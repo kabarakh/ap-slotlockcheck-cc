@@ -6,7 +6,7 @@ import {
   type RoomSyncedPayloadDto,
   type RoomSyncFailedPayloadDto,
   type RoomUpdatedPayloadDto,
-} from './live-messages.js';
+} from './dto/live-messages.dto.js';
 
 const SLUG_PATTERN = /^[a-z0-9-]{1,64}$/;
 

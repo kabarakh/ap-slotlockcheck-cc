@@ -1,8 +1,26 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { watchEffect } from 'vue';
+import { RouterView } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import AppHeader from '@/components/layout/AppHeader.vue';
+import AppMessages from '@/components/layout/AppMessages.vue';
+import { useUiStore } from '@/stores/ui';
+import { applyColorMode } from '@/theme';
+
+const ui = useUiStore();
+const { locale } = useI18n({ useScope: 'global' });
+
+watchEffect(() => {
+  locale.value = ui.locale;
+  document.documentElement.lang = ui.locale;
+  applyColorMode(ui.isDark);
+});
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the documentation</p>
+  <AppHeader />
+  <AppMessages />
+  <main class="app-main">
+    <RouterView />
+  </main>
 </template>
-
-<style scoped></style>

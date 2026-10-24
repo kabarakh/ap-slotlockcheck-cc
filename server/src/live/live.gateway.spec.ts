@@ -1,5 +1,5 @@
 import type { Socket } from 'socket.io';
-import { LiveMessageName } from './live-messages.js';
+import { LiveMessageName } from './dto/live-messages.dto.js';
 import { LiveGateway } from './live.gateway.js';
 
 function fakeSocket(channels: string[]): Socket {

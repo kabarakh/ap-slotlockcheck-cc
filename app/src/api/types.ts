@@ -1,0 +1,30 @@
+import type { components } from './schema';
+
+type Schemas = components['schemas'];
+
+export type RoomSummary = Schemas['RoomSummaryDto'];
+export type RoomDetail = Schemas['RoomDetailDto'];
+export type RoomMembership = Schemas['RoomMembershipDto'];
+export type RoomRole = Schemas['RoomRole'];
+export type SyncStatus = Schemas['SyncStatusDto'];
+export type SlotRow = Schemas['SlotRowDto'];
+export type SlotLock = Schemas['SlotLockDto'];
+export type LockStatus = Schemas['LockStatus'];
+export type UnlockTimeSource = Schemas['UnlockTimeSource'];
+export type ProgressionStatus = Schemas['ProgressionStatus'];
+export type CompletionStatus = Schemas['CompletionStatus'];
+export type AvailabilityStatus = Schemas['AvailabilityStatus'];
+export type AuthUser = Schemas['AuthUserDto'];
+export type RoomPreview = Schemas['RoomPreviewDto'];
+export type CreateRoomRequest = Schemas['CreateRoomDto'];
+export type OwnerCheckResult = Schemas['OwnerCheckResult'];
+export type RoomAdmin = Schemas['RoomAdminDto'];
+export type LockAssignment = Schemas['LockAssignmentDto'];
+export type UpdateRoomSettings = Schemas['UpdateRoomSettingsDto'];
+export type Warning = Schemas['WarningDto'];
+export type UnlockTimeImportResult = Schemas['UnlockTimeImportResultDto'];
+export type ApiError = Schemas['ApiErrorDto'];
+export type LiveMessageName = Schemas['LiveMessageName'];
+export type RoomSyncedPayload = Schemas['RoomSyncedPayloadDto'];
+export type RoomSyncFailedPayload = Schemas['RoomSyncFailedPayloadDto'];
+export type RoomUpdatedPayload = Schemas['RoomUpdatedPayloadDto'];

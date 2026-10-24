@@ -9,7 +9,7 @@ import {
   RoomSyncedPayloadDto,
   RoomSyncFailedPayloadDto,
   RoomUpdatedPayloadDto,
-} from './live/live-messages.js';
+} from './live/dto/live-messages.dto.js';
 
 export const API_PREFIX = 'api';
 

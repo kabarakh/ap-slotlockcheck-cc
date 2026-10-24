@@ -1,13 +1,11 @@
-import { mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import Database from 'better-sqlite3';
 import type { INestApplication } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import { loadFixture, type FixtureName } from '../fixtures/fixtures.js';
-
-const MIGRATIONS_PATH = join(import.meta.dirname, '..', '..', 'prisma', 'migrations');
+import { applyMigrations } from './migrations.js';
 
 const FIXTURE_ROUTES: [RegExp, FixtureName][] = [
   [/\/api\/tracker\/[^/]+\/checks_history$/, 'cheese-checks-history'],
@@ -23,16 +21,6 @@ export interface TestApp {
   app: INestApplication;
   fixtureOverrides: Map<FixtureName, unknown>;
   close(): Promise<void>;
-}
-
-function applyMigrations(databaseFile: string): void {
-  const database = new Database(databaseFile);
-  for (const migration of readdirSync(MIGRATIONS_PATH)
-    .filter((entry) => !entry.endsWith('.toml'))
-    .sort()) {
-    database.exec(readFileSync(join(MIGRATIONS_PATH, migration, 'migration.sql'), 'utf8'));
-  }
-  database.close();
 }
 
 export async function createTestApp(): Promise<TestApp> {

@@ -1,0 +1,98 @@
+:root {
+  --app-gap: 1rem;
+  --app-max-width: 96rem;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--p-content-background);
+  color: var(--p-text-color);
+}
+
+body {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--p-primary-color);
+}
+
+.app-main {
+  max-width: var(--app-max-width);
+  margin: 0 auto;
+  padding: var(--app-gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+}
+
+.app-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app-spacer {
+  flex: 1;
+}
+
+.app-form {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 40rem;
+}
+
+.app-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.app-muted {
+  color: var(--p-text-muted-color);
+  font-size: 0.875rem;
+}
+
+.app-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: var(--app-gap);
+}
+
+.app-stat {
+  border: 1px solid var(--p-content-border-color);
+  border-radius: var(--p-content-border-radius);
+  padding: 1rem;
+}
+
+.app-stat-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.inactivity-yellow {
+  color: var(--p-yellow-600);
+  font-weight: 600;
+}
+
+.inactivity-red {
+  color: var(--p-red-600);
+  font-weight: 600;
+}
+
+.app-dark .inactivity-yellow {
+  color: var(--p-yellow-400);
+}
+
+.app-dark .inactivity-red {
+  color: var(--p-red-400);
+}

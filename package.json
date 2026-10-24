@@ -16,8 +16,7 @@
     "dev:app": "npm run dev -w app",
     "api:sync": "npm run openapi:export -w server && npm run api:generate -w app",
     "api:check": "npm run api:sync && git diff --exit-code -- server/openapi.json app/src/api/schema.d.ts",
-    "build": "run-s build:server api:sync build:app",
-    "build:server": "npm run build -w server",
+    "build": "run-s api:sync build:app",
     "build:app": "npm run build -w app",
     "start": "npm run start:prod -w server",
     "lint": "npm run lint --workspaces",
@@ -32,10 +31,14 @@
   },
   "devDependencies": {
     "husky": "^9.1.7",
-    "npm-run-all2": "^9.0.4"
+    "npm-run-all2": "^9.0.4",
+    "typescript": "~6.0.3"
   },
   "overrides": {
-    "multer": "2.5.0"
+    "multer": "2.5.0",
+    "openapi-typescript": {
+      "typescript": "~6.0.3"
+    }
   },
   "allowScripts": {
     "@scarf/scarf": false,

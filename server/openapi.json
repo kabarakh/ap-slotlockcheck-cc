@@ -1546,15 +1546,41 @@
             "items": {
               "$ref": "#/components/schemas/SlotRowDto"
             }
+          },
+          "slug": {
+            "type": "string"
+          },
+          "room": {
+            "$ref": "#/components/schemas/RoomSummaryDto"
+          },
+          "removedSlotIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
           }
         },
         "required": [
-          "changedSlots"
+          "changedSlots",
+          "slug",
+          "room",
+          "removedSlotIds"
         ]
       },
       "RoomSyncFailedPayloadDto": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "syncStatus": {
+            "$ref": "#/components/schemas/SyncStatusDto"
+          }
+        },
+        "required": [
+          "slug",
+          "syncStatus"
+        ]
       },
       "RoomUpdatedPayloadDto": {
         "type": "object",
@@ -1564,10 +1590,18 @@
             "items": {
               "$ref": "#/components/schemas/SlotRowDto"
             }
+          },
+          "slug": {
+            "type": "string"
+          },
+          "room": {
+            "$ref": "#/components/schemas/RoomDetailDto"
           }
         },
         "required": [
-          "slots"
+          "slots",
+          "slug",
+          "room"
         ]
       }
     }
