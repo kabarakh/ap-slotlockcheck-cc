@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { parseArchipelagoLink } from '../sources/archipelago/archipelago-link.js';
-import type { SlotDataTracker, StaticTracker, TrackerData } from '../sources/archipelago/archipelago.schemas.js';
+import type {
+  RoomStatus,
+  SlotDataTracker,
+  StaticTracker,
+  TrackerData,
+} from '../sources/archipelago/archipelago.schemas.js';
 import { ArchipelagoService } from '../sources/archipelago/archipelago.service.js';
 import type { CheeseTracker } from '../sources/cheese/cheese.schemas.js';
 import { CheeseService } from '../sources/cheese/cheese.service.js';
@@ -12,6 +17,7 @@ export interface RoomSource {
   archipelagoOrigin: string;
   archipelagoTrackerId: string;
   archipelagoRoomId: string | null;
+  roomStatus: RoomStatus | null;
   tracker: TrackerData;
   staticTracker: StaticTracker;
   slotData: SlotDataTracker;
@@ -40,6 +46,7 @@ export class RoomSourceService {
       throw new RoomSourceError(`The Cheese tracker has no Archipelago tracker link: ${cheese.upstream_url}`);
     }
     const roomLink = parseArchipelagoLink(cheese.room_link, 'room');
+    const roomStatus = roomLink ? await this.archipelago.getRoomStatus(roomLink.origin, roomLink.id) : null;
     const staticTracker = await this.archipelago.getStaticTracker(trackerLink.origin, trackerLink.id);
     const tracker = await this.archipelago.getTracker(trackerLink.origin, trackerLink.id);
     const slotData = await this.archipelago.getSlotData(trackerLink.origin, trackerLink.id);
@@ -49,6 +56,7 @@ export class RoomSourceService {
       archipelagoOrigin: trackerLink.origin,
       archipelagoTrackerId: trackerLink.id,
       archipelagoRoomId: roomLink?.id ?? null,
+      roomStatus,
       tracker,
       staticTracker,
       slotData,

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { normalizeSlotName } from '../lock/lock.logic.js';
+import { createSlotFinder } from '../lock/lock.logic.js';
+import { slotIdentity } from '../sync/room-source.mapper.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RoomUpdatesService } from '../rooms/room-updates.service.js';
 import { RoomsService } from '../rooms/rooms.service.js';
@@ -30,12 +31,12 @@ export class UnlockTimesService {
     const room = await this.rooms.findRoomBySlug(slug);
     const parsed = parseUnlockTimeCsv(csv);
     const slots = await this.prisma.slot.findMany({ where: { roomId: room.id } });
-    const slotByName = new Map(slots.map((slot) => [normalizeSlotName(slot.name), slot]));
+    const findSlot = createSlotFinder(slots.map((slot) => ({ ...slotIdentity(slot), id: slot.id })));
     const errors = [...parsed.errors];
     let updated = 0;
     for (const row of parsed.rows) {
-      const locked = slotByName.get(normalizeSlotName(row.slot));
-      const locker = row.locker === null ? undefined : slotByName.get(normalizeSlotName(row.locker));
+      const locked = findSlot(row.slot);
+      const locker = row.locker === null ? undefined : findSlot(row.locker);
       if (!locked || (row.locker !== null && !locker)) {
         errors.push(`Line ${row.line}: unknown slot "${locked ? row.locker : row.slot}"`);
         continue;

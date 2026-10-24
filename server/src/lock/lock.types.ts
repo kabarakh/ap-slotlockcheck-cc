@@ -5,6 +5,7 @@ export type LockStatus = 'not_locked' | 'locked' | 'partially_unlocked' | 'unloc
 export interface SlotIdentity {
   position: number;
   name: string;
+  aliases?: string[];
 }
 
 export interface ReceivedItem {

@@ -36,6 +36,10 @@ export class SlotRowDto {
   id: number;
   position: number;
   name: string;
+
+  @ApiProperty({ type: String, nullable: true })
+  archipelagoName: string | null;
+
   game: string;
 
   @ApiProperty({ type: String, nullable: true })

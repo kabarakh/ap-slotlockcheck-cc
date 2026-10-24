@@ -1060,6 +1060,10 @@
       "SlotRowDto": {
         "type": "object",
         "properties": {
+          "archipelagoName": {
+            "type": "string",
+            "nullable": true
+          },
           "discordUserId": {
             "type": "string",
             "nullable": true
@@ -1159,6 +1163,7 @@
           }
         },
         "required": [
+          "archipelagoName",
           "discordUserId",
           "discordName",
           "lastActivity",

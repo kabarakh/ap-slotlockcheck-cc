@@ -1,7 +1,8 @@
-import type { ReceivedItem } from '../lock/lock.types.js';
+import type { ReceivedItem, SlotIdentity } from '../lock/lock.types.js';
 import type { ChecksHistoryPoint } from '../lock/unlock-time.logic.js';
 import {
   slotLockSlotDataSchema,
+  type RoomStatus,
   type SlotDataTracker,
   type TrackerData,
 } from '../sources/archipelago/archipelago.schemas.js';
@@ -10,11 +11,19 @@ import type { CheeseChecksHistory, CheeseTracker } from '../sources/cheese/chees
 export const SLOTLOCK_GAME = 'SlotLock';
 const ITEM_ID_INDEX = 0;
 const SENDER_INDEX = 2;
+const FIRST_PLAYER_POSITION = 1;
+const ALIAS_DISPLAY_PATTERN = /^(.+) \((.+)\)$/;
+
+export interface ArchipelagoSlotNames {
+  name: string | null;
+  alias: string | null;
+}
 
 export interface SlotRecord {
   cheeseGameId: number;
   position: number;
   name: string;
+  archipelagoName: string | null;
   game: string;
   discordUserId: string | null;
   discordName: string | null;
@@ -29,11 +38,38 @@ export interface SlotRecord {
   isSlotLock: boolean;
 }
 
-export function slotRecordsFromCheese(tracker: CheeseTracker): SlotRecord[] {
+export function archipelagoNamesByPosition(
+  roomStatus: RoomStatus | null,
+  tracker: TrackerData | null,
+): Map<number, ArchipelagoSlotNames> {
+  const result = new Map<number, ArchipelagoSlotNames>();
+  roomStatus?.players.forEach(([name], index) => {
+    result.set(index + FIRST_PLAYER_POSITION, { name, alias: null });
+  });
+  for (const entry of tracker?.aliases ?? []) {
+    const current = result.get(entry.player) ?? { name: null, alias: null };
+    result.set(entry.player, { ...current, alias: entry.alias });
+  }
+  return result;
+}
+
+export function slotIdentity(slot: Pick<SlotRecord, 'position' | 'name' | 'archipelagoName'>): SlotIdentity {
+  const display = ALIAS_DISPLAY_PATTERN.exec(slot.name);
+  const aliases = [slot.archipelagoName, display?.[1], display?.[2]].filter(
+    (alias): alias is string => typeof alias === 'string' && alias.length > 0,
+  );
+  return { position: slot.position, name: slot.name, aliases };
+}
+
+export function slotRecordsFromCheese(
+  tracker: CheeseTracker,
+  archipelagoNames: Map<number, ArchipelagoSlotNames> = new Map(),
+): SlotRecord[] {
   return tracker.games.map((game) => ({
     cheeseGameId: game.id,
     position: game.position,
     name: game.name,
+    archipelagoName: archipelagoNames.get(game.position)?.name ?? null,
     game: game.game,
     discordUserId: game.effective_discord_user_id ?? null,
     discordName: game.effective_discord_username ?? game.discord_username ?? null,

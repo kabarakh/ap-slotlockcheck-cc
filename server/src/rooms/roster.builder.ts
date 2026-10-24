@@ -12,6 +12,7 @@ export interface RosterSlot {
   id: number;
   position: number;
   name: string;
+  archipelagoName: string | null;
   game: string;
   discordUserId: string | null;
   discordName: string | null;
@@ -53,6 +54,7 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
         id: slot.id,
         position: slot.position,
         name: slot.name,
+        archipelagoName: slot.archipelagoName,
         game: slot.game,
         discordUserId: slot.discordUserId,
         discordName: slot.discordName,

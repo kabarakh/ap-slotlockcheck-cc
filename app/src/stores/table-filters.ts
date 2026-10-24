@@ -25,7 +25,14 @@ function matchesText(slot: SlotRow, text: string): boolean {
   if (needle.length === 0) {
     return true;
   }
-  return [slot.name, slot.game, slot.discordName ?? '', slot.notes, ...slot.locks.map((lock) => lock.senderName ?? '')]
+  return [
+    slot.name,
+    slot.archipelagoName ?? '',
+    slot.game,
+    slot.discordName ?? '',
+    slot.notes,
+    ...slot.locks.map((lock) => lock.senderName ?? ''),
+  ]
     .join(' ')
     .toLocaleLowerCase()
     .includes(needle);

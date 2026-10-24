@@ -13,6 +13,7 @@ export const roomStatusSchema = z.object({
 });
 
 export const trackerDataSchema = z.object({
+  aliases: z.array(z.object({ ...teamPlayer, alias: z.string().nullable() })).default([]),
   player_items_received: z.array(z.object({ ...teamPlayer, items: z.array(networkItemSchema) })),
   player_checks_done: z.array(z.object({ ...teamPlayer, locations: z.array(z.number().int()) })),
   activity_timers: z.array(z.object({ ...teamPlayer, time: z.string().nullable() })),

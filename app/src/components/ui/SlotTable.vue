@@ -19,6 +19,9 @@ const props = defineProps<{
 }>();
 const { t } = useI18n();
 
+const otherArchipelagoName = (slot: SlotRow): string | null =>
+  slot.archipelagoName && !slot.name.includes(slot.archipelagoName) ? slot.archipelagoName : null;
+
 const rows = computed(() =>
   props.slots.map((slot) => ({ ...slot, inactivityHours: props.hoursBySlotId.get(slot.id) ?? -1 })),
 );
@@ -38,7 +41,14 @@ const rows = computed(() =>
   >
     <template #empty>{{ t('slot.empty') }}</template>
     <Column field="position" :header="t('slot.columns.position')" sortable />
-    <Column field="name" :header="t('slot.columns.name')" sortable />
+    <Column field="name" :header="t('slot.columns.name')" sortable>
+      <template #body="{ data }">
+        <span>{{ (data as SlotRow).name }}</span>
+        <span v-if="otherArchipelagoName(data as SlotRow)" class="app-muted archipelago-name">
+          {{ otherArchipelagoName(data as SlotRow) }}
+        </span>
+      </template>
+    </Column>
     <Column field="discordName" :header="t('slot.columns.discord')" sortable />
     <Column field="game" :header="t('slot.columns.game')" sortable />
     <Column field="lockStatus" :header="t('slot.columns.lockStatus')" sortable>
@@ -86,3 +96,10 @@ const rows = computed(() =>
     <Column field="warningCount" :header="t('slot.columns.warnings')" sortable />
   </DataTable>
 </template>
+
+<style scoped>
+.archipelago-name {
+  display: block;
+  font-size: 0.75rem;
+}
+</style>

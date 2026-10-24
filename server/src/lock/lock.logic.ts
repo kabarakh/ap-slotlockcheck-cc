@@ -28,8 +28,16 @@ function pairKey(lockerPosition: number, lockedPosition: number): string {
   return `${lockerPosition}:${lockedPosition}`;
 }
 
-function createSlotFinder(slots: SlotIdentity[]): (name: string) => SlotIdentity | undefined {
-  const byName = new Map(slots.map((slot) => [normalizeSlotName(slot.name), slot]));
+export function createSlotFinder<Slot extends SlotIdentity>(slots: Slot[]): (name: string) => Slot | undefined {
+  const byName = new Map<string, Slot>();
+  for (const slot of slots) {
+    for (const alias of slot.aliases ?? []) {
+      byName.set(normalizeSlotName(alias), slot);
+    }
+  }
+  for (const slot of slots) {
+    byName.set(normalizeSlotName(slot.name), slot);
+  }
   return (name) => byName.get(normalizeSlotName(name));
 }
 

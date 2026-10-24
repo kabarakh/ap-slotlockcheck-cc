@@ -7,7 +7,7 @@ const SLOT_NAME_COLUMN = 2;
 
 const row = (table: Locator, slotName: string): Locator =>
   table.locator('tbody tr').filter({
-    has: table.page().locator(`td:nth-child(${SLOT_NAME_COLUMN})`, { hasText: new RegExp(`^${slotName}$`) }),
+    has: table.page().locator(`td:nth-child(${SLOT_NAME_COLUMN})`).getByText(slotName, { exact: true }),
   });
 
 test('the owner creates a room with the setup form', async ({ page }) => {
@@ -42,7 +42,7 @@ test('the roster filter reduces the rows', async ({ page }) => {
   await page.goto('/room/big-chill');
   await page.getByTestId('roster-search').fill('factorio');
   const roster = page.getByTestId('roster-table');
-  await expect(row(roster, 'Dave')).toBeVisible();
+  await expect(row(roster, 'Davey (Dave)')).toBeVisible();
   await expect(row(roster, 'Alice')).toHaveCount(0);
   await page.getByTestId('roster-search').fill('');
 });
@@ -80,7 +80,7 @@ test('an admin gives a warning and the roster shows it live', async ({ page, bro
   await page.getByTestId('save-warning').click();
   await expect(page.getByTestId('warnings-table')).toContainText('No activity');
 
-  await expect(row(visitor.getByTestId('roster-table'), 'Dave')).toContainText('1');
+  await expect(row(visitor.getByTestId('roster-table'), 'Davey (Dave)')).toContainText('1');
   await visitor.close();
 });
 

@@ -1,6 +1,7 @@
 import { loadFixture } from '../../test/fixtures/fixtures.js';
 import {
   datapackageSchema,
+  roomStatusSchema,
   slotDataTrackerSchema,
   staticTrackerSchema,
   trackerDataSchema,
@@ -15,6 +16,7 @@ const source: RoomSource = {
   archipelagoOrigin: 'https://archipelago.gg',
   archipelagoTrackerId: 'TrackerIdOfTheRoom0001',
   archipelagoRoomId: 'RoomIdOfTheRoomXX0001',
+  roomStatus: roomStatusSchema.parse(loadFixture('ap-room-status')),
   tracker: trackerDataSchema.parse(loadFixture('ap-tracker')),
   staticTracker: staticTrackerSchema.parse(loadFixture('ap-static-tracker')),
   slotData: slotDataTrackerSchema.parse(loadFixture('ap-slot-data')),
@@ -31,7 +33,7 @@ describe('buildPrototypeReport', () => {
       Alice: 'unlocked',
       Bob: 'locked',
       Carol: 'partially_unlocked',
-      Dave: 'locked',
+      'Davey (Dave)': 'locked',
       Locker2: 'not_locked',
     });
     expect(report.roster[2]?.[5]).toBe('Bob (Locker)');

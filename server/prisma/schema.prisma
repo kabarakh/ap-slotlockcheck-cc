@@ -64,6 +64,7 @@ model Slot {
   cheeseGameId       Int
   position           Int
   name               String
+  archipelagoName    String?
   game               String
   discordUserId      String?
   discordName        String?

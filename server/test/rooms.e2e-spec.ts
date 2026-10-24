@@ -87,7 +87,7 @@ describe('rooms (integration)', () => {
     expect(rows['Alice']?.locks[0]).toMatchObject({ lockerName: 'Locker', senderName: 'Bob' });
     expect(rows['Bob']?.lockStatus).toBe('locked');
     expect(rows['Carol']?.lockStatus).toBe('partially_unlocked');
-    expect(rows['Dave']?.lockStatus).toBe('locked');
+    expect(rows['Davey (Dave)']?.lockStatus).toBe('locked');
     expect(rows['Locker']?.lockStatus).toBe('not_locked');
   });
 
@@ -129,10 +129,10 @@ describe('rooms (integration)', () => {
 
   it('lets only admins give warnings', async () => {
     const rows = await roster();
-    const warning = { slotId: rows['Dave']?.id, date: '2026-10-24T10:00:00Z', text: 'Inactive' };
+    const warning = { slotId: rows['Davey (Dave)']?.id, date: '2026-10-24T10:00:00Z', text: 'Inactive' };
     await request(server).post('/api/rooms/big-chill/warnings').set('Cookie', playerCookie).send(warning).expect(403);
     await request(server).post('/api/rooms/big-chill/warnings').set('Cookie', ownerCookie).send(warning).expect(201);
-    expect((await roster())['Dave']?.warningCount).toBe(1);
+    expect((await roster())['Davey (Dave)']?.warningCount).toBe(1);
   });
 
   it('imports unlock times from CSV', async () => {
@@ -153,7 +153,7 @@ describe('rooms (integration)', () => {
     await request(server)
       .put('/api/rooms/big-chill/lock-assignments')
       .set('Cookie', ownerCookie)
-      .send({ lockerSlotId: rows['Locker']?.id, lockedSlotId: rows['Dave']?.id, locked: true })
+      .send({ lockerSlotId: rows['Locker']?.id, lockedSlotId: rows['Davey (Dave)']?.id, locked: true })
       .expect(200);
     await request(server)
       .put('/api/rooms/big-chill/lock-assignments')
@@ -161,7 +161,7 @@ describe('rooms (integration)', () => {
       .send({ lockerSlotId: rows['Locker']?.id, lockedSlotId: rows['Carol']?.id, locked: false })
       .expect(200);
     const updated = await roster();
-    expect(updated['Dave']?.locks).toHaveLength(2);
+    expect(updated['Davey (Dave)']?.locks).toHaveLength(2);
     expect(updated['Carol']?.lockStatus).toBe('unlocked');
   });
 

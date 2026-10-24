@@ -397,6 +397,7 @@ export interface components {
             unlocked: boolean;
         };
         SlotRowDto: {
+            archipelagoName: string | null;
             discordUserId: string | null;
             discordName: string | null;
             /** Format: date-time */

@@ -1,7 +1,9 @@
 import { detectLocks, evaluateSlotLockStates } from '../lock/lock.logic.js';
 import type { SlotLockState } from '../lock/lock.types.js';
 import {
+  archipelagoNamesByPosition,
   lockedSlotNamesByPosition,
+  slotIdentity,
   receivedItemsByPosition,
   slotRecordsFromCheese,
   type SlotRecord,
@@ -17,10 +19,10 @@ export interface PrototypeReport {
 const GOALED_STATUSES = new Set(['goal', 'done', 'released']);
 
 export function buildPrototypeReport(source: RoomSource, slotLockPositions?: number[]): PrototypeReport {
-  const slots = slotRecordsFromCheese(source.cheese);
+  const slots = slotRecordsFromCheese(source.cheese, archipelagoNamesByPosition(source.roomStatus, source.tracker));
   const lockers = slotLockPositions ?? slots.filter((slot) => slot.isSlotLock).map((slot) => slot.position);
   const detection = detectLocks({
-    slots,
+    slots: slots.map(slotIdentity),
     slotLockPositions: lockers,
     lockedSlotNamesByLocker: lockedSlotNamesByPosition(source.slotData, lockers),
     receivedItemsByLocker: receivedItemsByPosition(source.tracker, lockers, source.slotLockItemNames),

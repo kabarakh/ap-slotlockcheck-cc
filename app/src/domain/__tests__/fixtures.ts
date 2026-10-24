@@ -5,6 +5,7 @@ export function slotRow(overrides: Partial<SlotRow>): SlotRow {
     id: 1,
     position: 1,
     name: 'Slot',
+    archipelagoName: null,
     game: 'Game',
     discordUserId: null,
     discordName: null,
