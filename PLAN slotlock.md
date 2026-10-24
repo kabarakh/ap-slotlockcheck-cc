@@ -171,7 +171,7 @@ Technical names stay unchanged, for example Socket.IO "rooms" (always written "S
 
 ## 11. Views
 
-1. Room list: all rooms, with title, status, and percentage of unlocked slots.
+1. Room list: the rooms in which the logged-in user has a slot or is admin, with title, status, and percentage of unlocked slots. Visitors see no rooms in the list. Each room stays public: everybody can open it with its link (`/room/<slug>`).
 2. Roster: slot number, slot name, Discord user, game, lock status, unlocked by, unlock time, inactivity, progression status, completion status, availability status (all three from Cheese), Cheese notes, warnings, number of unlock items that this slot sent ("has unlocked").
 3. Player summary: number of slots, unlocked slots, goaled slots, locked slots, warnings.
    - A slot is "goaled" when its Cheese `completion_status` is `goal`, `done` or `released`, or when Archipelago reports the client status "goal" (30). This applies to 11.3, 11.4 and 11.9.
@@ -793,3 +793,4 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 16. **Unlock tree (11.9):** new view, added after the first plan. The app uses `d3-hierarchy` (ISC license) for the layout and draws an SVG.
 17. **Statistics from the second Google sheet:** slot names in the player summary, players by number of unlocked slots, column "has unlocked", hint for slots without Discord user, goal and activity timer from Archipelago.
 18. **Public test mode:** `npm run dev:public` makes the development environment reachable through the DynDNS name. The new variable `ADDITIONAL_ORIGINS` permits more origins for the origin check (15.8.5).
+19. **Room list (11.1):** the list shows only the own rooms of the user. Other rooms are public, but only with their link.

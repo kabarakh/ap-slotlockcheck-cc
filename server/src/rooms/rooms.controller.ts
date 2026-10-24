@@ -14,8 +14,8 @@ export class RoomsController {
   ) {}
 
   @Get()
-  listRooms(): Promise<RoomSummaryDto[]> {
-    return this.rooms.listRooms();
+  listRooms(@CurrentUser() user: AuthUser | undefined): Promise<RoomSummaryDto[]> {
+    return this.rooms.listRoomsOf(user);
   }
 
   @Get(':slug')

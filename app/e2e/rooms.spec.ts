@@ -23,11 +23,21 @@ test('the owner creates a room with the setup form', async ({ page }) => {
   await expect(page.getByTestId('room-title')).toHaveText('Big Chill');
 });
 
-test('a visitor sees the room list and the roster', async ({ page }) => {
+test('the room list shows only the own rooms', async ({ page }) => {
   await ensureRoom(page);
+  await loginAs(page, OWNER);
+  await page.goto('/');
+  await expect(page.getByRole('link', { name: 'Big Chill' })).toBeVisible();
   await page.context().clearCookies();
   await page.goto('/');
-  await page.getByRole('link', { name: 'Big Chill' }).click();
+  await expect(page.getByTestId('rooms-hint')).toContainText('Log in with Discord');
+  await expect(page.getByRole('link', { name: 'Big Chill' })).toHaveCount(0);
+});
+
+test('a visitor opens a room with its link and sees the roster', async ({ page }) => {
+  await ensureRoom(page);
+  await page.context().clearCookies();
+  await page.goto('/room/big-chill');
   const roster = page.getByTestId('roster-table');
   await expect(row(roster, 'Alice')).toContainText('Unlocked');
   await expect(row(roster, 'Bob')).toContainText('Locked');

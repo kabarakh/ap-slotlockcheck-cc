@@ -19,7 +19,10 @@
   messages: { success: 'Done', info: 'Information', warn: 'Warning', error: 'Error' },
   rooms: {
     title: 'Rooms',
-    empty: 'There are no rooms yet.',
+    empty: 'You have no slot in a room and you are not admin of a room.',
+    emptyVisitor: 'Log in to see your rooms.',
+    onlyOwnRooms: 'The list shows only the rooms in which you have a slot or are admin. Open other rooms with their link.',
+    loginForRooms: 'Log in with Discord to see your rooms. You can also open a room with its link.',
     columns: { title: 'Title', slots: 'Slots', progress: 'Unlocked', status: 'Synchronization' },
     unlockedOf: '{unlocked} of {locked} locked slots unlocked',
   },

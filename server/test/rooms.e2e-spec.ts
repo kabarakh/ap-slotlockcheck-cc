@@ -94,9 +94,15 @@ describe('rooms (integration)', () => {
     expect(rows['Carol']?.archipelagoGoal).toBe(true);
   });
 
-  it('lists the room', async () => {
-    const response = await request(server).get('/api/rooms').expect(200);
-    expect(response.body).toHaveLength(1);
+  it('lists a room only for its admins and players', async () => {
+    const stranger = await login({ discordId: '100000000000000055', name: 'Stranger', username: 'stranger' });
+    await request(server).get('/api/rooms').expect(200, []);
+    await request(server).get('/api/rooms').set('Cookie', stranger).expect(200, []);
+    const owner = await request(server).get('/api/rooms').set('Cookie', ownerCookie).expect(200);
+    const player = await request(server).get('/api/rooms').set('Cookie', playerCookie).expect(200);
+    expect(owner.body).toHaveLength(1);
+    expect(player.body).toHaveLength(1);
+    await request(server).get('/api/rooms/big-chill').set('Cookie', stranger).expect(200);
   });
 
   it('gives the roles of the users', async () => {

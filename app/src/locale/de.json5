@@ -19,7 +19,10 @@
   messages: { success: 'Erledigt', info: 'Information', warn: 'Warnung', error: 'Fehler' },
   rooms: {
     title: 'Räume',
-    empty: 'Es gibt noch keine Räume.',
+    empty: 'Du hast in keinem Raum einen Slot und bist nirgends Admin.',
+    emptyVisitor: 'Melde dich an, um deine Räume zu sehen.',
+    onlyOwnRooms: 'Die Liste zeigt nur Räume, in denen du einen Slot hast oder Admin bist. Andere Räume öffnest du über ihren Link.',
+    loginForRooms: 'Melde dich mit Discord an, um deine Räume zu sehen. Einen Raum kannst du auch direkt über seinen Link öffnen.',
     columns: { title: 'Titel', slots: 'Slots', progress: 'Entsperrt', status: 'Synchronisierung' },
     unlockedOf: '{unlocked} von {locked} gesperrten Slots entsperrt',
   },

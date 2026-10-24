@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { AuthUser } from '../auth/auth.types.js';
 import { AppConfigService } from '../config/app-config.service.js';
 import type { Room } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -37,8 +38,16 @@ export class RoomsService {
     return room;
   }
 
-  async listRooms(): Promise<RoomSummaryDto[]> {
-    const rooms = await this.prisma.room.findMany({ orderBy: { createdAt: 'desc' } });
+  async listRoomsOf(user: Pick<AuthUser, 'id' | 'discordId'> | undefined): Promise<RoomSummaryDto[]> {
+    if (!user) {
+      return [];
+    }
+    const rooms = await this.prisma.room.findMany({
+      where: {
+        OR: [{ admins: { some: { userId: user.id } } }, { slots: { some: { discordUserId: user.discordId } } }],
+      },
+      orderBy: { createdAt: 'desc' },
+    });
     return Promise.all(rooms.map(async (room) => this.toSummary(room, await this.getRosterForRoom(room.id))));
   }
 
