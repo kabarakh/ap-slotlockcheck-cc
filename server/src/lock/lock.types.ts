@@ -1,6 +1,6 @@
 export type LockSource = 'detected' | 'admin';
 export type UnlockTimeSource = 'sync' | 'estimated' | 'manual' | 'csv' | 'unknown';
-export type LockStatus = 'not_locked' | 'locked' | 'partially_unlocked' | 'unlocked';
+export type LockStatus = 'not_locked' | 'start_slot' | 'locked' | 'partially_unlocked' | 'unlocked';
 
 export interface SlotIdentity {
   position: number;

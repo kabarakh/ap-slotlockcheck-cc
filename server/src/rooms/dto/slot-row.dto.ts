@@ -7,7 +7,7 @@ import type {
   TrackerStatus,
 } from '../../sources/cheese/cheese.schemas.js';
 
-export const LOCK_STATUSES: LockStatus[] = ['not_locked', 'locked', 'partially_unlocked', 'unlocked'];
+export const LOCK_STATUSES: LockStatus[] = ['not_locked', 'start_slot', 'locked', 'partially_unlocked', 'unlocked'];
 export const UNLOCK_TIME_SOURCES: UnlockTimeSource[] = ['sync', 'estimated', 'manual', 'csv', 'unknown'];
 export const TRACKER_STATUSES: TrackerStatus[] = ['disconnected', 'connected', 'ready', 'playing', 'goal_completed'];
 export const PROGRESSION_STATUSES: ProgressionStatus[] = ['unknown', 'unblocked', 'bk', 'go', 'soft_bk'];

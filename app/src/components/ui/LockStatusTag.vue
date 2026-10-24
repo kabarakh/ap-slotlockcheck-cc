@@ -11,6 +11,7 @@ const severity = computed(
   () =>
     ({
       not_locked: 'secondary',
+      start_slot: 'info',
       locked: 'danger',
       partially_unlocked: 'warn',
       unlocked: 'success',

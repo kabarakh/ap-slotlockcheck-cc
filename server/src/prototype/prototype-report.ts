@@ -1,4 +1,4 @@
-import { detectLocks, evaluateSlotLockStates } from '../lock/lock.logic.js';
+import { detectLocks, detectStartSlots, evaluateSlotLockStates } from '../lock/lock.logic.js';
 import type { SlotLockState } from '../lock/lock.types.js';
 import {
   archipelagoNamesByPosition,
@@ -21,10 +21,11 @@ const GOALED_STATUSES = new Set(['goal', 'done', 'released']);
 export function buildPrototypeReport(source: RoomSource, slotLockPositions?: number[]): PrototypeReport {
   const slots = slotRecordsFromCheese(source.cheese, archipelagoNamesByPosition(source.roomStatus, source.tracker));
   const lockers = slotLockPositions ?? slots.filter((slot) => slot.isSlotLock).map((slot) => slot.position);
+  const lockedSlotNamesByLocker = lockedSlotNamesByPosition(source.slotData, lockers);
   const detection = detectLocks({
     slots: slots.map(slotIdentity),
     slotLockPositions: lockers,
-    lockedSlotNamesByLocker: lockedSlotNamesByPosition(source.slotData, lockers),
+    lockedSlotNamesByLocker,
     receivedItemsByLocker: receivedItemsByPosition(source.tracker, lockers, source.slotLockItemNames),
     overrides: [],
   });
@@ -38,6 +39,13 @@ export function buildPrototypeReport(source: RoomSource, slotLockPositions?: num
       unlockTime: null,
       timeSource: 'unknown',
     })),
+    new Set(
+      detectStartSlots(
+        slots.map((slot) => ({ ...slotIdentity(slot), isSlotLock: slot.isSlotLock })),
+        lockedSlotNamesByLocker,
+        detection.assignments,
+      ),
+    ),
   );
   const nameByPosition = new Map(slots.map((slot) => [slot.position, slot.name]));
   return {

@@ -114,10 +114,23 @@ function latestUnlock(unlocks: StoredUnlock[]): Pick<SlotLockState, 'unlockTime'
   return { unlockTime: latest.unlockTime, unlockTimeSource: latest.timeSource };
 }
 
+export function detectStartSlots(
+  slots: (SlotIdentity & { isSlotLock: boolean })[],
+  lockedSlotNamesByLocker: Map<number, string[]>,
+  assignments: LockAssignmentResult[],
+): number[] {
+  if (lockedSlotNamesByLocker.size === 0) {
+    return [];
+  }
+  const lockedPositions = new Set(assignments.map((assignment) => assignment.lockedPosition));
+  return slots.filter((slot) => !slot.isSlotLock && !lockedPositions.has(slot.position)).map((slot) => slot.position);
+}
+
 export function evaluateSlotLockStates(
   slotIds: number[],
   locks: StoredLock[],
   unlocks: StoredUnlock[],
+  startSlotIds: ReadonlySet<number> = new Set(),
 ): Map<number, SlotLockState> {
   const unlocksByPair = new Map(unlocks.map((unlock) => [`${unlock.lockerSlotId}:${unlock.lockedSlotId}`, unlock]));
   const states = new Map<number, SlotLockState>();
@@ -137,7 +150,9 @@ export function evaluateSlotLockStates(
     const unlockedCount = lockStates.filter((lock) => lock.unlocked).length;
     const status =
       slotLocks.length === 0
-        ? 'not_locked'
+        ? startSlotIds.has(slotId)
+          ? 'start_slot'
+          : 'not_locked'
         : unlockedCount === slotLocks.length
           ? 'unlocked'
           : unlockedCount > 0

@@ -34,6 +34,11 @@ describe('inactivityHours', () => {
     expect(inactivityHours(slot, now)).toBe(6);
   });
 
+  it('counts the inactivity of start slots', () => {
+    const slot = slotRow({ lockStatus: 'start_slot', lastActivity: '2026-10-24T02:00:00Z' });
+    expect(inactivityHours(slot, now)).toBe(10);
+  });
+
   it('is null without any time', () => {
     expect(inactivityHours(slotRow({ lockStatus: 'unlocked' }), now)).toBeNull();
   });

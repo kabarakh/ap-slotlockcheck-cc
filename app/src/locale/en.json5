@@ -79,6 +79,7 @@
   },
   lockStatus: {
     not_locked: 'Not locked',
+    start_slot: 'Open from start',
     locked: 'Locked',
     partially_unlocked: 'Partially unlocked',
     unlocked: 'Unlocked',

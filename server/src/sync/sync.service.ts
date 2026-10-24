@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { Injectable, Logger } from '@nestjs/common';
 import type { Prisma, Room } from '../generated/prisma/client.js';
 import { LiveGateway } from '../live/live.gateway.js';
-import { detectLocks } from '../lock/lock.logic.js';
+import { detectLocks, detectStartSlots } from '../lock/lock.logic.js';
 import type { LockDetectionResult } from '../lock/lock.types.js';
 import { estimateUnlockTime } from '../lock/unlock-time.logic.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -129,12 +129,23 @@ export class SyncService {
       const slots = await tx.slot.findMany({ where: { roomId: room.id } });
       const slotIdByPosition: SlotIdByPosition = new Map(slots.map((slot) => [slot.position, slot.id]));
       const selectedPositions = slots.filter((slot) => slot.isSelectedSlotLock).map((slot) => slot.position);
+      const lockedSlotNamesByLocker = lockedSlotNamesByPosition(source.slotData, selectedPositions);
       const detection = detectLocks({
         slots: records.map(slotIdentity),
         slotLockPositions: selectedPositions,
-        lockedSlotNamesByLocker: lockedSlotNamesByPosition(source.slotData, selectedPositions),
+        lockedSlotNamesByLocker,
         receivedItemsByLocker: receivedItemsByPosition(source.tracker, selectedPositions, source.slotLockItemNames),
         overrides: [],
+      });
+      const startPositions = detectStartSlots(
+        records.map((record) => ({ ...slotIdentity(record), isSlotLock: record.isSlotLock })),
+        lockedSlotNamesByLocker,
+        detection.assignments,
+      );
+      await tx.slot.updateMany({ where: { roomId: room.id }, data: { isStartSlot: false } });
+      await tx.slot.updateMany({
+        where: { roomId: room.id, position: { in: startPositions } },
+        data: { isStartSlot: true },
       });
       await this.storeDetectedLocks(tx, room.id, detection, slotIdByPosition);
       await this.storeNewUnlocks(tx, room.id, detection, slotIdByPosition, now, isFirstSync);

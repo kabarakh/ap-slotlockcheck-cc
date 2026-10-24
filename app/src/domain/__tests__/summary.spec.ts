@@ -15,7 +15,14 @@ const slots = [
     completionStatus: 'done',
     checksDone: 10,
   }),
-  slotRow({ id: 5, name: 'D', discordUserId: '3', discordName: 'carol', completionStatus: 'released' }),
+  slotRow({
+    id: 5,
+    name: 'D',
+    discordUserId: '3',
+    discordName: 'carol',
+    completionStatus: 'released',
+    lockStatus: 'start_slot',
+  }),
 ];
 
 describe('summarizePlayers', () => {

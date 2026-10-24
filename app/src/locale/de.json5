@@ -79,6 +79,7 @@
   },
   lockStatus: {
     not_locked: 'Nicht gesperrt',
+    start_slot: 'Frei ab Start',
     locked: 'Gesperrt',
     partially_unlocked: 'Teilweise entsperrt',
     unlocked: 'Entsperrt',

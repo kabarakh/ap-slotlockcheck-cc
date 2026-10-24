@@ -79,6 +79,7 @@ model Slot {
   notes              String
   isSlotLock         Boolean          @default(false)
   isSelectedSlotLock Boolean          @default(false)
+  isStartSlot        Boolean          @default(false)
   room               Room             @relation(fields: [roomId], references: [id], onDelete: Cascade)
   locksAsLocker      LockAssignment[] @relation("LockerSlot")
   locksAsLocked      LockAssignment[] @relation("LockedSlot")

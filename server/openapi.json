@@ -998,6 +998,7 @@
         "type": "string",
         "enum": [
           "not_locked",
+          "start_slot",
           "locked",
           "partially_unlocked",
           "unlocked"

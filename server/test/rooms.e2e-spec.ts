@@ -198,4 +198,25 @@ describe('rooms (integration)', () => {
       .expect(200, { role: 'admin', isOwner: false });
     await request(server).post(`/api/invitations/${token}/accept`).set('Cookie', guestCookie).expect(410);
   });
+
+  it('marks slots that the selected SlotLock slots do not lock as start slots', async () => {
+    await request(server)
+      .patch('/api/rooms/big-chill/settings')
+      .set('Cookie', ownerCookie)
+      .send({ slotLockPositions: [1] })
+      .expect(204);
+    const { SyncService } = await import('../src/sync/sync.service.js');
+    const room = (await request(server).get('/api/rooms/big-chill').expect(200)).body as { id: number };
+    await expect(testApp.app.get(SyncService).syncRoom(room.id, 'schedule')).resolves.toBe('success');
+    const rows = await roster();
+    expect(rows['Davey (Dave)']?.lockStatus).toBe('locked');
+    await request(server)
+      .post('/api/rooms/big-chill/lock-assignments/reset')
+      .set('Cookie', ownerCookie)
+      .send({ lockerSlotId: rows['Locker']?.id, lockedSlotId: rows['Davey (Dave)']?.id })
+      .expect(200);
+    const updated = await roster();
+    expect(updated['Davey (Dave)']?.lockStatus).toBe('start_slot');
+    expect(updated['Locker2']?.lockStatus).toBe('not_locked');
+  });
 });

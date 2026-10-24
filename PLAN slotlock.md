@@ -17,6 +17,7 @@ Always use the same word for a term. Do not use a synonym. The terms agree with 
 | slot | A player position in the room. | Slot | player account |
 | SlotLock slot | A slot with the game "SlotLock". It receives the unlock items. | – | lock slot |
 | locked slot | A slot that one or more SlotLock slots lock (6.4). | – | blocked slot |
+| start slot | A playable slot that no selected SlotLock slot locks. SlotLock gives its unlock item as start item, so the slot is open from the start (6.9). UI: "Frei ab Start" / "Open from start". | – | not locked (for a start slot) |
 | roster | The list of all slots in the room (11.2, `RosterView`). | Roster | slot list, player list |
 | item | An object that a slot receives or sends. | Item | object |
 | unlock item | An item "Unlock &lt;slot name&gt;" (6.1). | – | key, lock item |
@@ -119,6 +120,7 @@ Technical names stay unchanged, for example Socket.IO "rooms" (always written "S
 6. If one SlotLock slot receives more than one unlock item for the same slot, use only the first item.
 7. A slot is unlocked when each SlotLock slot that locks it has received at least one unlock item for it.
 8. "Unlocked by" is the sender of each first unlock item. Show one sender for each SlotLock slot.
+9. A playable slot that no selected SlotLock slot locks is a start slot. SlotLock gives the unlock item of each slot that it does not lock as start item. The Archipelago API does not show start items, so the server uses the slot data: a selected SlotLock slot has slot data and the slot is not in its `locked_slots`. SlotLock slots and slots without slot data have the status "not locked".
 
 ## 7. Unlock time
 
@@ -137,7 +139,7 @@ Technical names stay unchanged, for example Socket.IO "rooms" (always written "S
 
 ## 8. Inactivity
 
-1. Calculate inactivity only for unlocked slots.
+1. Calculate inactivity only for unlocked slots and start slots.
 2. Inactivity = current time minus the latest of these values: the last activity, the last "Still BK" click in Cheese (`last_checked`), or the unlock time.
 3. If a value is unknown, use the other values only. Cheese also sets `last_checked` when a player sets the status to BK.
 4. Use the yellow and red limits from the Cheese Tracker as default values.
@@ -782,3 +784,4 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 12. **Production packages:** `prisma` is a production dependency, because `prisma migrate deploy` runs on the server.
 13. **Aliases:** Archipelago shows a slot with an alias as "Alias (Name)". Cheese uses this display name. The SlotLock slot data and the unlock items use the original name. The server reads the original names from `GET /api/room_status` (players in the order of the player number) and the aliases from the tracker. It matches a name with the Cheese name, the original name and the parts of the alias display. The roster shows the original name if it differs.
 14. **"Still BK":** the inactivity also uses the Cheese field `last_checked` (8.2).
+15. **Start slots (6.9):** a new lock status `start_slot` separates start slots from slots that are not locked.

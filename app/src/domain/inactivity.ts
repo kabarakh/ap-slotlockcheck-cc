@@ -10,7 +10,7 @@ export interface InactivityLimits {
 const HOUR_MS = 60 * 60 * 1000;
 
 export function inactivityHours(slot: SlotRow, now: Date): number | null {
-  if (slot.lockStatus !== 'unlocked') {
+  if (slot.lockStatus !== 'unlocked' && slot.lockStatus !== 'start_slot') {
     return null;
   }
   const times = [slot.lastActivity, slot.lastChecked, slot.unlockTime]

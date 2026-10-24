@@ -1,4 +1,4 @@
-import { detectLocks, evaluateSlotLockStates, unlockTargetName } from './lock.logic.js';
+import { detectLocks, detectStartSlots, evaluateSlotLockStates, unlockTargetName } from './lock.logic.js';
 import type { LockDetectionInput, StoredUnlock } from './lock.types.js';
 
 const slots = [
@@ -141,7 +141,34 @@ describe('detectLocks', () => {
   });
 });
 
+describe('detectStartSlots', () => {
+  const slotsWithType = slots.map((slot) => ({ ...slot, isSlotLock: slot.name.includes('Locker') }));
+
+  it('gives the playable slots that no selected SlotLock slot locks', () => {
+    const assignments = [
+      { lockerPosition: 1, lockedPosition: 2, source: 'detected' as const },
+      { lockerPosition: 1, lockedPosition: 3, source: 'detected' as const },
+    ];
+    expect(detectStartSlots(slotsWithType, new Map([[1, ['Alice', 'Bob']]]), assignments)).toEqual([4]);
+  });
+
+  it('gives no start slots without slot data', () => {
+    expect(detectStartSlots(slotsWithType, new Map(), [])).toEqual([]);
+  });
+});
+
 describe('evaluateSlotLockStates', () => {
+  it('separates start slots from slots that are not locked', () => {
+    const states = evaluateSlotLockStates([10, 20], [], [], new Set([20]));
+    expect(states.get(10)?.status).toBe('not_locked');
+    expect(states.get(20)?.status).toBe('start_slot');
+  });
+
+  it('prefers a lock over the start slot mark', () => {
+    const states = evaluateSlotLockStates([20], [{ lockerSlotId: 1, lockedSlotId: 20 }], [], new Set([20]));
+    expect(states.get(20)?.status).toBe('locked');
+  });
+
   const t1 = new Date('2026-10-01T10:00:00Z');
   const t2 = new Date('2026-10-02T10:00:00Z');
   const unlock = (lockerSlotId: number, lockedSlotId: number, time: Date | null): StoredUnlock => ({

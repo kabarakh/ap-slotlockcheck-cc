@@ -71,7 +71,7 @@ export function summarizePlayers(slots: SlotRow[]): PlayerSummary[] {
 
 export function calculateStatistics(slots: SlotRow[]): GlobalStatistics {
   const playable = slots.filter((slot) => !slot.isSlotLock);
-  const lockable = playable.filter((slot) => slot.lockStatus !== 'not_locked');
+  const lockable = playable.filter((slot) => slot.lockStatus !== 'not_locked' && slot.lockStatus !== 'start_slot');
   const unlockedCount = lockable.filter((slot) => slot.lockStatus === 'unlocked').length;
   const goaledCount = playable.filter(isGoaled).length;
   const allChecksCount = playable.filter(hasAllChecks).length;

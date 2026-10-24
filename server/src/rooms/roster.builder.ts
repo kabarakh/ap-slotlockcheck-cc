@@ -27,6 +27,7 @@ export interface RosterSlot {
   notes: string;
   isSlotLock: boolean;
   isSelectedSlotLock: boolean;
+  isStartSlot: boolean;
 }
 
 export interface RosterInput {
@@ -45,6 +46,7 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
     input.slots.map((slot) => slot.id),
     input.locks,
     unlocks,
+    new Set(input.slots.filter((slot) => slot.isStartSlot).map((slot) => slot.id)),
   );
 
   return [...input.slots]
@@ -88,7 +90,7 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
 }
 
 export function countLockStates(rows: SlotRowDto[]): { locked: number; unlocked: number; percentage: number } {
-  const locked = rows.filter((row) => row.lockStatus !== 'not_locked').length;
+  const locked = rows.filter((row) => row.lockStatus !== 'not_locked' && row.lockStatus !== 'start_slot').length;
   const unlocked = rows.filter((row) => row.lockStatus === 'unlocked').length;
   return { locked, unlocked, percentage: locked === 0 ? 0 : Math.round((unlocked / locked) * 1000) / 10 };
 }

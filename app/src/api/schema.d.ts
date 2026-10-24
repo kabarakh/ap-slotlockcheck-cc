@@ -383,7 +383,7 @@ export interface components {
         /** @enum {string} */
         AvailabilityStatus: "unknown" | "open" | "claimed" | "public";
         /** @enum {string} */
-        LockStatus: "not_locked" | "locked" | "partially_unlocked" | "unlocked";
+        LockStatus: "not_locked" | "start_slot" | "locked" | "partially_unlocked" | "unlocked";
         /** @enum {string} */
         UnlockTimeSource: "sync" | "estimated" | "manual" | "csv" | "unknown";
         SlotLockDto: {

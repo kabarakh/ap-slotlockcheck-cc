@@ -18,7 +18,7 @@ const { hoursBySlotId, levelBySlotId } = storeToRefs(useInactivityStore());
 const { t } = useI18n();
 
 const lockStatusOptions = computed(() =>
-  (['not_locked', 'locked', 'partially_unlocked', 'unlocked'] as LockStatus[]).map((value) => ({
+  (['not_locked', 'start_slot', 'locked', 'partially_unlocked', 'unlocked'] as LockStatus[]).map((value) => ({
     value,
     label: t(`lockStatus.${value}`),
   })),
