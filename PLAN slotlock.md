@@ -445,7 +445,7 @@ Remove the folder `entities` that `nest g resource` makes. The database types co
 
 1. Make two template files with all variables:
    - `server/.env.development.example`: values for local development. `PUBLIC_BASE_URL=http://localhost:5173` (Vite). Discord callback: `http://localhost:5173/api/auth/discord/callback` (through the Vite proxy).
-   - `server/.env.production.example`: values for the proServer. Use placeholders, for example `PUBLIC_BASE_URL=https://<PRODUCTION_DOMAIN>` and `DISCORD_CALLBACK_URL=https://<PRODUCTION_DOMAIN>/api/auth/discord/callback`.
+   - `server/.env.production.example`: values for production: `PUBLIC_BASE_URL=https://slotlock.example.com` and `DISCORD_CALLBACK_URL=https://slotlock.example.com/api/auth/discord/callback`. Secrets stay placeholders.
 2. Keep the templates in version control. Do not keep the real files (`.env.development`, `.env.production`) in version control. They contain secrets.
 3. `ConfigModule` loads `.env.${NODE_ENV}`. Validate all variables at start. The application does not start if a placeholder `<…>` is still in a value.
 
@@ -756,6 +756,7 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 | Discord application | The project owner makes it, with callback URLs for development and production |
 | Environment files | Templates for development and production. Production uses placeholders. |
 | Health endpoint | `@nestjs/terminus` |
+| Production domain | `slotlock.example.com` (dynamic DNS, public IPv4 of the home connection) |
 | User-Agent | `SlotlockTracker/<version> (+<GitHub repository URL>)` |
 | Owner check | 1. claimed slot of the owner → Discord user ID, 2. Discord user name. Never a Cheese API key. If no match: stop with an instruction. |
 | Cheese status columns | `progression_status`, `completion_status`, `availability_status` |
@@ -764,7 +765,7 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 
 ## 23. Open points
 
-1. Production domain: replace `<PRODUCTION_DOMAIN>` before the first deployment.
+1. Production domain: decided, `slotlock.example.com` (dynamic DNS of the router). The host is not decided yet (proServer, Raspberry Pi or mini PC at home).
 2. proServer: who configures nginx and the pm2 start after a reboot (20.3a)? Decide in phase 8.
 3. GitHub repository: the developer makes it and adds the remote. Then replace `<OWNER>/<REPOSITORY>` in the `User-Agent` of the environment files.
 4. PrimeVue 5 needs a license key (24.1). Stay on PrimeVue 4.5 (MIT), or buy or request a PrimeUI license and update?

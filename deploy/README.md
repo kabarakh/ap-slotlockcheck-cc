@@ -38,14 +38,15 @@ This guide is for the person who prepares the proServer. This can be the develop
 ## 4. Configure nginx
 
 1. Use `deploy/nginx.conf.example` as template.
-2. Replace `<PRODUCTION_DOMAIN>` and the certificate paths.
-3. Keep the `Upgrade` and `Connection` headers for `/socket.io/`. The live updates need them.
-4. Set `TRUST_PROXY=true` in `.env.production`.
+2. The template uses the domain `slotlock.example.com` and the certificate paths of Let's Encrypt.
+3. Get the certificate before nginx uses the template, because nginx does not start without the certificate files: `sudo certbot certonly --standalone -d slotlock.example.com` (port 80 must be free and forwarded). After that, `certbot renew` renews the certificate automatically.
+4. Keep the `Upgrade` and `Connection` headers for `/socket.io/`. The live updates need them.
+5. Set `TRUST_PROXY=true` in `.env.production`.
 
 ## 5. Configure Discord
 
 1. Open the Discord application in the Discord Developer Portal.
-2. Add the redirect URL `https://<PRODUCTION_DOMAIN>/api/auth/discord/callback`.
+2. Add the redirect URL `https://slotlock.example.com/api/auth/discord/callback`.
 3. Copy client ID and client secret into `.env.production`.
 
 ## 6. Configure GitHub

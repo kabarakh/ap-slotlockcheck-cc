@@ -6,10 +6,10 @@ upstream slotlock_app {
 server {
     listen 443 ssl;
     http2 on;
-    server_name <PRODUCTION_DOMAIN>;
+    server_name slotlock.example.com;
 
-    ssl_certificate     /etc/ssl/<PRODUCTION_DOMAIN>/fullchain.pem;
-    ssl_certificate_key /etc/ssl/<PRODUCTION_DOMAIN>/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/slotlock.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/slotlock.example.com/privkey.pem;
 
     client_max_body_size 2m;
 
@@ -37,6 +37,6 @@ server {
 
 server {
     listen 80;
-    server_name <PRODUCTION_DOMAIN>;
+    server_name slotlock.example.com;
     return 301 https://$host$request_uri;
 }
