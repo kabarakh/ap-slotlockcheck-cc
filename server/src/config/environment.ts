@@ -17,6 +17,10 @@ export class Environment {
   @IsUrl({ require_tld: false })
   PUBLIC_BASE_URL: string;
 
+  @IsOptional()
+  @IsString()
+  ADDITIONAL_ORIGINS?: string;
+
   @IsString()
   DATABASE_URL: string;
 

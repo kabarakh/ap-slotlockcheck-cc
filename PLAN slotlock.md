@@ -460,6 +460,7 @@ Remove the folder `entities` that `nest g resource` makes. The database types co
 | `HTTP_USER_AGENT` | `User-Agent` for external requests: `SlotlockTracker/<version> (+https://github.com/<owner>/<repo>)`. |
 | `HTTP_TIMEOUT_SECONDS` | Timeout of each external request. Default 30. |
 | `TRUST_PROXY` | `true` behind nginx (correct client IP and protocol for the `Secure` cookie). |
+| `ADDITIONAL_ORIGINS` | Optional. More origins, separated by commas, that the origin check permits. |
 | `SYNC_INTERVAL_MINUTES` | Default 5. Minimum 5. |
 | `MANUAL_SYNC_COOLDOWN_SECONDS` | Default 60. Minimum 60. |
 | `APP_DIST_PATH` | Path to `app/dist`. |
@@ -791,3 +792,4 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 15. **Start slots (6.9):** a new lock status `start_slot` separates start slots from slots that are not locked.
 16. **Unlock tree (11.9):** new view, added after the first plan. The app uses `d3-hierarchy` (ISC license) for the layout and draws an SVG.
 17. **Statistics from the second Google sheet:** slot names in the player summary, players by number of unlocked slots, column "has unlocked", hint for slots without Discord user, goal and activity timer from Archipelago.
+18. **Public test mode:** `npm run dev:public` makes the development environment reachable through the DynDNS name. The new variable `ADDITIONAL_ORIGINS` permits more origins for the origin check (15.8.5).

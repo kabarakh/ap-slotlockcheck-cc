@@ -28,9 +28,11 @@
     "outdated": "npm outdated --workspaces --include-workspace-root",
     "audit:check": "npm audit --omit=dev --audit-level=moderate --workspaces --include-workspace-root",
     "prepare": "husky",
-    "prototype:report": "npm run prototype:report -w server --"
+    "prototype:report": "npm run prototype:report -w server --",
+    "dev:public": "cross-env SLOTLOCK_PUBLIC_DEV_HOSTS=slotlock.example.com run-p dev:server dev:app"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "husky": "^9.1.7",
     "npm-run-all2": "^9.0.4",
     "typescript": "~6.0.3"

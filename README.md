@@ -68,11 +68,23 @@ Replace the placeholders in `server/.env.development`. For a Discord login in de
 
 The app runs on `http://localhost:5173`. Vite sends `/api` and `/socket.io` to the server on port 3000. The API documentation is on `http://localhost:5173/api/docs`.
 
+### Public test mode
+
+`npm run dev:public` starts the development environment so that it is reachable from the internet through `http://slotlock.example.com:5173`.
+
+1. Set `PUBLIC_BASE_URL` and `DISCORD_CALLBACK_URL` in `server/.env.development` to the DynDNS address with port 5173. Set `ADDITIONAL_ORIGINS=http://localhost:5173`, so that `localhost` also works.
+2. Add the callback URL to the Discord application.
+3. Forward the port 5173 in the router to this computer and allow the port in the firewall.
+4. Stop the test mode and close the port after the test. The Vite development server is not made for the internet.
+
+In this mode, Vite listens on all network interfaces and accepts only the DynDNS host name.
+
 ### Scripts
 
 | Script | Function |
 |---|---|
 | `npm run dev` | Server and app in watch mode |
+| `npm run dev:public` | Same, reachable through the DynDNS name (public test mode) |
 | `npm run build` | Server build, OpenAPI export, type generation, app build |
 | `npm run lint` / `npm run lint:check` | Lint with fixes / without changes |
 | `npm run typecheck` | Type check of both workspaces |
