@@ -1,0 +1,14 @@
+{
+  "checksum": "slotlockchecksum0001",
+  "item_name_to_id": {
+    "Unlock Locker": 1002,
+    "Unlock Alice": 1003,
+    "Unlock Bob": 1004,
+    "Unlock Carol": 1005,
+    "Unlock Dave": 1006,
+    "Unlock Locker2": 1007,
+    "Nothing": 6999,
+    "Unlock Bonus Slot 1": 1
+  },
+  "location_name_to_id": {}
+}

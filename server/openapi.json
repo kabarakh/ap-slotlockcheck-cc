@@ -1,0 +1,1575 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/auth/me": {
+      "get": {
+        "operationId": "Auth_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "operationId": "Auth_logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/api/rooms": {
+      "get": {
+        "operationId": "Rooms_listRooms",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoomSummaryDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Rooms"
+        ]
+      }
+    },
+    "/api/rooms/{slug}": {
+      "get": {
+        "operationId": "Rooms_getRoom",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Rooms"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/roster": {
+      "get": {
+        "operationId": "Rooms_getRoster",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SlotRowDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Rooms"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/me": {
+      "get": {
+        "operationId": "Rooms_getMembership",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomMembershipDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Rooms"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/sync": {
+      "post": {
+        "operationId": "Sync_synchronizeNow",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncStatusDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Sync"
+        ]
+      }
+    },
+    "/api/room-setup/preview": {
+      "post": {
+        "operationId": "RoomSetup_preview",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RoomPreviewRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomPreviewDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "RoomSetup"
+        ]
+      }
+    },
+    "/api/room-setup": {
+      "post": {
+        "operationId": "RoomSetup_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRoomDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "RoomSetup"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/admins": {
+      "get": {
+        "operationId": "Admins_list",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoomAdminDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Admins"
+        ]
+      },
+      "post": {
+        "operationId": "Admins_add",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddRoomAdminDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoomAdminDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Admins"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/admins/{userId}": {
+      "delete": {
+        "operationId": "Admins_remove",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoomAdminDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Admins"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/settings": {
+      "patch": {
+        "operationId": "RoomSettings_update",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRoomSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "RoomSettings"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/lock-assignments": {
+      "get": {
+        "operationId": "LockAssignments_list",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LockAssignmentDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "LockAssignments"
+        ]
+      },
+      "put": {
+        "operationId": "LockAssignments_set",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetLockAssignmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LockAssignmentDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "LockAssignments"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/lock-assignments/reset": {
+      "post": {
+        "operationId": "LockAssignments_reset",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetLockAssignmentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LockAssignmentDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "LockAssignments"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/warnings": {
+      "get": {
+        "operationId": "Warnings_list",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WarningDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Warnings"
+        ]
+      },
+      "post": {
+        "operationId": "Warnings_create",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWarningDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WarningDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Warnings"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/warnings/{id}": {
+      "delete": {
+        "operationId": "Warnings_delete",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WarningDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Warnings"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/unlock-times": {
+      "put": {
+        "operationId": "UnlockTimes_set",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetUnlockTimeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "UnlockTimes"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/unlock-times/csv": {
+      "post": {
+        "operationId": "UnlockTimes_importCsv",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportUnlockTimesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnlockTimeImportResultDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "UnlockTimes"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Slotlock Tracker API",
+    "description": "",
+    "version": "0.1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "AuthUserDto": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "number"
+          },
+          "discordId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "avatar",
+          "id",
+          "discordId",
+          "name",
+          "username"
+        ]
+      },
+      "SessionDto": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AuthUserDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "user"
+        ]
+      },
+      "SyncStatusDto": {
+        "type": "object",
+        "properties": {
+          "lastSyncAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "lastSuccessfulSyncAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "lastSyncError": {
+            "type": "string",
+            "nullable": true
+          },
+          "running": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "lastSyncAt",
+          "lastSuccessfulSyncAt",
+          "lastSyncError",
+          "running"
+        ]
+      },
+      "RoomSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slotCount": {
+            "type": "number"
+          },
+          "lockedSlotCount": {
+            "type": "number"
+          },
+          "unlockedSlotCount": {
+            "type": "number"
+          },
+          "unlockedPercentage": {
+            "type": "number"
+          },
+          "syncStatus": {
+            "$ref": "#/components/schemas/SyncStatusDto"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "slotCount",
+          "lockedSlotCount",
+          "unlockedSlotCount",
+          "unlockedPercentage",
+          "syncStatus"
+        ]
+      },
+      "RoomDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slotCount": {
+            "type": "number"
+          },
+          "lockedSlotCount": {
+            "type": "number"
+          },
+          "unlockedSlotCount": {
+            "type": "number"
+          },
+          "unlockedPercentage": {
+            "type": "number"
+          },
+          "syncStatus": {
+            "$ref": "#/components/schemas/SyncStatusDto"
+          },
+          "cheeseTrackerId": {
+            "type": "string"
+          },
+          "cheeseTrackerUrl": {
+            "type": "string"
+          },
+          "archipelagoTrackerUrl": {
+            "type": "string"
+          },
+          "yellowLimitHours": {
+            "type": "number"
+          },
+          "redLimitHours": {
+            "type": "number"
+          },
+          "limitsOverridden": {
+            "type": "boolean"
+          },
+          "unknownSlotNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "manualSyncCooldownSeconds": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "slug",
+          "title",
+          "slotCount",
+          "lockedSlotCount",
+          "unlockedSlotCount",
+          "unlockedPercentage",
+          "syncStatus",
+          "cheeseTrackerId",
+          "cheeseTrackerUrl",
+          "archipelagoTrackerUrl",
+          "yellowLimitHours",
+          "redLimitHours",
+          "limitsOverridden",
+          "unknownSlotNames",
+          "manualSyncCooldownSeconds"
+        ]
+      },
+      "TrackerStatus": {
+        "type": "string",
+        "enum": [
+          "disconnected",
+          "connected",
+          "ready",
+          "playing",
+          "goal_completed"
+        ]
+      },
+      "ProgressionStatus": {
+        "type": "string",
+        "enum": [
+          "unknown",
+          "unblocked",
+          "bk",
+          "go",
+          "soft_bk"
+        ]
+      },
+      "CompletionStatus": {
+        "type": "string",
+        "enum": [
+          "incomplete",
+          "all_checks",
+          "goal",
+          "done",
+          "released"
+        ]
+      },
+      "AvailabilityStatus": {
+        "type": "string",
+        "enum": [
+          "unknown",
+          "open",
+          "claimed",
+          "public"
+        ]
+      },
+      "LockStatus": {
+        "type": "string",
+        "enum": [
+          "not_locked",
+          "locked",
+          "partially_unlocked",
+          "unlocked"
+        ]
+      },
+      "UnlockTimeSource": {
+        "type": "string",
+        "enum": [
+          "sync",
+          "estimated",
+          "manual",
+          "csv",
+          "unknown"
+        ]
+      },
+      "SlotLockDto": {
+        "type": "object",
+        "properties": {
+          "senderSlotId": {
+            "type": "number",
+            "nullable": true
+          },
+          "senderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "unlockTime": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "timeSource": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnlockTimeSource"
+              }
+            ]
+          },
+          "lockerSlotId": {
+            "type": "number"
+          },
+          "lockerName": {
+            "type": "string"
+          },
+          "unlocked": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "senderSlotId",
+          "senderName",
+          "unlockTime",
+          "timeSource",
+          "lockerSlotId",
+          "lockerName",
+          "unlocked"
+        ]
+      },
+      "SlotRowDto": {
+        "type": "object",
+        "properties": {
+          "discordUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "discordName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastActivity": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "trackerStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TrackerStatus"
+              }
+            ]
+          },
+          "progressionStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProgressionStatus"
+              }
+            ]
+          },
+          "completionStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CompletionStatus"
+              }
+            ]
+          },
+          "availabilityStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvailabilityStatus"
+              }
+            ]
+          },
+          "lockStatus": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LockStatus"
+              }
+            ]
+          },
+          "locks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SlotLockDto"
+            }
+          },
+          "unlockTime": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "unlockTimeSource": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UnlockTimeSource"
+              }
+            ]
+          },
+          "id": {
+            "type": "number"
+          },
+          "position": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "game": {
+            "type": "string"
+          },
+          "checksDone": {
+            "type": "number"
+          },
+          "checksTotal": {
+            "type": "number"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "isSlotLock": {
+            "type": "boolean"
+          },
+          "isSelectedSlotLock": {
+            "type": "boolean"
+          },
+          "warningCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "discordUserId",
+          "discordName",
+          "lastActivity",
+          "trackerStatus",
+          "progressionStatus",
+          "completionStatus",
+          "availabilityStatus",
+          "lockStatus",
+          "locks",
+          "unlockTime",
+          "unlockTimeSource",
+          "id",
+          "position",
+          "name",
+          "game",
+          "checksDone",
+          "checksTotal",
+          "notes",
+          "isSlotLock",
+          "isSelectedSlotLock",
+          "warningCount"
+        ]
+      },
+      "RoomRole": {
+        "type": "string",
+        "enum": [
+          "visitor",
+          "player",
+          "admin"
+        ]
+      },
+      "RoomMembershipDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RoomRole"
+              }
+            ]
+          },
+          "isOwner": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "role",
+          "isOwner"
+        ]
+      },
+      "RoomPreviewRequestDto": {
+        "type": "object",
+        "properties": {
+          "cheeseTrackerId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "cheeseTrackerId"
+        ]
+      },
+      "OwnerCheckResult": {
+        "type": "string",
+        "enum": [
+          "slot",
+          "name",
+          "failed"
+        ]
+      },
+      "SlotLockCandidateDto": {
+        "type": "object",
+        "properties": {
+          "position": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "position",
+          "name"
+        ]
+      },
+      "RoomPreviewDto": {
+        "type": "object",
+        "properties": {
+          "ownerCheck": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OwnerCheckResult"
+              }
+            ]
+          },
+          "ownerDiscordName": {
+            "type": "string",
+            "nullable": true
+          },
+          "existingSlug": {
+            "type": "string",
+            "nullable": true
+          },
+          "slotLockSlots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SlotLockCandidateDto"
+            }
+          },
+          "cheeseTrackerId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "suggestedSlug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "ownerCheck",
+          "ownerDiscordName",
+          "existingSlug",
+          "slotLockSlots",
+          "cheeseTrackerId",
+          "title",
+          "suggestedSlug"
+        ]
+      },
+      "CreateRoomDto": {
+        "type": "object",
+        "properties": {
+          "cheeseTrackerId": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "slotLockPositions": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "cheeseTrackerId",
+          "slug",
+          "title",
+          "slotLockPositions"
+        ]
+      },
+      "RoomAdminDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "number"
+          },
+          "discordId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isOwner": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "userId",
+          "discordId",
+          "name",
+          "isOwner"
+        ]
+      },
+      "AddRoomAdminDto": {
+        "type": "object",
+        "properties": {
+          "discordId": {
+            "type": "string",
+            "pattern": "^\\d{5,20}$"
+          }
+        },
+        "required": [
+          "discordId"
+        ]
+      },
+      "UpdateRoomSettingsDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "yellowLimitHours": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "redLimitHours": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10000
+          },
+          "useCheeseLimits": {
+            "type": "boolean"
+          },
+          "slotLockPositions": {
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      "LockSource": {
+        "type": "string",
+        "enum": [
+          "detected",
+          "admin"
+        ]
+      },
+      "LockAssignmentDto": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LockSource"
+              }
+            ]
+          },
+          "lockerSlotId": {
+            "type": "number"
+          },
+          "lockedSlotId": {
+            "type": "number"
+          },
+          "notLocked": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "source",
+          "lockerSlotId",
+          "lockedSlotId",
+          "notLocked"
+        ]
+      },
+      "SetLockAssignmentDto": {
+        "type": "object",
+        "properties": {
+          "lockerSlotId": {
+            "type": "number"
+          },
+          "lockedSlotId": {
+            "type": "number"
+          },
+          "locked": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "lockerSlotId",
+          "lockedSlotId",
+          "locked"
+        ]
+      },
+      "ResetLockAssignmentDto": {
+        "type": "object",
+        "properties": {
+          "lockerSlotId": {
+            "type": "number"
+          },
+          "lockedSlotId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lockerSlotId",
+          "lockedSlotId"
+        ]
+      },
+      "WarningDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "slotId": {
+            "type": "number"
+          },
+          "slotName": {
+            "type": "string"
+          },
+          "adminName": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "slotId",
+          "slotName",
+          "adminName",
+          "date",
+          "text"
+        ]
+      },
+      "CreateWarningDto": {
+        "type": "object",
+        "properties": {
+          "slotId": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          }
+        },
+        "required": [
+          "slotId",
+          "date",
+          "text"
+        ]
+      },
+      "SetUnlockTimeDto": {
+        "type": "object",
+        "properties": {
+          "lockerSlotId": {
+            "type": "number"
+          },
+          "lockedSlotId": {
+            "type": "number"
+          },
+          "unlockTime": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "lockerSlotId",
+          "lockedSlotId",
+          "unlockTime"
+        ]
+      },
+      "ImportUnlockTimesDto": {
+        "type": "object",
+        "properties": {
+          "csv": {
+            "type": "string",
+            "maxLength": 1000000
+          }
+        },
+        "required": [
+          "csv"
+        ]
+      },
+      "UnlockTimeImportResultDto": {
+        "type": "object",
+        "properties": {
+          "updated": {
+            "type": "number"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "updated",
+          "errors"
+        ]
+      },
+      "ApiErrorDto": {
+        "type": "object",
+        "properties": {
+          "details": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "statusCode": {
+            "type": "number"
+          },
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "statusCode",
+          "code",
+          "message"
+        ]
+      },
+      "LiveMessageName": {
+        "type": "string",
+        "enum": [
+          "room:join",
+          "room:leave",
+          "room:synced",
+          "room:sync-failed",
+          "room:updated"
+        ]
+      },
+      "LiveMessageCatalogDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LiveMessageName"
+              }
+            ]
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "RoomSyncedPayloadDto": {
+        "type": "object",
+        "properties": {
+          "changedSlots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SlotRowDto"
+            }
+          }
+        },
+        "required": [
+          "changedSlots"
+        ]
+      },
+      "RoomSyncFailedPayloadDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "RoomUpdatedPayloadDto": {
+        "type": "object",
+        "properties": {
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SlotRowDto"
+            }
+          }
+        },
+        "required": [
+          "slots"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "player": 1,
+    "slot_data": {
+      "free_starting_items": 0,
+      "auto_hint_locked_items": 0,
+      "locked_slots": ["Alice", "Bob", "Carol"],
+      "unlock_item_copies": 1,
+      "unlock_item_filler": 0,
+      "bonus_item_copies": 1,
+      "bonus_item_filler": 0,
+      "bonus_item_slots": 1,
+      "item_locations": {}
+    }
+  },
+  { "player": 2, "slot_data": {} },
+  { "player": 3, "slot_data": {} },
+  { "player": 4, "slot_data": {} },
+  { "player": 5, "slot_data": {} },
+  {
+    "player": 6,
+    "slot_data": {
+      "free_starting_items": 0,
+      "auto_hint_locked_items": 0,
+      "locked_slots": ["Carol", "Dave"],
+      "unlock_item_copies": 1,
+      "unlock_item_filler": 0,
+      "bonus_item_copies": 1,
+      "bonus_item_filler": 0,
+      "bonus_item_slots": 0,
+      "item_locations": {}
+    }
+  }
+]

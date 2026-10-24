@@ -1,0 +1,15 @@
+{
+  "tracker": "TrackerIdOfTheRoom0001",
+  "players": [
+    ["Locker", "SlotLock"],
+    ["Alice", "A Link to the Past"],
+    ["Bob", "Hollow Knight"],
+    ["Carol", "Celeste"],
+    ["Dave", "Factorio"],
+    ["Locker2", "SlotLock"]
+  ],
+  "last_port": 38281,
+  "last_activity": "Fri, 24 Oct 2026 11:00:00 GMT",
+  "timeout": 7200,
+  "downloads": []
+}

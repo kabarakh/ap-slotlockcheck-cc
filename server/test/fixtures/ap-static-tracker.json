@@ -1,0 +1,26 @@
+{
+  "groups": [],
+  "datapackage": {
+    "SlotLock": { "checksum": "slotlockchecksum0001", "version": 0 },
+    "A Link to the Past": { "checksum": "alttpchecksum0001", "version": 0 },
+    "Hollow Knight": { "checksum": "hkchecksum0001", "version": 0 },
+    "Celeste": { "checksum": "celestechecksum0001", "version": 0 },
+    "Factorio": { "checksum": "factoriochecksum0001", "version": 0 }
+  },
+  "player_locations_total": [
+    { "team": 0, "player": 1, "total_locations": 4 },
+    { "team": 0, "player": 2, "total_locations": 216 },
+    { "team": 0, "player": 3, "total_locations": 300 },
+    { "team": 0, "player": 4, "total_locations": 80 },
+    { "team": 0, "player": 5, "total_locations": 150 },
+    { "team": 0, "player": 6, "total_locations": 2 }
+  ],
+  "player_game": [
+    { "team": 0, "player": 1, "game": "SlotLock" },
+    { "team": 0, "player": 2, "game": "A Link to the Past" },
+    { "team": 0, "player": 3, "game": "Hollow Knight" },
+    { "team": 0, "player": 4, "game": "Celeste" },
+    { "team": 0, "player": 5, "game": "Factorio" },
+    { "team": 0, "player": 6, "game": "SlotLock" }
+  ]
+}

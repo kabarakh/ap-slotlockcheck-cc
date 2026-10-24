@@ -36,5 +36,11 @@
   },
   "overrides": {
     "multer": "2.5.0"
+  },
+  "allowScripts": {
+    "@scarf/scarf": false,
+    "prisma": true,
+    "@prisma/engines": true,
+    "better-sqlite3": true
   }
 }

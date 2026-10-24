@@ -1,0 +1,54 @@
+{
+  "aliases": [
+    { "team": 0, "player": 1, "alias": null },
+    { "team": 0, "player": 2, "alias": null },
+    { "team": 0, "player": 3, "alias": null },
+    { "team": 0, "player": 4, "alias": null },
+    { "team": 0, "player": 5, "alias": null },
+    { "team": 0, "player": 6, "alias": null }
+  ],
+  "player_items_received": [
+    {
+      "team": 0,
+      "player": 1,
+      "items": [
+        [1003, 20001, 3, 1],
+        [6999, 20002, 2, 0],
+        [1, 20003, 4, 1],
+        [1003, 20004, 5, 1]
+      ]
+    },
+    { "team": 0, "player": 2, "items": [[42, 77, 3, 1]] },
+    { "team": 0, "player": 3, "items": [] },
+    { "team": 0, "player": 4, "items": [] },
+    { "team": 0, "player": 5, "items": [] },
+    { "team": 0, "player": 6, "items": [[1005, 30001, 2, 1]] }
+  ],
+  "player_checks_done": [
+    { "team": 0, "player": 1, "locations": [10020] },
+    { "team": 0, "player": 2, "locations": [1, 2, 3] },
+    { "team": 0, "player": 3, "locations": [] },
+    { "team": 0, "player": 4, "locations": [] },
+    { "team": 0, "player": 5, "locations": [] },
+    { "team": 0, "player": 6, "locations": [] }
+  ],
+  "total_checks_done": [{ "team": 0, "checks_done": 4 }],
+  "hints": [],
+  "activity_timers": [
+    { "team": 0, "player": 1, "time": "Fri, 24 Oct 2026 11:00:00 GMT" },
+    { "team": 0, "player": 2, "time": "Fri, 24 Oct 2026 10:00:00 GMT" },
+    { "team": 0, "player": 3, "time": null },
+    { "team": 0, "player": 4, "time": "Thu, 23 Oct 2026 08:00:00 GMT" },
+    { "team": 0, "player": 5, "time": null },
+    { "team": 0, "player": 6, "time": null }
+  ],
+  "connection_timers": [],
+  "player_status": [
+    { "team": 0, "player": 1, "status": 20 },
+    { "team": 0, "player": 2, "status": 20 },
+    { "team": 0, "player": 3, "status": 0 },
+    { "team": 0, "player": 4, "status": 30 },
+    { "team": 0, "player": 5, "status": 0 },
+    { "team": 0, "player": 6, "status": 20 }
+  ]
+}

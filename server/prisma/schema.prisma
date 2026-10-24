@@ -1,0 +1,176 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id          Int         @id @default(autoincrement())
+  discordId   String      @unique
+  name        String
+  username    String      @default("")
+  avatar      String?
+  lastLoginAt DateTime?
+  createdAt   DateTime    @default(now())
+  roomAdmins  RoomAdmin[]
+  warnings    Warning[]
+}
+
+model Room {
+  id                   Int               @id @default(autoincrement())
+  slug                 String            @unique
+  title                String
+  cheeseTrackerId      String            @unique
+  archipelagoOrigin    String
+  archipelagoRoomId    String?
+  archipelagoTrackerId String
+  ownerCtUserId        Int?
+  ownerDiscordName     String?
+  yellowLimitHours     Int
+  redLimitHours        Int
+  limitsOverridden     Boolean           @default(false)
+  createdAt            DateTime          @default(now())
+  lastSyncAt           DateTime?
+  lastSuccessfulSyncAt DateTime?
+  lastSyncError        String?
+  unknownSlotNames     String            @default("[]")
+  slots               Slot[]
+  admins               RoomAdmin[]
+  lockAssignments      LockAssignment[]
+  unlockItems          UnlockItem[]
+  warnings             Warning[]
+  syncRuns             SyncRun[]
+  snapshots            SyncSnapshot[]
+  invitations          AdminInvitation[]
+}
+
+model RoomAdmin {
+  roomId  Int
+  userId  Int
+  isOwner Boolean @default(false)
+  room    Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([roomId, userId])
+}
+
+model Slot {
+  id                 Int              @id @default(autoincrement())
+  roomId             Int
+  cheeseGameId       Int
+  position           Int
+  name               String
+  game               String
+  discordUserId      String?
+  discordName        String?
+  checksDone         Int
+  checksTotal        Int
+  lastActivity       DateTime?
+  trackerStatus      String
+  progressionStatus  String
+  completionStatus   String
+  availabilityStatus String
+  notes              String
+  isSlotLock         Boolean          @default(false)
+  isSelectedSlotLock Boolean          @default(false)
+  room               Room             @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  locksAsLocker      LockAssignment[] @relation("LockerSlot")
+  locksAsLocked      LockAssignment[] @relation("LockedSlot")
+  unlocksAsLocker    UnlockItem[]     @relation("UnlockLocker")
+  unlocksAsLocked    UnlockItem[]     @relation("UnlockLocked")
+  unlocksAsSender    UnlockItem[]     @relation("UnlockSender")
+  warnings           Warning[]
+
+  @@unique([roomId, position])
+}
+
+model LockAssignment {
+  id           Int     @id @default(autoincrement())
+  roomId       Int
+  lockerSlotId Int
+  lockedSlotId Int
+  source       String
+  notLocked    Boolean @default(false)
+  room         Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  lockerSlot   Slot    @relation("LockerSlot", fields: [lockerSlotId], references: [id], onDelete: Cascade)
+  lockedSlot   Slot    @relation("LockedSlot", fields: [lockedSlotId], references: [id], onDelete: Cascade)
+
+  @@unique([lockerSlotId, lockedSlotId])
+}
+
+model UnlockItem {
+  id           Int       @id @default(autoincrement())
+  roomId       Int
+  lockerSlotId Int
+  lockedSlotId Int
+  senderSlotId Int?
+  firstSeenAt  DateTime
+  unlockTime   DateTime?
+  timeSource   String
+  room         Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  lockerSlot   Slot      @relation("UnlockLocker", fields: [lockerSlotId], references: [id], onDelete: Cascade)
+  lockedSlot   Slot      @relation("UnlockLocked", fields: [lockedSlotId], references: [id], onDelete: Cascade)
+  senderSlot   Slot?     @relation("UnlockSender", fields: [senderSlotId], references: [id], onDelete: SetNull)
+
+  @@unique([lockerSlotId, lockedSlotId])
+}
+
+model Warning {
+  id          Int      @id @default(autoincrement())
+  roomId      Int
+  slotId      Int
+  adminUserId Int
+  date        DateTime
+  text        String
+  createdAt   DateTime @default(now())
+  room        Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  slot        Slot     @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  admin       User     @relation(fields: [adminUserId], references: [id])
+}
+
+model SyncRun {
+  id         Int       @id @default(autoincrement())
+  roomId     Int
+  trigger    String
+  startedAt  DateTime
+  finishedAt DateTime?
+  result     String
+  error      String?
+  room       Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+model SyncSnapshot {
+  id             Int      @id @default(autoincrement())
+  roomId         Int
+  source         String
+  hash           String
+  payload        String
+  firstSyncRunId Int
+  lastSyncRunId  Int
+  createdAt      DateTime @default(now())
+  room           Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, source])
+}
+
+model Datapackage {
+  checksum  String   @id
+  game      String
+  itemNames String
+  createdAt DateTime @default(now())
+}
+
+model AdminInvitation {
+  id              Int       @id @default(autoincrement())
+  roomId          Int
+  tokenHash       String    @unique
+  validUntil      DateTime
+  createdByUserId Int
+  usedByUserId    Int?
+  usedAt          DateTime?
+  room            Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
