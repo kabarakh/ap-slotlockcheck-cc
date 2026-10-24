@@ -34,6 +34,15 @@ describe('inactivityHours', () => {
     expect(inactivityHours(slot, now)).toBe(6);
   });
 
+  it('uses a later activity from Archipelago', () => {
+    const slot = slotRow({
+      lockStatus: 'unlocked',
+      lastActivity: '2026-10-22T12:00:00Z',
+      archipelagoActivity: '2026-10-24T09:00:00Z',
+    });
+    expect(inactivityHours(slot, now)).toBe(3);
+  });
+
   it('counts the inactivity of start slots', () => {
     const slot = slotRow({ lockStatus: 'start_slot', lastActivity: '2026-10-24T02:00:00Z' });
     expect(inactivityHours(slot, now)).toBe(10);

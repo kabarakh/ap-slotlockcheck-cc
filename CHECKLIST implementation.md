@@ -65,7 +65,7 @@ Do these checks after each step. Use Node 26 (`nvm use`). Write the result into 
 - [x] Pinia stores (16.4)
 - [x] Router with guards (16.5)
 - [x] Views: room list, roster, player summary, statistics (11.1 to 11.4)
-- [x] Filters and sort functions (11.7)
+- [x] Filters and sort functions (11.8)
 - [x] i18n German and English (16.7)
 - [x] Theme Aura, light and dark, default system setting (16.8)
 - [x] Playwright tests for the public views (19.4)
@@ -86,7 +86,7 @@ Do these checks after each step. Use Node 26 (`nvm use`). Write the result into 
 ## Phase 6 – Admin area
 
 - [x] Modules `admins`, `warnings`, `unlock-times`
-- [x] Admin views: settings, lock assignment, admins, warnings, unlock times, CSV import, "Synchronize now" (11.6, 7.5, 5.2, 5.3)
+- [x] Admin views: settings, lock assignment, admins, warnings, unlock times, CSV import, "Synchronize now" (11.7, 7.5, 5.2, 5.3)
 
 ## Phase 7 – Optional: invitation links
 

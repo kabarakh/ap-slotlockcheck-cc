@@ -93,6 +93,7 @@ const rows = computed(() =>
       </template>
     </Column>
     <Column field="notes" :header="t('slot.columns.notes')" />
+    <Column field="unlocksSent" :header="t('slot.columns.unlocksSent')" sortable />
     <Column field="warningCount" :header="t('slot.columns.warnings')" sortable />
   </DataTable>
 </template>

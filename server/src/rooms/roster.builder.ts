@@ -13,6 +13,8 @@ export interface RosterSlot {
   position: number;
   name: string;
   archipelagoName: string | null;
+  archipelagoGoal: boolean;
+  archipelagoActivity: Date | null;
   game: string;
   discordUserId: string | null;
   discordName: string | null;
@@ -58,6 +60,8 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
         position: slot.position,
         name: slot.name,
         archipelagoName: slot.archipelagoName,
+        archipelagoGoal: slot.archipelagoGoal,
+        archipelagoActivity: toIso(slot.archipelagoActivity),
         game: slot.game,
         discordUserId: slot.discordUserId,
         discordName: slot.discordName,
@@ -85,6 +89,7 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
         unlockTime: toIso(state?.unlockTime ?? null),
         unlockTimeSource: state?.unlockTimeSource ?? null,
         warningCount: input.warningCountBySlotId.get(slot.id) ?? 0,
+        unlocksSent: unlocks.filter((unlock) => unlock.senderSlotId === slot.id).length,
       };
     });
 }

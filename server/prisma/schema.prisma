@@ -38,7 +38,7 @@ model Room {
   lastSuccessfulSyncAt DateTime?
   lastSyncError        String?
   unknownSlotNames     String            @default("[]")
-  slots               Slot[]
+  slots                Slot[]
   admins               RoomAdmin[]
   lockAssignments      LockAssignment[]
   unlockItems          UnlockItem[]
@@ -59,34 +59,36 @@ model RoomAdmin {
 }
 
 model Slot {
-  id                 Int              @id @default(autoincrement())
-  roomId             Int
-  cheeseGameId       Int
-  position           Int
-  name               String
-  archipelagoName    String?
-  game               String
-  discordUserId      String?
-  discordName        String?
-  checksDone         Int
-  checksTotal        Int
-  lastActivity       DateTime?
-  lastChecked        DateTime?
-  trackerStatus      String
-  progressionStatus  String
-  completionStatus   String
-  availabilityStatus String
-  notes              String
-  isSlotLock         Boolean          @default(false)
-  isSelectedSlotLock Boolean          @default(false)
-  isStartSlot        Boolean          @default(false)
-  room               Room             @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  locksAsLocker      LockAssignment[] @relation("LockerSlot")
-  locksAsLocked      LockAssignment[] @relation("LockedSlot")
-  unlocksAsLocker    UnlockItem[]     @relation("UnlockLocker")
-  unlocksAsLocked    UnlockItem[]     @relation("UnlockLocked")
-  unlocksAsSender    UnlockItem[]     @relation("UnlockSender")
-  warnings           Warning[]
+  id                  Int              @id @default(autoincrement())
+  roomId              Int
+  cheeseGameId        Int
+  position            Int
+  name                String
+  archipelagoName     String?
+  archipelagoGoal     Boolean          @default(false)
+  archipelagoActivity DateTime?
+  game                String
+  discordUserId       String?
+  discordName         String?
+  checksDone          Int
+  checksTotal         Int
+  lastActivity        DateTime?
+  lastChecked         DateTime?
+  trackerStatus       String
+  progressionStatus   String
+  completionStatus    String
+  availabilityStatus  String
+  notes               String
+  isSlotLock          Boolean          @default(false)
+  isSelectedSlotLock  Boolean          @default(false)
+  isStartSlot         Boolean          @default(false)
+  room                Room             @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  locksAsLocker       LockAssignment[] @relation("LockerSlot")
+  locksAsLocked       LockAssignment[] @relation("LockedSlot")
+  unlocksAsLocker     UnlockItem[]     @relation("UnlockLocker")
+  unlocksAsLocked     UnlockItem[]     @relation("UnlockLocked")
+  unlocksAsSender     UnlockItem[]     @relation("UnlockSender")
+  warnings            Warning[]
 
   @@unique([roomId, position])
 }

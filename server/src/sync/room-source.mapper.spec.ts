@@ -8,7 +8,7 @@ import {
 } from '../sources/archipelago/archipelago.schemas.js';
 import { cheeseTrackerSchema, type CheeseTracker } from '../sources/cheese/cheese.schemas.js';
 import {
-  archipelagoNamesByPosition,
+  archipelagoSlotsByPosition,
   itemNamesById,
   lockedSlotNamesByPosition,
   receivedItemsByPosition,
@@ -21,7 +21,7 @@ const roomStatus = roomStatusSchema.parse(loadFixture('ap-room-status'));
 const tracker = trackerDataSchema.parse(loadFixture('ap-tracker'));
 const slotData = slotDataTrackerSchema.parse(loadFixture('ap-slot-data'));
 const itemNames = itemNamesById(datapackageSchema.parse(loadFixture('ap-datapackage-slotlock')).item_name_to_id);
-const archipelagoNames = archipelagoNamesByPosition(roomStatus, tracker);
+const archipelagoNames = archipelagoSlotsByPosition(roomStatus, tracker);
 
 const detect = (source: CheeseTracker, names = archipelagoNames) =>
   detectLocks({
@@ -51,9 +51,15 @@ describe('room source mapping', () => {
     });
   });
 
-  it('reads original names and aliases by player number', () => {
-    expect(archipelagoNames.get(5)).toEqual({ name: 'Dave', alias: 'Davey' });
-    expect(archipelagoNames.get(2)).toEqual({ name: 'Alice', alias: null });
+  it('reads original names, aliases, goal and activity by player number', () => {
+    expect(archipelagoNames.get(5)).toEqual({ name: 'Dave', alias: 'Davey', goal: false, activity: null });
+    expect(archipelagoNames.get(2)).toEqual({
+      name: 'Alice',
+      alias: null,
+      goal: false,
+      activity: new Date('2026-10-24T10:00:00Z'),
+    });
+    expect(archipelagoNames.get(4)?.goal).toBe(true);
   });
 
   it('gives each slot its Cheese name, its Archipelago name and the parts of an alias display', () => {

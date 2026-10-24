@@ -140,7 +140,7 @@ Technical names stay unchanged, for example Socket.IO "rooms" (always written "S
 ## 8. Inactivity
 
 1. Calculate inactivity only for unlocked slots and start slots.
-2. Inactivity = current time minus the latest of these values: the last activity, the last "Still BK" click in Cheese (`last_checked`), or the unlock time.
+2. Inactivity = current time minus the latest of these values: the last activity in Cheese, the last "Still BK" click in Cheese (`last_checked`), the activity timer of Archipelago, or the unlock time.
 3. If a value is unknown, use the other values only. Cheese also sets `last_checked` when a player sets the status to BK.
 4. Use the yellow and red limits from the Cheese Tracker as default values.
 5. An admin can change the limits for each room.
@@ -172,14 +172,16 @@ Technical names stay unchanged, for example Socket.IO "rooms" (always written "S
 ## 11. Views
 
 1. Room list: all rooms, with title, status, and percentage of unlocked slots.
-2. Roster: slot number, slot name, Discord user, game, lock status, unlocked by, unlock time, inactivity, progression status, completion status, availability status (all three from Cheese), Cheese notes, warnings.
+2. Roster: slot number, slot name, Discord user, game, lock status, unlocked by, unlock time, inactivity, progression status, completion status, availability status (all three from Cheese), Cheese notes, warnings, number of unlock items that this slot sent ("has unlocked").
 3. Player summary: number of slots, unlocked slots, goaled slots, locked slots, warnings.
-   - A slot is "goaled" when its Cheese `completion_status` is `goal`, `done` or `released`. This applies to 11.3 and 11.4.
-4. Global statistics: number and percentage of unlocked slots, goaled slots, slots with all checks, number of players for each count of locked slots.
+   - A slot is "goaled" when its Cheese `completion_status` is `goal`, `done` or `released`, or when Archipelago reports the client status "goal" (30). This applies to 11.3, 11.4 and 11.9.
+   - Each count also shows the names of the slots.
+4. Global statistics: number and percentage of unlocked slots, goaled slots, slots with all checks, number of players for each count of locked slots, number of players for each count of unlocked slots.
 5. My slots: the slots of the logged-in user, with the same columns as 11.2.
-6. Admin area: room settings, lock assignment, admins, warnings, unlock times, CSV import, "Synchronize now".
-7. Make filters and sort functions for all tables.
-8. Unlock tree: a tree graphic. The selected SlotLock slot is the root. Each unlocked slot is below the slot that sent its unlock item. If more than one unlock item was necessary, the sender of the last one counts. If the sender is unknown, the slot is below the SlotLock slot. Start slots are below the SlotLock slot. Slots with reached goal have their own color. Locked slots are not in the tree.
+6. Admins see a hint with the slots that have no Discord user in Cheese.
+7. Admin area: room settings, lock assignment, admins, warnings, unlock times, CSV import, "Synchronize now".
+8. Make filters and sort functions for all tables.
+9. Unlock tree: a tree graphic. The selected SlotLock slot is the root. Each unlocked slot is below the slot that sent its unlock item. If more than one unlock item was necessary, the sender of the last one counts. If the sender is unknown, the slot is below the SlotLock slot. Start slots are below the SlotLock slot. Slots with reached goal have their own color. Locked slots are not in the tree.
 
 ## 12. Implementation steps
 
@@ -216,7 +218,7 @@ Each phase ends with: lint without errors, type check without errors, all tests 
 1. Make the OpenAPI export and the type generation (section 17).
 2. Make the Pinia stores and the API client (16.4).
 3. Make the public views: room list, roster, player summary, global statistics (11.1 to 11.4).
-4. Add filters and sort functions (11.7).
+4. Add filters and sort functions (11.8).
 
 ### Phase 4 – Live updates
 
@@ -232,7 +234,7 @@ Each phase ends with: lint without errors, type check without errors, all tests 
 ### Phase 6 – Admin area
 
 1. Make the modules `admins`, `warnings`, `unlock-times`.
-2. Make the admin views (11.6), the CSV import (7.5) and "Synchronize now" (5.2, 5.3).
+2. Make the admin views (11.7), the CSV import (7.5) and "Synchronize now" (5.2, 5.3).
 
 ### Phase 7 – Optional: invitation links (10.7)
 
@@ -786,4 +788,5 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 13. **Aliases:** Archipelago shows a slot with an alias as "Alias (Name)". Cheese uses this display name. The SlotLock slot data and the unlock items use the original name. The server reads the original names from `GET /api/room_status` (players in the order of the player number) and the aliases from the tracker. It matches a name with the Cheese name, the original name and the parts of the alias display. The roster shows the original name if it differs.
 14. **"Still BK":** the inactivity also uses the Cheese field `last_checked` (8.2).
 15. **Start slots (6.9):** a new lock status `start_slot` separates start slots from slots that are not locked.
-16. **Unlock tree (11.8):** new view, added after the first plan. The app uses `d3-hierarchy` (ISC license) for the layout and draws an SVG.
+16. **Unlock tree (11.9):** new view, added after the first plan. The app uses `d3-hierarchy` (ISC license) for the layout and draws an SVG.
+17. **Statistics from the second Google sheet:** slot names in the player summary, players by number of unlocked slots, column "has unlocked", hint for slots without Discord user, goal and activity timer from Archipelago.

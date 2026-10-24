@@ -55,6 +55,16 @@ test('players and statistics show the summaries', async ({ page }) => {
   await expect(page.getByTestId('statistics')).toContainText('1 / 4');
 });
 
+test('an admin sees the slots without Discord user and the extra statistics', async ({ page }) => {
+  await ensureRoom(page);
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/statistics');
+  await expect(page.getByTestId('slots-without-discord')).toContainText('Davey (Dave)');
+  await expect(page.getByTestId('players-by-unlocked')).toBeVisible();
+  await page.goto('/room/big-chill/players');
+  await expect(page.getByTestId('players-table')).toContainText('Carol');
+});
+
 test('the unlock tree shows who unlocked which slot', async ({ page }) => {
   await ensureRoom(page);
   await page.goto('/room/big-chill');

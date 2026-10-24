@@ -12,7 +12,7 @@ import {
   checksHistoryPoints,
   lockedSlotNamesByPosition,
   receivedItemsByPosition,
-  archipelagoNamesByPosition,
+  archipelagoSlotsByPosition,
   slotIdentity,
   slotRecordsFromCheese,
 } from './room-source.mapper.js';
@@ -114,7 +114,7 @@ export class SyncService {
   }
 
   private async applySource(room: Room, source: RoomSource, now: Date, isFirstSync: boolean): Promise<void> {
-    const records = slotRecordsFromCheese(source.cheese, archipelagoNamesByPosition(source.roomStatus, source.tracker));
+    const records = slotRecordsFromCheese(source.cheese, archipelagoSlotsByPosition(source.roomStatus, source.tracker));
     await this.prisma.$transaction(async (tx) => {
       await tx.slot.deleteMany({
         where: { roomId: room.id, position: { notIn: records.map((record) => record.position) } },

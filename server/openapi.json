@@ -1065,6 +1065,11 @@
             "type": "string",
             "nullable": true
           },
+          "archipelagoActivity": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
           "discordUserId": {
             "type": "string",
             "nullable": true
@@ -1146,6 +1151,9 @@
           "name": {
             "type": "string"
           },
+          "archipelagoGoal": {
+            "type": "boolean"
+          },
           "game": {
             "type": "string"
           },
@@ -1166,10 +1174,14 @@
           },
           "warningCount": {
             "type": "number"
+          },
+          "unlocksSent": {
+            "type": "number"
           }
         },
         "required": [
           "archipelagoName",
+          "archipelagoActivity",
           "discordUserId",
           "discordName",
           "lastActivity",
@@ -1185,13 +1197,15 @@
           "id",
           "position",
           "name",
+          "archipelagoGoal",
           "game",
           "checksDone",
           "checksTotal",
           "notes",
           "isSlotLock",
           "isSelectedSlotLock",
-          "warningCount"
+          "warningCount",
+          "unlocksSent"
         ]
       },
       "RoomRole": {

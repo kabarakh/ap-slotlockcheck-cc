@@ -398,6 +398,8 @@ export interface components {
         };
         SlotRowDto: {
             archipelagoName: string | null;
+            /** Format: date-time */
+            archipelagoActivity: string | null;
             discordUserId: string | null;
             discordName: string | null;
             /** Format: date-time */
@@ -416,6 +418,7 @@ export interface components {
             id: number;
             position: number;
             name: string;
+            archipelagoGoal: boolean;
             game: string;
             checksDone: number;
             checksTotal: number;
@@ -423,6 +426,7 @@ export interface components {
             isSlotLock: boolean;
             isSelectedSlotLock: boolean;
             warningCount: number;
+            unlocksSent: number;
         };
         /** @enum {string} */
         RoomRole: "visitor" | "player" | "admin";

@@ -40,6 +40,11 @@ export class SlotRowDto {
   @ApiProperty({ type: String, nullable: true })
   archipelagoName: string | null;
 
+  archipelagoGoal: boolean;
+
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
+  archipelagoActivity: string | null;
+
   game: string;
 
   @ApiProperty({ type: String, nullable: true })
@@ -86,4 +91,5 @@ export class SlotRowDto {
   unlockTimeSource: UnlockTimeSource | null;
 
   warningCount: number;
+  unlocksSent: number;
 }

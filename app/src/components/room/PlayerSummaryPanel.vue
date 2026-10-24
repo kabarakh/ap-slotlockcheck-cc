@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
+import SlotNameList from '@/components/ui/SlotNameList.vue';
+import type { PlayerSummary } from '@/domain/summary';
 import { useTableFiltersStore } from '@/stores/table-filters';
 
 const { playerText, filteredPlayers } = storeToRefs(useTableFiltersStore());
@@ -28,9 +30,21 @@ const { t } = useI18n();
       <template #empty>{{ t('players.empty') }}</template>
       <Column field="name" :header="t('players.columns.name')" sortable />
       <Column field="slotCount" :header="t('players.columns.slots')" sortable />
-      <Column field="unlockedCount" :header="t('players.columns.unlocked')" sortable />
-      <Column field="goaledCount" :header="t('players.columns.goaled')" sortable />
-      <Column field="lockedCount" :header="t('players.columns.locked')" sortable />
+      <Column field="unlockedCount" :header="t('players.columns.unlocked')" sortable>
+        <template #body="{ data }">
+          <SlotNameList :count="(data as PlayerSummary).unlockedCount" :names="(data as PlayerSummary).unlockedNames" />
+        </template>
+      </Column>
+      <Column field="goaledCount" :header="t('players.columns.goaled')" sortable>
+        <template #body="{ data }">
+          <SlotNameList :count="(data as PlayerSummary).goaledCount" :names="(data as PlayerSummary).goaledNames" />
+        </template>
+      </Column>
+      <Column field="lockedCount" :header="t('players.columns.locked')" sortable>
+        <template #body="{ data }">
+          <SlotNameList :count="(data as PlayerSummary).lockedCount" :names="(data as PlayerSummary).lockedNames" />
+        </template>
+      </Column>
       <Column field="warningCount" :header="t('players.columns.warnings')" sortable />
     </DataTable>
   </section>

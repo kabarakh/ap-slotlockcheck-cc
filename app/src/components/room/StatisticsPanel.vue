@@ -28,11 +28,27 @@ const { t } = useI18n();
         <div>{{ t('statistics.percentage', { value: globalStatistics.allChecksPercentage }) }}</div>
       </div>
     </div>
-    <h2>{{ t('statistics.playersByLocked') }}</h2>
-    <DataTable :value="globalStatistics.playersByLockedCount" size="small" striped-rows>
-      <Column field="lockedCount" :header="t('statistics.lockedCount')" />
-      <Column field="playerCount" :header="t('statistics.playerCount')" />
-    </DataTable>
+    <div class="distributions">
+      <div>
+        <h2>{{ t('statistics.playersByLocked') }}</h2>
+        <DataTable :value="globalStatistics.playersByLockedCount" size="small" striped-rows>
+          <Column field="lockedCount" :header="t('statistics.lockedCount')" />
+          <Column field="playerCount" :header="t('statistics.playerCount')" />
+        </DataTable>
+      </div>
+      <div>
+        <h2>{{ t('statistics.playersByUnlocked') }}</h2>
+        <DataTable
+          :value="globalStatistics.playersByUnlockedCount"
+          size="small"
+          striped-rows
+          data-testid="players-by-unlocked"
+        >
+          <Column field="slotCount" :header="t('statistics.unlockedCount')" />
+          <Column field="playerCount" :header="t('statistics.playerCount')" />
+        </DataTable>
+      </div>
+    </div>
   </section>
 </template>
 
@@ -40,5 +56,11 @@ const { t } = useI18n();
 .statistics {
   padding: 0;
   margin: 0;
+}
+
+.distributions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--app-gap);
 }
 </style>

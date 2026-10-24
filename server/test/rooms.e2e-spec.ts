@@ -89,6 +89,9 @@ describe('rooms (integration)', () => {
     expect(rows['Carol']?.lockStatus).toBe('partially_unlocked');
     expect(rows['Davey (Dave)']?.lockStatus).toBe('locked');
     expect(rows['Locker']?.lockStatus).toBe('not_locked');
+    expect(rows['Alice']).toMatchObject({ unlocksSent: 1, archipelagoActivity: '2026-10-24T10:00:00.000Z' });
+    expect(rows['Bob']).toMatchObject({ unlocksSent: 1, archipelagoGoal: false });
+    expect(rows['Carol']?.archipelagoGoal).toBe(true);
   });
 
   it('lists the room', async () => {

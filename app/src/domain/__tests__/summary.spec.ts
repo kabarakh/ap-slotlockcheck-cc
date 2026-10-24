@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateStatistics, summarizePlayers } from '../summary';
+import { calculateStatistics, isGoaled, summarizePlayers } from '../summary';
 import { slotRow } from './fixtures';
 
 const slots = [
@@ -25,6 +25,14 @@ const slots = [
   }),
 ];
 
+describe('isGoaled', () => {
+  it('uses the Cheese completion status and the Archipelago goal', () => {
+    expect(isGoaled(slotRow({ completionStatus: 'goal' }))).toBe(true);
+    expect(isGoaled(slotRow({ archipelagoGoal: true }))).toBe(true);
+    expect(isGoaled(slotRow({ completionStatus: 'all_checks' }))).toBe(false);
+  });
+});
+
 describe('summarizePlayers', () => {
   it('summarizes the slots of each player without SlotLock slots', () => {
     expect(summarizePlayers(slots)).toEqual([
@@ -32,6 +40,11 @@ describe('summarizePlayers', () => {
       expect.objectContaining({ name: 'bob', slotCount: 2, unlockedCount: 0, goaledCount: 1, lockedCount: 2 }),
       expect.objectContaining({ name: 'carol', slotCount: 1, goaledCount: 1, lockedCount: 0 }),
     ]);
+  });
+
+  it('lists the slot names of each category', () => {
+    const bob = summarizePlayers(slots).find((player) => player.name === 'bob');
+    expect(bob).toMatchObject({ unlockedNames: [], goaledNames: ['C'], lockedNames: ['B', 'C'] });
   });
 });
 
@@ -49,6 +62,10 @@ describe('calculateStatistics', () => {
       playersByLockedCount: [
         { lockedCount: 0, playerCount: 2 },
         { lockedCount: 2, playerCount: 1 },
+      ],
+      playersByUnlockedCount: [
+        { slotCount: 0, playerCount: 2 },
+        { slotCount: 1, playerCount: 1 },
       ],
     });
   });

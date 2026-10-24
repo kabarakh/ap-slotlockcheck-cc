@@ -6,6 +6,8 @@ export function slotRow(overrides: Partial<SlotRow>): SlotRow {
     position: 1,
     name: 'Slot',
     archipelagoName: null,
+    archipelagoGoal: false,
+    archipelagoActivity: null,
     game: 'Game',
     discordUserId: null,
     discordName: null,
@@ -25,6 +27,7 @@ export function slotRow(overrides: Partial<SlotRow>): SlotRow {
     unlockTime: null,
     unlockTimeSource: null,
     warningCount: 0,
+    unlocksSent: 0,
     ...overrides,
   };
 }

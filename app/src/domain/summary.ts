@@ -9,6 +9,14 @@ export interface PlayerSummary {
   goaledCount: number;
   lockedCount: number;
   warningCount: number;
+  unlockedNames: string[];
+  goaledNames: string[];
+  lockedNames: string[];
+}
+
+export interface PlayerDistributionEntry {
+  slotCount: number;
+  playerCount: number;
 }
 
 export interface GlobalStatistics {
@@ -21,12 +29,13 @@ export interface GlobalStatistics {
   allChecksCount: number;
   allChecksPercentage: number;
   playersByLockedCount: { lockedCount: number; playerCount: number }[];
+  playersByUnlockedCount: PlayerDistributionEntry[];
 }
 
 const GOALED_STATUSES = new Set(['goal', 'done', 'released']);
 
 export function isGoaled(slot: SlotRow): boolean {
-  return GOALED_STATUSES.has(slot.completionStatus);
+  return GOALED_STATUSES.has(slot.completionStatus) || slot.archipelagoGoal;
 }
 
 export function isLocked(slot: SlotRow): boolean {
@@ -39,6 +48,16 @@ export function hasAllChecks(slot: SlotRow): boolean {
 
 function percentage(part: number, total: number): number {
   return total === 0 ? 0 : Math.round((part / total) * 1000) / 10;
+}
+
+function distribution(counts: number[]): PlayerDistributionEntry[] {
+  const playersByCount = new Map<number, number>();
+  for (const count of counts) {
+    playersByCount.set(count, (playersByCount.get(count) ?? 0) + 1);
+  }
+  return [...playersByCount.entries()]
+    .sort(([a], [b]) => a - b)
+    .map(([slotCount, playerCount]) => ({ slotCount, playerCount }));
 }
 
 export function playerKey(slot: SlotRow): string {
@@ -58,12 +77,24 @@ export function summarizePlayers(slots: SlotRow[]): PlayerSummary[] {
       goaledCount: 0,
       lockedCount: 0,
       warningCount: 0,
+      unlockedNames: [],
+      goaledNames: [],
+      lockedNames: [],
     };
     current.slotCount += 1;
-    current.unlockedCount += slot.lockStatus === 'unlocked' ? 1 : 0;
-    current.goaledCount += isGoaled(slot) ? 1 : 0;
-    current.lockedCount += isLocked(slot) ? 1 : 0;
     current.warningCount += slot.warningCount;
+    if (slot.lockStatus === 'unlocked') {
+      current.unlockedCount += 1;
+      current.unlockedNames.push(slot.name);
+    }
+    if (isGoaled(slot)) {
+      current.goaledCount += 1;
+      current.goaledNames.push(slot.name);
+    }
+    if (isLocked(slot)) {
+      current.lockedCount += 1;
+      current.lockedNames.push(slot.name);
+    }
     players.set(key, current);
   }
   return [...players.values()].sort((a, b) => a.name.localeCompare(b.name));
@@ -75,10 +106,7 @@ export function calculateStatistics(slots: SlotRow[]): GlobalStatistics {
   const unlockedCount = lockable.filter((slot) => slot.lockStatus === 'unlocked').length;
   const goaledCount = playable.filter(isGoaled).length;
   const allChecksCount = playable.filter(hasAllChecks).length;
-  const playerCountByLocked = new Map<number, number>();
-  for (const player of summarizePlayers(slots)) {
-    playerCountByLocked.set(player.lockedCount, (playerCountByLocked.get(player.lockedCount) ?? 0) + 1);
-  }
+  const players = summarizePlayers(slots);
   return {
     slotCount: playable.length,
     lockableCount: lockable.length,
@@ -88,8 +116,10 @@ export function calculateStatistics(slots: SlotRow[]): GlobalStatistics {
     goaledPercentage: percentage(goaledCount, playable.length),
     allChecksCount,
     allChecksPercentage: percentage(allChecksCount, playable.length),
-    playersByLockedCount: [...playerCountByLocked.entries()]
-      .sort(([a], [b]) => a - b)
-      .map(([lockedCount, playerCount]) => ({ lockedCount, playerCount })),
+    playersByLockedCount: distribution(players.map((player) => player.lockedCount)).map((entry) => ({
+      lockedCount: entry.slotCount,
+      playerCount: entry.playerCount,
+    })),
+    playersByUnlockedCount: distribution(players.map((player) => player.unlockedCount)),
   };
 }

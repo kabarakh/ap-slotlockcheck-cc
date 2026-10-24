@@ -14,16 +14,22 @@ const SENDER_INDEX = 2;
 const FIRST_PLAYER_POSITION = 1;
 const ALIAS_DISPLAY_PATTERN = /^(.+) \((.+)\)$/;
 
-export interface ArchipelagoSlotNames {
+export interface ArchipelagoSlotInfo {
   name: string | null;
   alias: string | null;
+  goal: boolean;
+  activity: Date | null;
 }
+
+export const ARCHIPELAGO_CLIENT_GOAL = 30;
 
 export interface SlotRecord {
   cheeseGameId: number;
   position: number;
   name: string;
   archipelagoName: string | null;
+  archipelagoGoal: boolean;
+  archipelagoActivity: Date | null;
   game: string;
   discordUserId: string | null;
   discordName: string | null;
@@ -39,17 +45,28 @@ export interface SlotRecord {
   isSlotLock: boolean;
 }
 
-export function archipelagoNamesByPosition(
+export function archipelagoSlotsByPosition(
   roomStatus: RoomStatus | null,
   tracker: TrackerData | null,
-): Map<number, ArchipelagoSlotNames> {
-  const result = new Map<number, ArchipelagoSlotNames>();
+): Map<number, ArchipelagoSlotInfo> {
+  const result = new Map<number, ArchipelagoSlotInfo>();
+  const entry = (position: number): ArchipelagoSlotInfo =>
+    result.get(position) ?? { name: null, alias: null, goal: false, activity: null };
   roomStatus?.players.forEach(([name], index) => {
-    result.set(index + FIRST_PLAYER_POSITION, { name, alias: null });
+    result.set(index + FIRST_PLAYER_POSITION, { ...entry(index + FIRST_PLAYER_POSITION), name });
   });
-  for (const entry of tracker?.aliases ?? []) {
-    const current = result.get(entry.player) ?? { name: null, alias: null };
-    result.set(entry.player, { ...current, alias: entry.alias });
+  for (const alias of tracker?.aliases ?? []) {
+    result.set(alias.player, { ...entry(alias.player), alias: alias.alias });
+  }
+  for (const status of tracker?.player_status ?? []) {
+    result.set(status.player, { ...entry(status.player), goal: status.status === ARCHIPELAGO_CLIENT_GOAL });
+  }
+  for (const timer of tracker?.activity_timers ?? []) {
+    const activity = timer.time === null ? null : new Date(timer.time);
+    result.set(timer.player, {
+      ...entry(timer.player),
+      activity: activity !== null && !Number.isNaN(activity.getTime()) ? activity : null,
+    });
   }
   return result;
 }
@@ -64,13 +81,15 @@ export function slotIdentity(slot: Pick<SlotRecord, 'position' | 'name' | 'archi
 
 export function slotRecordsFromCheese(
   tracker: CheeseTracker,
-  archipelagoNames: Map<number, ArchipelagoSlotNames> = new Map(),
+  archipelagoSlots: Map<number, ArchipelagoSlotInfo> = new Map(),
 ): SlotRecord[] {
   return tracker.games.map((game) => ({
     cheeseGameId: game.id,
     position: game.position,
     name: game.name,
-    archipelagoName: archipelagoNames.get(game.position)?.name ?? null,
+    archipelagoName: archipelagoSlots.get(game.position)?.name ?? null,
+    archipelagoGoal: archipelagoSlots.get(game.position)?.goal ?? false,
+    archipelagoActivity: archipelagoSlots.get(game.position)?.activity ?? null,
     game: game.game,
     discordUserId: game.effective_discord_user_id ?? null,
     discordName: game.effective_discord_username ?? game.discord_username ?? null,

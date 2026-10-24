@@ -11,7 +11,7 @@ import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLiveStore } from '@/stores/live';
 
 const roomStore = useCurrentRoomStore();
-const { room, isAdmin, isPlayer, syncRequested } = storeToRefs(roomStore);
+const { room, isAdmin, isPlayer, syncRequested, slotsWithoutDiscord } = storeToRefs(roomStore);
 const { isConnected } = storeToRefs(useLiveStore());
 const { t } = useI18n();
 
@@ -53,6 +53,19 @@ const tabs = computed(() => [
     </div>
     <Message v-if="isAdmin && room.unknownSlotNames.length > 0" severity="warn">
       {{ t('room.unknownSlotNames', { names: room.unknownSlotNames.join(', ') }) }}
+    </Message>
+    <Message
+      v-if="isAdmin && slotsWithoutDiscord.length > 0"
+      severity="info"
+      closable
+      data-testid="slots-without-discord"
+    >
+      {{
+        t('room.slotsWithoutDiscord', {
+          count: slotsWithoutDiscord.length,
+          names: slotsWithoutDiscord.map((slot) => `#${slot.position} ${slot.name}`).join(', '),
+        })
+      }}
     </Message>
     <nav class="room-tabs">
       <template v-for="tab in tabs" :key="tab.name">

@@ -33,6 +33,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
   const selectedLockers = computed(() => sortedSlots.value.filter((slot) => slot.isSelectedSlotLock));
   const slotLockSlots = computed(() => sortedSlots.value.filter((slot) => slot.isSlotLock));
   const playableSlots = computed(() => sortedSlots.value.filter((slot) => !slot.isSlotLock));
+  const slotsWithoutDiscord = computed(() => playableSlots.value.filter((slot) => slot.discordUserId === null));
 
   const fetchMembership = async (roomSlug: string): Promise<void> => {
     membership.value = await unwrap(api.GET('/api/rooms/{slug}/me', { params: { path: { slug: roomSlug } } }));
@@ -150,6 +151,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     selectedLockers,
     slotLockSlots,
     playableSlots,
+    slotsWithoutDiscord,
     open,
     reload,
     close,

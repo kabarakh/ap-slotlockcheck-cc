@@ -64,6 +64,7 @@
     limits: 'Inactivity limits: yellow after {yellow} h, red after {red} h',
     unknownSlotNames: 'These unlock items have no matching slot: {names}',
     notFound: 'This room does not exist.',
+    slotsWithoutDiscord: '{count} slots have no Discord user in Cheese: {names}. These slots are not in "My slots" and not in the player summary of a player.',
   },
   slot: {
     empty: 'No slots agree with the filters.',
@@ -82,6 +83,7 @@
       availability: 'Availability',
       notes: 'Notes',
       warnings: 'Warnings',
+      unlocksSent: 'Has unlocked',
     },
   },
   lockStatus: {
@@ -130,6 +132,8 @@
     allChecks: 'Slots with all checks',
     percentage: '{value} %',
     playersByLocked: 'Players by number of locked slots',
+    playersByUnlocked: 'Players by number of unlocked slots',
+    unlockedCount: 'Unlocked slots',
     lockedCount: 'Locked slots',
     playerCount: 'Players',
   },
