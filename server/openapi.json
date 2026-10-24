@@ -1648,7 +1648,7 @@
             "type": "string"
           },
           "room": {
-            "$ref": "#/components/schemas/RoomSummaryDto"
+            "$ref": "#/components/schemas/RoomDetailDto"
           },
           "removedSlotIds": {
             "type": "array",

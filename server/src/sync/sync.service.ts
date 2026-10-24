@@ -59,7 +59,7 @@ export class SyncService {
       const after = await this.rooms.getRosterForRoom(roomId);
       this.live.publishSynced({
         slug: room.slug,
-        room: this.rooms.toSummary(updatedRoom, after),
+        room: this.rooms.toDetail(updatedRoom, after),
         ...diffRoster(before, after),
       });
       return 'success';

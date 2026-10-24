@@ -535,7 +535,7 @@ export interface components {
         RoomSyncedPayloadDto: {
             changedSlots: components["schemas"]["SlotRowDto"][];
             slug: string;
-            room: components["schemas"]["RoomSummaryDto"];
+            room: components["schemas"]["RoomDetailDto"];
             removedSlotIds: number[];
         };
         RoomSyncFailedPayloadDto: {

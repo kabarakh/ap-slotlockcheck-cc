@@ -46,6 +46,14 @@ describe('useCurrentRoomStore', () => {
     expect(store.room?.unlockedSlotCount).toBe(1);
   });
 
+  it('replaces the room details after a synchronization', () => {
+    const store = useCurrentRoomStore();
+    store.slug = 'big-chill';
+    store.room = { ...room, unknownSlotNames: ['Jiggy', 'Juliana'] };
+    store.applySynced({ slug: 'big-chill', room, changedSlots: [], removedSlotIds: [] });
+    expect(store.room?.unknownSlotNames).toEqual([]);
+  });
+
   it('ignores messages of other rooms', () => {
     const store = useCurrentRoomStore();
     store.slug = 'big-chill';

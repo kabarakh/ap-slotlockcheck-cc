@@ -91,7 +91,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     if (payload.slug !== slug.value || !room.value) {
       return;
     }
-    room.value = { ...room.value, ...payload.room };
+    room.value = payload.room;
     const changed = new Map(payload.changedSlots.map((slot) => [slot.id, slot]));
     const removed = new Set(payload.removedSlotIds);
     const kept = slots.value.filter((slot) => !removed.has(slot.id)).map((slot) => changed.get(slot.id) ?? slot);
@@ -118,8 +118,14 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     }
     syncRequested.value = true;
     try {
-      const status = await unwrap(api.POST('/api/rooms/{slug}/sync', { params: { path: { slug: slug.value } } }));
-      room.value = { ...room.value, syncStatus: status };
+      const path = { params: { path: { slug: slug.value } } };
+      await unwrap(api.POST('/api/rooms/{slug}/sync', path));
+      const [detail, roster] = await Promise.all([
+        unwrap(api.GET('/api/rooms/{slug}', path)),
+        unwrap(api.GET('/api/rooms/{slug}/roster', path)),
+      ]);
+      room.value = detail;
+      slots.value = roster;
       useUiStore().notify('success', 'room.syncDone');
     } catch (error) {
       useUiStore().notifyError(error);
