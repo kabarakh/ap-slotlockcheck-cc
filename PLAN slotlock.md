@@ -5,7 +5,7 @@ Language: ASD-STE100 (Simplified Technical English)
 
 References in the form "6.7" mean section 6, item 7.
 
-Sections 1 to 11 and 13 describe the functions. Sections 2, 12 and 14 to 23 describe the technical implementation.
+Sections 1 to 11 and 13 describe the functions. Sections 2, 12 and 14 to 24 describe the technical implementation. Section 24 lists the deviations during the implementation.
 
 ## Glossary
 
@@ -451,8 +451,9 @@ Remove the folder `entities` that `nest g resource` makes. The database types co
 | `DATABASE_URL` | SQLite file. |
 | `JWT_SECRET` | Key for the session token. |
 | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_CALLBACK_URL` | Discord OAuth. |
-| `CHEESE_BASE_URL`, `ARCHIPELAGO_BASE_URL` | Base URLs of the APIs. Default for Cheese: `https://cheesetrackers.theincrediblewheelofchee.se`. The Playwright tests set them to the mock server (19.4). |
-| `HTTP_USER_AGENT` | `User-Agent` for external requests: `SlotlockTracker/<version> (+https://github.com/<owner>/<repo>)`. The server sets the version from `package.json`. |
+| `CHEESE_BASE_URL` | Base URL of the Cheese API. Default: `https://cheesetrackers.theincrediblewheelofchee.se`. The Playwright tests set it to the mock server (19.4). The Archipelago URL comes from the Cheese data (24.7). |
+| `HTTP_USER_AGENT` | `User-Agent` for external requests: `SlotlockTracker/<version> (+https://github.com/<owner>/<repo>)`. |
+| `HTTP_TIMEOUT_SECONDS` | Timeout of each external request. Default 30. |
 | `TRUST_PROXY` | `true` behind nginx (correct client IP and protocol for the `Secure` cookie). |
 | `SYNC_INTERVAL_MINUTES` | Default 5. Minimum 5. |
 | `MANUAL_SYNC_COOLDOWN_SECONDS` | Default 60. Minimum 60. |
@@ -501,14 +502,19 @@ src/
 
 ### 16.3 Component rules
 
-1. Components do not use `defineProps`, `defineEmits`, `provide` or `inject`.
-2. Each component gets its data from Pinia stores. It uses getters (computed), state and actions of the stores.
+**There are two types of components: functional components and presentational components.**
+
+- Functional components (`components/<area>/`, views): rules 1 to 9 below.
+- Presentational components (`components/ui/`): they get props only. They do not use stores, do not send events (`defineEmits`) and do not use `provide` or `inject`. They can use `useI18n` for texts.
+
+1. Functional components do not use `defineProps`, `defineEmits`, `provide` or `inject`.
+2. Each functional component gets its data from Pinia stores. It uses getters (computed), state and actions of the stores.
 3. Components communicate only through Pinia stores. Example: a dialog component reads `uiStore.isWarningDialogOpen`. A button calls `uiStore.openWarningDialog(slotId)`.
 4. Components do not send HTTP requests and do not use the socket. Only store actions get data.
 5. Forms bind with `v-model` to a draft state in the store (for example `settingsStore.draft`). The action `save()` sends the draft.
 6. Show table rows and cells inside the table component with PrimeVue column templates. Do not make a component for each row or cell.
 7. The router gives the route parameters to the stores. Use `beforeEnter` or a navigation guard that calls a store action (for example `currentRoomStore.open(slug)`). Components do not read `useRoute()` for data.
-8. Exception: if props are absolutely necessary (for example a recursive component), write a comment with the reason in the component. Get approval in the review.
+8. If a component needs data from outside, make it a presentational component with props. Do not add props to a functional component.
 9. Use `<script setup lang="ts">`. Use `storeToRefs()` for state and getters.
 
 ### 16.4 Stores
@@ -714,6 +720,8 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 3. New texts exist in German and English.
 4. New Vue components obey 16.3.
 5. New server files were made with the Nest CLI where possible.
+6. **The code has no comments.** Names and small functions tell what the code does. Explain ideas and concepts in `README.md`, never with references to exact code locations. This rule also applies to configuration files.
+7. All tools use the latest stable version (14.6). Telemetry, funding messages and update notifiers are off.
 
 ## 22. Decisions
 
@@ -725,11 +733,12 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 | Delivery | NestJS serves `app/dist` |
 | Session | JWT in HttpOnly cookie |
 | Languages | German and English with `vue-i18n` |
-| UI library | PrimeVue |
+| UI library | PrimeVue 4.5 (MIT), see 24.1 |
 | Tests | Vitest in both workspaces |
 | Lint | ESLint + oxlint + Prettier, one configuration for each workspace |
 | Node | 26, installed with nvm |
-| Prototype | Nest CLI command in `server` |
+| Prototype | Standalone Nest application context in `server` (see 24.4) |
+| Vue components | Functional components (stores, no props) and presentational components (props only) |
 | Versions | Always the latest stable version of each tool |
 | Git hooks | Husky: pre-commit = full lint + type check, pre-push = audit (production, `moderate`) + tests |
 | External API validation | Zod |
@@ -752,4 +761,22 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 
 1. Production domain: replace `<PRODUCTION_DOMAIN>` before the first deployment.
 2. proServer: who configures nginx and the pm2 start after a reboot (20.3a)? Decide in phase 8.
-3. GitHub repository URL: replace `<owner>/<repo>` in the `User-Agent` when the repository exists (phase 0).
+3. GitHub repository: the developer makes it and adds the remote. Then replace `<OWNER>/<REPOSITORY>` in the `User-Agent` of the environment files.
+4. PrimeVue 5 needs a license key (24.1). Stay on PrimeVue 4.5 (MIT), or buy or request a PrimeUI license and update?
+5. Node 26 is not an LTS version yet (October 2026). Keep Node 26 or use Node 24 LTS until Node 26 becomes LTS?
+6. Compare the application with the Google sheet "BigChill" (phase 1.4, phase 2.3). This needs the real Cheese tracker ID of the room.
+
+## 24. Deviations during the implementation
+
+1. **PrimeVue:** PrimeVue 5 and `@primeuix/themes` 3 use the PrimeUI License and need a license key. The application uses PrimeVue 4.5, `@primeuix/themes` 2 and PrimeIcons 7 (all MIT). See open point 23.4.
+2. **TypeScript:** TypeScript 7 is the latest version. `typescript-eslint` and `@nestjs/swagger` support only TypeScript 6. The project uses TypeScript 6 (14.6.5). `openapi-typescript` asks for TypeScript 5. An npm override gives it TypeScript 6.
+3. **better-sqlite3:** version 13 has no prebuilt binaries and needs a C++ compiler. The project uses version 12, the same version as the Prisma adapter.
+4. **Commands (15.9):** `nest-commander` does not support NestJS 12. `prototype:report` and `openapi:export` are standalone Node scripts that start a Nest application context.
+5. **Discord login (15.8):** the server does the OAuth code flow without Passport. The OAuth state is in a short-lived HttpOnly cookie.
+6. **Lock detection (6.4):** the SlotLock apworld writes the locked slots into its slot data (`locked_slots`). The server reads them from `GET /api/slot_data_tracker/{tracker}`. Received unlock items also add a lock assignment.
+7. **Archipelago base URL (15.10):** there is no `ARCHIPELAGO_BASE_URL`. The server uses the origin of the Archipelago tracker link from Cheese. `GET /api/room_status` is not necessary and is not called.
+8. **Modules (15.2):** there are no server modules `players` and `statistics`. The app calculates player summary and statistics (16.4.4). The room creation is in the module `room-setup`. The shared HTTP client is in `sources/http`.
+9. **NestJS 12:** the Nest CLI makes ESM projects with Vitest and oxlint. Jest was not necessary.
+10. **User-Agent:** the version is part of the value of `HTTP_USER_AGENT`. The server does not read it from `package.json`.
+11. **Fixtures (phase 1.2):** there is no real tracker ID. The fixtures follow the source code of Cheese Tracker and Archipelago.
+12. **Production packages:** `prisma` is a production dependency, because `prisma migrate deploy` runs on the server.

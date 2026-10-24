@@ -1,0 +1,58 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  HUSKY: 0
+  CHECKPOINT_DISABLE: 1
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Prepare SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          echo "${{ secrets.DEPLOY_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+      - name: Upload release
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+          APP_ROOT: ${{ vars.DEPLOY_APP_ROOT || 'slotlock' }}
+        run: |
+          release="releases/$(date -u +%Y%m%d%H%M%S)-${GITHUB_SHA::8}"
+          echo "RELEASE=$release" >> "$GITHUB_ENV"
+          ssh -i ~/.ssh/id_deploy "$TARGET" "mkdir -p '$APP_ROOT/$release'"
+          rsync -az --relative -e "ssh -i $HOME/.ssh/id_deploy" \
+            package.json package-lock.json .nvmrc .npmrc \
+            server/package.json server/prisma.config.ts server/prisma server/dist \
+            app/package.json app/dist \
+            deploy \
+            "$TARGET:$APP_ROOT/$release/"
+      - name: Activate release
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+          APP_ROOT: ${{ vars.DEPLOY_APP_ROOT || 'slotlock' }}
+        run: |
+          ssh -i ~/.ssh/id_deploy "$TARGET" "SLOTLOCK_ROOT=\$HOME/$APP_ROOT bash '$APP_ROOT/$RELEASE/deploy/post-deploy.sh' '$APP_ROOT/$RELEASE'"

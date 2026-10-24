@@ -27,7 +27,8 @@
     "test:e2e": "npm run test:e2e -w app",
     "outdated": "npm outdated --workspaces --include-workspace-root",
     "audit:check": "npm audit --omit=dev --audit-level=moderate --workspaces --include-workspace-root",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prototype:report": "npm run prototype:report -w server --"
   },
   "devDependencies": {
     "husky": "^9.1.7",

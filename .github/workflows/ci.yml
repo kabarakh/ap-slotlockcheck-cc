@@ -3,6 +3,7 @@ name: CI
 on:
   push:
   pull_request:
+  workflow_call:
 
 env:
   HUSKY: 0
@@ -21,9 +22,9 @@ jobs:
       - run: npm run lint:check
       - run: npm run typecheck
       - run: npm test
-      - run: npm run api:check
       - run: npm run audit:check
       - run: npm run build
+      - run: git diff --exit-code -- server/openapi.json app/src/api/schema.d.ts
       - run: npx playwright install --with-deps chromium
         working-directory: app
       - run: npm run test:e2e
