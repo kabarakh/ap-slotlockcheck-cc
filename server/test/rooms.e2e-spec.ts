@@ -179,4 +179,23 @@ describe('rooms (integration)', () => {
       .set('Cookie', playerCookie)
       .expect(200, { role: 'admin', isOwner: false });
   });
+
+  it('makes a guest admin with a one-time invitation link', async () => {
+    const guestCookie = await login({ discordId: '100000000000000099', name: 'Guest', username: 'guest' });
+    const invitation = await request(server)
+      .post('/api/rooms/big-chill/invitations')
+      .set('Cookie', ownerCookie)
+      .expect(201);
+    const token = (invitation.body as { url: string }).url.split('/invite/')[1];
+    await request(server).post(`/api/invitations/${token}/accept`).expect(401);
+    await request(server)
+      .post(`/api/invitations/${token}/accept`)
+      .set('Cookie', guestCookie)
+      .expect(200, { slug: 'big-chill' });
+    await request(server)
+      .get('/api/rooms/big-chill/me')
+      .set('Cookie', guestCookie)
+      .expect(200, { role: 'admin', isOwner: false });
+    await request(server).post(`/api/invitations/${token}/accept`).set('Cookie', guestCookie).expect(410);
+  });
 });

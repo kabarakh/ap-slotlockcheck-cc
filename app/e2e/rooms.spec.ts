@@ -84,6 +84,22 @@ test('an admin gives a warning and the roster shows it live', async ({ page, bro
   await visitor.close();
 });
 
+test('an invitation link makes a guest admin', async ({ page, browser }) => {
+  await ensureRoom(page);
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/admin');
+  await page.getByRole('tab', { name: 'Admins' }).click();
+  await page.getByRole('button', { name: 'Make invitation link' }).click();
+  const url = await page.getByTestId('invitation-url').inputValue();
+
+  const guest = await browser.newPage();
+  await loginAs(guest, { discordId: '100000000000000077', name: 'Guest', username: 'guest' });
+  await guest.goto(new URL(url).pathname);
+  await expect(guest).toHaveURL(/\/room\/big-chill\/admin$/);
+  await expect(guest.getByRole('tab', { name: 'Lock assignment' })).toBeVisible();
+  await guest.close();
+});
+
 test('the language switch changes the texts', async ({ page }) => {
   await ensureRoom(page);
   await page.goto('/');

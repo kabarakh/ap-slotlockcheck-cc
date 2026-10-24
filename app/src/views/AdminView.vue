@@ -8,6 +8,7 @@ import TabPanels from 'primevue/tabpanels';
 import Tabs from 'primevue/tabs';
 import AdminListPanel from '@/components/admin/AdminListPanel.vue';
 import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel.vue';
+import InvitationPanel from '@/components/admin/InvitationPanel.vue';
 import LockAssignmentPanel from '@/components/admin/LockAssignmentPanel.vue';
 import UnlockTimesPanel from '@/components/admin/UnlockTimesPanel.vue';
 import WarningsPanel from '@/components/admin/WarningsPanel.vue';
@@ -31,7 +32,10 @@ onMounted(() => admin.load());
     <TabPanels>
       <TabPanel value="settings"><AdminSettingsPanel /></TabPanel>
       <TabPanel value="locks"><LockAssignmentPanel /></TabPanel>
-      <TabPanel value="admins"><AdminListPanel /></TabPanel>
+      <TabPanel value="admins">
+        <AdminListPanel />
+        <InvitationPanel />
+      </TabPanel>
       <TabPanel value="warnings"><WarningsPanel /></TabPanel>
       <TabPanel value="unlockTimes"><UnlockTimesPanel /></TabPanel>
     </TabPanels>

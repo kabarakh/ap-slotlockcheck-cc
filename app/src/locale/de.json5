@@ -178,6 +178,15 @@
     import: 'Importieren',
     imported: '{count} Entsperrzeiten geändert.',
   },
+  invitations: {
+    title: 'Einladungslink',
+    intro: 'Der Link macht einen Discord-Benutzer zum Admin dieses Raums. Er gilt einmal und 7 Tage lang.',
+    create: 'Einladungslink erzeugen',
+    copy: 'Link kopieren',
+    copied: 'Der Link ist kopiert.',
+    validUntil: 'Gültig bis',
+    failed: 'Dieser Einladungslink ist ungültig.',
+  },
   notFound: { title: 'Diese Seite gibt es nicht.' },
   errors: {
     UNKNOWN: 'Ein unerwarteter Fehler ist aufgetreten: {message}',
@@ -201,5 +210,7 @@
     WARNING_NOT_FOUND: 'Diese Verwarnung gibt es nicht.',
     UNLOCK_ITEM_NOT_FOUND: 'Dieses Unlock-Item gibt es nicht.',
     ORIGIN_NOT_ALLOWED: 'Die Anfrage kam von einer nicht erlaubten Seite.',
+    INVITATION_NOT_FOUND: 'Diesen Einladungslink gibt es nicht.',
+    INVITATION_EXPIRED: 'Dieser Einladungslink wurde schon benutzt oder ist zu alt.',
   },
 }

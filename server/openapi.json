@@ -510,6 +510,66 @@
         ]
       }
     },
+    "/api/rooms/{slug}/invitations": {
+      "post": {
+        "operationId": "Invitations_create",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminInvitationDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Invitations"
+        ]
+      }
+    },
+    "/api/invitations/{token}/accept": {
+      "post": {
+        "operationId": "Invitations_accept",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AcceptedInvitationDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Invitations"
+        ]
+      }
+    },
     "/api/rooms/{slug}/warnings": {
       "get": {
         "operationId": "Warnings_list",
@@ -1387,6 +1447,32 @@
         "required": [
           "lockerSlotId",
           "lockedSlotId"
+        ]
+      },
+      "AdminInvitationDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "validUntil": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "validUntil"
+        ]
+      },
+      "AcceptedInvitationDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug"
         ]
       },
       "WarningDto": {

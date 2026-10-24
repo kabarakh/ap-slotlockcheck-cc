@@ -228,6 +228,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/invitations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Invitations_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/invitations/{token}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["Invitations_accept"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/rooms/{slug}/warnings": {
         parameters: {
             query?: never;
@@ -451,6 +483,13 @@ export interface components {
         ResetLockAssignmentDto: {
             lockerSlotId: number;
             lockedSlotId: number;
+        };
+        AdminInvitationDto: {
+            url: string;
+            validUntil: string;
+        };
+        AcceptedInvitationDto: {
+            slug: string;
         };
         WarningDto: {
             id: number;
@@ -857,6 +896,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LockAssignmentDto"][];
+                };
+            };
+        };
+    };
+    Invitations_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminInvitationDto"];
+                };
+            };
+        };
+    };
+    Invitations_accept: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcceptedInvitationDto"];
                 };
             };
         };

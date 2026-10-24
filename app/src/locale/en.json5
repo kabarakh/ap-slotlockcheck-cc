@@ -172,6 +172,15 @@
     import: 'Import',
     imported: '{count} unlock times changed.',
   },
+  invitations: {
+    title: 'Invitation link',
+    intro: 'The link makes one Discord user admin of this room. It is valid for one use and for 7 days.',
+    create: 'Make invitation link',
+    copy: 'Copy link',
+    copied: 'The link is copied.',
+    validUntil: 'Valid until',
+    failed: 'This invitation link is not valid.',
+  },
   notFound: { title: 'This page does not exist.' },
   errors: {
     UNKNOWN: 'An unexpected error occurred: {message}',
@@ -195,5 +204,7 @@
     WARNING_NOT_FOUND: 'This warning does not exist.',
     UNLOCK_ITEM_NOT_FOUND: 'This unlock item does not exist.',
     ORIGIN_NOT_ALLOWED: 'The request came from a page that is not permitted.',
+    INVITATION_NOT_FOUND: 'This invitation link does not exist.',
+    INVITATION_EXPIRED: 'This invitation link was used already or is too old.',
   },
 }
