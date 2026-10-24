@@ -71,6 +71,7 @@ model Slot {
   checksDone         Int
   checksTotal        Int
   lastActivity       DateTime?
+  lastChecked        DateTime?
   trackerStatus      String
   progressionStatus  String
   completionStatus   String

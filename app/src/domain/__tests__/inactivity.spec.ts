@@ -24,6 +24,16 @@ describe('inactivityHours', () => {
     expect(inactivityHours(slot, now)).toBe(72);
   });
 
+  it('uses a later "Still BK" click from Cheese', () => {
+    const slot = slotRow({
+      lockStatus: 'unlocked',
+      lastActivity: '2026-10-20T12:00:00Z',
+      lastChecked: '2026-10-24T06:00:00Z',
+      unlockTime: '2026-10-19T12:00:00Z',
+    });
+    expect(inactivityHours(slot, now)).toBe(6);
+  });
+
   it('is null without any time', () => {
     expect(inactivityHours(slotRow({ lockStatus: 'unlocked' }), now)).toBeNull();
   });

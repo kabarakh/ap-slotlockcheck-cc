@@ -138,8 +138,8 @@ Technical names stay unchanged, for example Socket.IO "rooms" (always written "S
 ## 8. Inactivity
 
 1. Calculate inactivity only for unlocked slots.
-2. Inactivity = current time minus the later of these two values: the last activity, or the unlock time.
-3. If the unlock time is unknown, use the last activity only.
+2. Inactivity = current time minus the latest of these values: the last activity, the last "Still BK" click in Cheese (`last_checked`), or the unlock time.
+3. If a value is unknown, use the other values only. Cheese also sets `last_checked` when a player sets the status to BK.
 4. Use the yellow and red limits from the Cheese Tracker as default values.
 5. An admin can change the limits for each room.
 6. Show yellow or red color when inactivity is more than the limit.
@@ -780,3 +780,5 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 10. **User-Agent:** the version is part of the value of `HTTP_USER_AGENT`. The server does not read it from `package.json`.
 11. **Fixtures (phase 1.2):** there is no real tracker ID. The fixtures follow the source code of Cheese Tracker and Archipelago.
 12. **Production packages:** `prisma` is a production dependency, because `prisma migrate deploy` runs on the server.
+13. **Aliases:** Archipelago shows a slot with an alias as "Alias (Name)". Cheese uses this display name. The SlotLock slot data and the unlock items use the original name. The server reads the original names from `GET /api/room_status` (players in the order of the player number) and the aliases from the tracker. It matches a name with the Cheese name, the original name and the parts of the alias display. The roster shows the original name if it differs.
+14. **"Still BK":** the inactivity also uses the Cheese field `last_checked` (8.2).

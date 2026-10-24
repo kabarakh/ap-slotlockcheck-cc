@@ -54,7 +54,8 @@
       "progression_status": "bk",
       "effective_discord_username": "alice_owner",
       "user_is_away": false,
-      "effective_discord_user_id": "100000000000000001"
+      "effective_discord_user_id": "100000000000000001",
+      "last_checked": "2026-10-24T11:30:00Z"
     },
     {
       "id": 103,

@@ -54,6 +54,9 @@ export class SlotRowDto {
   @ApiProperty({ type: String, format: 'date-time', nullable: true })
   lastActivity: string | null;
 
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
+  lastChecked: string | null;
+
   @ApiProperty({ enum: TRACKER_STATUSES, enumName: 'TrackerStatus' })
   trackerStatus: TrackerStatus;
 

@@ -16,6 +16,7 @@ export const cheeseGameSchema = z.object({
   checks_done: z.number().int(),
   checks_total: z.number().int(),
   last_activity: z.iso.datetime({ offset: true }).optional(),
+  last_checked: z.iso.datetime({ offset: true }).optional(),
   discord_username: z.string().optional(),
   effective_discord_username: z.string().optional(),
   effective_discord_user_id: z.string().regex(/^\d+$/).optional(),

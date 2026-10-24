@@ -36,7 +36,12 @@ describe('room source mapping', () => {
   it('maps Cheese games to slot records with the Archipelago name', () => {
     const slots = slotRecordsFromCheese(cheese, archipelagoNames);
     expect(slots.map((slot) => slot.isSlotLock)).toEqual([true, false, false, false, false, true]);
-    expect(slots[1]).toMatchObject({ position: 2, name: 'Alice', discordUserId: '100000000000000001' });
+    expect(slots[1]).toMatchObject({
+      position: 2,
+      name: 'Alice',
+      discordUserId: '100000000000000001',
+      lastChecked: new Date('2026-10-24T11:30:00Z'),
+    });
     expect(slots[4]).toMatchObject({
       name: 'Davey (Dave)',
       archipelagoName: 'Dave',

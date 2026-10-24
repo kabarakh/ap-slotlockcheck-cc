@@ -13,7 +13,7 @@ export function inactivityHours(slot: SlotRow, now: Date): number | null {
   if (slot.lockStatus !== 'unlocked') {
     return null;
   }
-  const times = [slot.lastActivity, slot.unlockTime]
+  const times = [slot.lastActivity, slot.lastChecked, slot.unlockTime]
     .filter((value): value is string => value !== null)
     .map((value) => new Date(value).getTime());
   if (times.length === 0) {

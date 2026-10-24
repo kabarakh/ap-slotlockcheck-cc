@@ -402,6 +402,8 @@ export interface components {
             discordName: string | null;
             /** Format: date-time */
             lastActivity: string | null;
+            /** Format: date-time */
+            lastChecked: string | null;
             trackerStatus: components["schemas"]["TrackerStatus"];
             progressionStatus: components["schemas"]["ProgressionStatus"];
             completionStatus: components["schemas"]["CompletionStatus"];

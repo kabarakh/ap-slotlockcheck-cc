@@ -36,7 +36,7 @@ The DTO classes of the server are the only source of the API types. The server w
 
 ### Inactivity, players and statistics
 
-The browser calculates inactivity, player summaries and statistics from the roster. The inactivity uses the current time, so the colors change without a new synchronization.
+The browser calculates inactivity, player summaries and statistics from the roster. The inactivity counts from the latest of these times: last activity, last "Still BK" click in Cheese, unlock time. It uses the current time, so the colors change without a new synchronization.
 
 ### Vue components
 

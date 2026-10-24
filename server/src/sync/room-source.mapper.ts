@@ -30,6 +30,7 @@ export interface SlotRecord {
   checksDone: number;
   checksTotal: number;
   lastActivity: Date | null;
+  lastChecked: Date | null;
   trackerStatus: string;
   progressionStatus: string;
   completionStatus: string;
@@ -76,6 +77,7 @@ export function slotRecordsFromCheese(
     checksDone: game.checks_done,
     checksTotal: game.checks_total,
     lastActivity: game.last_activity ? new Date(game.last_activity) : null,
+    lastChecked: game.last_checked ? new Date(game.last_checked) : null,
     trackerStatus: game.tracker_status,
     progressionStatus: game.progression_status,
     completionStatus: game.completion_status,

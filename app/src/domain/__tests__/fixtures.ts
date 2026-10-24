@@ -12,6 +12,7 @@ export function slotRow(overrides: Partial<SlotRow>): SlotRow {
     checksDone: 0,
     checksTotal: 10,
     lastActivity: null,
+    lastChecked: null,
     trackerStatus: 'playing',
     progressionStatus: 'unknown',
     completionStatus: 'incomplete',

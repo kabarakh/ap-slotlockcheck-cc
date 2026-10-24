@@ -19,6 +19,7 @@ export interface RosterSlot {
   checksDone: number;
   checksTotal: number;
   lastActivity: Date | null;
+  lastChecked: Date | null;
   trackerStatus: string;
   progressionStatus: string;
   completionStatus: string;
@@ -61,6 +62,7 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
         checksDone: slot.checksDone,
         checksTotal: slot.checksTotal,
         lastActivity: toIso(slot.lastActivity),
+        lastChecked: toIso(slot.lastChecked),
         trackerStatus: slot.trackerStatus as TrackerStatus,
         progressionStatus: slot.progressionStatus as ProgressionStatus,
         completionStatus: slot.completionStatus as CompletionStatus,
