@@ -1,0 +1,40 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+dist-ssr
+coverage
+*.tsbuildinfo
+.eslintcache
+
+# Prisma
+server/src/generated/
+
+# Databases
+*.db
+*.db-journal
+*.sqlite
+
+# Environment
+.env
+.env.*
+!.env.*.example
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Tests
+test-results/
+playwright-report/
+__screenshots__/
+*.timestamp-*-*.mjs
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.sw?

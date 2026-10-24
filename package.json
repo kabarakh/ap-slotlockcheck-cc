@@ -1,0 +1,40 @@
+{
+  "name": "slotlock-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "server",
+    "app"
+  ],
+  "engines": {
+    "node": ">=26.0.0"
+  },
+  "scripts": {
+    "dev": "run-p dev:server dev:app",
+    "dev:server": "npm run start:dev -w server",
+    "dev:app": "npm run dev -w app",
+    "api:sync": "npm run openapi:export -w server && npm run api:generate -w app",
+    "api:check": "npm run api:sync && git diff --exit-code -- server/openapi.json app/src/api/schema.d.ts",
+    "build": "run-s build:server api:sync build:app",
+    "build:server": "npm run build -w server",
+    "build:app": "npm run build -w app",
+    "start": "npm run start:prod -w server",
+    "lint": "npm run lint --workspaces",
+    "lint:check": "npm run lint:check --workspaces",
+    "format": "npm run format --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "test": "npm run test --workspaces",
+    "test:e2e": "npm run test:e2e -w app",
+    "outdated": "npm outdated --workspaces --include-workspace-root",
+    "audit:check": "npm audit --omit=dev --audit-level=moderate --workspaces --include-workspace-root",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "npm-run-all2": "^9.0.4"
+  },
+  "overrides": {
+    "multer": "2.5.0"
+  }
+}

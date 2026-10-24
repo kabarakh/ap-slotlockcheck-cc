@@ -1,0 +1,2 @@
+npm run audit:check
+npm test
