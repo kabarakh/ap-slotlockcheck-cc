@@ -19,6 +19,7 @@ const tabs = computed(() => [
   { name: 'roster', label: t('room.tabs.roster'), visible: true },
   { name: 'players', label: t('room.tabs.players'), visible: true },
   { name: 'statistics', label: t('room.tabs.statistics'), visible: true },
+  { name: 'unlock-tree', label: t('room.tabs.unlockTree'), visible: true },
   { name: 'my-slots', label: t('room.tabs.mySlots'), visible: isPlayer.value },
   { name: 'admin', label: t('room.tabs.admin'), visible: isAdmin.value },
 ]);

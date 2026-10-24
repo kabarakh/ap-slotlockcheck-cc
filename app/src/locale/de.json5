@@ -44,7 +44,14 @@
     create: 'Raum anlegen',
   },
   room: {
-    tabs: { roster: 'Roster', players: 'Spieler', statistics: 'Statistik', mySlots: 'Meine Slots', admin: 'Admin' },
+    tabs: {
+      roster: 'Roster',
+      players: 'Spieler',
+      statistics: 'Statistik',
+      unlockTree: 'Unlock-Baum',
+      mySlots: 'Meine Slots',
+      admin: 'Admin',
+    },
     live: 'Live',
     offline: 'Offline',
     syncNow: 'Jetzt synchronisieren',
@@ -178,6 +185,20 @@
     csvHint: 'Spalten: slot, locker (optional), unlock_time. Zeiten ohne Zeitzone sind UTC, zum Beispiel 2026-10-20 18:30.',
     import: 'Importieren',
     imported: '{count} Entsperrzeiten geändert.',
+  },
+  unlockTree: {
+    title: 'Unlock-Baum',
+    intro: 'Jeder Slot steht unter dem Slot, der sein Unlock-Item gesendet hat. Der SlotLock-Slot ist die Wurzel. Waren mehrere Unlock-Items nötig, zählt der Absender des letzten.',
+    empty: 'Es gibt noch keine entsperrten Slots.',
+    stillLocked: '{count} Slots sind noch gesperrt und stehen nicht im Baum.',
+    goaled: 'Ziel erreicht',
+    legend: {
+      slotlock: 'SlotLock-Slot',
+      start: 'Frei ab Start',
+      unlocked: 'Entsperrt',
+      partial: 'Teilweise entsperrt',
+      goaled: 'Ziel erreicht',
+    },
   },
   invitations: {
     title: 'Einladungslink',

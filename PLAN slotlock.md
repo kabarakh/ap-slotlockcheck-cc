@@ -179,6 +179,7 @@ Technical names stay unchanged, for example Socket.IO "rooms" (always written "S
 5. My slots: the slots of the logged-in user, with the same columns as 11.2.
 6. Admin area: room settings, lock assignment, admins, warnings, unlock times, CSV import, "Synchronize now".
 7. Make filters and sort functions for all tables.
+8. Unlock tree: a tree graphic. The selected SlotLock slot is the root. Each unlocked slot is below the slot that sent its unlock item. If more than one unlock item was necessary, the sender of the last one counts. If the sender is unknown, the slot is below the SlotLock slot. Start slots are below the SlotLock slot. Slots with reached goal have their own color. Locked slots are not in the tree.
 
 ## 12. Implementation steps
 
@@ -785,3 +786,4 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 13. **Aliases:** Archipelago shows a slot with an alias as "Alias (Name)". Cheese uses this display name. The SlotLock slot data and the unlock items use the original name. The server reads the original names from `GET /api/room_status` (players in the order of the player number) and the aliases from the tracker. It matches a name with the Cheese name, the original name and the parts of the alias display. The roster shows the original name if it differs.
 14. **"Still BK":** the inactivity also uses the Cheese field `last_checked` (8.2).
 15. **Start slots (6.9):** a new lock status `start_slot` separates start slots from slots that are not locked.
+16. **Unlock tree (11.8):** new view, added after the first plan. The app uses `d3-hierarchy` (ISC license) for the layout and draws an SVG.

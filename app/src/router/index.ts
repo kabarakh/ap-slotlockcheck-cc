@@ -32,6 +32,7 @@ const router = createRouter({
         { path: '', name: 'roster', component: () => import('@/views/RosterView.vue') },
         { path: 'players', name: 'players', component: () => import('@/views/PlayerSummaryView.vue') },
         { path: 'statistics', name: 'statistics', component: () => import('@/views/StatisticsView.vue') },
+        { path: 'unlock-tree', name: 'unlock-tree', component: () => import('@/views/UnlockTreeView.vue') },
         {
           path: 'my-slots',
           name: 'my-slots',

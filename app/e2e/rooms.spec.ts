@@ -55,6 +55,17 @@ test('players and statistics show the summaries', async ({ page }) => {
   await expect(page.getByTestId('statistics')).toContainText('1 / 4');
 });
 
+test('the unlock tree shows who unlocked which slot', async ({ page }) => {
+  await ensureRoom(page);
+  await page.goto('/room/big-chill');
+  await page.getByRole('link', { name: 'Unlock tree' }).click();
+  const tree = page.getByTestId('unlock-tree');
+  await expect(tree.locator('[data-slot-name="Locker"]')).toBeVisible();
+  await expect(tree.locator('[data-slot-name="Alice"]')).toBeVisible();
+  await expect(tree.locator('[data-slot-name="Bob"]')).toHaveCount(0);
+  await expect(page.getByText('slots are still locked')).toBeVisible();
+});
+
 test('a player sees the own slots', async ({ page }) => {
   await ensureRoom(page);
   await loginAs(page, PLAYER);

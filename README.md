@@ -38,6 +38,10 @@ The DTO classes of the server are the only source of the API types. The server w
 
 The browser calculates inactivity, player summaries and statistics from the roster. The inactivity counts from the latest of these times: last activity, last "Still BK" click in Cheese, unlock time. It uses the current time, so the colors change without a new synchronization.
 
+### Unlock tree
+
+The unlock tree shows which slot sent the unlock item of which slot. The SlotLock slot is the root. A slot that needed more than one unlock item is below the sender of the last item. Start slots are below the SlotLock slot. The browser builds the tree from the roster; `d3-hierarchy` calculates the layout.
+
 ### Vue components
 
 - **Functional components** get all data from Pinia stores and call store actions. They have no props, no emits, no provide and no inject.

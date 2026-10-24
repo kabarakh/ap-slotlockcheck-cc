@@ -44,7 +44,14 @@
     create: 'Make room',
   },
   room: {
-    tabs: { roster: 'Roster', players: 'Players', statistics: 'Statistics', mySlots: 'My slots', admin: 'Admin' },
+    tabs: {
+      roster: 'Roster',
+      players: 'Players',
+      statistics: 'Statistics',
+      unlockTree: 'Unlock tree',
+      mySlots: 'My slots',
+      admin: 'Admin',
+    },
     live: 'Live',
     offline: 'Offline',
     syncNow: 'Synchronize now',
@@ -172,6 +179,20 @@
     csvHint: 'Columns: slot, locker (optional), unlock_time. Times without a time zone are UTC, for example 2026-10-20 18:30.',
     import: 'Import',
     imported: '{count} unlock times changed.',
+  },
+  unlockTree: {
+    title: 'Unlock tree',
+    intro: 'Each slot is below the slot that sent its unlock item. The SlotLock slot is the root. If more than one unlock item was necessary, the sender of the last one counts.',
+    empty: 'There are no unlocked slots yet.',
+    stillLocked: '{count} slots are still locked and are not in the tree.',
+    goaled: 'Goal reached',
+    legend: {
+      slotlock: 'SlotLock slot',
+      start: 'Open from start',
+      unlocked: 'Unlocked',
+      partial: 'Partially unlocked',
+      goaled: 'Goal reached',
+    },
   },
   invitations: {
     title: 'Invitation link',
