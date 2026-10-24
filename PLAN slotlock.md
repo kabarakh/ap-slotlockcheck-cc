@@ -139,7 +139,7 @@ Technical names stay unchanged, for example Socket.IO "rooms" (always written "S
 
 ## 8. Inactivity
 
-1. Calculate inactivity only for unlocked slots and start slots.
+1. Calculate inactivity only for unlocked slots and start slots. Do not calculate inactivity for slots with reached goal (11.3).
 2. Inactivity = current time minus the latest of these values: the last activity in Cheese, the last "Still BK" click in Cheese (`last_checked`), the activity timer of Archipelago, or the unlock time.
 3. If a value is unknown, use the other values only. Cheese also sets `last_checked` when a player sets the status to BK.
 4. Use the yellow and red limits from the Cheese Tracker as default values.

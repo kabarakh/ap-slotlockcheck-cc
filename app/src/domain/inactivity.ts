@@ -1,4 +1,5 @@
 import type { SlotRow } from '@/api/types';
+import { isGoaled } from './summary';
 
 export type InactivityLevel = 'none' | 'yellow' | 'red';
 
@@ -10,7 +11,7 @@ export interface InactivityLimits {
 const HOUR_MS = 60 * 60 * 1000;
 
 export function inactivityHours(slot: SlotRow, now: Date): number | null {
-  if (slot.lockStatus !== 'unlocked' && slot.lockStatus !== 'start_slot') {
+  if ((slot.lockStatus !== 'unlocked' && slot.lockStatus !== 'start_slot') || isGoaled(slot)) {
     return null;
   }
   const times = [slot.lastActivity, slot.lastChecked, slot.archipelagoActivity, slot.unlockTime]

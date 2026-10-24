@@ -48,6 +48,14 @@ describe('inactivityHours', () => {
     expect(inactivityHours(slot, now)).toBe(10);
   });
 
+  it('is null for slots with reached goal', () => {
+    const lastActivity = '2026-10-01T12:00:00Z';
+    expect(
+      inactivityHours(slotRow({ lockStatus: 'unlocked', completionStatus: 'done', lastActivity }), now),
+    ).toBeNull();
+    expect(inactivityHours(slotRow({ lockStatus: 'start_slot', archipelagoGoal: true, lastActivity }), now)).toBeNull();
+  });
+
   it('is null without any time', () => {
     expect(inactivityHours(slotRow({ lockStatus: 'unlocked' }), now)).toBeNull();
   });
