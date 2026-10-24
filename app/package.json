@@ -17,7 +17,8 @@
     "test:watch": "vitest",
     "typecheck": "vue-tsc --build",
     "lint:check": "oxlint . && eslint . && prettier --check src/ e2e/",
-    "api:generate": "openapi-typescript ../server/openapi.json -o src/api/schema.d.ts"
+    "api:generate": "openapi-typescript ../server/openapi.json -o src/api/schema.d.ts",
+    "cert:dev": "node scripts/dev-certificate.ts"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
@@ -45,6 +46,7 @@
     "@vue/eslint-config-typescript": "^14.9.0",
     "@vue/test-utils": "^2.5.1",
     "@vue/tsconfig": "^0.9.1",
+    "acme-client": "^5.4.0",
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-oxlint": "~1.89.0",

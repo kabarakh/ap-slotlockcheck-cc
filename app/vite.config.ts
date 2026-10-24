@@ -1,6 +1,7 @@
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
 
-import { defineConfig } from 'vite';
+import { defineConfig, type PluginOption } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import basicSsl from '@vitejs/plugin-basic-ssl';
 import vueDevTools from 'vite-plugin-vue-devtools';
@@ -14,8 +15,13 @@ const publicHosts = (process.env.SLOTLOCK_PUBLIC_DEV_HOSTS ?? '')
 const isPublicDev = publicHosts.length > 0;
 const publicPort = Number(process.env.SLOTLOCK_PUBLIC_DEV_PORT ?? 443);
 
+const certificatePath = (extension: string) =>
+  fileURLToPath(new URL(`./.certs/${publicHosts[0] ?? ''}.${extension}`, import.meta.url));
+const hasTrustedCertificate = isPublicDev && existsSync(certificatePath('crt')) && existsSync(certificatePath('key'));
+const httpsPlugins: PluginOption[] = isPublicDev && !hasTrustedCertificate ? [basicSsl({ domains: publicHosts })] : [];
+
 export default defineConfig({
-  plugins: [vue(), vueDevTools(), json5(), ...(isPublicDev ? [basicSsl({ domains: publicHosts })] : [])],
+  plugins: [vue(), vueDevTools(), json5(), ...httpsPlugins],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -24,6 +30,9 @@ export default defineConfig({
   server: {
     host: isPublicDev ? true : 'localhost',
     allowedHosts: publicHosts,
+    https: hasTrustedCertificate
+      ? { cert: readFileSync(certificatePath('crt')), key: readFileSync(certificatePath('key')) }
+      : undefined,
     hmr: isPublicDev ? { clientPort: publicPort } : undefined,
     proxy: {
       '/api': { target: serverUrl },

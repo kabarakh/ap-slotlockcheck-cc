@@ -77,7 +77,18 @@ The app runs on `http://localhost:5173`. Vite sends `/api` and `/socket.io` to t
 3. Forward the external port 443 in the router to the internal port 5173 of this computer and allow the port 5173 in the firewall. If you use another external port, set `SLOTLOCK_PUBLIC_DEV_PORT` to it, so that the live reload of Vite uses the correct port.
 4. Stop the test mode and close the port after the test. The Vite development server is not made for the internet.
 
-In this mode, Vite listens on all network interfaces and uses HTTPS with a self-signed certificate (`@vitejs/plugin-basic-ssl`). The browser shows a warning once. The production server uses a Let's Encrypt certificate (see `deploy/README.md`).
+In this mode, Vite listens on all network interfaces and uses HTTPS. Without a certificate in `app/.certs`, Vite uses a self-signed certificate (`@vitejs/plugin-basic-ssl`). Browsers show a warning, and some security programs (for example Bitdefender) block the page.
+
+#### Trusted certificate from Let's Encrypt
+
+1. Forward the external port 80 in the router to the port 80 of this computer and allow the port 80 in the firewall. Another local port is possible with `ACME_HTTP_PORT`.
+2. Run `npm run cert:dev`. Optional: `ACME_EMAIL` for expiry mails, `-- --staging` for a test with the Let's Encrypt test system.
+3. The script gets the certificate with the HTTP-01 challenge and saves it in `app/.certs` (not in version control). Running the script accepts the Let's Encrypt Subscriber Agreement.
+4. Restart `npm run dev:public`. Vite uses the certificate automatically.
+5. The certificate is valid for 90 days. Run `npm run cert:dev` again when less than 30 days are left (the script renews only then, or with `-- --force`).
+6. Close the port 80 again after the certificate request.
+
+The production server uses its own Let's Encrypt certificate through nginx (see `deploy/README.md`).
 
 ### Scripts
 
@@ -85,6 +96,7 @@ In this mode, Vite listens on all network interfaces and uses HTTPS with a self-
 |---|---|
 | `npm run dev` | Server and app in watch mode |
 | `npm run dev:public` | Same, reachable through the DynDNS name (public test mode) |
+| `npm run cert:dev` | Gets a Let's Encrypt certificate for the public test mode |
 | `npm run build` | Server build, OpenAPI export, type generation, app build |
 | `npm run lint` / `npm run lint:check` | Lint with fixes / without changes |
 | `npm run typecheck` | Type check of both workspaces |

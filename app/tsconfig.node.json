@@ -1,6 +1,6 @@
 {
   "extends": "@tsconfig/node26/tsconfig.json",
-  "include": ["vite.config.*", "vitest.config.*", "playwright.config.*", "eslint.config.*"],
+  "include": ["vite.config.*", "vitest.config.*", "playwright.config.*", "eslint.config.*", "scripts/**/*.ts"],
   "compilerOptions": {
     "module": "preserve",
     "moduleResolution": "bundler",

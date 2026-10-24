@@ -794,3 +794,4 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 17. **Statistics from the second Google sheet:** slot names in the player summary, players by number of unlocked slots, column "has unlocked", hint for slots without Discord user, goal and activity timer from Archipelago.
 18. **Public test mode:** `npm run dev:public` makes the development environment reachable through the DynDNS name. The new variable `ADDITIONAL_ORIGINS` permits more origins for the origin check (15.8.5).
 19. **Room list (11.1):** the list shows only the own rooms of the user. Other rooms are public, but only with their link.
+20. **Certificate for the public test mode:** `npm run cert:dev` gets a Let's Encrypt certificate with `acme-client` (HTTP-01). `acme-client` uses `node-forge`, which has a known weakness in the verification of RSA signatures. The script does not verify signatures from others, and `acme-client` is only a development dependency.
