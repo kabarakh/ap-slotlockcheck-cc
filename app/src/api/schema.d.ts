@@ -425,7 +425,6 @@ export interface components {
             notes: string;
             isSlotLock: boolean;
             isSelectedSlotLock: boolean;
-            warningCount: number;
             unlocksSent: number;
         };
         /** @enum {string} */

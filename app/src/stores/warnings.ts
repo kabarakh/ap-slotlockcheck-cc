@@ -18,6 +18,18 @@ export const useWarningsStore = defineStore('warnings', () => {
 
   const canSave = computed(() => draft.value.slotId !== null && draft.value.text.trim().length > 0 && !busy.value);
 
+  const countBySlotId = computed(() => {
+    const counts = new Map<number, number>();
+    for (const warning of warnings.value) {
+      counts.set(warning.slotId, (counts.get(warning.slotId) ?? 0) + 1);
+    }
+    return counts;
+  });
+
+  const clear = () => {
+    warnings.value = [];
+  };
+
   const slugPath = () => ({ params: { path: { slug: useCurrentRoomStore().slug ?? '' } } });
 
   const startDraft = (slotId: number | null = null) => {
@@ -66,5 +78,5 @@ export const useWarningsStore = defineStore('warnings', () => {
     }
   };
 
-  return { warnings, draft, busy, canSave, startDraft, fetch, save, remove };
+  return { warnings, draft, busy, canSave, countBySlotId, clear, startDraft, fetch, save, remove };
 });

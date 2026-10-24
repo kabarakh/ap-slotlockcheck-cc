@@ -36,7 +36,6 @@ export interface RosterInput {
   slots: RosterSlot[];
   locks: StoredLock[];
   unlocks: (Omit<StoredUnlock, 'timeSource'> & { timeSource: string })[];
-  warningCountBySlotId: Map<number, number>;
 }
 
 const toIso = (date: Date | null): string | null => date?.toISOString() ?? null;
@@ -88,7 +87,6 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
         })),
         unlockTime: toIso(state?.unlockTime ?? null),
         unlockTimeSource: state?.unlockTimeSource ?? null,
-        warningCount: input.warningCountBySlotId.get(slot.id) ?? 0,
         unlocksSent: unlocks.filter((unlock) => unlock.senderSlotId === slot.id).length,
       };
     });

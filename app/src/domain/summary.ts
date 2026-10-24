@@ -64,7 +64,10 @@ export function playerKey(slot: SlotRow): string {
   return slot.discordUserId ?? `name:${slot.discordName ?? ''}`;
 }
 
-export function summarizePlayers(slots: SlotRow[]): PlayerSummary[] {
+export function summarizePlayers(
+  slots: SlotRow[],
+  warningCountBySlotId: ReadonlyMap<number, number> = new Map(),
+): PlayerSummary[] {
   const players = new Map<string, PlayerSummary>();
   for (const slot of slots.filter((candidate) => !candidate.isSlotLock)) {
     const key = playerKey(slot);
@@ -82,7 +85,7 @@ export function summarizePlayers(slots: SlotRow[]): PlayerSummary[] {
       lockedNames: [],
     };
     current.slotCount += 1;
-    current.warningCount += slot.warningCount;
+    current.warningCount += warningCountBySlotId.get(slot.id) ?? 0;
     if (slot.lockStatus === 'unlocked') {
       current.unlockedCount += 1;
       current.unlockedNames.push(slot.name);

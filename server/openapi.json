@@ -1172,9 +1172,6 @@
           "isSelectedSlotLock": {
             "type": "boolean"
           },
-          "warningCount": {
-            "type": "number"
-          },
           "unlocksSent": {
             "type": "number"
           }
@@ -1204,7 +1201,6 @@
           "notes",
           "isSlotLock",
           "isSelectedSlotLock",
-          "warningCount",
           "unlocksSent"
         ]
       },

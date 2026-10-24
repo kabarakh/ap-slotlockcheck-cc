@@ -6,9 +6,11 @@ import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
 import SlotNameList from '@/components/ui/SlotNameList.vue';
 import type { PlayerSummary } from '@/domain/summary';
+import { useCurrentRoomStore } from '@/stores/current-room';
 import { useTableFiltersStore } from '@/stores/table-filters';
 
 const { playerText, filteredPlayers } = storeToRefs(useTableFiltersStore());
+const { isAdmin } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 </script>
 
@@ -45,7 +47,7 @@ const { t } = useI18n();
           <SlotNameList :count="(data as PlayerSummary).lockedCount" :names="(data as PlayerSummary).lockedNames" />
         </template>
       </Column>
-      <Column field="warningCount" :header="t('players.columns.warnings')" sortable />
+      <Column v-if="isAdmin" field="warningCount" :header="t('players.columns.warnings')" sortable />
     </DataTable>
   </section>
 </template>

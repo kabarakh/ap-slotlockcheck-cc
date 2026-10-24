@@ -9,12 +9,16 @@ import MultiSelect from 'primevue/multiselect';
 import type { LockStatus } from '@/api/types';
 import SlotTable from '@/components/ui/SlotTable.vue';
 import type { InactivityLevel } from '@/domain/inactivity';
+import { useCurrentRoomStore } from '@/stores/current-room';
 import { useInactivityStore } from '@/stores/inactivity';
+import { useWarningsStore } from '@/stores/warnings';
 import { useTableFiltersStore } from '@/stores/table-filters';
 
 const filters = useTableFiltersStore();
 const { roster, filteredRoster } = storeToRefs(filters);
 const { hoursBySlotId, levelBySlotId } = storeToRefs(useInactivityStore());
+const { isAdmin } = storeToRefs(useCurrentRoomStore());
+const { countBySlotId } = storeToRefs(useWarningsStore());
 const { t } = useI18n();
 
 const lockStatusOptions = computed(() =>
@@ -60,6 +64,7 @@ const inactivityOptions = computed(() =>
       :slots="filteredRoster"
       :hours-by-slot-id="hoursBySlotId"
       :level-by-slot-id="levelBySlotId"
+      :warning-count-by-slot-id="isAdmin ? countBySlotId : null"
       test-id="roster-table"
     />
   </section>

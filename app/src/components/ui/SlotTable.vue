@@ -5,6 +5,7 @@ import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import type { SlotRow } from '@/api/types';
 import type { InactivityLevel } from '@/domain/inactivity';
+import { isGoaled } from '@/domain/summary';
 import CheeseStatusTag from './CheeseStatusTag.vue';
 import InactivityText from './InactivityText.vue';
 import LockStatusTag from './LockStatusTag.vue';
@@ -15,6 +16,7 @@ const props = defineProps<{
   slots: SlotRow[];
   hoursBySlotId: Map<number, number | null>;
   levelBySlotId: Map<number, InactivityLevel>;
+  warningCountBySlotId: ReadonlyMap<number, number> | null;
   testId: string;
 }>();
 const { t } = useI18n();
@@ -23,7 +25,11 @@ const otherArchipelagoName = (slot: SlotRow): string | null =>
   slot.archipelagoName && !slot.name.includes(slot.archipelagoName) ? slot.archipelagoName : null;
 
 const rows = computed(() =>
-  props.slots.map((slot) => ({ ...slot, inactivityHours: props.hoursBySlotId.get(slot.id) ?? -1 })),
+  props.slots.map((slot) => ({
+    ...slot,
+    inactivityHours: props.hoursBySlotId.get(slot.id) ?? -1,
+    warningCount: props.warningCountBySlotId?.get(slot.id) ?? 0,
+  })),
 );
 </script>
 
@@ -79,7 +85,8 @@ const rows = computed(() =>
     </Column>
     <Column field="progressionStatus" :header="t('slot.columns.progression')" sortable>
       <template #body="{ data }">
-        <CheeseStatusTag kind="progression" :value="(data as SlotRow).progressionStatus" />
+        <span v-if="isGoaled(data as SlotRow)" class="app-muted">{{ t('common.none') }}</span>
+        <CheeseStatusTag v-else kind="progression" :value="(data as SlotRow).progressionStatus" />
       </template>
     </Column>
     <Column field="completionStatus" :header="t('slot.columns.completion')" sortable>
@@ -94,7 +101,7 @@ const rows = computed(() =>
     </Column>
     <Column field="notes" :header="t('slot.columns.notes')" />
     <Column field="unlocksSent" :header="t('slot.columns.unlocksSent')" sortable />
-    <Column field="warningCount" :header="t('slot.columns.warnings')" sortable />
+    <Column v-if="props.warningCountBySlotId" field="warningCount" :header="t('slot.columns.warnings')" sortable />
   </DataTable>
 </template>
 

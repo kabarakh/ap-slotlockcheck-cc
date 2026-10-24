@@ -103,7 +103,7 @@
     csv: 'Aus CSV importiert',
     unknown: 'Zeit unbekannt',
   },
-  progression: { unknown: 'Unbekannt', unblocked: 'Frei', bk: 'BK', go: 'Go', soft_bk: 'Soft BK' },
+  progression: { unknown: 'Unbekannt', unblocked: 'Nicht blockiert', bk: 'BK', go: 'Go', soft_bk: 'Soft BK' },
   completion: {
     incomplete: 'Offen',
     all_checks: 'Alle Checks',

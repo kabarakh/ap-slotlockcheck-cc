@@ -42,6 +42,7 @@ const lockStatusOptions = computed(() =>
       :slots="filteredMySlots"
       :hours-by-slot-id="hoursBySlotId"
       :level-by-slot-id="levelBySlotId"
+      :warning-count-by-slot-id="null"
       test-id="my-slots-table"
     />
   </section>

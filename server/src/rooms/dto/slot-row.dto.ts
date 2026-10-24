@@ -90,6 +90,5 @@ export class SlotRowDto {
   @ApiProperty({ enum: UNLOCK_TIME_SOURCES, enumName: 'UnlockTimeSource', nullable: true })
   unlockTimeSource: UnlockTimeSource | null;
 
-  warningCount: number;
   unlocksSent: number;
 }

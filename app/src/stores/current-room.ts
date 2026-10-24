@@ -12,6 +12,7 @@ import type {
 import { useAuthStore } from './auth';
 import { useLiveStore } from './live';
 import { useUiStore } from './ui';
+import { useWarningsStore } from './warnings';
 
 export const useCurrentRoomStore = defineStore('currentRoom', () => {
   const slug = ref<string | null>(null);
@@ -39,6 +40,14 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     membership.value = await unwrap(api.GET('/api/rooms/{slug}/me', { params: { path: { slug: roomSlug } } }));
   };
 
+  const refreshWarnings = async (): Promise<void> => {
+    if (membership.value.role === 'admin') {
+      await useWarningsStore().fetch();
+    } else {
+      useWarningsStore().clear();
+    }
+  };
+
   const open = async (roomSlug: string): Promise<boolean> => {
     if (slug.value === roomSlug && room.value) {
       return true;
@@ -57,6 +66,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
       room.value = detail;
       slots.value = roster;
       useLiveStore().joinRoom(roomSlug);
+      await refreshWarnings();
       return true;
     } catch (error) {
       room.value = null;
@@ -86,6 +96,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     room.value = null;
     slots.value = [];
     membership.value = { role: 'visitor', isOwner: false };
+    useWarningsStore().clear();
   };
 
   const applySynced = (payload: RoomSyncedPayload) => {
@@ -110,6 +121,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     if (payload.slug === slug.value) {
       room.value = payload.room;
       slots.value = payload.slots;
+      void refreshWarnings();
     }
   };
 

@@ -95,11 +95,12 @@ test('a player sees the own slots', async ({ page }) => {
   await expect(row(table, 'Alice')).toHaveCount(0);
 });
 
-test('an admin gives a warning and the roster shows it live', async ({ page, browser }) => {
+test('an admin gives a warning that only admins see', async ({ page, browser }) => {
   await ensureRoom(page);
-  const visitor = await browser.newPage();
-  await visitor.goto('/room/big-chill');
-  await expect(visitor.getByTestId('live-indicator')).toHaveText('Live');
+  const admin = await browser.newPage();
+  await loginAs(admin, OWNER);
+  await admin.goto('/room/big-chill');
+  await expect(admin.getByTestId('live-indicator')).toHaveText('Live');
 
   await loginAs(page, OWNER);
   await page.goto('/room/big-chill/admin');
@@ -111,7 +112,16 @@ test('an admin gives a warning and the roster shows it live', async ({ page, bro
   await page.getByTestId('save-warning').click();
   await expect(page.getByTestId('warnings-table')).toContainText('No activity');
 
-  await expect(row(visitor.getByTestId('roster-table'), 'Davey (Dave)')).toContainText('1');
+  const adminRoster = admin.getByTestId('roster-table');
+  await expect(adminRoster.getByRole('columnheader', { name: 'Warnings' })).toBeVisible();
+  await expect(row(adminRoster, 'Davey (Dave)').locator('td').last()).toHaveText('1');
+  await admin.close();
+
+  const visitor = await browser.newPage();
+  await visitor.goto('/room/big-chill');
+  await expect(visitor.getByTestId('roster-table').getByRole('columnheader', { name: 'Warnings' })).toHaveCount(0);
+  await visitor.goto('/room/big-chill/players');
+  await expect(visitor.getByTestId('players-table').getByRole('columnheader', { name: 'Warnings' })).toHaveCount(0);
   await visitor.close();
 });
 

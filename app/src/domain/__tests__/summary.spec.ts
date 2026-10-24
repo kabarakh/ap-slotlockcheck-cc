@@ -4,7 +4,7 @@ import { slotRow } from './fixtures';
 
 const slots = [
   slotRow({ id: 1, name: 'Locker', isSlotLock: true, discordUserId: '1', discordName: 'alice' }),
-  slotRow({ id: 2, name: 'A', discordUserId: '1', discordName: 'alice', lockStatus: 'unlocked', warningCount: 1 }),
+  slotRow({ id: 2, name: 'A', discordUserId: '1', discordName: 'alice', lockStatus: 'unlocked' }),
   slotRow({ id: 3, name: 'B', discordUserId: '2', discordName: 'bob', lockStatus: 'locked' }),
   slotRow({
     id: 4,
@@ -35,7 +35,7 @@ describe('isGoaled', () => {
 
 describe('summarizePlayers', () => {
   it('summarizes the slots of each player without SlotLock slots', () => {
-    expect(summarizePlayers(slots)).toEqual([
+    expect(summarizePlayers(slots, new Map([[2, 1]]))).toEqual([
       expect.objectContaining({ name: 'alice', slotCount: 1, unlockedCount: 1, lockedCount: 0, warningCount: 1 }),
       expect.objectContaining({ name: 'bob', slotCount: 2, unlockedCount: 0, goaledCount: 1, lockedCount: 2 }),
       expect.objectContaining({ name: 'carol', slotCount: 1, goaledCount: 1, lockedCount: 0 }),

@@ -151,7 +151,7 @@ Technical names stay unchanged, for example Socket.IO "rooms" (always written "S
 1. Admins give warnings manually.
 2. A warning has a slot, a date, an admin, and a text.
 3. An admin can delete a warning.
-4. The application shows the number of warnings for each slot and for each player.
+4. The application shows the number of warnings for each slot and for each player. Only admins see warnings. The public roster and the live messages do not contain them.
 
 ## 10. Users and roles
 
@@ -795,3 +795,5 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 18. **Public test mode:** `npm run dev:public` makes the development environment reachable through the DynDNS name. The new variable `ADDITIONAL_ORIGINS` permits more origins for the origin check (15.8.5).
 19. **Room list (11.1):** the list shows only the own rooms of the user. Other rooms are public, but only with their link.
 20. **Certificate for the public test mode:** `npm run cert:dev` gets a Let's Encrypt certificate with `acme-client` (HTTP-01). `acme-client` uses `node-forge`, which has a known weakness in the verification of RSA signatures. The script does not verify signatures from others, and `acme-client` is only a development dependency.
+21. **Warnings only for admins (9.4):** the roster has no warning count. Admins load the warnings from the protected endpoint and see the counts in roster and player summary.
+22. **Progression of finished slots:** for a slot with reached goal, the roster shows no progression status, because players do not update it after the goal.

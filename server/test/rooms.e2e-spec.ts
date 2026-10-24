@@ -141,7 +141,11 @@ describe('rooms (integration)', () => {
     const warning = { slotId: rows['Davey (Dave)']?.id, date: '2026-10-24T10:00:00Z', text: 'Inactive' };
     await request(server).post('/api/rooms/big-chill/warnings').set('Cookie', playerCookie).send(warning).expect(403);
     await request(server).post('/api/rooms/big-chill/warnings').set('Cookie', ownerCookie).send(warning).expect(201);
-    expect((await roster())['Davey (Dave)']?.warningCount).toBe(1);
+    expect((await roster())['Davey (Dave)']).not.toHaveProperty('warningCount');
+    await request(server).get('/api/rooms/big-chill/warnings').set('Cookie', playerCookie).expect(403);
+    await request(server).get('/api/rooms/big-chill/warnings').expect(403);
+    const warnings = await request(server).get('/api/rooms/big-chill/warnings').set('Cookie', ownerCookie).expect(200);
+    expect(warnings.body).toHaveLength(1);
   });
 
   it('imports unlock times from CSV', async () => {

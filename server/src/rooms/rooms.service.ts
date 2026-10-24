@@ -62,17 +62,15 @@ export class RoomsService {
   }
 
   async getRosterForRoom(roomId: number): Promise<SlotRowDto[]> {
-    const [slots, locks, unlocks, warnings] = await Promise.all([
+    const [slots, locks, unlocks] = await Promise.all([
       this.prisma.slot.findMany({ where: { roomId } }),
       this.prisma.lockAssignment.findMany({ where: { roomId, notLocked: false } }),
       this.prisma.unlockItem.findMany({ where: { roomId } }),
-      this.prisma.warning.groupBy({ by: ['slotId'], where: { roomId }, _count: { _all: true } }),
     ]);
     return buildRoster({
       slots,
       locks,
       unlocks,
-      warningCountBySlotId: new Map(warnings.map((warning) => [warning.slotId, warning._count._all])),
     });
   }
 

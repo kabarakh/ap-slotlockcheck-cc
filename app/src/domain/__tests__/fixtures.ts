@@ -26,7 +26,6 @@ export function slotRow(overrides: Partial<SlotRow>): SlotRow {
     locks: [],
     unlockTime: null,
     unlockTimeSource: null,
-    warningCount: 0,
     unlocksSent: 0,
     ...overrides,
   };
