@@ -113,13 +113,12 @@ test('an admin gives a warning that only admins see', async ({ page, browser }) 
   await expect(page.getByTestId('warnings-table')).toContainText('No activity');
 
   const adminRoster = admin.getByTestId('roster-table');
-  await expect(adminRoster.getByRole('columnheader', { name: 'Warnings' })).toBeVisible();
-  await expect(row(adminRoster, 'Davey (Dave)').locator('td').last()).toHaveText('1');
+  await expect(row(adminRoster, 'Davey (Dave)').getByTestId('warning-badge')).toHaveText('1');
   await admin.close();
 
   const visitor = await browser.newPage();
   await visitor.goto('/room/big-chill');
-  await expect(visitor.getByTestId('roster-table').getByRole('columnheader', { name: 'Warnings' })).toHaveCount(0);
+  await expect(visitor.getByTestId('roster-table').getByTestId('warning-badge')).toHaveCount(0);
   await visitor.goto('/room/big-chill/players');
   await expect(visitor.getByTestId('players-table').getByRole('columnheader', { name: 'Warnings' })).toHaveCount(0);
   await visitor.close();

@@ -71,6 +71,7 @@
   },
   slot: {
     empty: 'No slots agree with the filters.',
+    warningCount: '{count} warning(s)',
     columns: {
       position: '#',
       name: 'Slot',
@@ -83,7 +84,7 @@
       checks: 'Checks',
       progression: 'Progression',
       completion: 'Completion',
-      availability: 'Availability',
+      cheeseStatus: 'Cheese status',
       notes: 'Notes',
       warnings: 'Warnings',
       unlocksSent: 'Has unlocked',

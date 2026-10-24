@@ -71,6 +71,7 @@
   },
   slot: {
     empty: 'Kein Slot passt zu den Filtern.',
+    warningCount: '{count} Verwarnung(en)',
     columns: {
       position: '#',
       name: 'Slot',
@@ -83,7 +84,7 @@
       checks: 'Checks',
       progression: 'Fortschritt',
       completion: 'Abschluss',
-      availability: 'Verfügbarkeit',
+      cheeseStatus: 'Cheese-Status',
       notes: 'Notizen',
       warnings: 'Verwarnungen',
       unlocksSent: 'Hat entsperrt',

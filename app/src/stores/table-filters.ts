@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import type { LockStatus, SlotRow } from '@/api/types';
+import { formatGameName } from '@/domain/game-name';
 import type { InactivityLevel } from '@/domain/inactivity';
 import { useCurrentRoomStore } from './current-room';
 import { useInactivityStore } from './inactivity';
@@ -29,6 +30,7 @@ function matchesText(slot: SlotRow, text: string): boolean {
     slot.name,
     slot.archipelagoName ?? '',
     slot.game,
+    formatGameName(slot.game),
     slot.discordName ?? '',
     slot.notes,
     ...slot.locks.map((lock) => lock.senderName ?? ''),

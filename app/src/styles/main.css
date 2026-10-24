@@ -1,6 +1,5 @@
 :root {
   --app-gap: 1rem;
-  --app-max-width: 96rem;
   font-family:
     Inter,
     system-ui,
@@ -26,9 +25,7 @@ a {
 }
 
 .app-main {
-  max-width: var(--app-max-width);
-  margin: 0 auto;
-  padding: var(--app-gap);
+  padding: var(--app-gap) 1rem;
   display: flex;
   flex-direction: column;
   gap: var(--app-gap);
