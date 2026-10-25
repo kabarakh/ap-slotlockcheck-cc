@@ -97,6 +97,7 @@ The production server uses its own Let's Encrypt certificate through nginx (see 
 | `npm run dev` | Server and app in watch mode |
 | `npm run dev:public` | Same, reachable through the DynDNS name (public test mode) |
 | `npm run cert:dev` | Gets a Let's Encrypt certificate for the public test mode |
+| `npm run icons` | Makes `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` and `logo-512.png` from `app/public/favicon.svg` and `app/public/logo.svg` |
 | `npm run build` | Server build, OpenAPI export, type generation, app build |
 | `npm run lint` / `npm run lint:check` | Lint with fixes / without changes |
 | `npm run typecheck` | Type check of both workspaces |
@@ -122,6 +123,10 @@ Husky runs lint and type check before each commit, and the audit and the tests b
 - npm: no funding messages and no update notifier (`.npmrc`).
 - Prisma: no telemetry (`CHECKPOINT_DISABLE=1`).
 - `@scarf/scarf` (install analytics of a Swagger UI dependency) is blocked in `allowScripts`.
+
+## Logo and favicon
+
+The logo and the favicon use the six colored circles of the Archipelago mod icon. The logo replaces the top circle with a padlock (the SlotLock slot). The favicon has a padlock in the center. The gaps between the circles are transparent. Ask the Archipelago community before a public release, because the design is based on their icon.
 
 ## Licenses
 

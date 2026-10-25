@@ -30,7 +30,8 @@
     "prepare": "husky",
     "prototype:report": "npm run prototype:report -w server --",
     "dev:public": "cross-env SLOTLOCK_PUBLIC_DEV_HOSTS=slotlock.example.com run-p dev:server dev:app",
-    "cert:dev": "cross-env SLOTLOCK_PUBLIC_DEV_HOSTS=slotlock.example.com npm run cert:dev -w app"
+    "cert:dev": "cross-env SLOTLOCK_PUBLIC_DEV_HOSTS=slotlock.example.com npm run cert:dev -w app",
+    "icons": "npm run icons -w app"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",

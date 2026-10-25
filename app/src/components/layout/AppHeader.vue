@@ -23,7 +23,10 @@ const colorModes: ColorMode[] = ['system', 'light', 'dark'];
 
 <template>
   <header class="app-header">
-    <RouterLink to="/" class="app-brand"><i class="pi pi-lock" /> {{ t('app.title') }}</RouterLink>
+    <RouterLink to="/" class="app-brand">
+      <img src="/logo.svg" alt="" class="app-logo" width="28" height="28" />
+      {{ t('app.title') }}
+    </RouterLink>
     <nav class="app-toolbar">
       <RouterLink :to="{ name: 'rooms' }">{{ t('app.rooms') }}</RouterLink>
       <RouterLink :to="{ name: 'room-create' }">{{ t('app.newRoom') }}</RouterLink>
@@ -70,7 +73,14 @@ const colorModes: ColorMode[] = ['system', 'light', 'dark'];
   border-bottom: 1px solid var(--p-content-border-color);
 }
 
+.app-logo {
+  display: block;
+}
+
 .app-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 700;
   font-size: 1.125rem;
   text-decoration: none;

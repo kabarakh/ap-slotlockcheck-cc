@@ -18,7 +18,8 @@
     "typecheck": "vue-tsc --build",
     "lint:check": "oxlint . && eslint . && prettier --check src/ e2e/",
     "api:generate": "openapi-typescript ../server/openapi.json -o src/api/schema.d.ts",
-    "cert:dev": "node scripts/dev-certificate.ts"
+    "cert:dev": "node scripts/dev-certificate.ts",
+    "icons": "node scripts/icons.ts"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
+    "@resvg/resvg-js": "^2.6.2",
     "@tsconfig/node26": "^26.0.1",
     "@types/d3-hierarchy": "^3.1.7",
     "@types/jsdom": "^30.0.0",
