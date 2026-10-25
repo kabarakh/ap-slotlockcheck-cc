@@ -10,7 +10,7 @@ import { useUiStore, type ColorMode, type Locale } from '@/stores/ui';
 const auth = useAuthStore();
 const ui = useUiStore();
 const { user, isLoggedIn } = storeToRefs(auth);
-const { locale, colorMode } = storeToRefs(ui);
+const { locale, colorMode, isDark } = storeToRefs(ui);
 const { t } = useI18n();
 const route = useRoute();
 
@@ -24,7 +24,7 @@ const colorModes: ColorMode[] = ['system', 'light', 'dark'];
 <template>
   <header class="app-header">
     <RouterLink to="/" class="app-brand">
-      <img src="/logo.svg" alt="" class="app-logo" width="28" height="28" />
+      <img :src="isDark ? '/logo-dark.svg' : '/logo.svg'" alt="" class="app-logo" width="28" height="28" />
       {{ t('app.title') }}
     </RouterLink>
     <nav class="app-toolbar">

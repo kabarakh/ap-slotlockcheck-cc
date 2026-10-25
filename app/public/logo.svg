@@ -1,33 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
     <g id="cut-lock">
-      <rect x="21" y="13" width="22" height="15.5" rx="4" stroke="#000" stroke-width="3" />
-      <path d="M26 13 V8.5 a6 6 0 0 1 12 0 V13" fill="none" stroke="#000" stroke-width="6.2" />
+      <rect x="18" y="28" width="28" height="22" rx="4.5" stroke="#000" stroke-width="5" />
+      <path d="M24.5 28 V21.5 a7.5 7.5 0 0 1 15 0 V28" fill="none" stroke="#000" stroke-width="10" />
     </g>
     <mask id="m-yellow">
       <rect width="64" height="64" fill="#fff" />
       <circle cx="16.41" cy="41" r="12.7" />
+      <circle cx="32" cy="14" r="12.7" />
       <use href="#cut-lock" />
     </mask>
     <mask id="m-green">
       <rect width="64" height="64" fill="#fff" />
       <circle cx="47.59" cy="41" r="12.7" />
+      <circle cx="32" cy="14" r="12.7" />
       <use href="#cut-lock" />
     </mask>
     <mask id="m-blue">
       <rect width="64" height="64" fill="#fff" />
       <circle cx="32" cy="50" r="12.7" />
+      <use href="#cut-lock" />
     </mask>
     <mask id="m-lilac">
       <rect width="64" height="64" fill="#fff" />
       <circle cx="32" cy="50" r="12.7" />
+      <use href="#cut-lock" />
+    </mask>
+    <mask id="m-other">
+      <rect width="64" height="64" fill="#fff" />
+      <use href="#cut-lock" />
+    </mask>
+    <mask id="m-keyhole">
+      <rect width="64" height="64" fill="#fff" />
+      <circle cx="32" cy="36.5" r="3" />
+      <rect x="30.6" y="36.5" width="2.8" height="7" rx="1" />
     </mask>
   </defs>
   <circle cx="16.41" cy="23" r="11.2" fill="#eee391" mask="url(#m-yellow)" />
   <circle cx="47.59" cy="23" r="11.2" fill="#75c275" mask="url(#m-green)" />
   <circle cx="16.41" cy="41" r="11.2" fill="#767ebd" mask="url(#m-blue)" />
   <circle cx="47.59" cy="41" r="11.2" fill="#ca94c2" mask="url(#m-lilac)" />
-  <path d="M26 13 V8.5 a6 6 0 0 1 12 0 V13" fill="none" stroke="#c97682" stroke-width="3.2" />
-  <rect x="21" y="13" width="22" height="15.5" rx="4" fill="#c97682" />
-  <circle cx="32" cy="50" r="11.2" fill="#d9a07d" />
+  <circle cx="32" cy="14" r="11.2" fill="#c97682" mask="url(#m-other)" />
+  <circle cx="32" cy="50" r="11.2" fill="#d9a07d" mask="url(#m-other)" />
+  <path fill="none" stroke="#3b3f52" d="M24.5 28 V21.5 a7.5 7.5 0 0 1 15 0 V28" stroke-width="5" />
+  <rect fill="#3b3f52" x="18" y="28" width="28" height="22" rx="4.5" mask="url(#m-keyhole)" />
 </svg>

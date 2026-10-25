@@ -8,8 +8,8 @@ const ICO_SIZES = [16, 32, 48];
 
 const publicDirectory = join(import.meta.dirname, '..', 'public');
 
-export function renderPng(svg: string, size: number): Buffer {
-  return new Resvg(svg, { fitTo: { mode: 'width', value: size } }).render().asPng();
+export function renderPng(svg: string, size: number, background?: string): Buffer {
+  return new Resvg(svg, { fitTo: { mode: 'width', value: size }, background }).render().asPng();
 }
 
 export function createIco(images: { size: number; png: Buffer }[]): Buffer {
@@ -42,7 +42,7 @@ function writeIcons(): void {
     createIco(ICO_SIZES.map((size) => ({ size, png: renderPng(favicon, size) }))),
   );
   writeFileSync(join(publicDirectory, 'favicon-32.png'), renderPng(favicon, 32));
-  writeFileSync(join(publicDirectory, 'apple-touch-icon.png'), renderPng(logo, 180));
+  writeFileSync(join(publicDirectory, 'apple-touch-icon.png'), renderPng(logo, 180, '#ffffff'));
   writeFileSync(join(publicDirectory, 'logo-512.png'), renderPng(logo, 512));
 }
 

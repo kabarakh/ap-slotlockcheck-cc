@@ -126,7 +126,7 @@ Husky runs lint and type check before each commit, and the audit and the tests b
 
 ## Logo and favicon
 
-The logo and the favicon use the six colored circles of the Archipelago mod icon. The logo replaces the top circle with a padlock (the SlotLock slot). The favicon has a padlock in the center. The gaps between the circles are transparent. Ask the Archipelago community before a public release, because the design is based on their icon.
+The logo and the favicon show the six colored circles of the Archipelago mod icon with a large padlock in front. The gaps between the circles and around the padlock are transparent. The padlock is dark on light backgrounds and light on dark backgrounds: the favicon follows the color scheme of the system, and the header shows `logo.svg` or `logo-dark.svg` for the color mode of the app. The Apple touch icon has a white background, because iOS shows transparent areas as black. Ask the Archipelago community before a public release, because the design is based on their icon.
 
 ## Licenses
 
