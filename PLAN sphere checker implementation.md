@@ -82,8 +82,9 @@ model SeedLocation {
    - `visitorsSeeLocations Boolean @default(false)` (F 8, "Visitors").
    - `playersMarkFiller Boolean @default(false)` (F 1.5, F 5.2).
 2. `RoomAdmin`: new field `role String @default("admin")` with the values `admin` and `helper`. The owner is always `admin`.
-3. `Datapackage`: new field `locationNames String?`. The upload fills `itemNames` and `locationNames` from the datapackage of the multidata file. The checksum stays the key.
-4. Migration name: `sphere_checker`.
+3. `AdminInvitation`: new field `role String @default("admin")` (6.4.3).
+4. `Datapackage`: new field `locationNames String?`. The upload fills `itemNames` and `locationNames` from the datapackage of the multidata file. The checksum stays the key.
+5. Migration name: `sphere_checker`.
 
 ### 3.3 Room roles
 
@@ -102,7 +103,7 @@ Folder `server/src/seed`. Files from the Nest CLI where possible (main 15.1.5).
 |---|---|
 | `seed.module.ts` | Module |
 | `seed.controller.ts` | Endpoints 4.6 |
-| `seed.service.ts` | Upload, check against the room, save, delete |
+| `seed.service.ts` | Upload, check against the room, save |
 | `multidata.reader.ts` | Pure function: `Buffer` → `MultidataContent` (4.3) |
 | `pickle/pickle-decoder.ts` | Restricted pickle decoder (4.2) |
 | `pickle/pickle-decoder.spec.ts` | Tests (4.7) |
@@ -149,12 +150,13 @@ Folder `server/src/seed`. Files from the Nest CLI where possible (main 15.1.5).
 | Method and path | Role | Function |
 |---|---|---|
 | `GET /api/rooms/{slug}/seed` | helper | `SeedDataDto` or 404 |
-| `POST /api/rooms/{slug}/seed` | admin | Upload (`multipart/form-data`, field `file`, maximum 50 MB). Replaces the old data. Keeps the filler marks of locations that exist in the new data. Then a synchronization (main 5.2). |
-| `DELETE /api/rooms/{slug}/seed` | admin | Deletes `SeedData` and all `SeedLocation` rows |
+| `POST /api/rooms/{slug}/seed` | admin | Upload (`multipart/form-data`, field `file`, maximum 50 MB). Then a synchronization (main 5.2). |
 
-1. `FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } })`.
-2. nginx: `client_max_body_size 50m` only for `location /api/rooms/` with `~ /seed$` (`deploy/nginx.conf.example`). All other paths keep `2m`.
-3. After the upload: `RoomUpdatesService.publish` and the live message 7.2.
+1. Each room accepts only one upload. If the room has seed data, the upload stops with HTTP 409 `SEED_ALREADY_UPLOADED`. There is no endpoint to replace or delete the seed data. The seed data is deleted only with the room (`onDelete: Cascade`).
+2. The check of 4.5 runs before the server saves data. A wrong file is never saved.
+3. `FileInterceptor('file', { storage: memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } })`.
+4. nginx: `client_max_body_size 50m` only for `location /api/rooms/` with `~ /seed$` (`deploy/nginx.conf.example`). All other paths keep `2m`.
+5. After the upload: `RoomUpdatesService.publish` and the live message 7.2.
 
 ### 4.7 Tests
 
@@ -183,7 +185,7 @@ Folder `server/src/locations`.
 
 ### 5.2 Sphere limit for players
 
-1. `lowestOpenSphere` = the lowest sphere with at least one location with `checked = false`.
+1. `lowestOpenSphere` = the lowest sphere with at least one location with `checked = false`. Ignore the locations of finder slots with reached goal (main 11.3).
 2. `visibleMaxSphere` = `lowestOpenSphere + room.sphereOffset`.
 3. If all locations are checked, all spheres are visible.
 4. Admins and admin helpers see all spheres.
@@ -192,7 +194,7 @@ Folder `server/src/locations`.
 
 1. For each sphere: number of open, found and total locations.
 2. Admin and helper: for the open locations of each sphere, the number of each item type. Progression and filler. Filler = useful + normal + trap (F 2.2).
-3. Option `excludeGoaled` (F 2.3, switch): locations of finder slots with reached goal are not counted. Items for receiver slots with reached goal count as filler. "Reached goal" is the same rule as in the roster (main 11.3).
+3. Option `excludeGoaled` (F 2.3, switch): each user sets the switch for the own views. It is a filter of the stores `sphereOverview` and `locations`, not a room setting. With the switch on, locations of finder slots with reached goal are not counted. Items for receiver slots with reached goal count as filler. "Reached goal" is the same rule as in the roster (main 11.3).
 4. Player and visitor: only spheres up to `visibleMaxSphere`, without item types.
 
 ### 5.4 Endpoints
@@ -220,7 +222,7 @@ Folder `server/src/locations`.
 4. Row for `view=user` (`LocationUserRowDto`): `id`, `sphere`, `finderSlotId`, `finderName`, `discordName`, `game`, `locationName`, `fillerMarked`, `canMarkFiller`.
 5. Row for `view=admin` (`LocationAdminRowDto`): the fields of 5.6.4 and `receiverName`, `itemName`, `itemType`, `fillerMarkedByName`, `fillerMarkedAt`.
 6. `view=admin` needs the role helper. Else 403.
-7. `view=user`: the server limits `toSphere` to `visibleMaxSphere` and ignores `itemTypes`.
+7. `view=user`: the server ignores `itemTypes`. For `state=open`, it limits `toSphere` to `visibleMaxSphere`. For `state=found` and `state=filler`, there is no sphere limit: found locations are no spoiler, and only an admin or a helper can mark a location in a high sphere.
 8. Two DTO classes, not one class with optional fields. So the user answer can never contain an item.
 
 ### 5.7 Visitors
@@ -258,7 +260,7 @@ New child routes of `/room/:slug` in `app/src/router/index.ts`:
 
 | Store | File | State and actions |
 |---|---|---|
-| `seed` | `stores/seed.ts` | `seed: SeedData \| null`; `fetch()`, `upload(file)`, `remove()` |
+| `seed` | `stores/seed.ts` | `seed: SeedData \| null`; `fetch()`, `upload(file)` |
 | `sphereOverview` | `stores/sphere-overview.ts` | `spheres`, `lowestOpenSphere`, `visibleMaxSphere`, `excludeGoaled`; `fetch()` |
 | `locations` | `stores/locations.ts` | `filters`, `rows`, `total`, `loading`, `view`; `fetchPage(offset, limit, sort)`, `setFilters()`, `markFiller(id)`, `unmarkFiller(id)` |
 | `sphereCleanup` | `stores/sphere-cleanup.ts` | `options`, `entries`; `fetch()`; getter `messages` (6.6) |
@@ -278,7 +280,7 @@ Functional components (no props, no events, data from stores):
 | `LocationFilterBar.vue` | `components/locations` | Filters F 4: slot dropdown with "All", "Mine" and single slots with search (`MultiSelect` with `filter`), item type (`MultiSelect`, admin view only), sphere range (`Slider` with `range` and two `InputNumber`) |
 | `LocationListPanel.vue` | `components/locations` | Table with lazy loading, page from the `locations` store |
 | `SphereCleanupPanel.vue` | `components/spheres` | Options and the messages with copy buttons (6.6) |
-| `SeedPanel.vue` | `components/admin` | Upload (`FileUpload` mode `basic`, `.archipelago`), seed data, delete |
+| `SeedPanel.vue` | `components/admin` | Upload (`FileUpload` mode `basic`, `.archipelago`) while the room has no seed data. After the upload: only the seed data. A text tells that the upload is possible only one time. |
 | `SphereCheckerSettingsPanel.vue` | `components/admin` | `sphereOffset`, `visitorsSeeLocations`, `playersMarkFiller` |
 | `ServerConnectionPanel.vue` | `components/admin` | Password input, login status, log out |
 | `ServerCommandsPanel.vue` | `components/admin` | Send item, release, collect for a slot; release of spheres |
@@ -307,7 +309,8 @@ New tabs in `AdminView.vue`:
 | "Sphere clean-up" | `SphereCleanupPanel` | helper |
 
 1. `AdminView` is admin only today. A helper sees only the tab "Sphere clean-up". The route `admin` gets `requiresRole: 'helper'`, and each tab checks the role.
-2. `AdminListPanel.vue`: a role selection (admin, helper) when an admin adds a user, and the role in the list.
+2. `AdminListPanel.vue`: a role selection (admin, helper) when an admin adds a user, and the role in the list. As for admins, a helper is a player of the room or gets an invitation link.
+3. `InvitationPanel.vue`: a role selection (admin, helper). `AdminInvitation` gets the field `role String @default("admin")`. Accepting the invitation gives this role.
 
 ### 6.5 Domain functions
 
@@ -370,15 +373,19 @@ Folder `server/src/archipelago-admin`.
 
 ### 9.2 Passwords
 
-1. `AdminSessionStore` is a singleton service with a `Map<roomId, { serverPassword, roomPassword? }>`. It does not write to the disk or the database (F 8).
+1. `AdminSessionStore` is a singleton service with a `Map<roomId, { slotId, serverPassword, roomPassword? }>`. `slotId` is the SlotLock slot for the connection (9.3.2). It does not write to the disk or the database (F 8).
 2. After a restart of the server, the map is empty. The status endpoint then gives `loggedIn: false`.
 3. The passwords never go to the logs, the snapshots or the answers. The global exception filter (`ApiErrorFilter`) must not show the request body.
 4. Optional `roomPassword`: if the Archipelago room has a password, the connection needs it. The admin enters it in the same form.
 
 ### 9.3 Connection
 
-1. Address: `wss://<host of room.archipelagoOrigin>:<port>`. The port comes from Cheese (`last_port`). Keep `last_port` in `Room` during the synchronization (new field `archipelagoPort Int?`).
-2. `client.login(address, slotLockSlot.archipelagoName ?? slotLockSlot.name, '', { password: roomPassword, slotData: false })`. Without a game, `archipelago.js` connects as "TextOnly" (F 8: connect as the SlotLock slot).
+1. Before each run, the server wakes the room and gets the current port. A room on archipelago.gg stops after some time without activity and often gets a new port when it starts again.
+   1. `GET <archipelagoOrigin>/room/<archipelagoRoomId>` starts the room (same as a visit of the room page).
+   2. Then `GET /api/room_status/<archipelagoRoomId>` (`ArchipelagoService.getRoomStatus`) gives `last_port`. If the connection to this port fails, ask again every 2 seconds and try the new port. Stop after 30 seconds with the error `ROOM_NOT_REACHABLE`.
+   3. If the room has no `archipelagoRoomId` (main 24.7), the run stops with the error `ROOM_LINK_MISSING`.
+2. Address: `wss://<host of room.archipelagoOrigin>:<last_port>`.
+3. SlotLock slot: if the room has one selected SlotLock slot, the server uses it. If the room has more, the admin selects one in the login form (`slotId`, 9.5). `client.login(address, slot.archipelagoName ?? slot.name, '', { password: roomPassword, slotData: false })`. Without a game, `archipelago.js` connects as "TextOnly" (F 8: connect as the SlotLock slot).
 3. Then `client.messages.say('!admin login <serverPassword>')`.
 4. The server waits for a `PrintJSON` packet of the type `AdminCommandResult` (or `CommandResult`) after each line. Timeout: 10 seconds. The text of the answer goes into the result of the command.
 5. The connection is open only during one run. After the run, the server sends `!admin logout` and disconnects.
@@ -408,8 +415,8 @@ All endpoints need the role admin (F 8, "Admin helper").
 
 | Method and path | Function |
 |---|---|
-| `GET /api/rooms/{slug}/server-admin` | `{ loggedIn, port, running }` |
-| `PUT /api/rooms/{slug}/server-admin/login` | Body `{ serverPassword, roomPassword? }`. Connects, logs in, disconnects. Keeps the passwords in memory only if the login is successful. |
+| `GET /api/rooms/{slug}/server-admin` | `{ loggedIn, slotId, running }` |
+| `PUT /api/rooms/{slug}/server-admin/login` | Body `{ slotId?, serverPassword, roomPassword? }`. `slotId` is necessary if the room has more than one selected SlotLock slot. Connects, logs in, disconnects. Keeps the passwords in memory only if the login is successful. |
 | `DELETE /api/rooms/{slug}/server-admin/login` | Removes the passwords from memory |
 | `POST /api/rooms/{slug}/server-admin/send-location` | Body `{ locationIds: number[] }` (IDs of `SeedLocation`) |
 | `POST /api/rooms/{slug}/server-admin/send-item` | Body `{ slotId, itemName, amount }` |
@@ -421,7 +428,7 @@ All endpoints need the role admin (F 8, "Admin helper").
 | `DELETE /api/rooms/{slug}/server-admin/jobs/{id}` | Stops a run after the current line |
 
 1. Each command endpoint starts a run and gives the job ID at once (HTTP 202).
-2. `release-spheres` mode `all`: all open locations in the spheres. `filler`: only open locations with an item type other than `progression`. `marked`: only open locations with a filler mark (F 8, "Release of spheres").
+2. `release-spheres` mode `all`: all open locations in the spheres. `filler`: only open locations with an item type other than `progression`. Only the item type counts. Items for slots with reached goal are not filler in this mode. `marked`: only open locations with a filler mark (F 8, "Release of spheres").
 3. `send-item`: the item name must exist in the datapackage of the game of the slot (`Datapackage.itemNames`). A new endpoint `GET /api/rooms/{slug}/server-admin/items?slotId=` gives the item names for the input field (`AutoComplete`).
 
 ### 9.6 Runs
@@ -453,7 +460,7 @@ Each phase ends with the standard check of `CHECKLIST implementation.md`.
 2. Multidata reader, item type, fixtures (4.3, 4.4).
 3. Command `seed:report`. Test with the multidata file of the Big Chill room. Make sure that `Slot.position` is the player number (4.5.1).
 4. Prisma migration `sphere_checker` (section 3).
-5. Upload, check, delete (4.5, 4.6). nginx limit.
+5. Upload and check, only one upload for each room (4.5, 4.6). nginx limit.
 6. Admin tab "Seed" with `SeedPanel`.
 
 ### Phase P2 – Location status
