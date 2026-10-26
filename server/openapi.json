@@ -2311,6 +2311,9 @@
             "type": "string",
             "nullable": true
           },
+          "lowestSphere": {
+            "type": "number"
+          },
           "slotId": {
             "type": "number"
           },
@@ -2333,6 +2336,7 @@
         "required": [
           "discordUserId",
           "discordName",
+          "lowestSphere",
           "slotId",
           "slotName",
           "progression",

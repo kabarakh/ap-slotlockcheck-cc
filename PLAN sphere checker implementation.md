@@ -505,11 +505,11 @@ Each phase ends with the standard check of `CHECKLIST implementation.md`.
 5. **Chat:** all players see the admin commands in the chat (F 7.1.6). This is accepted (F 8).
 6. **Wrong release:** a release cannot be undone. The confirmation dialog (9.6.5) shows the numbers before the run.
 
-## 13. Open questions from the implementation
+## 13. Questions from the implementation
 
-The implementation uses the solution in the column "Solution now". The developer can change it later.
+The developer answered these questions on 2026-10-26. The column "Decision" shows the result.
 
-| No. | Question | Solution now |
+| No. | Question | Decision |
 |---|---|---|
 | 13.1 | An item for an item link group has the group as receiver. The group is not a slot. How must the views show it? | `SeedLocation.receiverSlotId` is empty, `receiverName` is the name of the group. Filters by receiver do not find these items. |
 | 13.2 | With "minimal accessibility", some locations are in no sphere. Where do they go? | Sphere = number of spheres (after the last sphere). The seed data shows the number of these locations. |
@@ -517,12 +517,12 @@ The implementation uses the solution in the column "Solution now". The developer
 | 13.4 | A game without a checksum in the datapackage of the multidata file. | The server does not save its datapackage. The item names for "Send item" then come only from the locations of the seed. |
 | 13.5 | "Items for slots with reached goal count as filler" (F 2.3): in which filler type? | With the switch "Exclude slots with reached goal", a progression item for such a slot counts as "normal". Useful items and traps keep their type. |
 | 13.6 | Do the location filters stay for each room? | The filters stay in the browser for all rooms together, as the roster filters. |
-| 13.7 | Can an admin change the role of an existing admin or helper? | Yes: "Make admin" with the other role changes the role. The tracker owner always stays admin. An invitation link for a helper does not make an admin a helper. |
-| 13.8 | Who can remove a filler mark? | The same users who can set it (5.8), also when the location is checked in the meantime. |
-| 13.9 | In which language is the Discord text? | In the language of the app of the user who makes the text (German or English). |
-| 13.10 | In which order are the lines of the Discord text? | In the order of the slot numbers. The lines of a Discord user with more slots stay together at the position of the first slot. |
+| 13.7 | Can an admin change the role of an existing admin or helper? | No. An admin removes the user and adds the user again with the other role. "Make admin" for an existing admin or helper gives the error `ALREADY_ADMIN`. An invitation link does not change the role of an existing admin or helper. |
+| 13.8 | Who can remove a filler mark? | Only admins and admin helpers. A player can set a mark (5.8), but cannot remove it. |
+| 13.9 | In which language is the Discord text? | Always English, in the format of the feature list (F 3.4). |
+| 13.10 | In which order are the lines of the Discord text? | By the lowest open sphere of the slot in the selected spheres, then by the slot number. The lines of a Discord user with more slots stay together at the position of the first slot of the user. |
 | 13.11 | How does the server know that an admin command was successful? | The Archipelago server answers only errors directly (`AdminCommandResult`). The server sends the lines with a pause of 300 ms and shows each error answer in the result of the run. It does not check each line one by one. |
-| 13.12 | Not tested with a real Archipelago server. | The protocol is tested with a small fake server (`server/test/support/fake-archipelago-server.ts`). A test with a real room is still necessary (9.7.3). |
+| 13.12 | Not tested with a real Archipelago server. | Still open. The protocol is tested with a small fake server (`server/test/support/fake-archipelago-server.ts`). A test with a real room is necessary (9.7.3). |
 
 ## 14. Deviations during the implementation
 
@@ -546,3 +546,4 @@ The implementation uses the solution in the column "Solution now". The developer
 18. **Port (9.3.1):** the server reads `last_port` from `GET /api/room_status`. It does not keep the port in the database.
 19. **Development packages:** `ws` and `@types/ws` for the fake Archipelago server in the tests.
 20. **Item names (9.5.3):** from the newest datapackage of the game of the slot. Without a datapackage, the names of the items that the slot receives in the seed.
+21. **Clean-up entries (5.5):** each entry has `lowestSphere`, the lowest sphere with open locations of the slot in the selected spheres. The server sorts the entries by it (13.10).

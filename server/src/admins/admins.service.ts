@@ -50,11 +50,10 @@ export class AdminsService {
     const existing = await this.prisma.roomAdmin.findUnique({
       where: { roomId_userId: { roomId: room.id, userId: user.id } },
     });
-    await this.prisma.roomAdmin.upsert({
-      where: { roomId_userId: { roomId: room.id, userId: user.id } },
-      create: { roomId: room.id, userId: user.id, role },
-      update: existing?.isOwner ? {} : { role },
-    });
+    if (existing) {
+      throw new ConflictException('ALREADY_ADMIN');
+    }
+    await this.prisma.roomAdmin.create({ data: { roomId: room.id, userId: user.id, role } });
     return this.listAdmins(slug);
   }
 

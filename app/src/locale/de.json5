@@ -279,7 +279,7 @@
   },
   cleanup: {
     title: 'Sphere-Clean-up',
-    intro: 'Mache einen Text für Discord mit den Slots, die in den gewählten Spheres offene Locations haben. Kopiere jede Nachricht und poste sie im Discord-Thread. Eine Nachricht hat höchstens 10 Pings.',
+    intro: 'Mache einen englischen Text für Discord mit den Slots, die in den gewählten Spheres offene Locations haben. Die Zeilen stehen nach der niedrigsten offenen Sphere und dann nach der Slot-Nummer. Kopiere jede Nachricht und poste sie im Discord-Thread. Eine Nachricht hat höchstens 10 Pings.',
     from: 'Von Sphere',
     to: 'Bis Sphere',
     slotModes: { all: 'Alle Slots mit offenen Locations', progression: 'Nur Slots mit offener Progression' },
@@ -289,12 +289,6 @@
     messageNumber: 'Nachricht {number} von {count}',
     copy: 'Kopieren',
     copied: 'Die Nachricht ist kopiert.',
-    message: {
-      title: '# Sphere {sphere}',
-      titleRange: '# Spheres {from}–{to}',
-      line: '{user}, {slot}: {progression} Progression, {filler} Filler ({useful} nützlich, {normal} normal, {trap} Fallen)',
-      lineWithoutUser: '{slot}: {progression} Progression, {filler} Filler ({useful} nützlich, {normal} normal, {trap} Fallen)',
-    },
   },
   server: {
     title: 'Archipelago-Server',
@@ -367,6 +361,7 @@
     NO_ARCHIPELAGO_TRACKER: 'Der Cheese Tracker hat keinen Link zu einem Archipelago-Tracker.',
     INVALID_SLOTLOCK_SELECTION: 'Wähle mindestens einen SlotLock-Slot des Trackers.',
     SYNC_TOO_EARLY: 'Die letzte Synchronisierung ist zu kurz her. Warte einen Moment.',
+    ALREADY_ADMIN: 'Dieser Benutzer ist schon Admin oder Admin-Helfer. Um die Rolle zu ändern, entferne ihn zuerst.',
     NOT_A_PLAYER: 'Nur Spieler dieses Raums können Admins werden.',
     OWNER_CANNOT_BE_REMOVED: 'Der Tracker-Owner bleibt immer Admin.',
     ADMIN_NOT_FOUND: 'Diesen Admin gibt es nicht.',

@@ -25,6 +25,15 @@ export interface CleanupTexts {
   lineWithoutUser: (slotName: string, counts: CleanupCounts) => string;
 }
 
+export const ENGLISH_CLEANUP_TEXTS: CleanupTexts = {
+  title: (fromSphere, toSphere) =>
+    fromSphere === toSphere ? `# Sphere ${fromSphere}` : `# Spheres ${fromSphere}–${toSphere}`,
+  line: (user, slotName, counts) => `${user}, ${ENGLISH_CLEANUP_TEXTS.lineWithoutUser(slotName, counts)}`,
+  lineWithoutUser: (slotName, counts) =>
+    `${slotName}: ${counts.progression} progression, ${counts.filler} filler ` +
+    `(${counts.useful} useful, ${counts.normal} normal, ${counts.trap} traps)`,
+};
+
 export interface CleanupOptions {
   fromSphere: number;
   toSphere: number;

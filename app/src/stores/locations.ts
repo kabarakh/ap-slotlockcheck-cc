@@ -52,16 +52,7 @@ export const useLocationsStore = defineStore(
       return [0, maximum];
     });
 
-    const canUnmarkFiller = (row: LocationUserRow): boolean => {
-      const room = useCurrentRoomStore();
-      if (!row.fillerMarked) {
-        return false;
-      }
-      return (
-        room.isHelper ||
-        (room.room?.playersMarkFiller === true && room.mySlots.some((slot) => slot.id === row.finderSlotId))
-      );
-    };
+    const canUnmarkFiller = (row: LocationUserRow): boolean => row.fillerMarked && useCurrentRoomStore().isHelper;
 
     const query = () => {
       const current = filters.value;

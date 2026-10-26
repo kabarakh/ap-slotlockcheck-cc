@@ -734,6 +734,7 @@ export interface components {
         SphereCleanupEntryDto: {
             discordUserId: string | null;
             discordName: string | null;
+            lowestSphere: number;
             slotId: number;
             slotName: string;
             progression: number;

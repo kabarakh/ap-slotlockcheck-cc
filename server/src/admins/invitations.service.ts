@@ -55,7 +55,7 @@ export class InvitationsService {
       this.prisma.roomAdmin.upsert({
         where: { roomId_userId: { roomId: invitation.roomId, userId: user.id } },
         create: { roomId: invitation.roomId, userId: user.id, role },
-        update: role === 'admin' ? { role } : {},
+        update: {},
       }),
     ]);
     return { slug: invitation.room.slug };

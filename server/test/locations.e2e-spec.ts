@@ -166,6 +166,11 @@ describe('spheres and locations (integration)', () => {
   it('lets players mark only the open locations of their own slots', async () => {
     const carolCookie = await login(server, CAROL);
     await mark(await locationId('Old Site: Strawberry 2'), carolCookie).expect(204);
+    const removal = await request(server)
+      .delete(`/api/rooms/big-chill/locations/${await locationId('Old Site: Strawberry 2')}/filler-mark`)
+      .set('Cookie', carolCookie)
+      .expect(403);
+    expect(removal.body).toMatchObject({ code: 'FILLER_MARK_NOT_PERMITTED' });
     const foreign = await mark(await locationId('Salubra_(Requires_Charms)'), carolCookie).expect(403);
     expect(foreign.body).toMatchObject({ code: 'FILLER_MARK_NOT_PERMITTED' });
     await mark(await locationId('Salubra_(Requires_Charms)')).expect(403);
@@ -206,13 +211,16 @@ describe('spheres and locations (integration)', () => {
     expect(page.total).toBe(0);
   });
 
-  it('keeps the owner an admin when somebody tries to make the owner a helper', async () => {
-    const admins = await request(server)
-      .post('/api/rooms/big-chill/admins')
-      .set('Cookie', ownerCookie)
-      .send({ discordId: OWNER.discordId, role: 'helper' })
-      .expect(201);
-    expect(admins.body).toContainEqual(expect.objectContaining({ discordId: OWNER.discordId, role: 'admin' }));
+  it('does not change the role of an existing admin or helper', async () => {
+    for (const discordId of [OWNER.discordId, PLAYER.discordId]) {
+      const response = await request(server)
+        .post('/api/rooms/big-chill/admins')
+        .set('Cookie', ownerCookie)
+        .send({ discordId, role: 'admin' })
+        .expect(409);
+      expect(response.body).toMatchObject({ code: 'ALREADY_ADMIN' });
+    }
+    await get('/me', playerCookie).expect(200, { role: 'helper', isOwner: false });
   });
 
   it('makes a helper with an invitation link', async () => {
@@ -238,19 +246,20 @@ describe('spheres and locations (integration)', () => {
       cleanup.entries.map((entry) => [entry.slotName, entry.progression, entry.useful, entry.normal, entry.trap]),
     ).toEqual([
       ['Locker', 1, 0, 0, 0],
-      ['Alice', 1, 0, 1, 0],
       ['Bob', 2, 0, 0, 0],
+      ['Alice', 1, 0, 1, 0],
+      ['Locker2', 0, 1, 0, 0],
       ['Carol', 0, 1, 1, 0],
       ['Davey (Dave)', 1, 0, 0, 1],
-      ['Locker2', 0, 1, 0, 0],
     ]);
-    expect(cleanup.entries[2]).toMatchObject({ discordUserId: PLAYER.discordId });
+    expect(cleanup.entries.map((entry) => entry.lowestSphere)).toEqual([0, 0, 1, 1, 2, 2]);
+    expect(cleanup.entries[1]).toMatchObject({ discordUserId: PLAYER.discordId });
     const progression = (
       await get('/sphere-cleanup?fromSphere=0&toSphere=3&slots=progression&excludeGoaled=true', playerCookie).expect(
         200,
       )
     ).body as SphereCleanupDto;
-    expect(progression.entries.map((entry) => entry.slotName)).toEqual(['Locker', 'Alice', 'Bob', 'Davey (Dave)']);
+    expect(progression.entries.map((entry) => entry.slotName)).toEqual(['Locker', 'Bob', 'Alice', 'Davey (Dave)']);
     await get('/sphere-cleanup?fromSphere=0', playerCookie).expect(400);
   });
 });

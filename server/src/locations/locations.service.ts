@@ -18,7 +18,7 @@ import type {
   SphereOverviewDto,
 } from './dto/location.dto.js';
 import { cleanupEntries } from './cleanup.logic.js';
-import { canChangeFillerMark, canMarkFiller } from './filler-permission.logic.js';
+import { canMarkFiller, canRemoveFillerMark } from './filler-permission.logic.js';
 import { isGoaled } from './goal.logic.js';
 import { LocationStatusService } from './location-status.service.js';
 import { locationOrderBy, locationWhere } from './location-query.js';
@@ -115,12 +115,13 @@ export class LocationsService {
     const slots = await this.prisma.slot.findMany({ where: { roomId: room.id } });
     const goaled = new Map(slots.map((slot) => [slot.id, isGoaled(slot)]));
     const groups = await this.prisma.seedLocation.groupBy({
-      by: ['finderSlotId', 'itemType', 'receiverSlotId'],
+      by: ['sphere', 'finderSlotId', 'itemType', 'receiverSlotId'],
       where: { roomId: room.id, checked: false, sphere: { gte: fromSphere, lte: toSphere } },
       _count: { _all: true },
     });
     const entries = cleanupEntries(
       groups.map((group) => ({
+        sphere: group.sphere,
         finderSlotId: group.finderSlotId,
         itemType: group.itemType as ItemType,
         finderGoaled: goaled.get(group.finderSlotId) ?? false,
@@ -144,16 +145,19 @@ export class LocationsService {
     if (!location) {
       throw new NotFoundException('LOCATION_NOT_FOUND');
     }
-    const permission = {
-      role: membership.role,
-      playersMarkFiller: room.playersMarkFiller,
-      isOwnSlot: user !== undefined && location.finderSlot.discordUserId === user.discordId,
-    };
-    if (!canChangeFillerMark(permission)) {
-      throw new ForbiddenException('FILLER_MARK_NOT_PERMITTED');
-    }
     if (marked && location.checked) {
       throw new BadRequestException('LOCATION_ALREADY_CHECKED');
+    }
+    const permitted = marked
+      ? canMarkFiller({
+          role: membership.role,
+          playersMarkFiller: room.playersMarkFiller,
+          isOwnSlot: user !== undefined && location.finderSlot.discordUserId === user.discordId,
+          checked: location.checked,
+        })
+      : canRemoveFillerMark(membership.role);
+    if (!permitted) {
+      throw new ForbiddenException('FILLER_MARK_NOT_PERMITTED');
     }
     await this.prisma.seedLocation.update({
       where: { id: location.id },

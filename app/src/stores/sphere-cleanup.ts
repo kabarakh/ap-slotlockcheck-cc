@@ -2,8 +2,7 @@ import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { api, unwrap } from '@/api/client';
 import type { CleanupSlotMode, SphereCleanupEntry } from '@/api/types';
-import { buildCleanupMessages, type CleanupCounts } from '@/domain/cleanup-message';
-import { i18n } from '@/i18n';
+import { buildCleanupMessages, ENGLISH_CLEANUP_TEXTS } from '@/domain/cleanup-message';
 import { useCurrentRoomStore } from './current-room';
 import { useSphereOverviewStore } from './sphere-overview';
 import { useUiStore } from './ui';
@@ -16,8 +15,6 @@ export interface CleanupDraft {
   pings: boolean;
 }
 
-const countParams = (counts: CleanupCounts) => ({ ...counts });
-
 export const useSphereCleanupStore = defineStore('sphereCleanup', () => {
   const draft = ref<CleanupDraft>({ fromSphere: 0, toSphere: 0, slots: 'all', excludeGoaled: false, pings: true });
   const entries = ref<SphereCleanupEntry[]>([]);
@@ -28,18 +25,7 @@ export const useSphereCleanupStore = defineStore('sphereCleanup', () => {
     if (!range.value) {
       return [];
     }
-    const t = i18n.global.t;
-    return buildCleanupMessages(
-      entries.value,
-      { ...range.value, pings: draft.value.pings },
-      {
-        title: (from, to) =>
-          from === to ? t('cleanup.message.title', { sphere: from }) : t('cleanup.message.titleRange', { from, to }),
-        line: (user, slotName, counts) => t('cleanup.message.line', { user, slot: slotName, ...countParams(counts) }),
-        lineWithoutUser: (slotName, counts) =>
-          t('cleanup.message.lineWithoutUser', { slot: slotName, ...countParams(counts) }),
-      },
-    );
+    return buildCleanupMessages(entries.value, { ...range.value, pings: draft.value.pings }, ENGLISH_CLEANUP_TEXTS);
   });
 
   const prepare = async (): Promise<void> => {

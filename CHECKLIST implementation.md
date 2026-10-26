@@ -102,7 +102,7 @@ Do these checks after each step. Use Node 26 (`nvm use`). Write the result into 
 
 ## Sphere checker
 
-Reference: `PLAN sphere checker implementation.md` (section numbers in brackets). Open questions and deviations: same file, sections 13 and 14.
+Reference: `PLAN sphere checker implementation.md` (section numbers in brackets). Questions and deviations: same file, sections 13 and 14.
 
 ### Phase P1 – Seed data
 

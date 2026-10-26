@@ -153,17 +153,16 @@ describe('canUnmarkFiller', () => {
     useAuthStore().user = { id: 1, discordId: '2', name: 'Bob', username: 'bob', avatar: null };
   });
 
-  it('permits helpers and the players of the own slots with the room setting', () => {
+  it('permits only helpers and admins to remove a mark', () => {
     const current = useCurrentRoomStore();
     const locations = useLocationsStore();
     current.membership = { role: 'player', isOwner: false };
-    expect(locations.canUnmarkFiller(row({}))).toBe(true);
-    expect(locations.canUnmarkFiller(row({ finderSlotId: 8 }))).toBe(false);
-    expect(locations.canUnmarkFiller(row({ fillerMarked: false }))).toBe(false);
-    current.room = room({ playersMarkFiller: false });
     expect(locations.canUnmarkFiller(row({}))).toBe(false);
     current.membership = { role: 'helper', isOwner: false };
     expect(locations.canUnmarkFiller(row({ finderSlotId: 8 }))).toBe(true);
+    expect(locations.canUnmarkFiller(row({ fillerMarked: false }))).toBe(false);
+    current.membership = { role: 'admin', isOwner: true };
+    expect(locations.canUnmarkFiller(row({}))).toBe(true);
   });
 });
 

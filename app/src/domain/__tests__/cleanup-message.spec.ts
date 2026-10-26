@@ -1,12 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { buildCleanupMessages, MAXIMUM_MESSAGE_LENGTH, type CleanupEntry, type CleanupTexts } from '../cleanup-message';
-
-const texts: CleanupTexts = {
-  title: (from, to) => (from === to ? `# Sphere ${from}` : `# Spheres ${from}–${to}`),
-  line: (user, slot, counts) =>
-    `${user}, ${slot}: ${counts.progression} progression, ${counts.filler} filler (${counts.useful} useful, ${counts.normal} normal, ${counts.trap} traps)`,
-  lineWithoutUser: (slot, counts) => `${slot}: ${counts.progression} progression, ${counts.filler} filler`,
-};
+import {
+  buildCleanupMessages,
+  ENGLISH_CLEANUP_TEXTS as texts,
+  MAXIMUM_MESSAGE_LENGTH,
+  type CleanupEntry,
+} from '../cleanup-message';
 
 const entry = (overrides: Partial<CleanupEntry>): CleanupEntry => ({
   slotName: 'Slot',

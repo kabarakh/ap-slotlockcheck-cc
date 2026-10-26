@@ -184,6 +184,7 @@ export class SphereCleanupQueryDto extends SphereQueryDto {
 }
 
 export class SphereCleanupEntryDto {
+  lowestSphere: number;
   slotId: number;
   slotName: string;
 

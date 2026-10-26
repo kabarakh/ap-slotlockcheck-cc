@@ -273,7 +273,7 @@
   },
   cleanup: {
     title: 'Sphere clean-up',
-    intro: 'Make a text for Discord with the slots that have open locations in the selected spheres. Copy each message and post it in the Discord thread. A message has at most 10 pings.',
+    intro: 'Make an English text for Discord with the slots that have open locations in the selected spheres. The lines are in the order of the lowest open sphere and then of the slot number. Copy each message and post it in the Discord thread. A message has at most 10 pings.',
     from: 'From sphere',
     to: 'To sphere',
     slotModes: { all: 'All slots with open locations', progression: 'Only slots with open progression' },
@@ -283,12 +283,6 @@
     messageNumber: 'Message {number} of {count}',
     copy: 'Copy',
     copied: 'The message is copied.',
-    message: {
-      title: '# Sphere {sphere}',
-      titleRange: '# Spheres {from}–{to}',
-      line: '{user}, {slot}: {progression} progression, {filler} filler ({useful} useful, {normal} normal, {trap} traps)',
-      lineWithoutUser: '{slot}: {progression} progression, {filler} filler ({useful} useful, {normal} normal, {trap} traps)',
-    },
   },
   server: {
     title: 'Archipelago server',
@@ -362,6 +356,7 @@
     INVALID_SLOTLOCK_SELECTION: 'Select at least one SlotLock slot of the tracker.',
     SYNC_TOO_EARLY: 'The last synchronization is too recent. Wait a moment.',
     NOT_A_PLAYER: 'Only players of this room can become admins.',
+    ALREADY_ADMIN: 'This user is admin or admin helper already. To change the role, remove the user first.',
     OWNER_CANNOT_BE_REMOVED: 'The tracker owner always stays admin.',
     ADMIN_NOT_FOUND: 'This admin does not exist.',
     INVALID_LOCK_PAIR: 'This lock assignment is not possible.',

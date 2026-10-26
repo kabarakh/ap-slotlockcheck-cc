@@ -85,7 +85,9 @@ test('a player marks an own location as filler and the admin sees who marked it'
   await page.goto('/room/big-chill/locations/open');
   const row = page.getByTestId('location-table').locator('tbody tr').filter({ hasText: 'Old Site: Strawberry 2' });
   await row.getByTestId('mark-filler').click();
-  await expect(row.getByTestId('unmark-filler')).toBeVisible();
+  await expect(row.getByLabel('Marked as filler')).toBeVisible();
+  await expect(row.getByTestId('mark-filler')).toHaveCount(0);
+  await expect(row.getByTestId('unmark-filler')).toHaveCount(0);
   const foreignRow = page.getByTestId('location-table').locator('tbody tr').filter({ hasText: 'Salubra' });
   await expect(foreignRow.getByTestId('mark-filler')).toHaveCount(0);
 
