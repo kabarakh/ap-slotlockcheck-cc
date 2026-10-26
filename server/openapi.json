@@ -1257,6 +1257,466 @@
           "Seed"
         ]
       }
+    },
+    "/api/rooms/{slug}/server-admin": {
+      "get": {
+        "operationId": "ArchipelagoAdmin_status",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerAdminStatusDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/login": {
+      "put": {
+        "operationId": "ArchipelagoAdmin_login",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServerLoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerAdminStatusDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      },
+      "delete": {
+        "operationId": "ArchipelagoAdmin_logout",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerAdminStatusDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/send-location": {
+      "post": {
+        "operationId": "ArchipelagoAdmin_sendLocations",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendLocationsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerJobDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/send-item": {
+      "post": {
+        "operationId": "ArchipelagoAdmin_sendItem",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerJobDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/release": {
+      "post": {
+        "operationId": "ArchipelagoAdmin_release",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotCommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerJobDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/collect": {
+      "post": {
+        "operationId": "ArchipelagoAdmin_collect",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlotCommandDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerJobDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/release-spheres/preview": {
+      "get": {
+        "operationId": "ArchipelagoAdmin_previewRelease",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ReleaseMode"
+            }
+          },
+          {
+            "name": "fromSphere",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "toSphere",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReleasePreviewDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/release-spheres": {
+      "post": {
+        "operationId": "ArchipelagoAdmin_releaseSpheres",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReleaseSpheresDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerJobDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/items": {
+      "get": {
+        "operationId": "ArchipelagoAdmin_itemNames",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemNamesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/job": {
+      "get": {
+        "operationId": "ArchipelagoAdmin_job",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerJobDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/server-admin/jobs/{id}": {
+      "delete": {
+        "operationId": "ArchipelagoAdmin_stopJob",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerJobDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "ArchipelagoAdmin"
+        ]
+      }
     }
   },
   "info": {
@@ -2563,6 +3023,222 @@
         },
         "required": [
           "file"
+        ]
+      },
+      "ServerJobState": {
+        "type": "string",
+        "enum": [
+          "running",
+          "done",
+          "failed",
+          "stopped"
+        ]
+      },
+      "ServerJobDto": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerJobState"
+              }
+            ]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "id": {
+            "type": "string"
+          },
+          "command": {
+            "type": "string"
+          },
+          "total": {
+            "type": "number"
+          },
+          "done": {
+            "type": "number"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "state",
+          "startedAt",
+          "finishedAt",
+          "id",
+          "command",
+          "total",
+          "done",
+          "errors"
+        ]
+      },
+      "ServerAdminStatusDto": {
+        "type": "object",
+        "properties": {
+          "slotId": {
+            "type": "number",
+            "nullable": true
+          },
+          "job": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ServerJobDto"
+              }
+            ]
+          },
+          "loggedIn": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "slotId",
+          "job",
+          "loggedIn"
+        ]
+      },
+      "ServerLoginDto": {
+        "type": "object",
+        "properties": {
+          "slotId": {
+            "type": "number"
+          },
+          "serverPassword": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "roomPassword": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "serverPassword"
+        ]
+      },
+      "SendLocationsDto": {
+        "type": "object",
+        "properties": {
+          "locationIds": {
+            "minItems": 1,
+            "maxItems": 20000,
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "locationIds"
+        ]
+      },
+      "SendItemDto": {
+        "type": "object",
+        "properties": {
+          "slotId": {
+            "type": "number"
+          },
+          "itemName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 1000
+          }
+        },
+        "required": [
+          "slotId",
+          "itemName",
+          "amount"
+        ]
+      },
+      "SlotCommandDto": {
+        "type": "object",
+        "properties": {
+          "slotId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "slotId"
+        ]
+      },
+      "ReleaseMode": {
+        "type": "string",
+        "enum": [
+          "all",
+          "filler",
+          "marked"
+        ]
+      },
+      "ReleasePreviewDto": {
+        "type": "object",
+        "properties": {
+          "locationCount": {
+            "type": "number"
+          },
+          "progressionCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "locationCount",
+          "progressionCount"
+        ]
+      },
+      "ReleaseSpheresDto": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ReleaseMode"
+              }
+            ]
+          },
+          "fromSphere": {
+            "type": "number",
+            "minimum": 0
+          },
+          "toSphere": {
+            "type": "number",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "mode",
+          "fromSphere",
+          "toSphere"
+        ]
+      },
+      "ItemNamesDto": {
+        "type": "object",
+        "properties": {
+          "itemNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "itemNames"
         ]
       },
       "ApiErrorDto": {

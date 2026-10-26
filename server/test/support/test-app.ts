@@ -23,7 +23,9 @@ export interface TestApp {
   close(): Promise<void>;
 }
 
-export async function createTestApp(): Promise<TestApp> {
+export type ProviderOverride = [token: symbol, value: unknown];
+
+export async function createTestApp(overrides: ProviderOverride[] = []): Promise<TestApp> {
   const directory = mkdtempSync(join(tmpdir(), 'slotlock-test-'));
   const databaseFile = join(directory, 'test.db');
   applyMigrations(databaseFile);
@@ -45,6 +47,9 @@ export async function createTestApp(): Promise<TestApp> {
     'fetch',
     vi.fn((input: string | URL) => {
       const url = input.toString();
+      if (/^https:\/\/archipelago\.gg\/room\/[^/]+$/.test(url)) {
+        return Promise.resolve(new Response('<html></html>', { status: 200 }));
+      }
       const route = FIXTURE_ROUTES.find(([pattern]) => pattern.test(url));
       if (!route) {
         return Promise.resolve(new Response('not found', { status: 404 }));
@@ -56,7 +61,11 @@ export async function createTestApp(): Promise<TestApp> {
 
   const { AppModule } = await import('../../src/app.module.js');
   const { configureApp } = await import('../../src/setup-app.js');
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+  const builder = Test.createTestingModule({ imports: [AppModule] });
+  for (const [token, value] of overrides) {
+    builder.overrideProvider(token).useValue(value);
+  }
+  const moduleRef = await builder.compile();
   const app = moduleRef.createNestApplication<NestExpressApplication>({ logger: false });
   configureApp(app, false);
   await app.init();

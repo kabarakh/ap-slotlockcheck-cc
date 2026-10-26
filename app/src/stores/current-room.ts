@@ -14,6 +14,7 @@ import { useAuthStore } from './auth';
 import { useLiveStore } from './live';
 import { useLocationsStore } from './locations';
 import { useSeedStore } from './seed';
+import { useServerAdminStore } from './server-admin';
 import { useSphereOverviewStore } from './sphere-overview';
 import { useUiStore } from './ui';
 import { useWarningsStore } from './warnings';
@@ -110,6 +111,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     useSeedStore().clear();
     useSphereOverviewStore().clear();
     useLocationsStore().leave();
+    useServerAdminStore().clear();
   };
 
   const applySynced = (payload: RoomSyncedPayload) => {

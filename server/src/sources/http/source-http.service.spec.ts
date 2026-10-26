@@ -31,6 +31,16 @@ describe('SourceHttpService', () => {
     );
   });
 
+  it('visits a page without reading it as JSON', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('<html></html>', { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(service.visit('https://example.org/room/x')).resolves.toBeUndefined();
+    const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    expect((init.headers as Record<string, string>)['accept']).toBe('text/html');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('gone', { status: 404 })));
+    await expect(service.visit('https://example.org/room/x')).rejects.toThrow(SourceRequestError);
+  });
+
   it('throws a request error for HTTP errors', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('nope', { status: 404 })));
     await expect(service.getJson('https://example.org/a', z.unknown())).rejects.toThrow(SourceRequestError);

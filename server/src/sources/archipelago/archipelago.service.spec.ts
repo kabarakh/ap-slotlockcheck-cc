@@ -28,6 +28,13 @@ describe('ArchipelagoService', () => {
     expect(status.players[0]).toEqual(['Locker', 'SlotLock']);
   });
 
+  it('wakes a room with a visit of the room page', async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response('<html></html>', { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    await new ArchipelagoService(new SourceHttpService(config)).wakeRoom(origin, 'RoomIdOfTheRoomXX0001');
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('https://archipelago.gg/room/RoomIdOfTheRoomXX0001');
+  });
+
   it('reads the tracker with received items', async () => {
     const { service } = serviceReturning('ap-tracker');
     const tracker = await service.getTracker(origin, 'TrackerIdOfTheRoom0001');

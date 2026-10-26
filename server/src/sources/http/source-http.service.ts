@@ -25,12 +25,17 @@ export class SourceHttpService {
     return this.fetchJson(url);
   }
 
-  private async fetchJson(url: string): Promise<unknown> {
+  async visit(url: string): Promise<void> {
+    const response = await this.request(url, 'text/html');
+    await response.arrayBuffer();
+  }
+
+  private async request(url: string, accept: string): Promise<Response> {
     const startedAt = performance.now();
     let response: Response;
     try {
       response = await fetch(url, {
-        headers: { accept: 'application/json', 'user-agent': this.config.get('HTTP_USER_AGENT') },
+        headers: { accept, 'user-agent': this.config.get('HTTP_USER_AGENT') },
         signal: AbortSignal.timeout(this.config.get('HTTP_TIMEOUT_SECONDS') * 1000),
       });
     } catch (error) {
@@ -41,6 +46,11 @@ export class SourceHttpService {
     if (!response.ok) {
       throw new SourceRequestError(url, response.status, `HTTP ${response.status}`);
     }
+    return response;
+  }
+
+  private async fetchJson(url: string): Promise<unknown> {
+    const response = await this.request(url, 'application/json');
     try {
       return await response.json();
     } catch {

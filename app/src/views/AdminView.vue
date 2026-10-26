@@ -13,6 +13,9 @@ import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel.vue';
 import InvitationPanel from '@/components/admin/InvitationPanel.vue';
 import LockAssignmentPanel from '@/components/admin/LockAssignmentPanel.vue';
 import SeedPanel from '@/components/admin/SeedPanel.vue';
+import ServerCommandsPanel from '@/components/admin/ServerCommandsPanel.vue';
+import ServerConnectionPanel from '@/components/admin/ServerConnectionPanel.vue';
+import ServerJobProgress from '@/components/admin/ServerJobProgress.vue';
 import SphereCheckerSettingsPanel from '@/components/admin/SphereCheckerSettingsPanel.vue';
 import UnlockTimesPanel from '@/components/admin/UnlockTimesPanel.vue';
 import WarningsPanel from '@/components/admin/WarningsPanel.vue';
@@ -42,6 +45,7 @@ onMounted(() => {
         <Tab value="warnings" data-testid="tab-warnings">{{ t('admin.tabs.warnings') }}</Tab>
         <Tab value="unlockTimes" data-testid="tab-unlock-times">{{ t('admin.tabs.unlockTimes') }}</Tab>
         <Tab value="seed" data-testid="tab-seed">{{ t('admin.tabs.seed') }}</Tab>
+        <Tab v-if="room?.hasSeed" value="server" data-testid="tab-server">{{ t('admin.tabs.server') }}</Tab>
       </template>
       <Tab v-if="room?.hasSeed" value="cleanup" data-testid="tab-cleanup">{{ t('admin.tabs.cleanup') }}</Tab>
     </TabList>
@@ -58,6 +62,11 @@ onMounted(() => {
         <TabPanel value="seed">
           <SeedPanel />
           <SphereCheckerSettingsPanel />
+        </TabPanel>
+        <TabPanel v-if="room?.hasSeed" value="server">
+          <ServerConnectionPanel />
+          <ServerJobProgress />
+          <ServerCommandsPanel />
         </TabPanel>
       </template>
       <TabPanel v-if="room?.hasSeed" value="cleanup"><SphereCleanupPanel /></TabPanel>

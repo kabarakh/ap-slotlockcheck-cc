@@ -122,3 +122,17 @@ test('an admin makes a player an admin helper', async ({ page }) => {
   await expect(text).toHaveValue(/\nalice_owner, Alice: 1 progression/);
   await expect(text).toHaveValue(/\n<@100000000000000002>, Bob: 2 progression/);
 });
+
+test('an admin sees the login form of the Archipelago server', async ({ page }) => {
+  await ensureSeed(page);
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/admin');
+  await page.getByTestId('tab-server').click();
+  await expect(page.getByText('All players see the admin commands')).toBeVisible();
+  await expect(page.getByTestId('server-slot')).toBeVisible();
+  await expect(page.getByTestId('server-login')).toBeDisabled();
+  await expect(page.getByTestId('release-spheres')).toBeDisabled();
+  await page.goto('/room/big-chill/locations/open?view=admin');
+  await expect(page.getByTestId('location-table')).toBeVisible();
+  await expect(page.getByTestId('send-location')).toHaveCount(0);
+});

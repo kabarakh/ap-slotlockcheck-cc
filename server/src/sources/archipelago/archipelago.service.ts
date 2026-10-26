@@ -33,6 +33,10 @@ export class ArchipelagoService {
     return this.http.getJson(this.apiUrl(origin, 'slot_data_tracker', trackerId), slotDataTrackerSchema);
   }
 
+  wakeRoom(origin: string, roomId: string): Promise<void> {
+    return this.http.visit(new URL(`/room/${encodeURIComponent(roomId)}`, origin).toString());
+  }
+
   getDatapackage(origin: string, checksum: string): Promise<Datapackage> {
     return this.http.getJson(this.apiUrl(origin, 'datapackage', checksum), datapackageSchema);
   }

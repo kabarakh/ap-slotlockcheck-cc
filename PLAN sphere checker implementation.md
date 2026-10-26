@@ -521,6 +521,8 @@ The implementation uses the solution in the column "Solution now". The developer
 | 13.8 | Who can remove a filler mark? | The same users who can set it (5.8), also when the location is checked in the meantime. |
 | 13.9 | In which language is the Discord text? | In the language of the app of the user who makes the text (German or English). |
 | 13.10 | In which order are the lines of the Discord text? | In the order of the slot numbers. The lines of a Discord user with more slots stay together at the position of the first slot. |
+| 13.11 | How does the server know that an admin command was successful? | The Archipelago server answers only errors directly (`AdminCommandResult`). The server sends the lines with a pause of 300 ms and shows each error answer in the result of the run. It does not check each line one by one. |
+| 13.12 | Not tested with a real Archipelago server. | The protocol is tested with a small fake server (`server/test/support/fake-archipelago-server.ts`). A test with a real room is still necessary (9.7.3). |
 
 ## 14. Deviations during the implementation
 
@@ -538,3 +540,9 @@ The implementation uses the solution in the column "Solution now". The developer
 12. **Tests of the role calculation:** new unit tests for `RoomRoleService` (main 19.1), also for the role `helper`.
 13. **Admin page for helpers (6.4.1):** a helper opens the admin page and sees only the tab "Sphere clean-up". Without seed data, the page shows a message. The data of the other admin tabs is loaded only for admins.
 14. **Clean-up endpoint (5.5):** `fromSphere` and `toSphere` are necessary. The server changes their order if `fromSphere` is larger.
+15. **Chat packet (9.3):** the server sends the `Say` packet directly, because `client.messages.say()` of `archipelago.js` waits for the echo of the line. The echo of the login hides the password, so the wait never ends.
+16. **Timeouts (9.3):** the connection gets 10 seconds to open. After the logout, the server waits a short time before it disconnects, so that the logout line arrives.
+17. **Job endpoints (9.5):** `GET /api/rooms/{slug}/server-admin/job` gives the last run of the room. `DELETE /api/rooms/{slug}/server-admin/jobs/{id}` stops it. The status endpoint also contains the last run.
+18. **Port (9.3.1):** the server reads `last_port` from `GET /api/room_status`. It does not keep the port in the database.
+19. **Development packages:** `ws` and `@types/ws` for the fake Archipelago server in the tests.
+20. **Item names (9.5.3):** from the newest datapackage of the game of the slot. Without a datapackage, the names of the items that the slot receives in the seed.

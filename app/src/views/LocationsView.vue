@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
@@ -9,13 +9,20 @@ import LocationFilterBar from '@/components/locations/LocationFilterBar.vue';
 import LocationListPanel from '@/components/locations/LocationListPanel.vue';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLocationsStore } from '@/stores/locations';
+import { useServerAdminStore } from '@/stores/server-admin';
 
-const { room, isHelper } = storeToRefs(useCurrentRoomStore());
+const { room, isHelper, isAdmin } = storeToRefs(useCurrentRoomStore());
 const { locationState, view } = storeToRefs(useLocationsStore());
 const { t } = useI18n();
 
 const states: LocationState[] = ['open', 'found', 'filler'];
 const query = computed(() => (view.value === 'admin' ? { view: 'admin' } : {}));
+
+onMounted(() => {
+  if (isAdmin.value) {
+    void useServerAdminStore().fetchStatus();
+  }
+});
 </script>
 
 <template>

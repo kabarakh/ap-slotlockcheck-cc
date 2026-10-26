@@ -8,11 +8,16 @@ import type { LocationAdminRow, LocationSortField, LocationUserRow } from '@/api
 import DateTimeText from '@/components/ui/DateTimeText.vue';
 import ItemTypeTag from '@/components/ui/ItemTypeTag.vue';
 import { formatGameName } from '@/domain/game-name';
+import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLocationsStore } from '@/stores/locations';
+import { useServerAdminStore } from '@/stores/server-admin';
 
 const locations = useLocationsStore();
 const { rows, total, loading, offset, limit, sortField, sortOrder, isAdminView, locationState } =
   storeToRefs(locations);
+const serverAdmin = useServerAdminStore();
+const { loggedIn, jobRunning } = storeToRefs(serverAdmin);
+const { isAdmin } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 
 const onPage = (event: DataTablePageEvent) => locations.setPage(event.first, event.rows);
@@ -96,6 +101,22 @@ const onSort = (event: DataTableSortEvent) =>
           v-else-if="(data as LocationUserRow).fillerMarked"
           class="pi pi-flag-fill"
           :aria-label="t('locations.isMarked')"
+        />
+      </template>
+    </Column>
+    <Column
+      v-if="isAdminView && isAdmin && loggedIn && locationState !== 'found'"
+      :header="t('locations.columns.server')"
+    >
+      <template #body="{ data }">
+        <Button
+          :label="t('locations.sendLocation')"
+          icon="pi pi-send"
+          size="small"
+          text
+          :disabled="jobRunning"
+          data-testid="send-location"
+          @click="serverAdmin.sendLocation((data as LocationAdminRow).id)"
         />
       </template>
     </Column>

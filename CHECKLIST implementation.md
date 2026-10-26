@@ -139,6 +139,15 @@ Reference: `PLAN sphere checker implementation.md` (section numbers in brackets)
 - [x] `buildCleanupMessages` with tests: 0, 10, 11 and 25 pings, users with more slots, slots without Discord user, 2,000 characters (6.6)
 - [x] `SphereCleanupPanel` in the admin tab "Sphere clean-up", also for helpers
 
+### Phase P6 – Server connection
+
+- [x] `archipelago.js`, connection, command lines, passwords only in memory (9.2 to 9.4)
+- [x] Endpoints and runs with progress and stop (9.5, 9.6)
+- [x] Admin tab "Server", confirmation dialog with the numbers of the preview, progress
+- [x] Button "Send location" in the admin view of the locations (only for admins with server login)
+- [x] Protocol test with `archipelago.js` against a fake Archipelago server
+- [-] Manual test with a real Archipelago server (9.7.3): needs a room with an admin password
+
 ## Open decisions for the developer
 
 See `PLAN slotlock.md`, section 23: production domain, responsibility on the proServer, GitHub repository, PrimeVue license, Node 26 or Node 24 LTS, comparison with the Google sheet.
@@ -157,3 +166,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-26 | Sphere checker P3 | ok | ok | 132 unit, 34 integration, 36 unit app, 16 e2e ok | Visual check in the browser |
 | 2026-10-26 | Sphere checker P4 | ok | ok | 137 unit, 39 integration, 37 unit app, 18 e2e ok | |
 | 2026-10-26 | Sphere checker P5 | ok | ok | 140 unit, 40 integration, 46 unit app, 18 e2e ok | |
+| 2026-10-26 | Sphere checker P6 | ok | ok | 156 unit, 52 integration, 50 unit app, 19 e2e ok | No test with a real Archipelago server |

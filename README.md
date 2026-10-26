@@ -51,6 +51,17 @@ The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sp
 - The server keeps only the locations and the item names. It ignores the server options of the file, because they contain the passwords of the room.
 - Archipelago does not put locations that are not reachable into a sphere. The server puts them after the last sphere.
 - An item for an item link group has the group as receiver. The group is not a slot of the room.
+- The sphere limit for players is the lowest sphere with open locations plus a number that the admin sets. Slots with reached goal do not hold the limit back.
+- The socket messages of a room are public. So the live message about changed locations contains no items. The browser loads the data again through the API, which checks the role of the user.
+- Admin helpers see the admin view of the locations and make the Discord text, but they cannot change the room.
+
+### Connection to the Archipelago server
+
+- The admin commands are chat lines that start with `!admin`, the same as in Archipolygo. The server connects as a text client of the selected SlotLock slot, logs in with the admin password, sends the lines and disconnects.
+- A room on archipelago.gg stops after some time without activity and can get a new port. Before each command, the server opens the room page (this starts the room) and reads the current port.
+- The passwords stay only in the memory of the server. After a restart, the admin logs in again.
+- The Archipelago server answers successful admin commands only with a message to all players. It answers errors directly. So the server sends the lines with a short pause and collects the error answers.
+- The chat function of `archipelago.js` waits for its own message to come back. The server hides the password in this echo, so the application sends the chat packet directly.
 
 ### Vue components
 

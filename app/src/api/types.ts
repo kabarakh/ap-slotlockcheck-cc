@@ -44,3 +44,7 @@ export type LocationAdminRow = Schemas['LocationAdminRowDto'];
 export type SphereCleanup = Schemas['SphereCleanupDto'];
 export type SphereCleanupEntry = Schemas['SphereCleanupEntryDto'];
 export type CleanupSlotMode = Schemas['CleanupSlotMode'];
+export type ServerAdminStatus = Schemas['ServerAdminStatusDto'];
+export type ServerJob = Schemas['ServerJobDto'];
+export type ReleaseMode = Schemas['ReleaseMode'];
+export type ReleasePreview = Schemas['ReleasePreviewDto'];
