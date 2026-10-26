@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { windowTitle } from '../window-title';
 
 describe('windowTitle', () => {

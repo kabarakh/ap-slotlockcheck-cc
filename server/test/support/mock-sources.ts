@@ -1,4 +1,5 @@
 import { createServer, type Server } from 'node:http';
+
 import { loadFixture, type FixtureName } from '../fixtures/fixtures.ts';
 
 export const MOCK_CHEESE_TRACKER_ID = 'AbCdEfGhIjKlMnOpQrStUv';

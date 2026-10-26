@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+
 import { api, ApiRequestError, unwrap } from '@/api/client';
 import type { SeedData } from '@/api/types';
 import { useCurrentRoomStore } from './current-room';

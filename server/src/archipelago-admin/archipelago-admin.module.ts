@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { LocationsModule } from '../locations/locations.module.js';
 import { RoomsModule } from '../rooms/rooms.module.js';
 import { ArchipelagoModule } from '../sources/archipelago/archipelago.module.js';

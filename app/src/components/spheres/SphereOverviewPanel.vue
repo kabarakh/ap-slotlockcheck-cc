@@ -2,9 +2,12 @@
 import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Checkbox from 'primevue/checkbox';
 import ProgressSpinner from 'primevue/progressspinner';
+
 import SphereOverviewTable from '@/components/ui/SphereOverviewTable.vue';
+
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useSphereOverviewStore } from '@/stores/sphere-overview';
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { generateKeyPairSync } from 'node:crypto';
 import type { AddressInfo } from 'node:net';
+
 import { remainingValidDays, startChallengeServer } from './acme-challenge';
 
 describe('startChallengeServer', () => {

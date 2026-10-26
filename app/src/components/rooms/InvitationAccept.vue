@@ -3,8 +3,10 @@ import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
+
 import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
+
 import { useInvitationsStore } from '@/stores/invitations';
 
 const invitations = useInvitationsStore();

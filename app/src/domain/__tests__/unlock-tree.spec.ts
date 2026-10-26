@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import type { SlotLock } from '@/api/types';
 import { buildUnlockForest, type UnlockTreeNode } from '../unlock-tree';
 import { slotRow } from './fixtures';

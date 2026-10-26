@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
-import type { SlotRow } from '@/api/types';
-import { formatGameName } from '@/domain/game-name';
-import type { InactivityLevel } from '@/domain/inactivity';
-import { checksPercentage, isGoaled } from '@/domain/summary';
+
 import CheeseStatusTag from './CheeseStatusTag.vue';
 import InactivityText from './InactivityText.vue';
 import LockStatusTag from './LockStatusTag.vue';
 import UnlockInfo from './UnlockInfo.vue';
+
+import type { SlotRow } from '@/api/types';
+import { formatGameName } from '@/domain/game-name';
+import type { InactivityLevel } from '@/domain/inactivity';
+import { checksPercentage, isGoaled } from '@/domain/summary';
 
 const props = defineProps<{
   slots: SlotRow[];

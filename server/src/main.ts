@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { SwaggerModule } from '@nestjs/swagger';
+
 import { AppModule } from './app.module.js';
 import { AppConfigService } from './config/app-config.service.js';
 import { API_PREFIX, configureApp, createOpenApiDocument } from './setup-app.js';

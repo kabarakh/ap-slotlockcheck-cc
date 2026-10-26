@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { RoomRole } from '../rooms/dto/room.dto.js';
 import { REQUIRE_ROOM_ROLE_KEY } from './auth.decorators.js';

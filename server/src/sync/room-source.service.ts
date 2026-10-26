@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { PrismaService } from '../prisma/prisma.service.js';
 import { parseArchipelagoLink } from '../sources/archipelago/archipelago-link.js';
 import type {

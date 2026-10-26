@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+
 import { api, ApiRequestError, unwrap } from '@/api/client';
 import type {
   LocationsChangedPayload,

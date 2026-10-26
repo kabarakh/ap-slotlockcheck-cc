@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+
 import { RoomSourceService } from '../sync/room-source.service.js';
 import { buildPrototypeReport, formatTable } from './prototype-report.js';
 import { PrototypeModule } from './prototype.module.js';

@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+
 import type { LockStatus, SlotRow } from '@/api/types';
 import { formatGameName } from '@/domain/game-name';
 import type { InactivityLevel } from '@/domain/inactivity';

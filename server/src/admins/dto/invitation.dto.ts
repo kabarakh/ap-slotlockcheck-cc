@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsOptional } from 'class-validator';
+
 import { ADMIN_ROLES, type AdminRole } from './admins.dto.js';
 
 export class CreateInvitationDto {

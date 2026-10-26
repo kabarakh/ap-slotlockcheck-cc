@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+
 import { detectLocks, evaluateSlotLockStates } from './lock.logic.js';
 import type { LockDetectionInput, LockDetectionResult, SlotLockState, StoredLock, StoredUnlock } from './lock.types.js';
 import { canReplaceUnlockTime, estimateUnlockTime, type ChecksHistoryPoint } from './unlock-time.logic.js';

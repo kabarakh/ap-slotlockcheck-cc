@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
+
 import { useUiStore } from '@/stores/ui';
 
 const ui = useUiStore();

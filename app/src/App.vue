@@ -4,8 +4,10 @@ import { storeToRefs } from 'pinia';
 import { useTitle } from '@vueuse/core';
 import { RouterView } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+
 import AppHeader from '@/components/layout/AppHeader.vue';
 import AppMessages from '@/components/layout/AppMessages.vue';
+
 import { windowTitle } from '@/domain/window-title';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useUiStore } from '@/stores/ui';

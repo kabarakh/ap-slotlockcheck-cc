@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { deflateSync } from 'node:zlib';
+
 import { itemTypeFromFlags } from './item-type.js';
 import { MultidataFormatError, readMultidata } from './multidata.reader.js';
 

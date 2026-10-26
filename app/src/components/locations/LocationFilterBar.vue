@@ -2,12 +2,14 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import InputNumber from 'primevue/inputnumber';
 import MultiSelect from 'primevue/multiselect';
 import Select from 'primevue/select';
 import Slider from 'primevue/slider';
+
 import type { LocationSlotScope } from '@/api/types';
 import { ITEM_TYPES } from '@/domain/item-type';
 import { useAuthStore } from '@/stores/auth';

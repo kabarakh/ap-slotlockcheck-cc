@@ -1,9 +1,11 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router';
+
+import RoomListView from '@/views/RoomListView.vue';
+
 import { useAuthStore } from '@/stores/auth';
 import type { LocationState } from '@/api/types';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLocationsStore } from '@/stores/locations';
-import RoomListView from '@/views/RoomListView.vue';
 
 declare module 'vue-router' {
   interface RouteMeta {

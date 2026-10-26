@@ -2,12 +2,14 @@
 import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import InputNumber from 'primevue/inputnumber';
 import Message from 'primevue/message';
 import Select from 'primevue/select';
 import Textarea from 'primevue/textarea';
+
 import type { CleanupSlotMode } from '@/api/types';
 import { useSphereCleanupStore } from '@/stores/sphere-cleanup';
 

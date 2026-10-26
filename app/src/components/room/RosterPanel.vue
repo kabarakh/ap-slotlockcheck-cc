@@ -2,12 +2,15 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
-import type { LockStatus } from '@/api/types';
+
 import SlotTable from '@/components/ui/SlotTable.vue';
+
+import type { LockStatus } from '@/api/types';
 import type { InactivityLevel } from '@/domain/inactivity';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useInactivityStore } from '@/stores/inactivity';

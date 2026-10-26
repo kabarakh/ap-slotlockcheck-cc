@@ -2,14 +2,17 @@
 import { computed, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import AutoComplete, { type AutoCompleteCompleteEvent } from 'primevue/autocomplete';
 import Button from 'primevue/button';
 import InputNumber from 'primevue/inputnumber';
 import Select from 'primevue/select';
+
+import ServerConfirmDialog from './ServerConfirmDialog.vue';
+
 import type { ReleaseMode } from '@/api/types';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useServerAdminStore } from '@/stores/server-admin';
-import ServerConfirmDialog from './ServerConfirmDialog.vue';
 
 const serverAdmin = useServerAdminStore();
 const { itemDraft, releaseDraft, itemNames, commandSlotId, loggedIn, jobRunning, busy } = storeToRefs(serverAdmin);

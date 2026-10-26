@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+
 import Tag from 'primevue/tag';
+
 import type { LockStatus } from '@/api/types';
 
 const props = defineProps<{ status: LockStatus }>();

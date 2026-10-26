@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import acme from 'acme-client';
+
 import { remainingValidDays, startChallengeServer, type ChallengeTokens } from './acme-challenge.ts';
 
 const RENEW_BEFORE_DAYS = 30;

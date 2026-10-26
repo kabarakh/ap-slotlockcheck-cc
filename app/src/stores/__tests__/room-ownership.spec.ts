@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+
 import { slotRow } from '@/domain/__tests__/fixtures';
 import { useAdminStore } from '../admin';
 import { useAuthStore } from '../auth';

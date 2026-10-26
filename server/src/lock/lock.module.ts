@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { LockService } from './lock.service.js';
 
 @Module({

@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+
 import { ensureRoom, ensureSeed, generationOutputFixture, loginAs, multidataFixture, OWNER, PLAYER } from './support';
 
 test.describe.configure({ mode: 'serial' });

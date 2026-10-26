@@ -73,6 +73,7 @@ The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sp
 - **Functional components** get all data from Pinia stores and call store actions. They have no props, no emits, no provide and no inject.
 - **Presentational components** (`app/src/components/ui`) get props only. They do not use stores and send no events.
 - Only store actions send HTTP requests or use the socket.
+- The imports are in four groups with an empty line between them: libraries, PrimeVue, own components, own code (stores, domain, API). ESLint (`perfectionist/sort-imports`) checks and corrects the groups. The server has two groups: libraries and own code.
 
 ## Development
 

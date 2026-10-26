@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+
 import { createSlotFinder } from '../lock/lock.logic.js';
 import { slotIdentity } from '../sync/room-source.mapper.js';
 import { PrismaService } from '../prisma/prisma.service.js';

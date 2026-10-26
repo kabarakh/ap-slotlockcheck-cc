@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
+
 import type { SphereItemTypes, SphereRow } from '@/api/types';
 
 const props = defineProps<{ spheres: SphereRow[]; itemTypes: SphereItemTypes[] | null }>();

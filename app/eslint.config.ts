@@ -4,6 +4,7 @@ import pluginVue from 'eslint-plugin-vue';
 import pluginPlaywright from 'eslint-plugin-playwright';
 import pluginVitest from '@vitest/eslint-plugin';
 import pluginOxlint from 'eslint-plugin-oxlint';
+import pluginPerfectionist from 'eslint-plugin-perfectionist';
 import skipFormatting from 'eslint-config-prettier/flat';
 
 export default defineConfigWithVueTs(
@@ -25,6 +26,25 @@ export default defineConfigWithVueTs(
   {
     ...pluginVitest.configs.recommended,
     files: ['src/**/__tests__/*'],
+  },
+
+  {
+    plugins: { perfectionist: pluginPerfectionist },
+    rules: {
+      'perfectionist/sort-imports': [
+        'error',
+        {
+          type: 'unsorted',
+          groups: ['unknown', 'primevue', 'component', 'own'],
+          customGroups: [
+            { groupName: 'primevue', elementNamePattern: '^primevue(/|$)' },
+            { groupName: 'component', elementNamePattern: '\\.vue$' },
+            { groupName: 'own', elementNamePattern: '^(@/|\\.)' },
+          ],
+          newlinesBetween: 1,
+        },
+      ],
+    },
   },
 
   ...pluginOxlint.buildFromOxlintConfigFile('.oxlintrc.json'),

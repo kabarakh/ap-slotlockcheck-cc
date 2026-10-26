@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+
 import { REQUIRE_LOGIN_KEY } from './auth.decorators.js';
 import { SESSION_COOKIE, type AuthenticatedRequest } from './auth.types.js';
 import { SessionService } from './session.service.js';

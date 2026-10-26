@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { ConfigModule } from '../config/config.module.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { ArchipelagoModule } from '../sources/archipelago/archipelago.module.js';

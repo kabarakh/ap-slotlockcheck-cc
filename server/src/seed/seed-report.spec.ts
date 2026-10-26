@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+
 import { multidataFixturePath } from '../../test/fixtures/fixtures.js';
 import { readMultidata } from './multidata.reader.js';
 import { buildSeedReport } from './seed-report.js';

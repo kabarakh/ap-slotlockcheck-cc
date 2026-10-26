@@ -1,5 +1,6 @@
 import request from 'supertest';
 import type { App } from 'supertest/types.js';
+
 import type { RoomAdminDto } from '../src/admins/dto/admins.dto.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
 import { SyncService } from '../src/sync/sync.service.js';

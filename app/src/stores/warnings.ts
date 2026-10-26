@@ -1,5 +1,6 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+
 import { api, unwrap } from '@/api/client';
 import type { Warning } from '@/api/types';
 import { useCurrentRoomStore } from './current-room';

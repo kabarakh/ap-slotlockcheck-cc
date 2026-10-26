@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { inflateSync } from 'node:zlib';
+
 import { decodePickle, PickleObject, UnsupportedPickleError, type PickleValue } from './pickle-decoder.js';
 
 const PROTO_4 = [0x80, 0x04];

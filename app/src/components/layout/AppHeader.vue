@@ -2,8 +2,10 @@
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import { RouterLink, useRoute } from 'vue-router';
+
 import Button from 'primevue/button';
 import Select from 'primevue/select';
+
 import { useAuthStore } from '@/stores/auth';
 import { useUiStore, type ColorMode, type Locale } from '@/stores/ui';
 

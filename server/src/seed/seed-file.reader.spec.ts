@@ -1,6 +1,7 @@
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
 import { multidataFixturePath } from '../../test/fixtures/fixtures.js';
 import { MultidataFormatError } from './multidata.reader.js';
 import { readSeedFile } from './seed-file.reader.js';

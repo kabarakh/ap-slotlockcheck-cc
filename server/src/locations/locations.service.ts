@@ -1,4 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+
 import type { AuthUser } from '../auth/auth.types.js';
 import { RoomRoleService } from '../auth/room-role.service.js';
 import type { Room } from '../generated/prisma/client.js';

@@ -1,4 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
+
 import { CHEESE_TRACKER_ID, ensureRoom, loginAs, OWNER, PLAYER } from './support';
 
 test.describe.configure({ mode: 'serial' });

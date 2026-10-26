@@ -2,9 +2,12 @@
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import { RouterLink, RouterView } from 'vue-router';
+
 import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
+
 import RoomHeader from '@/components/room/RoomHeader.vue';
+
 import { useCurrentRoomStore } from '@/stores/current-room';
 
 const { room, loading, notFound } = storeToRefs(useCurrentRoomStore());

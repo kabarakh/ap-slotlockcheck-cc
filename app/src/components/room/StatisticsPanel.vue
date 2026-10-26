@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
+
 import { useStatisticsStore } from '@/stores/statistics';
 
 const { globalStatistics } = storeToRefs(useStatisticsStore());

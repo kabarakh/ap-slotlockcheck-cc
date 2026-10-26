@@ -1,5 +1,6 @@
 import { open as openFile, readFile, stat } from 'node:fs/promises';
 import yauzl, { type Entry, type ZipFile } from 'yauzl';
+
 import { MultidataFormatError } from './multidata.reader.js';
 
 export const MAXIMUM_MULTIDATA_FILE_BYTES = 50 * 1024 * 1024;

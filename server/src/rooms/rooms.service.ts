@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+
 import type { AuthUser } from '../auth/auth.types.js';
 import { AppConfigService } from '../config/app-config.service.js';
 import type { Room } from '../generated/prisma/client.js';

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { CookieOptions, Response } from 'express';
+
 import { AppConfigService } from '../config/app-config.service.js';
 import { SESSION_COOKIE, SESSION_LIFETIME_SECONDS, type AuthUser, type SessionPayload } from './auth.types.js';
 

@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+
 import { formatTable } from '../prototype/prototype-report.js';
 import { readMultidata } from './multidata.reader.js';
 import { buildSeedReport } from './seed-report.js';

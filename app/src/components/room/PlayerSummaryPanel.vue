@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
+
 import SlotNameList from '@/components/ui/SlotNameList.vue';
+
 import type { PlayerSummary } from '@/domain/summary';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useTableFiltersStore } from '@/stores/table-filters';

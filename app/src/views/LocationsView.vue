@@ -3,10 +3,13 @@ import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
+
 import Message from 'primevue/message';
-import type { LocationState } from '@/api/types';
+
 import LocationFilterBar from '@/components/locations/LocationFilterBar.vue';
 import LocationListPanel from '@/components/locations/LocationListPanel.vue';
+
+import type { LocationState } from '@/api/types';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLocationsStore } from '@/stores/locations';
 import { useServerAdminStore } from '@/stores/server-admin';

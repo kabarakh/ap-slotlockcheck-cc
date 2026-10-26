@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ArrayMinSize, IsArray, IsInt, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+
 import { CHEESE_TRACKER_ID_PATTERN } from '../../sources/cheese/cheese.schemas.js';
 
 export const ROOM_SLUG_PATTERN = /^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/;

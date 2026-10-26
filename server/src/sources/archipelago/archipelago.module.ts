@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { SourceHttpModule } from '../http/http.module.js';
 import { ArchipelagoService } from './archipelago.service.js';
 

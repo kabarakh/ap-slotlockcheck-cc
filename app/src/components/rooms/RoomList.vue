@@ -3,13 +3,16 @@ import { computed, onMounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
+
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
 import ProgressBar from 'primevue/progressbar';
 import Tag from 'primevue/tag';
-import type { RoomListEntry } from '@/api/types';
+
 import SyncStatusText from '@/components/ui/SyncStatusText.vue';
+
+import type { RoomListEntry } from '@/api/types';
 import { checksPercentage } from '@/domain/summary';
 import { useAuthStore } from '@/stores/auth';
 import { useRoomsStore } from '@/stores/rooms';

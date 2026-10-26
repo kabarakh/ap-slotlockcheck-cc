@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import { RoomDetailDto, SyncStatusDto } from '../../rooms/dto/room.dto.js';
 import { SlotRowDto } from '../../rooms/dto/slot-row.dto.js';
 

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import type { SyncStatus } from '@/api/types';
+
 import DateTimeText from './DateTimeText.vue';
+
+import type { SyncStatus } from '@/api/types';
 
 const props = defineProps<{ status: SyncStatus }>();
 const { t } = useI18n();

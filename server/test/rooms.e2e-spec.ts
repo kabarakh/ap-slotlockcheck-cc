@@ -1,5 +1,6 @@
 import request from 'supertest';
 import type { App } from 'supertest/types.js';
+
 import type { SlotRowDto } from '../src/rooms/dto/slot-row.dto.js';
 import { createTestApp, type TestApp } from './support/test-app.js';
 

@@ -2,11 +2,14 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
-import type { LockStatus } from '@/api/types';
+
 import SlotTable from '@/components/ui/SlotTable.vue';
+
+import type { LockStatus } from '@/api/types';
 import { useInactivityStore } from '@/stores/inactivity';
 import { useTableFiltersStore } from '@/stores/table-filters';
 

@@ -2,11 +2,13 @@
 import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Tab from 'primevue/tab';
 import TabList from 'primevue/tablist';
 import TabPanel from 'primevue/tabpanel';
 import TabPanels from 'primevue/tabpanels';
 import Tabs from 'primevue/tabs';
+
 import AdminListPanel from '@/components/admin/AdminListPanel.vue';
 import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel.vue';
 import InvitationPanel from '@/components/admin/InvitationPanel.vue';
@@ -20,6 +22,7 @@ import SphereCheckerSettingsPanel from '@/components/admin/SphereCheckerSettings
 import UnlockTimesPanel from '@/components/admin/UnlockTimesPanel.vue';
 import WarningsPanel from '@/components/admin/WarningsPanel.vue';
 import SphereCleanupPanel from '@/components/spheres/SphereCleanupPanel.vue';
+
 import { useAdminStore } from '@/stores/admin';
 import { useCurrentRoomStore } from '@/stores/current-room';
 

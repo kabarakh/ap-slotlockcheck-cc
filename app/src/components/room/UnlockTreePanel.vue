@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Message from 'primevue/message';
+
 import UnlockTreeChart from '@/components/ui/UnlockTreeChart.vue';
+
 import { useStatisticsStore } from '@/stores/statistics';
 
 const { unlockForest } = storeToRefs(useStatisticsStore());

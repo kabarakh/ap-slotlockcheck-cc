@@ -2,13 +2,16 @@
 import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
-import type { Warning } from '@/api/types';
+
 import DateTimeText from '@/components/ui/DateTimeText.vue';
-import { useWarningsStore } from '@/stores/warnings';
 import WarningDialog from './WarningDialog.vue';
+
+import type { Warning } from '@/api/types';
+import { useWarningsStore } from '@/stores/warnings';
 
 const warningsStore = useWarningsStore();
 const { warnings } = storeToRefs(warningsStore);

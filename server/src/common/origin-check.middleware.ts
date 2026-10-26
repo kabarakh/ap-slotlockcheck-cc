@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable, type NestMiddleware } from '@nestjs/common';
 import type { NextFunction, Request, Response } from 'express';
+
 import { AppConfigService } from '../config/app-config.service.js';
 
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);

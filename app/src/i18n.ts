@@ -1,4 +1,5 @@
 import { createI18n } from 'vue-i18n';
+
 import de from './locale/de.json5';
 import en from './locale/en.json5';
 

@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Textarea from 'primevue/textarea';
+
 import LockStatusTag from '@/components/ui/LockStatusTag.vue';
 import UnlockTimeText from '@/components/ui/UnlockTimeText.vue';
-import { useUnlockTimesStore } from '@/stores/unlock-times';
 import UnlockTimeDialog from './UnlockTimeDialog.vue';
+
+import { useUnlockTimesStore } from '@/stores/unlock-times';
 
 const unlockTimes = useUnlockTimesStore();
 const { unlockedPairs, csv, importResult, busy } = storeToRefs(unlockTimes);

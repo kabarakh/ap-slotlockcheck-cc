@@ -1,6 +1,7 @@
 import { computed } from 'vue';
 import { defineStore } from 'pinia';
 import { useIntervalFn, useNow } from '@vueuse/core';
+
 import { inactivityHours, inactivityLevel, type InactivityLevel } from '@/domain/inactivity';
 import { useCurrentRoomStore } from './current-room';
 

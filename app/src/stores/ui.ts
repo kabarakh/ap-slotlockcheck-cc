@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { usePreferredDark } from '@vueuse/core';
+
 import { ApiRequestError } from '@/api/client';
 
 export type Locale = 'de' | 'en';

@@ -6,6 +6,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+
 import type { AuthUser } from '../auth/auth.types.js';
 import type { Room } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';

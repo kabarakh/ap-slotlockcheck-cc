@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { calculateStatistics, isGoaled, summarizePlayers } from '../summary';
 import { slotRow } from './fixtures';
 

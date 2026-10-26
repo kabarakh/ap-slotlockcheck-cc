@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { GoneException, Injectable, NotFoundException } from '@nestjs/common';
+
 import type { AuthUser } from '../auth/auth.types.js';
 import { AppConfigService } from '../config/app-config.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';

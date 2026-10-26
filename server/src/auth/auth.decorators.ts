@@ -1,4 +1,5 @@
 import { createParamDecorator, SetMetadata, type ExecutionContext } from '@nestjs/common';
+
 import type { RoomRole } from '../rooms/dto/room.dto.js';
 import type { AuthenticatedRequest, AuthUser } from './auth.types.js';
 

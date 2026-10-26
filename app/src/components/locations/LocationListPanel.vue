@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+
 import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'primevue/datatable';
-import type { LocationAdminRow, LocationSortField, LocationUserRow } from '@/api/types';
+
 import DateTimeText from '@/components/ui/DateTimeText.vue';
 import ItemTypeTag from '@/components/ui/ItemTypeTag.vue';
+
+import type { LocationAdminRow, LocationSortField, LocationUserRow } from '@/api/types';
 import { formatGameName } from '@/domain/game-name';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLocationsStore } from '@/stores/locations';

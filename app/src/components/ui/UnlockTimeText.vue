@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import type { UnlockTimeSource } from '@/api/types';
+
 import DateTimeText from './DateTimeText.vue';
+
+import type { UnlockTimeSource } from '@/api/types';
 
 const props = defineProps<{ time: string | null; source: UnlockTimeSource | null }>();
 const { t } = useI18n();

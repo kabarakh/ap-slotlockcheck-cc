@@ -3,10 +3,13 @@ import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
+
 import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Tag from 'primevue/tag';
+
 import SyncStatusText from '@/components/ui/SyncStatusText.vue';
+
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLiveStore } from '@/stores/live';
 

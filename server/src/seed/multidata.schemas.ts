@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { PickleObject } from './pickle/pickle-decoder.js';
 
 const integer = z.number().int();

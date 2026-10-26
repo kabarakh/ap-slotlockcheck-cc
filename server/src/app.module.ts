@@ -3,6 +3,7 @@ import { Module, type DynamicModule, type MiddlewareConsumer, type NestModule } 
 import { APP_FILTER } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
+
 import { AdminsModule } from './admins/admins.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { ApiErrorFilter } from './common/api-error.filter.js';

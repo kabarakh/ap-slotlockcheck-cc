@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+
 import type { LocationUserRow, RoomDetail, SphereOverview } from '@/api/types';
 import { roomDetail, slotRow } from '@/domain/__tests__/fixtures';
 import { useAuthStore } from '../auth';

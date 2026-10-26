@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { AuthModule } from '../auth/auth.module.js';
 import { LiveModule } from '../live/live.module.js';
 import { RoomUpdatesService } from './room-updates.service.js';

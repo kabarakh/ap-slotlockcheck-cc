@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { SLUG_PATTERN, trackerIdFromInput } from '../room-setup';
 
 describe('trackerIdFromInput', () => {

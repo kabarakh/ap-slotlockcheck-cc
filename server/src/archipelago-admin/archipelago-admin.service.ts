@@ -6,6 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
 import type { Room, Slot } from '../generated/prisma/client.js';
 import { LocationStatusService } from '../locations/location-status.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';

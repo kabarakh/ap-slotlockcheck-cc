@@ -1,6 +1,7 @@
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+
 import { applyMigrations } from './support/migrations.ts';
 import { startMockSources } from './support/mock-sources.ts';
 

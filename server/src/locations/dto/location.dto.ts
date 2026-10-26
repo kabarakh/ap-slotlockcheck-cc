@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { ArrayMaxSize, IsArray, IsBoolean, IsIn, IsInt, IsOptional, Max, Min } from 'class-validator';
+
 import { ITEM_TYPES, type ItemType } from '../../seed/item-type.js';
 
 export const LOCATION_STATES = ['open', 'found', 'filler'] as const;

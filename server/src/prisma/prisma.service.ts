@@ -1,5 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+
 import { AppConfigService } from '../config/app-config.service.js';
 import { PrismaClient } from '../generated/prisma/client.js';
 

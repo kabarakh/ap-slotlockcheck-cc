@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+
 import type { LockStatus, UnlockTimeSource } from '../../lock/lock.types.js';
 import type {
   AvailabilityStatus,

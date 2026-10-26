@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+
 import { LiveModule } from '../live/live.module.js';
 import { LocationsModule } from '../locations/locations.module.js';
 import { RoomsModule } from '../rooms/rooms.module.js';

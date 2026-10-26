@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+
 import type { ServerJob } from '@/api/types';
 import { slotRow } from '@/domain/__tests__/fixtures';
 import { useCurrentRoomStore } from '../current-room';

@@ -1,4 +1,5 @@
 import { inflateSync } from 'node:zlib';
+
 import { itemTypeFromFlags, type ItemType } from './item-type.js';
 import { multidataSchema, type MultidataRoot } from './multidata.schemas.js';
 import { decodePickle, UnsupportedPickleError } from './pickle/pickle-decoder.js';
