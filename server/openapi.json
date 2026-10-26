@@ -1744,7 +1744,7 @@
     }
   },
   "info": {
-    "title": "Slotlock Tracker API",
+    "title": "SlotLockCheck API",
     "description": "",
     "version": "0.1.0",
     "contact": {}

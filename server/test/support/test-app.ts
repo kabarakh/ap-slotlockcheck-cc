@@ -38,7 +38,7 @@ export async function createTestApp(overrides: ProviderOverride[] = []): Promise
     DISCORD_CLIENT_SECRET: 'test',
     DISCORD_CALLBACK_URL: 'http://localhost:5173/api/auth/discord/callback',
     CHEESE_BASE_URL: 'https://cheese.test',
-    HTTP_USER_AGENT: 'SlotlockTracker/test',
+    HTTP_USER_AGENT: 'SlotLockCheck/test',
     APP_DIST_PATH: directory,
   });
 

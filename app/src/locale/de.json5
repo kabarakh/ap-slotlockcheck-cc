@@ -7,7 +7,7 @@
     reset: 'Zurücksetzen',
   },
   app: {
-    title: 'Slotlock Tracker',
+    title: 'SlotLockCheck',
     rooms: 'Räume',
     newRoom: 'Neuer Raum',
     login: 'Mit Discord anmelden',

@@ -1,4 +1,4 @@
-# Slotlock Tracker – Implementation Checklist
+# SlotLockCheck – Implementation Checklist
 
 Language: ASD-STE100 (Simplified Technical English)
 Reference: `PLAN slotlock.md` (section numbers in brackets). Deviations: `PLAN slotlock.md`, section 24.

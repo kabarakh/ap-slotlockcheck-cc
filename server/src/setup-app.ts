@@ -25,7 +25,7 @@ export function configureApp(app: NestExpressApplication, trustProxy: boolean): 
 }
 
 export function createOpenApiDocument(app: INestApplication): OpenAPIObject {
-  const config = new DocumentBuilder().setTitle('Slotlock Tracker API').setVersion('0.1.0').build();
+  const config = new DocumentBuilder().setTitle('SlotLockCheck API').setVersion('0.1.0').build();
   return SwaggerModule.createDocument(app, config, {
     extraModels: [
       ApiErrorDto,

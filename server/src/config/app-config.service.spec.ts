@@ -10,7 +10,7 @@ const validEnvironment = {
   DISCORD_CLIENT_ID: 'client',
   DISCORD_CLIENT_SECRET: 'secret',
   DISCORD_CALLBACK_URL: 'http://localhost:5173/api/auth/discord/callback',
-  HTTP_USER_AGENT: 'SlotlockTracker/0.1.0',
+  HTTP_USER_AGENT: 'SlotLockCheck/0.1.0',
 };
 
 describe('validateEnvironment', () => {

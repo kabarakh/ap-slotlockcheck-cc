@@ -1,7 +1,7 @@
 {
   "name": "@slotlock/server",
   "version": "0.1.0",
-  "description": "Slotlock Tracker server",
+  "description": "SlotLockCheck server",
   "author": "",
   "private": true,
   "license": "UNLICENSED",

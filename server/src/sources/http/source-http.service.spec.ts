@@ -4,7 +4,7 @@ import { SourceFormatError, SourceRequestError } from './source-errors.js';
 import { SourceHttpService } from './source-http.service.js';
 
 const config = {
-  get: (key: string) => (key === 'HTTP_TIMEOUT_SECONDS' ? 5 : 'SlotlockTracker/test'),
+  get: (key: string) => (key === 'HTTP_TIMEOUT_SECONDS' ? 5 : 'SlotLockCheck/test'),
 } as unknown as AppConfigService;
 
 describe('SourceHttpService', () => {
@@ -21,7 +21,7 @@ describe('SourceHttpService', () => {
       value: 1,
     });
     const init = fetchMock.mock.calls[0]?.[1] as RequestInit;
-    expect((init.headers as Record<string, string>)['user-agent']).toBe('SlotlockTracker/test');
+    expect((init.headers as Record<string, string>)['user-agent']).toBe('SlotLockCheck/test');
   });
 
   it('throws a format error with the path of the wrong field', async () => {

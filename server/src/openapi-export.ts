@@ -11,7 +11,7 @@ const EXPORT_ENVIRONMENT: Record<string, string> = {
   DISCORD_CLIENT_ID: 'openapi-export',
   DISCORD_CLIENT_SECRET: 'openapi-export',
   DISCORD_CALLBACK_URL: 'http://localhost:5173/api/auth/discord/callback',
-  HTTP_USER_AGENT: 'SlotlockTracker/openapi-export',
+  HTTP_USER_AGENT: 'SlotLockCheck/openapi-export',
 };
 
 async function exportOpenApi(): Promise<void> {

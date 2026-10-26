@@ -1,6 +1,6 @@
-# Slotlock Tracker
+# SlotLockCheck
 
-Slotlock Tracker shows the lock status of all slots in an Archipelago room that uses the game SlotLock. It replaces a manual Google sheet. The functions and the technical plan are in `PLAN slotlock.md`. The progress is in `CHECKLIST implementation.md`.
+SlotLockCheck shows the lock status of all slots in an Archipelago room that uses the game SlotLock. It replaces a manual Google sheet. The functions and the technical plan are in `PLAN slotlock.md`. The progress is in `CHECKLIST implementation.md`.
 
 Language: ASD-STE100 (Simplified Technical English)
 

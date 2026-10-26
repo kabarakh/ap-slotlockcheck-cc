@@ -1,4 +1,4 @@
-# Slotlock Tracker – Implementation Plan
+# SlotLockCheck – Implementation Plan
 
 Version: draft v3 (2026-10-24)
 Language: ASD-STE100 (Simplified Technical English)
@@ -457,7 +457,7 @@ Remove the folder `entities` that `nest g resource` makes. The database types co
 | `JWT_SECRET` | Key for the session token. |
 | `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_CALLBACK_URL` | Discord OAuth. |
 | `CHEESE_BASE_URL` | Base URL of the Cheese API. Default: `https://cheesetrackers.theincrediblewheelofchee.se`. The Playwright tests set it to the mock server (19.4). The Archipelago URL comes from the Cheese data (24.7). |
-| `HTTP_USER_AGENT` | `User-Agent` for external requests: `SlotlockTracker/<version> (+https://github.com/<owner>/<repo>)`. |
+| `HTTP_USER_AGENT` | `User-Agent` for external requests: `SlotLockCheck/<version> (+https://github.com/<owner>/<repo>)`. |
 | `HTTP_TIMEOUT_SECONDS` | Timeout of each external request. Default 30. |
 | `TRUST_PROXY` | `true` behind nginx (correct client IP and protocol for the `Secure` cookie). |
 | `ADDITIONAL_ORIGINS` | Optional. More origins, separated by commas, that the origin check permits. |
@@ -758,7 +758,7 @@ Use `npm-run-all2` (as in the reference project) for parallel and sequential scr
 | Environment files | Templates for development and production. Production uses placeholders. |
 | Health endpoint | `@nestjs/terminus` |
 | Production domain | `slotlock.example.com` (dynamic DNS, public IPv4 of the home connection) |
-| User-Agent | `SlotlockTracker/<version> (+<GitHub repository URL>)` |
+| User-Agent | `SlotLockCheck/<version> (+<GitHub repository URL>)` |
 | Owner check | 1. claimed slot of the owner → Discord user ID, 2. Discord user name. Never a Cheese API key. If no match: stop with an instruction. |
 | Cheese status columns | `progression_status`, `completion_status`, `availability_status` |
 | Goaled | `completion_status` is `goal`, `done` or `released` |
