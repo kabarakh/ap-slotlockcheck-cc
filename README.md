@@ -36,7 +36,7 @@ The DTO classes of the server are the only source of the API types. The server w
 
 ### Inactivity, players and statistics
 
-The browser calculates inactivity, player summaries and statistics from the roster. The inactivity counts from the latest of these times: last activity in Cheese, last "Still BK" click in Cheese, activity timer of Archipelago, unlock time. Slots with reached goal have no inactivity. It uses the current time, so the colors change without a new synchronization.
+The browser calculates inactivity, player summaries and statistics from the roster. The statistics show a donut chart for each part of a total and a bar chart for each distribution. `d3-shape` and `d3-scale` calculate the geometry (`charts.ts`); Vue draws the SVG, as for the unlock tree. The colors are CSS variables (`--app-chart-*`), so the charts follow the light and the dark mode. The inactivity counts from the latest of these times: last activity in Cheese, last "Still BK" click in Cheese, activity timer of Archipelago, unlock time. Slots with reached goal have no inactivity. It uses the current time, so the colors change without a new synchronization.
 
 ### Game control and setup
 

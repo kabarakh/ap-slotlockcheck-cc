@@ -1,51 +1,161 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 
+import BarChart from '@/components/ui/BarChart.vue';
+import DonutChart from '@/components/ui/DonutChart.vue';
+
+import type { ChartPart } from '@/domain/charts';
 import { useStatisticsStore } from '@/stores/statistics';
+
+interface StatisticCard {
+  key: string;
+  title: string;
+  value: string;
+  center: string;
+  parts: ChartPart[];
+  legend: boolean;
+}
 
 const { globalStatistics } = storeToRefs(useStatisticsStore());
 const { t } = useI18n();
+
+const percentage = (value: number) => t('statistics.percentage', { value });
+
+const cards = computed<StatisticCard[]>(() => {
+  const stats = globalStatistics.value;
+  return [
+    {
+      key: 'unlocked',
+      title: t('statistics.unlocked'),
+      value: `${stats.unlockedCount} / ${stats.lockableCount}`,
+      center: percentage(stats.unlockedPercentage),
+      legend: false,
+      parts: [
+        { key: 'unlocked', label: t('statistics.parts.unlocked'), value: stats.unlockedCount, color: 'unlocks' },
+        {
+          key: 'locked',
+          label: t('statistics.parts.locked'),
+          value: stats.lockableCount - stats.unlockedCount,
+          color: 'rest',
+        },
+      ],
+    },
+    {
+      key: 'goaled',
+      title: t('statistics.goaled'),
+      value: `${stats.goaledCount} / ${stats.slotCount}`,
+      center: percentage(stats.goaledPercentage),
+      legend: false,
+      parts: [
+        { key: 'goaled', label: t('statistics.parts.goaled'), value: stats.goaledCount, color: 'goal' },
+        {
+          key: 'open',
+          label: t('statistics.parts.notGoaled'),
+          value: stats.slotCount - stats.goaledCount,
+          color: 'rest',
+        },
+      ],
+    },
+    {
+      key: 'checks',
+      title: t('statistics.checks'),
+      value: `${stats.checksDone} / ${stats.checksTotal}`,
+      center: percentage(stats.checksPercentage),
+      legend: false,
+      parts: [
+        { key: 'done', label: t('statistics.parts.checksDone'), value: stats.checksDone, color: 'checks' },
+        {
+          key: 'open',
+          label: t('statistics.parts.checksOpen'),
+          value: stats.checksTotal - stats.checksDone,
+          color: 'rest',
+        },
+      ],
+    },
+    {
+      key: 'openChecks',
+      title: t('statistics.openChecks'),
+      value: String(stats.openChecksInOpenSlots + stats.openChecksInLockedSlots),
+      center: '',
+      legend: true,
+      parts: [
+        {
+          key: 'openSlots',
+          label: t('statistics.openChecksInOpenSlots'),
+          value: stats.openChecksInOpenSlots,
+          color: 'checks',
+        },
+        {
+          key: 'lockedSlots',
+          label: t('statistics.openChecksInLockedSlots'),
+          value: stats.openChecksInLockedSlots,
+          color: 'locked',
+        },
+      ],
+    },
+    {
+      key: 'allChecks',
+      title: t('statistics.allChecks'),
+      value: `${stats.allChecksCount} / ${stats.slotCount}`,
+      center: percentage(stats.allChecksPercentage),
+      legend: false,
+      parts: [
+        { key: 'all', label: t('statistics.parts.allChecks'), value: stats.allChecksCount, color: 'checks' },
+        {
+          key: 'open',
+          label: t('statistics.parts.openChecksLeft'),
+          value: stats.slotCount - stats.allChecksCount,
+          color: 'rest',
+        },
+      ],
+    },
+  ];
+});
+
+const lockedBars = computed(() =>
+  globalStatistics.value.playersByLockedCount.map((entry) => ({
+    label: String(entry.lockedCount),
+    value: entry.playerCount,
+  })),
+);
+const unlockedBars = computed(() =>
+  globalStatistics.value.playersByUnlockedCount.map((entry) => ({
+    label: String(entry.slotCount),
+    value: entry.playerCount,
+  })),
+);
 </script>
 
 <template>
   <section class="app-main statistics">
     <div class="app-stat-grid" data-testid="statistics">
-      <div class="app-stat">
-        <div class="app-muted">{{ t('statistics.unlocked') }}</div>
-        <div class="app-stat-value">{{ globalStatistics.unlockedCount }} / {{ globalStatistics.lockableCount }}</div>
-        <div>{{ t('statistics.percentage', { value: globalStatistics.unlockedPercentage }) }}</div>
-      </div>
-      <div class="app-stat">
-        <div class="app-muted">{{ t('statistics.goaled') }}</div>
-        <div class="app-stat-value">{{ globalStatistics.goaledCount }} / {{ globalStatistics.slotCount }}</div>
-        <div>{{ t('statistics.percentage', { value: globalStatistics.goaledPercentage }) }}</div>
-      </div>
-      <div class="app-stat" data-testid="statistics-checks">
-        <div class="app-muted">{{ t('statistics.checks') }}</div>
-        <div class="app-stat-value">{{ globalStatistics.checksDone }} / {{ globalStatistics.checksTotal }}</div>
-        <div>{{ t('statistics.percentage', { value: globalStatistics.checksPercentage }) }}</div>
-      </div>
-      <div class="app-stat">
-        <div class="app-muted">{{ t('statistics.openChecksInOpenSlots') }}</div>
-        <div class="app-stat-value">{{ globalStatistics.openChecksInOpenSlots }}</div>
-      </div>
-      <div class="app-stat">
-        <div class="app-muted">{{ t('statistics.openChecksInLockedSlots') }}</div>
-        <div class="app-stat-value">{{ globalStatistics.openChecksInLockedSlots }}</div>
-      </div>
-      <div class="app-stat">
-        <div class="app-muted">{{ t('statistics.allChecks') }}</div>
-        <div class="app-stat-value">{{ globalStatistics.allChecksCount }} / {{ globalStatistics.slotCount }}</div>
-        <div>{{ t('statistics.percentage', { value: globalStatistics.allChecksPercentage }) }}</div>
+      <div v-for="card in cards" :key="card.key" class="app-stat statistic" :data-testid="`statistics-${card.key}`">
+        <DonutChart :parts="card.parts" :center="card.center" />
+        <div>
+          <div class="app-muted">{{ card.title }}</div>
+          <div class="app-stat-value">{{ card.value }}</div>
+          <ul v-if="card.legend" class="statistic-legend">
+            <li v-for="part in card.parts" :key="part.key">
+              <span class="chart-legend" :class="`chart-${part.color}`" />{{ part.label }}: {{ part.value }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class="distributions">
       <div>
         <h2>{{ t('statistics.playersByLocked') }}</h2>
+        <BarChart
+          :bars="lockedBars"
+          color="locked"
+          :x-label="t('statistics.lockedCount')"
+          :y-label="t('statistics.playerCount')"
+        />
         <DataTable :value="globalStatistics.playersByLockedCount" size="small" striped-rows>
           <Column field="lockedCount" :header="t('statistics.lockedCount')" />
           <Column field="playerCount" :header="t('statistics.playerCount')" />
@@ -53,6 +163,12 @@ const { t } = useI18n();
       </div>
       <div>
         <h2>{{ t('statistics.playersByUnlocked') }}</h2>
+        <BarChart
+          :bars="unlockedBars"
+          color="unlocks"
+          :x-label="t('statistics.unlockedCount')"
+          :y-label="t('statistics.playerCount')"
+        />
         <DataTable
           :value="globalStatistics.playersByUnlockedCount"
           size="small"
@@ -71,6 +187,19 @@ const { t } = useI18n();
 .statistics {
   padding: 0;
   margin: 0;
+}
+
+.statistic {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.statistic-legend {
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
 }
 
 .distributions {

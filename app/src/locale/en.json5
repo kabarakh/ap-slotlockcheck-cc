@@ -149,6 +149,17 @@
     unlockedCount: 'Unlocked slots',
     lockedCount: 'Locked slots',
     playerCount: 'Players',
+    openChecks: 'Open checks',
+    parts: {
+      unlocked: 'Unlocked',
+      locked: 'Locked',
+      goaled: 'With goal',
+      notGoaled: 'Without goal',
+      checksDone: 'Done',
+      checksOpen: 'Open',
+      allChecks: 'All checks',
+      openChecksLeft: 'Open checks',
+    },
   },
   roster: {
     checks: 'Checks: {done} of {total} ({percentage} %). {locked} open checks are in locked slots.',

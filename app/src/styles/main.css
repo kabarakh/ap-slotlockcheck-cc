@@ -1,5 +1,10 @@
 :root {
   --app-gap: 1rem;
+  --app-chart-unlocks: var(--p-sky-600);
+  --app-chart-checks: var(--p-emerald-600);
+  --app-chart-goal: var(--p-green-600);
+  --app-chart-locked: var(--p-surface-500);
+  --app-chart-rest: var(--p-surface-300);
   font-family:
     Inter,
     system-ui,
@@ -121,4 +126,60 @@ html.app-dark .room-list-bar-text {
     -1px -1px 0 var(--p-surface-950),
     1px -1px 0 var(--p-surface-950),
     -1px 1px 0 var(--p-surface-950);
+}
+
+html.app-dark {
+  --app-chart-unlocks: var(--p-sky-500);
+  --app-chart-checks: var(--p-emerald-500);
+  --app-chart-goal: var(--p-green-400);
+  --app-chart-locked: var(--p-surface-400);
+  --app-chart-rest: var(--p-surface-700);
+}
+
+.chart-unlocks {
+  fill: var(--app-chart-unlocks);
+}
+
+.chart-checks {
+  fill: var(--app-chart-checks);
+}
+
+.chart-goal {
+  fill: var(--app-chart-goal);
+}
+
+.chart-locked {
+  fill: var(--app-chart-locked);
+}
+
+.chart-rest {
+  fill: var(--app-chart-rest);
+}
+
+.chart-legend {
+  display: inline-block;
+  width: 0.625rem;
+  height: 0.625rem;
+  margin-right: 0.375rem;
+  border-radius: 2px;
+}
+
+.chart-legend.chart-unlocks {
+  background: var(--app-chart-unlocks);
+}
+
+.chart-legend.chart-checks {
+  background: var(--app-chart-checks);
+}
+
+.chart-legend.chart-goal {
+  background: var(--app-chart-goal);
+}
+
+.chart-legend.chart-locked {
+  background: var(--app-chart-locked);
+}
+
+.chart-legend.chart-rest {
+  background: var(--app-chart-rest);
 }

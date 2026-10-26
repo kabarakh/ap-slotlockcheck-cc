@@ -76,6 +76,8 @@ test('players and statistics show the summaries', async ({ page }) => {
   await page.goto('/room/big-chill/statistics');
   await expect(page.getByTestId('statistics')).toContainText('1 / 4');
   await expect(page.getByTestId('statistics-checks')).toContainText('201 / 752');
+  await expect(page.getByTestId('statistics-checks').getByTestId('donut-chart')).toBeVisible();
+  await expect(page.getByTestId('bar-chart')).toHaveCount(2);
 });
 
 test('an admin sees the slots without Discord user and the extra statistics', async ({ page }) => {

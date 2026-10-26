@@ -155,6 +155,17 @@
     unlockedCount: 'Entsperrte Slots',
     lockedCount: 'Gesperrte Slots',
     playerCount: 'Spieler',
+    openChecks: 'Offene Checks',
+    parts: {
+      unlocked: 'Entsperrt',
+      locked: 'Gesperrt',
+      goaled: 'Mit Ziel',
+      notGoaled: 'Ohne Ziel',
+      checksDone: 'Erledigt',
+      checksOpen: 'Offen',
+      allChecks: 'Alle Checks',
+      openChecksLeft: 'Offene Checks',
+    },
   },
   roster: {
     checks: 'Checks: {done} von {total} ({percentage} %). {locked} offene Checks sind in gesperrten Slots.',
