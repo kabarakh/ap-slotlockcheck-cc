@@ -48,7 +48,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/RoomSummaryDto"
+                    "$ref": "#/components/schemas/RoomListEntryDto"
                   }
                 }
               }
@@ -1895,6 +1895,34 @@
           "user"
         ]
       },
+      "RoomRole": {
+        "type": "string",
+        "enum": [
+          "visitor",
+          "player",
+          "helper",
+          "admin"
+        ]
+      },
+      "RoomMembershipDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RoomRole"
+              }
+            ]
+          },
+          "isOwner": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "role",
+          "isOwner"
+        ]
+      },
       "SyncStatusDto": {
         "type": "object",
         "properties": {
@@ -1923,9 +1951,12 @@
           "running"
         ]
       },
-      "RoomSummaryDto": {
+      "RoomListEntryDto": {
         "type": "object",
         "properties": {
+          "membership": {
+            "$ref": "#/components/schemas/RoomMembershipDto"
+          },
           "id": {
             "type": "number"
           },
@@ -1952,6 +1983,7 @@
           }
         },
         "required": [
+          "membership",
           "id",
           "slug",
           "title",
@@ -1965,30 +1997,6 @@
       "RoomDetailDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "number"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "slotCount": {
-            "type": "number"
-          },
-          "lockedSlotCount": {
-            "type": "number"
-          },
-          "unlockedSlotCount": {
-            "type": "number"
-          },
-          "unlockedPercentage": {
-            "type": "number"
-          },
-          "syncStatus": {
-            "$ref": "#/components/schemas/SyncStatusDto"
-          },
           "cheeseTrackerId": {
             "type": "string"
           },
@@ -2027,17 +2035,33 @@
           },
           "playersMarkFiller": {
             "type": "boolean"
+          },
+          "id": {
+            "type": "number"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slotCount": {
+            "type": "number"
+          },
+          "lockedSlotCount": {
+            "type": "number"
+          },
+          "unlockedSlotCount": {
+            "type": "number"
+          },
+          "unlockedPercentage": {
+            "type": "number"
+          },
+          "syncStatus": {
+            "$ref": "#/components/schemas/SyncStatusDto"
           }
         },
         "required": [
-          "id",
-          "slug",
-          "title",
-          "slotCount",
-          "lockedSlotCount",
-          "unlockedSlotCount",
-          "unlockedPercentage",
-          "syncStatus",
           "cheeseTrackerId",
           "cheeseTrackerUrl",
           "archipelagoTrackerUrl",
@@ -2049,7 +2073,15 @@
           "hasSeed",
           "sphereOffset",
           "visitorsSeeLocations",
-          "playersMarkFiller"
+          "playersMarkFiller",
+          "id",
+          "slug",
+          "title",
+          "slotCount",
+          "lockedSlotCount",
+          "unlockedSlotCount",
+          "unlockedPercentage",
+          "syncStatus"
         ]
       },
       "TrackerStatus": {
@@ -2299,34 +2331,6 @@
           "isSlotLock",
           "isSelectedSlotLock",
           "unlocksSent"
-        ]
-      },
-      "RoomRole": {
-        "type": "string",
-        "enum": [
-          "visitor",
-          "player",
-          "helper",
-          "admin"
-        ]
-      },
-      "RoomMembershipDto": {
-        "type": "object",
-        "properties": {
-          "role": {
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/RoomRole"
-              }
-            ]
-          },
-          "isOwner": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "role",
-          "isOwner"
         ]
       },
       "SphereRowDto": {

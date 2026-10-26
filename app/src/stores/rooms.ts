@@ -1,11 +1,11 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { api, unwrap } from '@/api/client';
-import type { RoomSummary } from '@/api/types';
+import type { RoomListEntry } from '@/api/types';
 import { useUiStore } from './ui';
 
 export const useRoomsStore = defineStore('rooms', () => {
-  const rooms = ref<RoomSummary[]>([]);
+  const rooms = ref<RoomListEntry[]>([]);
   const loading = ref(false);
 
   const sortedRooms = computed(() => [...rooms.value].sort((a, b) => a.title.localeCompare(b.title)));

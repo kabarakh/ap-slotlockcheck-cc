@@ -23,7 +23,8 @@
     emptyVisitor: 'Melde dich an, um deine Räume zu sehen.',
     onlyOwnRooms: 'Die Liste zeigt nur Räume, in denen du einen Slot hast oder Admin bist. Andere Räume öffnest du über ihren Link.',
     loginForRooms: 'Melde dich mit Discord an, um deine Räume zu sehen. Einen Raum kannst du auch direkt über seinen Link öffnen.',
-    columns: { title: 'Titel', slots: 'Slots', progress: 'Entsperrt', status: 'Synchronisierung' },
+    columns: { title: 'Titel', role: 'Meine Rolle', slots: 'Slots', progress: 'Entsperrt', status: 'Synchronisierung' },
+    roles: { owner: 'Eigentümer', admin: 'Admin', helper: 'Admin-Helfer', player: 'Spieler' },
     unlockedOf: '{unlocked} von {locked} gesperrten Slots entsperrt',
   },
   roomSetup: {

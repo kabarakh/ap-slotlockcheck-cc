@@ -102,6 +102,8 @@ describe('rooms (integration)', () => {
     const player = await request(server).get('/api/rooms').set('Cookie', playerCookie).expect(200);
     expect(owner.body).toHaveLength(1);
     expect(player.body).toHaveLength(1);
+    expect(owner.body).toEqual([expect.objectContaining({ membership: { role: 'admin', isOwner: true } })]);
+    expect(player.body).toEqual([expect.objectContaining({ membership: { role: 'player', isOwner: false } })]);
     await request(server).get('/api/rooms/big-chill').set('Cookie', stranger).expect(200);
   });
 

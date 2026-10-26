@@ -28,6 +28,7 @@ test('the room list shows only the own rooms', async ({ page }) => {
   await loginAs(page, OWNER);
   await page.goto('/');
   await expect(page.getByRole('link', { name: 'Big Chill' })).toBeVisible();
+  await expect(page.getByTestId('room-role')).toHaveText('Owner');
   await expect(page).toHaveTitle('SlotLockCheck');
   await page.getByRole('link', { name: 'Big Chill' }).click();
   await expect(page).toHaveTitle('Big Chill - SlotLockCheck');

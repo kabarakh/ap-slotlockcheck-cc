@@ -3,7 +3,13 @@ import type { AuthUser } from '../auth/auth.types.js';
 import { AppConfigService } from '../config/app-config.service.js';
 import type { Room } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import type { RoomDetailDto, RoomSummaryDto, SyncStatusDto } from './dto/room.dto.js';
+import type {
+  RoomDetailDto,
+  RoomListEntryDto,
+  RoomMembershipDto,
+  RoomSummaryDto,
+  SyncStatusDto,
+} from './dto/room.dto.js';
 import type { SlotRowDto } from './dto/slot-row.dto.js';
 import { buildRoster, countLockStates } from './roster.builder.js';
 
@@ -38,7 +44,10 @@ export class RoomsService {
     return room;
   }
 
-  async listRoomsOf(user: Pick<AuthUser, 'id' | 'discordId'> | undefined): Promise<RoomSummaryDto[]> {
+  async listRoomsOf(
+    user: Pick<AuthUser, 'id' | 'discordId'> | undefined,
+    membershipOf: (room: Room) => Promise<RoomMembershipDto>,
+  ): Promise<RoomListEntryDto[]> {
     if (!user) {
       return [];
     }
@@ -48,7 +57,12 @@ export class RoomsService {
       },
       orderBy: { createdAt: 'desc' },
     });
-    return Promise.all(rooms.map(async (room) => this.toSummary(room, await this.getRosterForRoom(room.id))));
+    return Promise.all(
+      rooms.map(async (room) => ({
+        ...this.toSummary(room, await this.getRosterForRoom(room.id)),
+        membership: await membershipOf(room),
+      })),
+    );
   }
 
   async getRoom(slug: string): Promise<RoomDetailDto> {

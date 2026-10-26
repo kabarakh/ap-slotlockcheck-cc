@@ -48,3 +48,7 @@ export class RoomMembershipDto {
 
   isOwner: boolean;
 }
+
+export class RoomListEntryDto extends RoomSummaryDto {
+  membership: RoomMembershipDto;
+}

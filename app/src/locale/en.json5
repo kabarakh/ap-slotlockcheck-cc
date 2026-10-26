@@ -23,7 +23,8 @@
     emptyVisitor: 'Log in to see your rooms.',
     onlyOwnRooms: 'The list shows only the rooms in which you have a slot or are admin. Open other rooms with their link.',
     loginForRooms: 'Log in with Discord to see your rooms. You can also open a room with its link.',
-    columns: { title: 'Title', slots: 'Slots', progress: 'Unlocked', status: 'Synchronization' },
+    columns: { title: 'Title', role: 'My role', slots: 'Slots', progress: 'Unlocked', status: 'Synchronization' },
+    roles: { owner: 'Owner', admin: 'Admin', helper: 'Admin helper', player: 'Player' },
     unlockedOf: '{unlocked} of {locked} locked slots unlocked',
   },
   roomSetup: {

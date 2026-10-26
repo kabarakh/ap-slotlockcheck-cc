@@ -2,7 +2,7 @@ import type { components } from './schema';
 
 type Schemas = components['schemas'];
 
-export type RoomSummary = Schemas['RoomSummaryDto'];
+export type RoomListEntry = Schemas['RoomListEntryDto'];
 export type RoomDetail = Schemas['RoomDetailDto'];
 export type RoomMembership = Schemas['RoomMembershipDto'];
 export type RoomRole = Schemas['RoomRole'];

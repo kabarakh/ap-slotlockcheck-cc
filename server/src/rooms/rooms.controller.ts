@@ -2,7 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { CurrentUser } from '../auth/auth.decorators.js';
 import type { AuthUser } from '../auth/auth.types.js';
 import { RoomRoleService } from '../auth/room-role.service.js';
-import { RoomDetailDto, RoomMembershipDto, RoomSummaryDto } from './dto/room.dto.js';
+import { RoomDetailDto, RoomListEntryDto, RoomMembershipDto } from './dto/room.dto.js';
 import { SlotRowDto } from './dto/slot-row.dto.js';
 import { RoomsService } from './rooms.service.js';
 
@@ -14,8 +14,8 @@ export class RoomsController {
   ) {}
 
   @Get()
-  listRooms(@CurrentUser() user: AuthUser | undefined): Promise<RoomSummaryDto[]> {
-    return this.rooms.listRoomsOf(user);
+  listRooms(@CurrentUser() user: AuthUser | undefined): Promise<RoomListEntryDto[]> {
+    return this.rooms.listRoomsOf(user, (room) => this.roles.getMembership(user, room));
   }
 
   @Get(':slug')

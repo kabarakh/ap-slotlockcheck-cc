@@ -642,6 +642,12 @@ export interface components {
         SessionDto: {
             user: components["schemas"]["AuthUserDto"] | null;
         };
+        /** @enum {string} */
+        RoomRole: "visitor" | "player" | "helper" | "admin";
+        RoomMembershipDto: {
+            role: components["schemas"]["RoomRole"];
+            isOwner: boolean;
+        };
         SyncStatusDto: {
             /** Format: date-time */
             lastSyncAt: string | null;
@@ -650,7 +656,8 @@ export interface components {
             lastSyncError: string | null;
             running: boolean;
         };
-        RoomSummaryDto: {
+        RoomListEntryDto: {
+            membership: components["schemas"]["RoomMembershipDto"];
             id: number;
             slug: string;
             title: string;
@@ -661,14 +668,6 @@ export interface components {
             syncStatus: components["schemas"]["SyncStatusDto"];
         };
         RoomDetailDto: {
-            id: number;
-            slug: string;
-            title: string;
-            slotCount: number;
-            lockedSlotCount: number;
-            unlockedSlotCount: number;
-            unlockedPercentage: number;
-            syncStatus: components["schemas"]["SyncStatusDto"];
             cheeseTrackerId: string;
             cheeseTrackerUrl: string;
             archipelagoTrackerUrl: string;
@@ -681,6 +680,14 @@ export interface components {
             sphereOffset: number;
             visitorsSeeLocations: boolean;
             playersMarkFiller: boolean;
+            id: number;
+            slug: string;
+            title: string;
+            slotCount: number;
+            lockedSlotCount: number;
+            unlockedSlotCount: number;
+            unlockedPercentage: number;
+            syncStatus: components["schemas"]["SyncStatusDto"];
         };
         /** @enum {string} */
         TrackerStatus: "disconnected" | "connected" | "ready" | "playing" | "goal_completed";
@@ -734,12 +741,6 @@ export interface components {
             isSlotLock: boolean;
             isSelectedSlotLock: boolean;
             unlocksSent: number;
-        };
-        /** @enum {string} */
-        RoomRole: "visitor" | "player" | "helper" | "admin";
-        RoomMembershipDto: {
-            role: components["schemas"]["RoomRole"];
-            isOwner: boolean;
         };
         SphereRowDto: {
             sphere: number;
@@ -1087,7 +1088,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["RoomSummaryDto"][];
+                    "application/json": components["schemas"]["RoomListEntryDto"][];
                 };
             };
         };
