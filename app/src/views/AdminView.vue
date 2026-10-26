@@ -2,7 +2,6 @@
 import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
-import Message from 'primevue/message';
 import Tab from 'primevue/tab';
 import TabList from 'primevue/tablist';
 import TabPanel from 'primevue/tabpanel';
@@ -12,6 +11,7 @@ import AdminListPanel from '@/components/admin/AdminListPanel.vue';
 import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel.vue';
 import InvitationPanel from '@/components/admin/InvitationPanel.vue';
 import LockAssignmentPanel from '@/components/admin/LockAssignmentPanel.vue';
+import RoomOwnershipPanel from '@/components/admin/RoomOwnershipPanel.vue';
 import SeedPanel from '@/components/admin/SeedPanel.vue';
 import ServerCommandsPanel from '@/components/admin/ServerCommandsPanel.vue';
 import ServerConnectionPanel from '@/components/admin/ServerConnectionPanel.vue';
@@ -35,8 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <Message v-if="!isAdmin && !room?.hasSeed" severity="info">{{ t('admin.helperWithoutSeed') }}</Message>
-  <Tabs v-else :value="isAdmin ? 'settings' : 'cleanup'" lazy>
+  <Tabs :value="isAdmin ? 'settings' : room?.hasSeed ? 'cleanup' : 'room'" lazy>
     <TabList>
       <template v-if="isAdmin">
         <Tab value="settings">{{ t('admin.tabs.settings') }}</Tab>
@@ -48,6 +47,7 @@ onMounted(() => {
         <Tab v-if="room?.hasSeed" value="server" data-testid="tab-server">{{ t('admin.tabs.server') }}</Tab>
       </template>
       <Tab v-if="room?.hasSeed" value="cleanup" data-testid="tab-cleanup">{{ t('admin.tabs.cleanup') }}</Tab>
+      <Tab value="room" data-testid="tab-room">{{ t('admin.tabs.room') }}</Tab>
     </TabList>
     <TabPanels>
       <template v-if="isAdmin">
@@ -70,6 +70,7 @@ onMounted(() => {
         </TabPanel>
       </template>
       <TabPanel v-if="room?.hasSeed" value="cleanup"><SphereCleanupPanel /></TabPanel>
+      <TabPanel value="room"><RoomOwnershipPanel /></TabPanel>
     </TabPanels>
   </Tabs>
 </template>

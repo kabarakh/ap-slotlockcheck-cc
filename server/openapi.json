@@ -88,6 +88,37 @@
         "tags": [
           "Rooms"
         ]
+      },
+      "delete": {
+        "operationId": "RoomOwnership_delete",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteRoomDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "RoomOwnership"
+        ]
       }
     },
     "/api/rooms/{slug}/roster": {
@@ -1023,6 +1054,72 @@
         },
         "tags": [
           "Invitations"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/owner": {
+      "post": {
+        "operationId": "RoomOwnership_transfer",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferOwnerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoomAdminDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "RoomOwnership"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/leave": {
+      "post": {
+        "operationId": "RoomOwnership_leave",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "RoomOwnership"
         ]
       }
     },
@@ -2902,6 +2999,34 @@
         },
         "required": [
           "slug"
+        ]
+      },
+      "TransferOwnerDto": {
+        "type": "object",
+        "properties": {
+          "discordId": {
+            "type": "string",
+            "pattern": "^\\d{5,20}$"
+          },
+          "stayAdmin": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "discordId",
+          "stayAdmin"
+        ]
+      },
+      "DeleteRoomDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "title"
         ]
       },
       "WarningDto": {

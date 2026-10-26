@@ -42,6 +42,11 @@ The browser calculates inactivity, player summaries and statistics from the rost
 
 The unlock tree shows which slot sent the unlock item of which slot. The SlotLock slot is the root. A slot that needed more than one unlock item is below the sender of the last item. Start slots are below the SlotLock slot. The browser builds the tree from the roster; `d3-hierarchy` calculates the layout.
 
+### Room owner
+
+- The first owner is the owner of the Cheese Tracker who made the room. When the Cheese Tracker gets another owner, the synchronization makes this user the owner of the room, if the user is clear. The old owner then stays admin.
+- The owner can transfer the room by hand and selects if the old owner stays admin. Admins and admin helpers can leave a room. Only the owner can delete a room.
+
 ### Sphere checker
 
 The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sphere checker implementation.md`.

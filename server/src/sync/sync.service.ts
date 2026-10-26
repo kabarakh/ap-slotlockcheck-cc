@@ -7,7 +7,9 @@ import { detectLocks, detectStartSlots } from '../lock/lock.logic.js';
 import type { LockDetectionResult } from '../lock/lock.types.js';
 import { estimateUnlockTime } from '../lock/unlock-time.logic.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { trackerOwnerIdentity } from '../room-setup/owner-check.js';
 import { RoomsService } from '../rooms/rooms.service.js';
+import type { CheeseTracker } from '../sources/cheese/cheese.schemas.js';
 import { CheeseService } from '../sources/cheese/cheese.service.js';
 import {
   checksHistoryPoints,
@@ -154,6 +156,7 @@ export class SyncService {
       });
       await this.storeDetectedLocks(tx, room.id, detection, slotIdByPosition);
       await this.storeNewUnlocks(tx, room.id, detection, slotIdByPosition, now, isFirstSync);
+      await this.applyOwnerChange(tx, room, source.cheese);
       await tx.room.update({
         where: { id: room.id },
         data: {
@@ -176,6 +179,53 @@ export class SyncService {
       });
       return this.locationStatus.applyChecks(tx, room.id, source.tracker.player_checks_done, now);
     });
+  }
+
+  private async applyOwnerChange(tx: Prisma.TransactionClient, room: Room, cheese: CheeseTracker): Promise<void> {
+    const ownerUnchanged =
+      (cheese.owner_ct_user_id ?? null) === room.ownerCtUserId &&
+      (cheese.owner_discord_username ?? null) === room.ownerDiscordName;
+    if (ownerUnchanged) {
+      return;
+    }
+    const userId = await this.ownerUserId(tx, cheese);
+    if (userId === null) {
+      this.logger.warn(`The new owner of the Cheese tracker of room ${room.slug} is not clear`);
+      return;
+    }
+    const current = await tx.roomAdmin.findFirst({ where: { roomId: room.id, isOwner: true } });
+    if (current?.userId === userId) {
+      return;
+    }
+    await tx.roomAdmin.updateMany({ where: { roomId: room.id, isOwner: true }, data: { isOwner: false } });
+    await tx.roomAdmin.upsert({
+      where: { roomId_userId: { roomId: room.id, userId } },
+      create: { roomId: room.id, userId, isOwner: true, role: 'admin' },
+      update: { isOwner: true, role: 'admin' },
+    });
+    this.logger.log(`The owner of room ${room.slug} changed with the owner of the Cheese tracker`);
+  }
+
+  private async ownerUserId(tx: Prisma.TransactionClient, cheese: CheeseTracker): Promise<number | null> {
+    const identity = trackerOwnerIdentity(cheese);
+    if (identity === null) {
+      return null;
+    }
+    if ('discordId' in identity) {
+      const name =
+        cheese.games.find((game) => game.effective_discord_user_id === identity.discordId)
+          ?.effective_discord_username ?? identity.discordId;
+      const user = await tx.user.upsert({
+        where: { discordId: identity.discordId },
+        create: { discordId: identity.discordId, name },
+        update: {},
+      });
+      return user.id;
+    }
+    const username = identity.username.toLocaleLowerCase('en');
+    const users = await tx.user.findMany({ where: { username: { not: '' } } });
+    const matches = users.filter((user) => user.username.toLocaleLowerCase('en') === username);
+    return matches.length === 1 && matches[0] ? matches[0].id : null;
   }
 
   private async storeDetectedLocks(

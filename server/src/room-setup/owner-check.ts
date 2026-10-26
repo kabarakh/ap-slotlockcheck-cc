@@ -24,6 +24,29 @@ export function checkTrackerOwner(tracker: CheeseTracker, candidate: OwnerCandid
   return 'failed';
 }
 
+export type TrackerOwnerIdentity = { discordId: string } | { username: string } | null;
+
+export function trackerOwnerIdentity(tracker: CheeseTracker): TrackerOwnerIdentity {
+  const ownerId = tracker.owner_ct_user_id;
+  if (ownerId !== undefined) {
+    const discordIds = new Set(
+      tracker.games
+        .filter((game) => game.claimed_by_ct_user_id === ownerId)
+        .map((game) => game.effective_discord_user_id)
+        .filter((discordId): discordId is string => discordId !== undefined),
+    );
+    const [discordId] = discordIds;
+    if (discordIds.size === 1 && discordId !== undefined) {
+      return { discordId };
+    }
+    if (discordIds.size > 1) {
+      return null;
+    }
+  }
+  const ownerName = tracker.owner_discord_username?.trim();
+  return ownerName ? { username: ownerName } : null;
+}
+
 export function slugFromTitle(title: string): string {
   const slug = title
     .normalize('NFKD')

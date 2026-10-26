@@ -523,6 +523,7 @@ The developer answered these questions on 2026-10-26. The column "Decision" show
 | 13.10 | In which order are the lines of the Discord text? | By the lowest open sphere of the slot in the selected spheres, then by the slot number. The lines of a Discord user with more slots stay together at the position of the first slot of the user. |
 | 13.11 | How does the server know that an admin command was successful? | The Archipelago server answers only errors directly (`AdminCommandResult`). The server sends the lines with a pause of 300 ms and shows each error answer in the result of the run. It does not check each line one by one. |
 | 13.12 | Not tested with a real Archipelago server. | Still open. The protocol is tested with a small fake server (`server/test/support/fake-archipelago-server.ts`). A test with a real room is necessary (9.7.3). |
+| 13.13 | When the Cheese owner changes automatically, does the old owner stay admin? | Yes. The old owner stays admin and can leave the room. Without a clear new Cheese owner, the owner of the room does not change. |
 
 ## 14. Deviations during the implementation
 

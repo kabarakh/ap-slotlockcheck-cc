@@ -146,3 +146,24 @@ test('an admin sees the login form of the Archipelago server', async ({ page }) 
   await expect(page.getByTestId('location-table')).toBeVisible();
   await expect(page.getByTestId('send-location')).toHaveCount(0);
 });
+
+test('a helper leaves the room and the owner sees transfer and delete', async ({ page }) => {
+  await ensureSeed(page);
+  await loginAs(page, PLAYER);
+  await page.goto('/room/big-chill/admin');
+  await page.getByTestId('tab-room').click();
+  await page.getByTestId('leave-room').click();
+  await page.getByTestId('confirm-leave').click();
+  await expect(page).toHaveURL(/\/room\/big-chill$/);
+  await expect(page.getByRole('link', { name: 'Admin', exact: true })).toHaveCount(0);
+
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/admin');
+  await page.getByTestId('tab-room').click();
+  await expect(page.getByTestId('transfer-owner')).toBeDisabled();
+  await expect(page.getByTestId('delete-room')).toBeDisabled();
+  await page.getByTestId('delete-title').fill('big chill');
+  await expect(page.getByTestId('delete-room')).toBeDisabled();
+  await page.getByTestId('delete-title').fill('Big Chill');
+  await expect(page.getByTestId('delete-room')).toBeEnabled();
+});
