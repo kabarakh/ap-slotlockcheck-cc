@@ -79,9 +79,9 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
               <ProgressBar
                 :value="(data as RoomListEntry).unlockedPercentage"
                 :show-value="false"
-                class="room-progress"
+                class="room-list-bar"
               />
-              <span class="progress-text">
+              <span class="room-list-bar-text">
                 {{
                   t('rooms.progressValue', {
                     done: (data as RoomListEntry).unlockedSlotCount,
@@ -96,9 +96,9 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
               <ProgressBar
                 :value="checksPercentage((data as RoomListEntry).checksDone, (data as RoomListEntry).checksTotal)"
                 :show-value="false"
-                class="room-progress checks-progress"
+                class="room-list-bar room-list-bar-checks"
               />
-              <span class="progress-text">
+              <span class="room-list-bar-text">
                 {{
                   t('rooms.progressValue', {
                     done: (data as RoomListEntry).checksDone,
@@ -135,20 +135,20 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
   position: relative;
 }
 
-.room-progress {
+.room-list-bar {
   height: 1.25rem;
   background: var(--p-surface-300);
 }
 
-.room-progress :deep(.p-progressbar-value) {
+.room-list-bar :deep(.p-progressbar-value) {
   background: var(--p-sky-600);
 }
 
-.checks-progress :deep(.p-progressbar-value) {
+.room-list-bar-checks :deep(.p-progressbar-value) {
   background: var(--p-emerald-600);
 }
 
-.progress-text {
+.room-list-bar-text {
   position: absolute;
   inset: 0;
   display: flex;
@@ -158,27 +158,14 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
   font-weight: 700;
   color: var(--p-surface-900);
   text-shadow:
-    0 0 3px var(--p-surface-0),
-    0 0 3px var(--p-surface-0);
+    1px 0 0 var(--p-surface-0),
+    -1px 0 0 var(--p-surface-0),
+    0 1px 0 var(--p-surface-0),
+    0 -1px 0 var(--p-surface-0),
+    1px 1px 0 var(--p-surface-0),
+    -1px -1px 0 var(--p-surface-0),
+    1px -1px 0 var(--p-surface-0),
+    -1px 1px 0 var(--p-surface-0);
   pointer-events: none;
-}
-
-:global(.app-dark) .room-progress {
-  background: var(--p-surface-700);
-}
-
-:global(.app-dark) .room-progress :deep(.p-progressbar-value) {
-  background: var(--p-sky-500);
-}
-
-:global(.app-dark) .checks-progress :deep(.p-progressbar-value) {
-  background: var(--p-emerald-500);
-}
-
-:global(.app-dark) .progress-text {
-  color: var(--p-surface-0);
-  text-shadow:
-    0 0 3px var(--p-surface-950),
-    0 0 3px var(--p-surface-950);
 }
 </style>

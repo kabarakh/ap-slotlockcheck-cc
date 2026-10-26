@@ -93,3 +93,32 @@ a {
 .app-dark .inactivity-red {
   color: var(--p-red-400);
 }
+
+html.app-dark .unlock-tree-node-goaled text {
+  fill: var(--p-green-400);
+}
+
+html.app-dark .room-list-bar {
+  background: var(--p-surface-700);
+}
+
+html.app-dark .room-list-bar .p-progressbar-value {
+  background: var(--p-sky-500);
+}
+
+html.app-dark .room-list-bar-checks .p-progressbar-value {
+  background: var(--p-emerald-500);
+}
+
+html.app-dark .room-list-bar-text {
+  color: var(--p-surface-0);
+  text-shadow:
+    1px 0 0 var(--p-surface-950),
+    -1px 0 0 var(--p-surface-950),
+    0 1px 0 var(--p-surface-950),
+    0 -1px 0 var(--p-surface-950),
+    1px 1px 0 var(--p-surface-950),
+    -1px -1px 0 var(--p-surface-950),
+    1px -1px 0 var(--p-surface-950),
+    -1px 1px 0 var(--p-surface-950);
+}

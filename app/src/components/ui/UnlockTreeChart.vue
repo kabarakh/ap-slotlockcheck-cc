@@ -163,8 +163,4 @@ const tooltip = (node: UnlockTreeNode): string =>
   fill: var(--p-green-600);
   font-weight: 600;
 }
-
-:global(.app-dark) .unlock-tree-node-goaled text {
-  fill: var(--p-green-400);
-}
 </style>
