@@ -127,6 +127,12 @@ Reference: `PLAN sphere checker implementation.md` (section numbers in brackets)
 - [x] E2E tests: upload, sphere overview, locations, admin view, visitor setting
 - [x] Visual check in the browser (spheres, admin view of the locations, Seed tab)
 
+### Phase P4 – Filler marks and admin helper
+
+- [x] Role `helper` (3.3) with unit tests, role selection in the admin list and in the invitation link (6.4.2, 6.4.3)
+- [x] Filler marks with permissions (5.8), setting `playersMarkFiller`
+- [x] E2E tests: player marks an own location, admin sees who marked it, admin makes a helper
+
 ## Open decisions for the developer
 
 See `PLAN slotlock.md`, section 23: production domain, responsibility on the proServer, GitHub repository, PrimeVue license, Node 26 or Node 24 LTS, comparison with the Google sheet.
@@ -143,3 +149,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-26 | Sphere checker P1 | ok | ok | 110 unit, 22 integration, 29 unit app, 13 e2e ok | Real multidata file of the Big Chill room checked with `seed:report` |
 | 2026-10-26 | Sphere checker P2 | ok | ok | 120 unit, 24 integration ok | |
 | 2026-10-26 | Sphere checker P3 | ok | ok | 132 unit, 34 integration, 36 unit app, 16 e2e ok | Visual check in the browser |
+| 2026-10-26 | Sphere checker P4 | ok | ok | 137 unit, 39 integration, 37 unit app, 18 e2e ok | |

@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import { RoomUpdatesService } from '../rooms/room-updates.service.js';
 import { RoomsService } from '../rooms/rooms.service.js';
 import type {
+  AdminRole,
   LockAssignmentDto,
   ResetLockAssignmentDto,
   RoomAdminDto,
@@ -31,10 +32,11 @@ export class AdminsService {
       discordId: admin.user.discordId,
       name: admin.user.name,
       isOwner: admin.isOwner,
+      role: admin.isOwner || admin.role !== 'helper' ? 'admin' : 'helper',
     }));
   }
 
-  async addAdmin(slug: string, discordId: string): Promise<RoomAdminDto[]> {
+  async addAdmin(slug: string, discordId: string, role: AdminRole = 'admin'): Promise<RoomAdminDto[]> {
     const room = await this.rooms.findRoomBySlug(slug);
     const slot = await this.prisma.slot.findFirst({ where: { roomId: room.id, discordUserId: discordId } });
     if (!slot) {
@@ -45,10 +47,13 @@ export class AdminsService {
       create: { discordId, name: slot.discordName ?? discordId },
       update: {},
     });
+    const existing = await this.prisma.roomAdmin.findUnique({
+      where: { roomId_userId: { roomId: room.id, userId: user.id } },
+    });
     await this.prisma.roomAdmin.upsert({
       where: { roomId_userId: { roomId: room.id, userId: user.id } },
-      create: { roomId: room.id, userId: user.id },
-      update: {},
+      create: { roomId: room.id, userId: user.id, role },
+      update: existing?.isOwner ? {} : { role },
     });
     return this.listAdmins(slug);
   }

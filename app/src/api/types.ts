@@ -19,6 +19,7 @@ export type RoomPreview = Schemas['RoomPreviewDto'];
 export type CreateRoomRequest = Schemas['CreateRoomDto'];
 export type OwnerCheckResult = Schemas['OwnerCheckResult'];
 export type RoomAdmin = Schemas['RoomAdminDto'];
+export type AdminRole = Schemas['AdminRole'];
 export type LockAssignment = Schemas['LockAssignmentDto'];
 export type UpdateRoomSettings = Schemas['UpdateRoomSettingsDto'];
 export type Warning = Schemas['WarningDto'];

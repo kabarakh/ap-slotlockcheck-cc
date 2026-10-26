@@ -168,6 +168,7 @@
     reset: 'Use the detected value again',
   },
   admins: {
+    roles: { admin: 'Admin', helper: 'Admin helper' },
     columns: { name: 'Admin', role: 'Role' },
     owner: 'Tracker owner',
     remove: 'Remove',
@@ -207,7 +208,7 @@
   },
   invitations: {
     title: 'Invitation link',
-    intro: 'The link makes one Discord user admin of this room. It is valid for one use and for 7 days.',
+    intro: 'The link makes one Discord user admin or admin helper of this room. It is valid for one use and for 7 days.',
     create: 'Make invitation link',
     copy: 'Copy link',
     copied: 'The link is copied.',
@@ -232,6 +233,11 @@
     adminView: 'Admin view',
     userView: 'User view',
     adminViewHint: 'The admin view shows the items. Do not share it with players.',
+    markFiller: 'Mark as filler',
+    unmarkFiller: 'Remove mark',
+    isMarked: 'Marked as filler',
+    marked: 'The location is marked as filler.',
+    unmarked: 'The mark is removed.',
     empty: 'There are no locations for this filter.',
     columns: {
       sphere: 'Sphere',
@@ -242,6 +248,8 @@
       game: 'Game',
       type: 'Type',
       location: 'Location',
+      filler: 'Filler',
+      markedBy: 'Marked by',
     },
     filters: {
       scope: { all: 'All slots', mine: 'My slots', selected: 'Selected slots' },
@@ -304,5 +312,8 @@
     INVALID_MULTIDATA: 'The multidata file is not valid.',
     LOCATIONS_NOT_PUBLIC: 'Log in to see the locations of this room.',
     LOGIN_REQUIRED: 'Log in to use this filter.',
+    LOCATION_NOT_FOUND: 'This location does not exist.',
+    FILLER_MARK_NOT_PERMITTED: 'You cannot change the filler mark of this location.',
+    LOCATION_ALREADY_CHECKED: 'This location is checked already.',
   },
 }

@@ -351,6 +351,66 @@
         ]
       }
     },
+    "/api/rooms/{slug}/locations/{id}/filler-mark": {
+      "put": {
+        "operationId": "Locations_markFiller",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Locations"
+        ]
+      },
+      "delete": {
+        "operationId": "Locations_unmarkFiller",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Locations"
+        ]
+      }
+    },
     "/api/rooms/{slug}/locations/admin": {
       "get": {
         "operationId": "Locations_getAdminPage",
@@ -821,6 +881,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvitationDto"
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
             "description": "",
@@ -2000,9 +2070,23 @@
           "slotLockPositions"
         ]
       },
+      "AdminRole": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "helper"
+        ]
+      },
       "RoomAdminDto": {
         "type": "object",
         "properties": {
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdminRole"
+              }
+            ]
+          },
           "userId": {
             "type": "number"
           },
@@ -2017,6 +2101,7 @@
           }
         },
         "required": [
+          "role",
           "userId",
           "discordId",
           "name",
@@ -2026,6 +2111,13 @@
       "AddRoomAdminDto": {
         "type": "object",
         "properties": {
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdminRole"
+              }
+            ]
+          },
           "discordId": {
             "type": "string",
             "pattern": "^\\d{5,20}$"
@@ -2144,9 +2236,28 @@
           "lockedSlotId"
         ]
       },
+      "CreateInvitationDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdminRole"
+              }
+            ]
+          }
+        }
+      },
       "AdminInvitationDto": {
         "type": "object",
         "properties": {
+          "role": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AdminRole"
+              }
+            ]
+          },
           "url": {
             "type": "string"
           },
@@ -2155,6 +2266,7 @@
           }
         },
         "required": [
+          "role",
           "url",
           "validUntil"
         ]

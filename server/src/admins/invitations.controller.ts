@@ -1,7 +1,7 @@
-import { Controller, HttpCode, Param, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
 import { CurrentUser, RequireLogin, RequireRoomRole } from '../auth/auth.decorators.js';
 import type { AuthUser } from '../auth/auth.types.js';
-import { AcceptedInvitationDto, AdminInvitationDto } from './dto/invitation.dto.js';
+import { AcceptedInvitationDto, AdminInvitationDto, CreateInvitationDto } from './dto/invitation.dto.js';
 import { InvitationsService } from './invitations.service.js';
 
 @Controller()
@@ -10,8 +10,12 @@ export class InvitationsController {
 
   @Post('rooms/:slug/invitations')
   @RequireRoomRole('admin')
-  create(@Param('slug') slug: string, @CurrentUser() admin: AuthUser): Promise<AdminInvitationDto> {
-    return this.invitations.create(slug, admin);
+  create(
+    @Param('slug') slug: string,
+    @CurrentUser() admin: AuthUser,
+    @Body() body: CreateInvitationDto,
+  ): Promise<AdminInvitationDto> {
+    return this.invitations.create(slug, admin, body.role ?? 'admin');
   }
 
   @Post('invitations/:token/accept')

@@ -22,7 +22,7 @@ export class AdminsController {
 
   @Post()
   add(@Param('slug') slug: string, @Body() body: AddRoomAdminDto): Promise<RoomAdminDto[]> {
-    return this.admins.addAdmin(slug, body.discordId);
+    return this.admins.addAdmin(slug, body.discordId, body.role);
   }
 
   @Delete(':userId')

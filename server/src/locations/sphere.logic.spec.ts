@@ -1,4 +1,4 @@
-import { canMarkFiller } from './filler-permission.logic.js';
+import { canChangeFillerMark, canMarkFiller } from './filler-permission.logic.js';
 import { locationOrderBy, locationWhere, type LocationFilter } from './location-query.js';
 import { effectiveItemType, summarizeSpheres, visibleMaxSphere, type SphereGroup } from './sphere.logic.js';
 
@@ -75,6 +75,13 @@ describe('canMarkFiller', () => {
   it('never permits visitors and checked locations', () => {
     expect(canMarkFiller({ ...base, role: 'visitor' })).toBe(false);
     expect(canMarkFiller({ ...base, role: 'admin', checked: true })).toBe(false);
+  });
+
+  it('permits the removal of a mark also for checked locations', () => {
+    expect(canChangeFillerMark({ role: 'helper', playersMarkFiller: false, isOwnSlot: false })).toBe(true);
+    expect(canChangeFillerMark({ role: 'player', playersMarkFiller: true, isOwnSlot: true })).toBe(true);
+    expect(canChangeFillerMark({ role: 'player', playersMarkFiller: true, isOwnSlot: false })).toBe(false);
+    expect(canChangeFillerMark({ role: 'visitor', playersMarkFiller: true, isOwnSlot: true })).toBe(false);
   });
 });
 

@@ -1,14 +1,21 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
+import Select from 'primevue/select';
+import type { AdminRole } from '@/api/types';
 import DateTimeText from '@/components/ui/DateTimeText.vue';
 import { useInvitationsStore } from '@/stores/invitations';
 
 const invitations = useInvitationsStore();
-const { createdUrl, createdValidUntil } = storeToRefs(invitations);
+const { role, createdUrl, createdValidUntil } = storeToRefs(invitations);
 const { t } = useI18n();
+
+const roleOptions = computed(() =>
+  (['admin', 'helper'] as AdminRole[]).map((value) => ({ value, label: t(`admins.roles.${value}`) })),
+);
 </script>
 
 <template>
@@ -16,6 +23,13 @@ const { t } = useI18n();
     <h3>{{ t('invitations.title') }}</h3>
     <p class="app-muted">{{ t('invitations.intro') }}</p>
     <div class="app-toolbar">
+      <Select
+        v-model="role"
+        :options="roleOptions"
+        option-label="label"
+        option-value="value"
+        data-testid="invitation-role"
+      />
       <Button :label="t('invitations.create')" icon="pi pi-link" size="small" @click="invitations.create()" />
     </div>
     <template v-if="createdUrl">

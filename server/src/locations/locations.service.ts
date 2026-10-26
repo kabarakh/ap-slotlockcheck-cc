@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import type { AuthUser } from '../auth/auth.types.js';
 import { RoomRoleService } from '../auth/room-role.service.js';
 import type { Room } from '../generated/prisma/client.js';
@@ -15,7 +15,7 @@ import type {
   LocationUserRowDto,
   SphereOverviewDto,
 } from './dto/location.dto.js';
-import { canMarkFiller } from './filler-permission.logic.js';
+import { canChangeFillerMark, canMarkFiller } from './filler-permission.logic.js';
 import { isGoaled } from './goal.logic.js';
 import { LocationStatusService } from './location-status.service.js';
 import { locationOrderBy, locationWhere } from './location-query.js';
@@ -103,6 +103,36 @@ export class LocationsService {
       sort: query.sort ?? 'sphere',
     });
     return { total: page.total, rows: page.rows.map((row) => this.toAdminRow(access, user, row)) };
+  }
+
+  async setFillerMark(slug: string, user: AuthUser | undefined, locationId: number, marked: boolean): Promise<void> {
+    const room = await this.rooms.findRoomBySlug(slug);
+    const membership = await this.roles.getMembership(user, room);
+    const location = await this.prisma.seedLocation.findFirst({
+      where: { id: locationId, roomId: room.id },
+      include: { finderSlot: true },
+    });
+    if (!location) {
+      throw new NotFoundException('LOCATION_NOT_FOUND');
+    }
+    const permission = {
+      role: membership.role,
+      playersMarkFiller: room.playersMarkFiller,
+      isOwnSlot: user !== undefined && location.finderSlot.discordUserId === user.discordId,
+    };
+    if (!canChangeFillerMark(permission)) {
+      throw new ForbiddenException('FILLER_MARK_NOT_PERMITTED');
+    }
+    if (marked && location.checked) {
+      throw new BadRequestException('LOCATION_ALREADY_CHECKED');
+    }
+    await this.prisma.seedLocation.update({
+      where: { id: location.id },
+      data: marked
+        ? { fillerMarkedAt: new Date(), fillerMarkedByUserId: user?.id ?? null }
+        : { fillerMarkedAt: null, fillerMarkedByUserId: null },
+    });
+    await this.status.publishChanged(slug, room.id, 1);
   }
 
   private async access(slug: string, user: AuthUser | undefined): Promise<RoomAccess> {

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Put, Query } from '@nestjs/common';
 import { CurrentUser } from '../auth/auth.decorators.js';
 import type { AuthUser } from '../auth/auth.types.js';
 import {
@@ -30,6 +30,26 @@ export class LocationsController {
     @Query() query: LocationQueryDto,
   ): Promise<LocationUserPageDto> {
     return this.locations.getUserPage(slug, user, query);
+  }
+
+  @Put('locations/:id/filler-mark')
+  @HttpCode(204)
+  markFiller(
+    @Param('slug') slug: string,
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: AuthUser | undefined,
+  ): Promise<void> {
+    return this.locations.setFillerMark(slug, user, id, true);
+  }
+
+  @Delete('locations/:id/filler-mark')
+  @HttpCode(204)
+  unmarkFiller(
+    @Param('slug') slug: string,
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: AuthUser | undefined,
+  ): Promise<void> {
+    return this.locations.setFillerMark(slug, user, id, false);
   }
 
   @Get('locations/admin')

@@ -70,3 +70,46 @@ test('a visitor sees the locations only with the room setting', async ({ page })
   await page.goto('/room/big-chill/locations/open');
   await expect(page.getByTestId('location-table')).toContainText('Salubra_(Requires_Charms)');
 });
+
+test('a player marks an own location as filler and the admin sees who marked it', async ({ page }) => {
+  await ensureSeed(page);
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/admin');
+  await page.getByTestId('tab-seed').click();
+  await page.getByTestId('sphere-offset').locator('input').fill('2');
+  await page.getByTestId('players-mark-filler').click();
+  await page.getByTestId('save-sphere-settings').click();
+  await expect(page.getByText('The settings are saved.')).toBeVisible();
+
+  await loginAs(page, PLAYER);
+  await page.goto('/room/big-chill/locations/open');
+  const row = page.getByTestId('location-table').locator('tbody tr').filter({ hasText: 'Old Site: Strawberry 2' });
+  await row.getByTestId('mark-filler').click();
+  await expect(row.getByTestId('unmark-filler')).toBeVisible();
+  const foreignRow = page.getByTestId('location-table').locator('tbody tr').filter({ hasText: 'Salubra' });
+  await expect(foreignRow.getByTestId('mark-filler')).toHaveCount(0);
+
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/locations/filler?view=admin');
+  await expect(page.getByTestId('location-table')).toContainText('Old Site: Strawberry 2');
+  await expect(page.getByTestId('location-table')).toContainText('Carol');
+});
+
+test('an admin makes a player an admin helper', async ({ page }) => {
+  await ensureSeed(page);
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/admin');
+  await page.getByRole('tab', { name: 'Admins' }).click();
+  await page.getByRole('combobox', { name: 'Select a player' }).click();
+  await page.getByRole('option', { name: 'Carol' }).click();
+  await page.getByTestId('new-admin-role').click();
+  await page.getByRole('option', { name: 'Admin helper' }).click();
+  await page.getByRole('button', { name: 'Make admin' }).click();
+  await expect(page.getByTestId('admins-table')).toContainText('Admin helper');
+
+  await loginAs(page, PLAYER);
+  await page.goto('/room/big-chill/locations/open');
+  await page.getByTestId('location-view-switch').click();
+  await expect(page.getByTestId('location-table').getByRole('columnheader', { name: 'Item' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Admin', exact: true })).toHaveCount(0);
+});

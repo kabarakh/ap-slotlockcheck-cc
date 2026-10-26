@@ -148,6 +148,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/locations/{id}/filler-mark": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["Locations_markFiller"];
+        post?: never;
+        delete: operations["Locations_unmarkFiller"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/rooms/{slug}/locations/admin": {
         parameters: {
             query?: never;
@@ -591,13 +607,17 @@ export interface components {
             title: string;
             slotLockPositions: number[];
         };
+        /** @enum {string} */
+        AdminRole: "admin" | "helper";
         RoomAdminDto: {
+            role: components["schemas"]["AdminRole"];
             userId: number;
             discordId: string;
             name: string;
             isOwner: boolean;
         };
         AddRoomAdminDto: {
+            role?: components["schemas"]["AdminRole"];
             discordId: string;
         };
         UpdateRoomSettingsDto: {
@@ -627,7 +647,11 @@ export interface components {
             lockerSlotId: number;
             lockedSlotId: number;
         };
+        CreateInvitationDto: {
+            role?: components["schemas"]["AdminRole"];
+        };
         AdminInvitationDto: {
+            role: components["schemas"]["AdminRole"];
             url: string;
             validUntil: string;
         };
@@ -910,6 +934,46 @@ export interface operations {
             };
         };
     };
+    Locations_markFiller: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    Locations_unmarkFiller: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     Locations_getAdminPage: {
         parameters: {
             query: {
@@ -1160,7 +1224,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateInvitationDto"];
+            };
+        };
         responses: {
             201: {
                 headers: {

@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
-import type { RoomDetail, SphereOverview } from '@/api/types';
+import type { LocationUserRow, RoomDetail, SphereOverview } from '@/api/types';
+import { slotRow } from '@/domain/__tests__/fixtures';
+import { useAuthStore } from '../auth';
 import { useCurrentRoomStore } from '../current-room';
 import { useLocationsStore } from '../locations';
 import { useSphereOverviewStore } from '../sphere-overview';
@@ -126,6 +128,42 @@ describe('useLocationsStore', () => {
     await locations.refresh();
     expect(apiGet).not.toHaveBeenCalled();
     expect(locations.rows).toEqual([]);
+  });
+});
+
+describe('canUnmarkFiller', () => {
+  const row = (overrides: Partial<LocationUserRow>): LocationUserRow => ({
+    id: 1,
+    sphere: 0,
+    finderSlotId: 7,
+    finderName: 'Bob',
+    discordName: 'bob',
+    game: 'Hollow Knight',
+    locationName: 'Mothwing_Cloak',
+    fillerMarked: true,
+    canMarkFiller: false,
+    ...overrides,
+  });
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+    const current = useCurrentRoomStore();
+    current.room = room({ playersMarkFiller: true });
+    current.slots = [slotRow({ id: 7, discordUserId: '2' }), slotRow({ id: 8, discordUserId: '3' })];
+    useAuthStore().user = { id: 1, discordId: '2', name: 'Bob', username: 'bob', avatar: null };
+  });
+
+  it('permits helpers and the players of the own slots with the room setting', () => {
+    const current = useCurrentRoomStore();
+    const locations = useLocationsStore();
+    current.membership = { role: 'player', isOwner: false };
+    expect(locations.canUnmarkFiller(row({}))).toBe(true);
+    expect(locations.canUnmarkFiller(row({ finderSlotId: 8 }))).toBe(false);
+    expect(locations.canUnmarkFiller(row({ fillerMarked: false }))).toBe(false);
+    current.room = room({ playersMarkFiller: false });
+    expect(locations.canUnmarkFiller(row({}))).toBe(false);
+    current.membership = { role: 'helper', isOwner: false };
+    expect(locations.canUnmarkFiller(row({ finderSlotId: 8 }))).toBe(true);
   });
 });
 

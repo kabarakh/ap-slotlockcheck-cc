@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { api, unwrap } from '@/api/client';
-import type { LockAssignment, RoomAdmin } from '@/api/types';
+import type { AdminRole, LockAssignment, RoomAdmin } from '@/api/types';
 import { useCurrentRoomStore } from './current-room';
 import { useUiStore } from './ui';
 
@@ -33,6 +33,7 @@ export const useAdminStore = defineStore('admin', () => {
     playersMarkFiller: false,
   });
   const newAdminDiscordId = ref<string | null>(null);
+  const newAdminRole = ref<AdminRole>('admin');
   const busy = ref(false);
 
   const slugPath = () => ({ params: { path: { slug: useCurrentRoomStore().slug ?? '' } } });
@@ -150,7 +151,7 @@ export const useAdminStore = defineStore('admin', () => {
       return;
     }
     const result = await run(() =>
-      unwrap(api.POST('/api/rooms/{slug}/admins', { ...slugPath(), body: { discordId } })),
+      unwrap(api.POST('/api/rooms/{slug}/admins', { ...slugPath(), body: { discordId, role: newAdminRole.value } })),
     );
     if (result) {
       admins.value = result;
@@ -199,6 +200,7 @@ export const useAdminStore = defineStore('admin', () => {
     settingsDraft,
     sphereSettingsDraft,
     newAdminDiscordId,
+    newAdminRole,
     busy,
     playerOptions,
     isLocked,

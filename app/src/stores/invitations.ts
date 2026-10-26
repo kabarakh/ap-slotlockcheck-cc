@@ -1,12 +1,14 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { api, unwrap } from '@/api/client';
+import type { AdminRole } from '@/api/types';
 import { useCurrentRoomStore } from './current-room';
 import { useUiStore } from './ui';
 
 export type InvitationState = 'idle' | 'accepting' | 'accepted' | 'failed';
 
 export const useInvitationsStore = defineStore('invitations', () => {
+  const role = ref<AdminRole>('admin');
   const createdUrl = ref<string | null>(null);
   const createdValidUntil = ref<string | null>(null);
   const state = ref<InvitationState>('idle');
@@ -15,7 +17,10 @@ export const useInvitationsStore = defineStore('invitations', () => {
   const create = async (): Promise<void> => {
     try {
       const invitation = await unwrap(
-        api.POST('/api/rooms/{slug}/invitations', { params: { path: { slug: useCurrentRoomStore().slug ?? '' } } }),
+        api.POST('/api/rooms/{slug}/invitations', {
+          params: { path: { slug: useCurrentRoomStore().slug ?? '' } },
+          body: { role: role.value },
+        }),
       );
       createdUrl.value = invitation.url;
       createdValidUntil.value = invitation.validUntil;
@@ -45,5 +50,5 @@ export const useInvitationsStore = defineStore('invitations', () => {
     }
   };
 
-  return { createdUrl, createdValidUntil, state, acceptedSlug, create, copyCreatedUrl, accept };
+  return { role, createdUrl, createdValidUntil, state, acceptedSlug, create, copyCreatedUrl, accept };
 });

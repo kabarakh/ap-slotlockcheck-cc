@@ -7,7 +7,7 @@ import type {
 } from '../src/locations/dto/location.dto.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
 import { multidataFixturePath } from './fixtures/fixtures.js';
-import { createRoom, login, OWNER, PLAYER } from './support/room.js';
+import { CAROL, createRoom, login, OWNER, PLAYER, STRANGER } from './support/room.js';
 import { createTestApp, type TestApp } from './support/test-app.js';
 
 describe('spheres and locations (integration)', () => {
@@ -154,5 +154,76 @@ describe('spheres and locations (integration)', () => {
     ]);
     const room = await request(server).get('/api/rooms/big-chill').expect(200);
     expect(room.body).toMatchObject({ sphereOffset: 0, visitorsSeeLocations: true, playersMarkFiller: true });
+  });
+
+  const locationId = async (locationName: string): Promise<number> =>
+    (await testApp.app.get(PrismaService).seedLocation.findFirstOrThrow({ where: { locationName } })).id;
+
+  const mark = (id: number, cookie: string[] = []) =>
+    request(server).put(`/api/rooms/big-chill/locations/${id}/filler-mark`).set('Cookie', cookie);
+
+  it('lets players mark only the open locations of their own slots', async () => {
+    const carolCookie = await login(server, CAROL);
+    await mark(await locationId('Old Site: Strawberry 2'), carolCookie).expect(204);
+    const foreign = await mark(await locationId('Salubra_(Requires_Charms)'), carolCookie).expect(403);
+    expect(foreign.body).toMatchObject({ code: 'FILLER_MARK_NOT_PERMITTED' });
+    await mark(await locationId('Salubra_(Requires_Charms)')).expect(403);
+    const checked = await mark(await locationId("Link's House"), ownerCookie).expect(400);
+    expect(checked.body).toMatchObject({ code: 'LOCATION_ALREADY_CHECKED' });
+    expect((await mark(999999, ownerCookie).expect(404)).body).toMatchObject({ code: 'LOCATION_NOT_FOUND' });
+  });
+
+  it('lists the marked locations without sphere limit and shows who marked them', async () => {
+    const page = (await get('/locations?state=filler', playerCookie).expect(200)).body as LocationUserPageDto;
+    expect(page.rows.map((row) => [row.locationName, row.sphere, row.fillerMarked])).toEqual([
+      ['Old Site: Strawberry 2', 2, true],
+    ]);
+    const adminPage = (await get('/locations/admin?state=filler', ownerCookie).expect(200))
+      .body as LocationAdminPageDto;
+    expect(adminPage.rows[0]).toMatchObject({ fillerMarkedByName: 'Carol' });
+    expect(adminPage.rows[0]?.fillerMarkedAt).toEqual(expect.any(String));
+  });
+
+  it('makes a helper who sees the admin view but cannot change the room', async () => {
+    const admins = await request(server)
+      .post('/api/rooms/big-chill/admins')
+      .set('Cookie', ownerCookie)
+      .send({ discordId: PLAYER.discordId, role: 'helper' })
+      .expect(201);
+    expect(admins.body).toContainEqual(expect.objectContaining({ discordId: PLAYER.discordId, role: 'helper' }));
+    expect(admins.body).toContainEqual(expect.objectContaining({ discordId: OWNER.discordId, role: 'admin' }));
+    await get('/me', playerCookie).expect(200, { role: 'helper', isOwner: false });
+    await get('/locations/admin?state=open', playerCookie).expect(200);
+    await get('/seed', playerCookie).expect(200);
+    await request(server).patch('/api/rooms/big-chill/settings').set('Cookie', playerCookie).send({}).expect(403);
+    await request(server).get('/api/rooms/big-chill/warnings').set('Cookie', playerCookie).expect(403);
+    await request(server)
+      .delete(`/api/rooms/big-chill/locations/${await locationId('Old Site: Strawberry 2')}/filler-mark`)
+      .set('Cookie', playerCookie)
+      .expect(204);
+    const page = (await get('/locations?state=filler', playerCookie).expect(200)).body as LocationUserPageDto;
+    expect(page.total).toBe(0);
+  });
+
+  it('keeps the owner an admin when somebody tries to make the owner a helper', async () => {
+    const admins = await request(server)
+      .post('/api/rooms/big-chill/admins')
+      .set('Cookie', ownerCookie)
+      .send({ discordId: OWNER.discordId, role: 'helper' })
+      .expect(201);
+    expect(admins.body).toContainEqual(expect.objectContaining({ discordId: OWNER.discordId, role: 'admin' }));
+  });
+
+  it('makes a helper with an invitation link', async () => {
+    const invitation = await request(server)
+      .post('/api/rooms/big-chill/invitations')
+      .set('Cookie', ownerCookie)
+      .send({ role: 'helper' })
+      .expect(201);
+    expect(invitation.body).toMatchObject({ role: 'helper' });
+    const token = new URL((invitation.body as { url: string }).url).pathname.split('/').pop() ?? '';
+    const strangerCookie = await login(server, STRANGER);
+    await request(server).post(`/api/invitations/${token}/accept`).set('Cookie', strangerCookie).expect(200);
+    await get('/me', strangerCookie).expect(200, { role: 'helper', isOwner: false });
   });
 });

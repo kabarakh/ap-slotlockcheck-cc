@@ -3,6 +3,7 @@ import {
   ArrayUnique,
   IsArray,
   IsBoolean,
+  IsIn,
   IsInt,
   IsOptional,
   IsString,
@@ -13,16 +14,27 @@ import {
   MinLength,
 } from 'class-validator';
 
+export const ADMIN_ROLES = ['admin', 'helper'] as const;
+export type AdminRole = (typeof ADMIN_ROLES)[number];
+
 export class RoomAdminDto {
   userId: number;
   discordId: string;
   name: string;
   isOwner: boolean;
+
+  @ApiProperty({ enum: ADMIN_ROLES, enumName: 'AdminRole' })
+  role: AdminRole;
 }
 
 export class AddRoomAdminDto {
   @Matches(/^\d{5,20}$/)
   discordId: string;
+
+  @ApiProperty({ enum: ADMIN_ROLES, enumName: 'AdminRole', required: false })
+  @IsOptional()
+  @IsIn(ADMIN_ROLES)
+  role?: AdminRole;
 }
 
 export class UpdateRoomSettingsDto {

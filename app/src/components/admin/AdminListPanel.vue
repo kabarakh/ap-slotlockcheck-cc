@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import Button from 'primevue/button';
@@ -6,12 +7,16 @@ import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import Select from 'primevue/select';
 import Tag from 'primevue/tag';
-import type { RoomAdmin } from '@/api/types';
+import type { AdminRole, RoomAdmin } from '@/api/types';
 import { useAdminStore } from '@/stores/admin';
 
 const admin = useAdminStore();
-const { admins, playerOptions, newAdminDiscordId, busy } = storeToRefs(admin);
+const { admins, playerOptions, newAdminDiscordId, newAdminRole, busy } = storeToRefs(admin);
 const { t } = useI18n();
+
+const roleOptions = computed(() =>
+  (['admin', 'helper'] as AdminRole[]).map((value) => ({ value, label: t(`admins.roles.${value}`) })),
+);
 </script>
 
 <template>
@@ -21,6 +26,7 @@ const { t } = useI18n();
       <Column :header="t('admins.columns.role')">
         <template #body="{ data }">
           <Tag v-if="(data as RoomAdmin).isOwner" :value="t('admins.owner')" severity="info" />
+          <Tag v-else :value="t(`admins.roles.${(data as RoomAdmin).role}`)" severity="secondary" />
         </template>
       </Column>
       <Column>
@@ -46,6 +52,13 @@ const { t } = useI18n();
         option-value="discordId"
         filter
         :placeholder="t('admins.selectPlayer')"
+      />
+      <Select
+        v-model="newAdminRole"
+        :options="roleOptions"
+        option-label="label"
+        option-value="value"
+        data-testid="new-admin-role"
       />
       <Button type="submit" :label="t('admins.add')" :disabled="!newAdminDiscordId" :loading="busy" />
     </form>

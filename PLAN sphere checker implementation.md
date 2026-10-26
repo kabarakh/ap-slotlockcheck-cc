@@ -517,6 +517,8 @@ The implementation uses the solution in the column "Solution now". The developer
 | 13.4 | A game without a checksum in the datapackage of the multidata file. | The server does not save its datapackage. The item names for "Send item" then come only from the locations of the seed. |
 | 13.5 | "Items for slots with reached goal count as filler" (F 2.3): in which filler type? | With the switch "Exclude slots with reached goal", a progression item for such a slot counts as "normal". Useful items and traps keep their type. |
 | 13.6 | Do the location filters stay for each room? | The filters stay in the browser for all rooms together, as the roster filters. |
+| 13.7 | Can an admin change the role of an existing admin or helper? | Yes: "Make admin" with the other role changes the role. The tracker owner always stays admin. An invitation link for a helper does not make an admin a helper. |
+| 13.8 | Who can remove a filler mark? | The same users who can set it (5.8), also when the location is checked in the meantime. |
 
 ## 14. Deviations during the implementation
 
@@ -530,3 +532,5 @@ The implementation uses the solution in the column "Solution now". The developer
 8. **Sphere overview (5.3):** the item types come in a separate list `itemTypes`. It is `null` for players and visitors.
 9. **Live message (7.2):** the live store gives the message to `currentRoom.applyLocationsChanged`, because only `currentRoom` receives socket data (main 16.4.3). This action loads the sphere overview and the current page again.
 10. **View switch (6.1.2):** the router gives `view=admin` to the store action `locations.enter`. The store opens the admin view only for helpers and admins.
+11. **Filler marks (5.4):** the endpoints give HTTP 204 and send `room:locations-changed`. The app then loads the current page again.
+12. **Tests of the role calculation:** new unit tests for `RoomRoleService` (main 19.1), also for the role `helper`.

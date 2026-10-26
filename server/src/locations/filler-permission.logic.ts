@@ -8,12 +8,13 @@ export interface FillerPermissionInput {
   checked: boolean;
 }
 
-export function canMarkFiller(input: FillerPermissionInput): boolean {
-  if (input.checked) {
-    return false;
-  }
+export function canChangeFillerMark(input: Omit<FillerPermissionInput, 'checked'>): boolean {
   if (RoomRoleService.satisfies(input.role, 'helper')) {
     return true;
   }
   return input.role === 'player' && input.playersMarkFiller && input.isOwnSlot;
+}
+
+export function canMarkFiller(input: FillerPermissionInput): boolean {
+  return !input.checked && canChangeFillerMark(input);
 }

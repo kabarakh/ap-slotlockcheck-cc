@@ -52,6 +52,17 @@ export const useLocationsStore = defineStore(
       return [0, maximum];
     });
 
+    const canUnmarkFiller = (row: LocationUserRow): boolean => {
+      const room = useCurrentRoomStore();
+      if (!row.fillerMarked) {
+        return false;
+      }
+      return (
+        room.isHelper ||
+        (room.room?.playersMarkFiller === true && room.mySlots.some((slot) => slot.id === row.finderSlotId))
+      );
+    };
+
     const query = () => {
       const current = filters.value;
       return {
@@ -131,6 +142,25 @@ export const useLocationsStore = defineStore(
       await applyFilters();
     };
 
+    const setFillerMark = async (id: number, marked: boolean): Promise<void> => {
+      const slug = useCurrentRoomStore().slug;
+      if (!slug) {
+        return;
+      }
+      const params = { params: { path: { slug, id } } };
+      try {
+        await unwrap(
+          marked
+            ? api.PUT('/api/rooms/{slug}/locations/{id}/filler-mark', params)
+            : api.DELETE('/api/rooms/{slug}/locations/{id}/filler-mark', params),
+        );
+        useUiStore().notify('success', marked ? 'locations.marked' : 'locations.unmarked');
+        await fetchPage();
+      } catch (error) {
+        useUiStore().notifyError(error);
+      }
+    };
+
     const refresh = async (): Promise<void> => {
       if (locationState.value) {
         await fetchPage();
@@ -150,6 +180,7 @@ export const useLocationsStore = defineStore(
       loading,
       isAdminView,
       sphereBounds,
+      canUnmarkFiller,
       fetchPage,
       enter,
       leave,
@@ -157,6 +188,7 @@ export const useLocationsStore = defineStore(
       setSort,
       applyFilters,
       resetFilters,
+      setFillerMark,
       refresh,
     };
   },

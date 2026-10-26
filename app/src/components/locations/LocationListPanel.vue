@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable, { type DataTablePageEvent, type DataTableSortEvent } from 'primevue/datatable';
-import type { LocationAdminRow, LocationSortField } from '@/api/types';
+import type { LocationAdminRow, LocationSortField, LocationUserRow } from '@/api/types';
+import DateTimeText from '@/components/ui/DateTimeText.vue';
 import ItemTypeTag from '@/components/ui/ItemTypeTag.vue';
 import { formatGameName } from '@/domain/game-name';
 import { useLocationsStore } from '@/stores/locations';
 
 const locations = useLocationsStore();
-const { rows, total, loading, offset, limit, sortField, sortOrder, isAdminView } = storeToRefs(locations);
+const { rows, total, loading, offset, limit, sortField, sortOrder, isAdminView, locationState } =
+  storeToRefs(locations);
 const { t } = useI18n();
 
 const onPage = (event: DataTablePageEvent) => locations.setPage(event.first, event.rows);
@@ -61,6 +64,40 @@ const onSort = (event: DataTableSortEvent) =>
     </Column>
     <Column field="location" :header="t('locations.columns.location')" sortable>
       <template #body="{ data }">{{ data.locationName }}</template>
+    </Column>
+    <Column v-if="isAdminView && locationState === 'filler'" :header="t('locations.columns.markedBy')">
+      <template #body="{ data }">
+        {{ (data as LocationAdminRow).fillerMarkedByName ?? t('common.none') }},
+        <DateTimeText :value="(data as LocationAdminRow).fillerMarkedAt" />
+      </template>
+    </Column>
+    <Column :header="t('locations.columns.filler')">
+      <template #body="{ data }">
+        <Button
+          v-if="(data as LocationUserRow).canMarkFiller && !(data as LocationUserRow).fillerMarked"
+          :label="t('locations.markFiller')"
+          icon="pi pi-flag"
+          size="small"
+          text
+          data-testid="mark-filler"
+          @click="locations.setFillerMark((data as LocationUserRow).id, true)"
+        />
+        <Button
+          v-else-if="locations.canUnmarkFiller(data as LocationUserRow)"
+          :label="t('locations.unmarkFiller')"
+          icon="pi pi-flag-fill"
+          size="small"
+          severity="secondary"
+          text
+          data-testid="unmark-filler"
+          @click="locations.setFillerMark((data as LocationUserRow).id, false)"
+        />
+        <i
+          v-else-if="(data as LocationUserRow).fillerMarked"
+          class="pi pi-flag-fill"
+          :aria-label="t('locations.isMarked')"
+        />
+      </template>
     </Column>
   </DataTable>
 </template>
