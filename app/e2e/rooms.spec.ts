@@ -28,6 +28,11 @@ test('the room list shows only the own rooms', async ({ page }) => {
   await loginAs(page, OWNER);
   await page.goto('/');
   await expect(page.getByRole('link', { name: 'Big Chill' })).toBeVisible();
+  await expect(page).toHaveTitle('SlotLockCheck');
+  await page.getByRole('link', { name: 'Big Chill' }).click();
+  await expect(page).toHaveTitle('Big Chill - SlotLockCheck');
+  await page.getByRole('link', { name: 'Rooms', exact: true }).click();
+  await expect(page).toHaveTitle('SlotLockCheck');
   await page.context().clearCookies();
   await page.goto('/');
   await expect(page.getByTestId('rooms-hint')).toContainText('Log in with Discord');
@@ -38,6 +43,7 @@ test('a visitor opens a room with its link and sees the roster', async ({ page }
   await ensureRoom(page);
   await page.context().clearCookies();
   await page.goto('/room/big-chill');
+  await expect(page).toHaveTitle('Big Chill - SlotLockCheck');
   const roster = page.getByTestId('roster-table');
   await expect(row(roster, 'Alice')).toContainText('Unlocked');
   await expect(row(roster, 'Bob')).toContainText('Locked');
