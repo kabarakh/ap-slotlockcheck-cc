@@ -3,6 +3,7 @@ import type { Server, Socket } from 'socket.io';
 import {
   LiveMessageName,
   roomChannel,
+  type LocationsChangedPayloadDto,
   type RoomSyncedPayloadDto,
   type RoomSyncFailedPayloadDto,
   type RoomUpdatedPayloadDto,
@@ -46,5 +47,9 @@ export class LiveGateway {
 
   publishUpdated(payload: RoomUpdatedPayloadDto): void {
     this.server?.to(roomChannel(payload.slug)).emit(LiveMessageName.RoomUpdated, payload);
+  }
+
+  publishLocationsChanged(payload: LocationsChangedPayloadDto): void {
+    this.server?.to(roomChannel(payload.slug)).emit(LiveMessageName.LocationsChanged, payload);
   }
 }

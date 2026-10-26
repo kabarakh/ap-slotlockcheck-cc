@@ -1761,7 +1761,8 @@
           "room:leave",
           "room:synced",
           "room:sync-failed",
-          "room:updated"
+          "room:updated",
+          "room:locations-changed"
         ]
       },
       "LiveMessageCatalogDto": {
@@ -1777,6 +1778,26 @@
         },
         "required": [
           "name"
+        ]
+      },
+      "LocationsChangedPayloadDto": {
+        "type": "object",
+        "properties": {
+          "lowestOpenSphere": {
+            "type": "number",
+            "nullable": true
+          },
+          "slug": {
+            "type": "string"
+          },
+          "changedCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lowestOpenSphere",
+          "slug",
+          "changedCount"
         ]
       },
       "RoomSyncedPayloadDto": {

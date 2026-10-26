@@ -8,6 +8,7 @@ export enum LiveMessageName {
   RoomSynced = 'room:synced',
   RoomSyncFailed = 'room:sync-failed',
   RoomUpdated = 'room:updated',
+  LocationsChanged = 'room:locations-changed',
 }
 
 export class RoomSyncedPayloadDto {
@@ -31,6 +32,15 @@ export class RoomUpdatedPayloadDto {
 
   @ApiProperty({ type: [SlotRowDto] })
   slots: SlotRowDto[];
+}
+
+export class LocationsChangedPayloadDto {
+  slug: string;
+
+  @ApiProperty({ type: Number, nullable: true })
+  lowestOpenSphere: number | null;
+
+  changedCount: number;
 }
 
 export class LiveMessageCatalogDto {

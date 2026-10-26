@@ -113,6 +113,11 @@ Reference: `PLAN sphere checker implementation.md` (section numbers in brackets)
 - [x] Upload with check against the room, only one upload for each room (4.5, 4.6), nginx limit
 - [x] Admin tab "Seed" with `SeedPanel`
 
+### Phase P2 – Location status
+
+- [x] `applyChecks` in the synchronization (7.1)
+- [x] Live message `room:locations-changed` without items (7.2)
+
 ## Open decisions for the developer
 
 See `PLAN slotlock.md`, section 23: production domain, responsibility on the proServer, GitHub repository, PrimeVue license, Node 26 or Node 24 LTS, comparison with the Google sheet.
@@ -126,3 +131,5 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-24 | Phase 3–4 app | ok | ok | 12 unit, 7 e2e ok | Visual check in the browser (roster, admin, lock matrix) |
 | 2026-10-24 | Phase 7 | ok | ok | 66 unit, 13 integration, 12 unit app, 8 e2e ok | Invitation links |
 | 2026-10-24 | Phase 8 files | ok | ok | – | `post-deploy.sh` syntax check only |
+| 2026-10-26 | Sphere checker P1 | ok | ok | 110 unit, 22 integration, 29 unit app, 13 e2e ok | Real multidata file of the Big Chill room checked with `seed:report` |
+| 2026-10-26 | Sphere checker P2 | ok | ok | 120 unit, 24 integration ok | |

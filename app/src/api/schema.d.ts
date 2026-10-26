@@ -4,1144 +4,1150 @@
  */
 
 export interface paths {
-    "/api/auth/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Auth_me"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/api/auth/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["Auth_logout"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Auth_me'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/auth/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Rooms_listRooms"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['Auth_logout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Rooms_getRoom"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Rooms_listRooms'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/roster": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Rooms_getRoster"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Rooms_getRoom'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/roster': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Rooms_getMembership"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Rooms_getRoster'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/sync": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["Sync_synchronizeNow"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Rooms_getMembership'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/sync': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/room-setup/preview": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RoomSetup_preview"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['Sync_synchronizeNow'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/room-setup/preview': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/room-setup": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RoomSetup_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['RoomSetup_preview'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/room-setup': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/admins": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Admins_list"];
-        put?: never;
-        post: operations["Admins_add"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['RoomSetup_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/admins': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/admins/{userId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["Admins_remove"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Admins_list'];
+    put?: never;
+    post: operations['Admins_add'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/admins/{userId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["RoomSettings_update"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['Admins_remove'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/lock-assignments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["LockAssignments_list"];
-        put: operations["LockAssignments_set"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: operations['RoomSettings_update'];
+    trace?: never;
+  };
+  '/api/rooms/{slug}/lock-assignments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/lock-assignments/reset": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["LockAssignments_reset"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['LockAssignments_list'];
+    put: operations['LockAssignments_set'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/lock-assignments/reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/invitations": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["Invitations_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['LockAssignments_reset'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/invitations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/invitations/{token}/accept": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["Invitations_accept"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['Invitations_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/invitations/{token}/accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/warnings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Warnings_list"];
-        put?: never;
-        post: operations["Warnings_create"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['Invitations_accept'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/warnings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/warnings/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete: operations["Warnings_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations['Warnings_list'];
+    put?: never;
+    post: operations['Warnings_create'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/warnings/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/unlock-times": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put: operations["UnlockTimes_set"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['Warnings_delete'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/unlock-times': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/unlock-times/csv": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["UnlockTimes_importCsv"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put: operations['UnlockTimes_set'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/unlock-times/csv': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/rooms/{slug}/seed": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["Seed_get"];
-        put?: never;
-        post: operations["Seed_upload"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations['UnlockTimes_importCsv'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/rooms/{slug}/seed': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get: operations['Seed_get'];
+    put?: never;
+    post: operations['Seed_upload'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        AuthUserDto: {
-            avatar: string | null;
-            id: number;
-            discordId: string;
-            name: string;
-            username: string;
-        };
-        SessionDto: {
-            user: components["schemas"]["AuthUserDto"] | null;
-        };
-        SyncStatusDto: {
-            /** Format: date-time */
-            lastSyncAt: string | null;
-            /** Format: date-time */
-            lastSuccessfulSyncAt: string | null;
-            lastSyncError: string | null;
-            running: boolean;
-        };
-        RoomSummaryDto: {
-            id: number;
-            slug: string;
-            title: string;
-            slotCount: number;
-            lockedSlotCount: number;
-            unlockedSlotCount: number;
-            unlockedPercentage: number;
-            syncStatus: components["schemas"]["SyncStatusDto"];
-        };
-        RoomDetailDto: {
-            id: number;
-            slug: string;
-            title: string;
-            slotCount: number;
-            lockedSlotCount: number;
-            unlockedSlotCount: number;
-            unlockedPercentage: number;
-            syncStatus: components["schemas"]["SyncStatusDto"];
-            cheeseTrackerId: string;
-            cheeseTrackerUrl: string;
-            archipelagoTrackerUrl: string;
-            yellowLimitHours: number;
-            redLimitHours: number;
-            limitsOverridden: boolean;
-            unknownSlotNames: string[];
-            manualSyncCooldownSeconds: number;
-            hasSeed: boolean;
-            sphereOffset: number;
-            visitorsSeeLocations: boolean;
-            playersMarkFiller: boolean;
-        };
-        /** @enum {string} */
-        TrackerStatus: "disconnected" | "connected" | "ready" | "playing" | "goal_completed";
-        /** @enum {string} */
-        ProgressionStatus: "unknown" | "unblocked" | "bk" | "go" | "soft_bk";
-        /** @enum {string} */
-        CompletionStatus: "incomplete" | "all_checks" | "goal" | "done" | "released";
-        /** @enum {string} */
-        AvailabilityStatus: "unknown" | "open" | "claimed" | "public";
-        /** @enum {string} */
-        LockStatus: "not_locked" | "start_slot" | "locked" | "partially_unlocked" | "unlocked";
-        /** @enum {string} */
-        UnlockTimeSource: "sync" | "estimated" | "manual" | "csv" | "unknown";
-        SlotLockDto: {
-            senderSlotId: number | null;
-            senderName: string | null;
-            /** Format: date-time */
-            unlockTime: string | null;
-            timeSource: components["schemas"]["UnlockTimeSource"] | null;
-            lockerSlotId: number;
-            lockerName: string;
-            unlocked: boolean;
-        };
-        SlotRowDto: {
-            archipelagoName: string | null;
-            /** Format: date-time */
-            archipelagoActivity: string | null;
-            discordUserId: string | null;
-            discordName: string | null;
-            /** Format: date-time */
-            lastActivity: string | null;
-            /** Format: date-time */
-            lastChecked: string | null;
-            trackerStatus: components["schemas"]["TrackerStatus"];
-            progressionStatus: components["schemas"]["ProgressionStatus"];
-            completionStatus: components["schemas"]["CompletionStatus"];
-            availabilityStatus: components["schemas"]["AvailabilityStatus"];
-            lockStatus: components["schemas"]["LockStatus"];
-            locks: components["schemas"]["SlotLockDto"][];
-            /** Format: date-time */
-            unlockTime: string | null;
-            unlockTimeSource: components["schemas"]["UnlockTimeSource"] | null;
-            id: number;
-            position: number;
-            name: string;
-            archipelagoGoal: boolean;
-            game: string;
-            checksDone: number;
-            checksTotal: number;
-            notes: string;
-            isSlotLock: boolean;
-            isSelectedSlotLock: boolean;
-            unlocksSent: number;
-        };
-        /** @enum {string} */
-        RoomRole: "visitor" | "player" | "helper" | "admin";
-        RoomMembershipDto: {
-            role: components["schemas"]["RoomRole"];
-            isOwner: boolean;
-        };
-        RoomPreviewRequestDto: {
-            cheeseTrackerId: string;
-        };
-        /** @enum {string} */
-        OwnerCheckResult: "slot" | "name" | "failed";
-        SlotLockCandidateDto: {
-            position: number;
-            name: string;
-        };
-        RoomPreviewDto: {
-            ownerCheck: components["schemas"]["OwnerCheckResult"];
-            ownerDiscordName: string | null;
-            existingSlug: string | null;
-            slotLockSlots: components["schemas"]["SlotLockCandidateDto"][];
-            cheeseTrackerId: string;
-            title: string;
-            suggestedSlug: string;
-        };
-        CreateRoomDto: {
-            cheeseTrackerId: string;
-            slug: string;
-            title: string;
-            slotLockPositions: number[];
-        };
-        RoomAdminDto: {
-            userId: number;
-            discordId: string;
-            name: string;
-            isOwner: boolean;
-        };
-        AddRoomAdminDto: {
-            discordId: string;
-        };
-        UpdateRoomSettingsDto: {
-            title?: string;
-            yellowLimitHours?: number;
-            redLimitHours?: number;
-            useCheeseLimits?: boolean;
-            slotLockPositions?: number[];
-        };
-        /** @enum {string} */
-        LockSource: "detected" | "admin";
-        LockAssignmentDto: {
-            source: components["schemas"]["LockSource"];
-            lockerSlotId: number;
-            lockedSlotId: number;
-            notLocked: boolean;
-        };
-        SetLockAssignmentDto: {
-            lockerSlotId: number;
-            lockedSlotId: number;
-            locked: boolean;
-        };
-        ResetLockAssignmentDto: {
-            lockerSlotId: number;
-            lockedSlotId: number;
-        };
-        AdminInvitationDto: {
-            url: string;
-            validUntil: string;
-        };
-        AcceptedInvitationDto: {
-            slug: string;
-        };
-        WarningDto: {
-            id: number;
-            slotId: number;
-            slotName: string;
-            adminName: string;
-            date: string;
-            text: string;
-        };
-        CreateWarningDto: {
-            slotId: number;
-            date: string;
-            text: string;
-        };
-        SetUnlockTimeDto: {
-            lockerSlotId: number;
-            lockedSlotId: number;
-            unlockTime: string;
-        };
-        ImportUnlockTimesDto: {
-            csv: string;
-        };
-        UnlockTimeImportResultDto: {
-            updated: number;
-            errors: string[];
-        };
-        SeedDataDto: {
-            /** Format: date-time */
-            uploadedAt: string;
-            seedName: string;
-            archipelagoVersion: string;
-            locationCount: number;
-            sphereCount: number;
-            unreachableLocationCount: number;
-            uploadedByName: string;
-        };
-        SeedUploadDto: {
-            /** Format: binary */
-            file: string;
-        };
-        ApiErrorDto: {
-            details?: {
-                [key: string]: unknown;
-            };
-            statusCode: number;
-            code: string;
-            message: string;
-        };
-        /** @enum {string} */
-        LiveMessageName: "room:join" | "room:leave" | "room:synced" | "room:sync-failed" | "room:updated";
-        LiveMessageCatalogDto: {
-            name: components["schemas"]["LiveMessageName"];
-        };
-        RoomSyncedPayloadDto: {
-            changedSlots: components["schemas"]["SlotRowDto"][];
-            slug: string;
-            room: components["schemas"]["RoomDetailDto"];
-            removedSlotIds: number[];
-        };
-        RoomSyncFailedPayloadDto: {
-            slug: string;
-            syncStatus: components["schemas"]["SyncStatusDto"];
-        };
-        RoomUpdatedPayloadDto: {
-            slots: components["schemas"]["SlotRowDto"][];
-            slug: string;
-            room: components["schemas"]["RoomDetailDto"];
-        };
+  schemas: {
+    AuthUserDto: {
+      avatar: string | null;
+      id: number;
+      discordId: string;
+      name: string;
+      username: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    SessionDto: {
+      user: components['schemas']['AuthUserDto'] | null;
+    };
+    SyncStatusDto: {
+      /** Format: date-time */
+      lastSyncAt: string | null;
+      /** Format: date-time */
+      lastSuccessfulSyncAt: string | null;
+      lastSyncError: string | null;
+      running: boolean;
+    };
+    RoomSummaryDto: {
+      id: number;
+      slug: string;
+      title: string;
+      slotCount: number;
+      lockedSlotCount: number;
+      unlockedSlotCount: number;
+      unlockedPercentage: number;
+      syncStatus: components['schemas']['SyncStatusDto'];
+    };
+    RoomDetailDto: {
+      id: number;
+      slug: string;
+      title: string;
+      slotCount: number;
+      lockedSlotCount: number;
+      unlockedSlotCount: number;
+      unlockedPercentage: number;
+      syncStatus: components['schemas']['SyncStatusDto'];
+      cheeseTrackerId: string;
+      cheeseTrackerUrl: string;
+      archipelagoTrackerUrl: string;
+      yellowLimitHours: number;
+      redLimitHours: number;
+      limitsOverridden: boolean;
+      unknownSlotNames: string[];
+      manualSyncCooldownSeconds: number;
+      hasSeed: boolean;
+      sphereOffset: number;
+      visitorsSeeLocations: boolean;
+      playersMarkFiller: boolean;
+    };
+    /** @enum {string} */
+    TrackerStatus: 'disconnected' | 'connected' | 'ready' | 'playing' | 'goal_completed';
+    /** @enum {string} */
+    ProgressionStatus: 'unknown' | 'unblocked' | 'bk' | 'go' | 'soft_bk';
+    /** @enum {string} */
+    CompletionStatus: 'incomplete' | 'all_checks' | 'goal' | 'done' | 'released';
+    /** @enum {string} */
+    AvailabilityStatus: 'unknown' | 'open' | 'claimed' | 'public';
+    /** @enum {string} */
+    LockStatus: 'not_locked' | 'start_slot' | 'locked' | 'partially_unlocked' | 'unlocked';
+    /** @enum {string} */
+    UnlockTimeSource: 'sync' | 'estimated' | 'manual' | 'csv' | 'unknown';
+    SlotLockDto: {
+      senderSlotId: number | null;
+      senderName: string | null;
+      /** Format: date-time */
+      unlockTime: string | null;
+      timeSource: components['schemas']['UnlockTimeSource'] | null;
+      lockerSlotId: number;
+      lockerName: string;
+      unlocked: boolean;
+    };
+    SlotRowDto: {
+      archipelagoName: string | null;
+      /** Format: date-time */
+      archipelagoActivity: string | null;
+      discordUserId: string | null;
+      discordName: string | null;
+      /** Format: date-time */
+      lastActivity: string | null;
+      /** Format: date-time */
+      lastChecked: string | null;
+      trackerStatus: components['schemas']['TrackerStatus'];
+      progressionStatus: components['schemas']['ProgressionStatus'];
+      completionStatus: components['schemas']['CompletionStatus'];
+      availabilityStatus: components['schemas']['AvailabilityStatus'];
+      lockStatus: components['schemas']['LockStatus'];
+      locks: components['schemas']['SlotLockDto'][];
+      /** Format: date-time */
+      unlockTime: string | null;
+      unlockTimeSource: components['schemas']['UnlockTimeSource'] | null;
+      id: number;
+      position: number;
+      name: string;
+      archipelagoGoal: boolean;
+      game: string;
+      checksDone: number;
+      checksTotal: number;
+      notes: string;
+      isSlotLock: boolean;
+      isSelectedSlotLock: boolean;
+      unlocksSent: number;
+    };
+    /** @enum {string} */
+    RoomRole: 'visitor' | 'player' | 'helper' | 'admin';
+    RoomMembershipDto: {
+      role: components['schemas']['RoomRole'];
+      isOwner: boolean;
+    };
+    RoomPreviewRequestDto: {
+      cheeseTrackerId: string;
+    };
+    /** @enum {string} */
+    OwnerCheckResult: 'slot' | 'name' | 'failed';
+    SlotLockCandidateDto: {
+      position: number;
+      name: string;
+    };
+    RoomPreviewDto: {
+      ownerCheck: components['schemas']['OwnerCheckResult'];
+      ownerDiscordName: string | null;
+      existingSlug: string | null;
+      slotLockSlots: components['schemas']['SlotLockCandidateDto'][];
+      cheeseTrackerId: string;
+      title: string;
+      suggestedSlug: string;
+    };
+    CreateRoomDto: {
+      cheeseTrackerId: string;
+      slug: string;
+      title: string;
+      slotLockPositions: number[];
+    };
+    RoomAdminDto: {
+      userId: number;
+      discordId: string;
+      name: string;
+      isOwner: boolean;
+    };
+    AddRoomAdminDto: {
+      discordId: string;
+    };
+    UpdateRoomSettingsDto: {
+      title?: string;
+      yellowLimitHours?: number;
+      redLimitHours?: number;
+      useCheeseLimits?: boolean;
+      slotLockPositions?: number[];
+    };
+    /** @enum {string} */
+    LockSource: 'detected' | 'admin';
+    LockAssignmentDto: {
+      source: components['schemas']['LockSource'];
+      lockerSlotId: number;
+      lockedSlotId: number;
+      notLocked: boolean;
+    };
+    SetLockAssignmentDto: {
+      lockerSlotId: number;
+      lockedSlotId: number;
+      locked: boolean;
+    };
+    ResetLockAssignmentDto: {
+      lockerSlotId: number;
+      lockedSlotId: number;
+    };
+    AdminInvitationDto: {
+      url: string;
+      validUntil: string;
+    };
+    AcceptedInvitationDto: {
+      slug: string;
+    };
+    WarningDto: {
+      id: number;
+      slotId: number;
+      slotName: string;
+      adminName: string;
+      date: string;
+      text: string;
+    };
+    CreateWarningDto: {
+      slotId: number;
+      date: string;
+      text: string;
+    };
+    SetUnlockTimeDto: {
+      lockerSlotId: number;
+      lockedSlotId: number;
+      unlockTime: string;
+    };
+    ImportUnlockTimesDto: {
+      csv: string;
+    };
+    UnlockTimeImportResultDto: {
+      updated: number;
+      errors: string[];
+    };
+    SeedDataDto: {
+      /** Format: date-time */
+      uploadedAt: string;
+      seedName: string;
+      archipelagoVersion: string;
+      locationCount: number;
+      sphereCount: number;
+      unreachableLocationCount: number;
+      uploadedByName: string;
+    };
+    SeedUploadDto: {
+      /** Format: binary */
+      file: string;
+    };
+    ApiErrorDto: {
+      details?: {
+        [key: string]: unknown;
+      };
+      statusCode: number;
+      code: string;
+      message: string;
+    };
+    /** @enum {string} */
+    LiveMessageName:
+      'room:join' | 'room:leave' | 'room:synced' | 'room:sync-failed' | 'room:updated' | 'room:locations-changed';
+    LiveMessageCatalogDto: {
+      name: components['schemas']['LiveMessageName'];
+    };
+    LocationsChangedPayloadDto: {
+      lowestOpenSphere: number | null;
+      slug: string;
+      changedCount: number;
+    };
+    RoomSyncedPayloadDto: {
+      changedSlots: components['schemas']['SlotRowDto'][];
+      slug: string;
+      room: components['schemas']['RoomDetailDto'];
+      removedSlotIds: number[];
+    };
+    RoomSyncFailedPayloadDto: {
+      slug: string;
+      syncStatus: components['schemas']['SyncStatusDto'];
+    };
+    RoomUpdatedPayloadDto: {
+      slots: components['schemas']['SlotRowDto'][];
+      slug: string;
+      room: components['schemas']['RoomDetailDto'];
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    Auth_me: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionDto"];
-                };
-            };
-        };
+  Auth_me: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    Auth_logout: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['SessionDto'];
         };
+      };
     };
-    Rooms_listRooms: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RoomSummaryDto"][];
-                };
-            };
-        };
+  };
+  Auth_logout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    Rooms_getRoom: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RoomDetailDto"];
-                };
-            };
-        };
+        content?: never;
+      };
     };
-    Rooms_getRoster: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SlotRowDto"][];
-                };
-            };
-        };
+  };
+  Rooms_listRooms: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    Rooms_getMembership: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RoomMembershipDto"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['RoomSummaryDto'][];
         };
+      };
     };
-    Sync_synchronizeNow: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SyncStatusDto"];
-                };
-            };
-        };
+  };
+  Rooms_getRoom: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
     };
-    RoomSetup_preview: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RoomPreviewRequestDto"];
-            };
+        content: {
+          'application/json': components['schemas']['RoomDetailDto'];
         };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RoomPreviewDto"];
-                };
-            };
-        };
+      };
     };
-    RoomSetup_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateRoomDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RoomDetailDto"];
-                };
-            };
-        };
+  };
+  Rooms_getRoster: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
     };
-    Admins_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RoomAdminDto"][];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['SlotRowDto'][];
         };
+      };
     };
-    Admins_add: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AddRoomAdminDto"];
-            };
-        };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RoomAdminDto"][];
-                };
-            };
-        };
+  };
+  Rooms_getMembership: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
     };
-    Admins_remove: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-                userId: number;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RoomAdminDto"][];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['RoomMembershipDto'];
         };
+      };
     };
-    RoomSettings_update: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UpdateRoomSettingsDto"];
-            };
-        };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+  };
+  Sync_synchronizeNow: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
     };
-    LockAssignments_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LockAssignmentDto"][];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['SyncStatusDto'];
         };
+      };
     };
-    LockAssignments_set: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SetLockAssignmentDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LockAssignmentDto"][];
-                };
-            };
-        };
+  };
+  RoomSetup_preview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    LockAssignments_reset: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ResetLockAssignmentDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LockAssignmentDto"][];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RoomPreviewRequestDto'];
+      };
     };
-    Invitations_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AdminInvitationDto"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['RoomPreviewDto'];
         };
+      };
     };
-    Invitations_accept: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                token: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AcceptedInvitationDto"];
-                };
-            };
-        };
+  };
+  RoomSetup_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    Warnings_list: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WarningDto"][];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateRoomDto'];
+      };
     };
-    Warnings_create: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CreateWarningDto"];
-            };
+        content: {
+          'application/json': components['schemas']['RoomDetailDto'];
         };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WarningDto"][];
-                };
-            };
-        };
+      };
     };
-    Warnings_delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-                id: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["WarningDto"][];
-                };
-            };
-        };
+  };
+  Admins_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
     };
-    UnlockTimes_set: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SetUnlockTimeDto"];
-            };
+        content: {
+          'application/json': components['schemas']['RoomAdminDto'][];
         };
-        responses: {
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+      };
     };
-    UnlockTimes_importCsv: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ImportUnlockTimesDto"];
-            };
-        };
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UnlockTimeImportResultDto"];
-                };
-            };
-        };
+  };
+  Admins_add: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
     };
-    Seed_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SeedDataDto"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AddRoomAdminDto'];
+      };
     };
-    Seed_upload: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "multipart/form-data": components["schemas"]["SeedUploadDto"];
-            };
+        content: {
+          'application/json': components['schemas']['RoomAdminDto'][];
         };
-        responses: {
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SeedDataDto"];
-                };
-            };
-        };
+      };
     };
+  };
+  Admins_remove: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+        userId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RoomAdminDto'][];
+        };
+      };
+    };
+  };
+  RoomSettings_update: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateRoomSettingsDto'];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  LockAssignments_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LockAssignmentDto'][];
+        };
+      };
+    };
+  };
+  LockAssignments_set: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SetLockAssignmentDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LockAssignmentDto'][];
+        };
+      };
+    };
+  };
+  LockAssignments_reset: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResetLockAssignmentDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LockAssignmentDto'][];
+        };
+      };
+    };
+  };
+  Invitations_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminInvitationDto'];
+        };
+      };
+    };
+  };
+  Invitations_accept: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        token: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AcceptedInvitationDto'];
+        };
+      };
+    };
+  };
+  Warnings_list: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WarningDto'][];
+        };
+      };
+    };
+  };
+  Warnings_create: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateWarningDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WarningDto'][];
+        };
+      };
+    };
+  };
+  Warnings_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+        id: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WarningDto'][];
+        };
+      };
+    };
+  };
+  UnlockTimes_set: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SetUnlockTimeDto'];
+      };
+    };
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  UnlockTimes_importCsv: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ImportUnlockTimesDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UnlockTimeImportResultDto'];
+        };
+      };
+    };
+  };
+  Seed_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SeedDataDto'];
+        };
+      };
+    };
+  };
+  Seed_upload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': components['schemas']['SeedUploadDto'];
+      };
+    };
+    responses: {
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SeedDataDto'];
+        };
+      };
+    };
+  };
 }

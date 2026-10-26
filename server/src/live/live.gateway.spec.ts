@@ -37,4 +37,16 @@ describe('LiveGateway', () => {
     expect(to).toHaveBeenCalledWith('room:big-chill');
     expect(emit).toHaveBeenCalledWith(LiveMessageName.RoomSyncFailed, expect.objectContaining({ slug: 'big-chill' }));
   });
+
+  it('sends the change of the locations without items', () => {
+    const gateway = new LiveGateway();
+    const emit = vi.fn();
+    gateway.server = { to: vi.fn().mockReturnValue({ emit }) } as never;
+    gateway.publishLocationsChanged({ slug: 'big-chill', lowestOpenSphere: 2, changedCount: 3 });
+    expect(emit).toHaveBeenCalledWith(LiveMessageName.LocationsChanged, {
+      slug: 'big-chill',
+      lowestOpenSphere: 2,
+      changedCount: 3,
+    });
+  });
 });

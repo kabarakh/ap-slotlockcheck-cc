@@ -1,5 +1,6 @@
 import { detectLocks, detectStartSlots, evaluateSlotLockStates } from '../lock/lock.logic.js';
 import type { SlotLockState } from '../lock/lock.types.js';
+import { isGoaled } from '../locations/goal.logic.js';
 import {
   archipelagoSlotsByPosition,
   lockedSlotNamesByPosition,
@@ -15,8 +16,6 @@ export interface PrototypeReport {
   players: string[][];
   unknownSlotNames: string[];
 }
-
-const GOALED_STATUSES = new Set(['goal', 'done', 'released']);
 
 export function buildPrototypeReport(source: RoomSource, slotLockPositions?: number[]): PrototypeReport {
   const slots = slotRecordsFromCheese(source.cheese, archipelagoSlotsByPosition(source.roomStatus, source.tracker));
@@ -93,9 +92,7 @@ function playerRows(slots: SlotRecord[], states: Map<number, SlotLockState>): st
           player,
           String(playerSlots.length),
           String(playerSlots.filter((slot) => status(slot) === 'unlocked').length),
-          String(
-            playerSlots.filter((slot) => GOALED_STATUSES.has(slot.completionStatus) || slot.archipelagoGoal).length,
-          ),
+          String(playerSlots.filter(isGoaled).length),
           String(
             playerSlots.filter((slot) => status(slot) === 'locked' || status(slot) === 'partially_unlocked').length,
           ),

@@ -1,5 +1,11 @@
 import { io, type Socket } from 'socket.io-client';
-import type { LiveMessageName, RoomSyncedPayload, RoomSyncFailedPayload, RoomUpdatedPayload } from './types';
+import type {
+  LiveMessageName,
+  LocationsChangedPayload,
+  RoomSyncedPayload,
+  RoomSyncFailedPayload,
+  RoomUpdatedPayload,
+} from './types';
 
 export const LIVE_MESSAGES = {
   roomJoin: 'room:join',
@@ -7,12 +13,14 @@ export const LIVE_MESSAGES = {
   roomSynced: 'room:synced',
   roomSyncFailed: 'room:sync-failed',
   roomUpdated: 'room:updated',
+  locationsChanged: 'room:locations-changed',
 } as const satisfies Record<string, LiveMessageName>;
 
 export interface ServerToClientMessages {
   [LIVE_MESSAGES.roomSynced]: (payload: RoomSyncedPayload) => void;
   [LIVE_MESSAGES.roomSyncFailed]: (payload: RoomSyncFailedPayload) => void;
   [LIVE_MESSAGES.roomUpdated]: (payload: RoomUpdatedPayload) => void;
+  [LIVE_MESSAGES.locationsChanged]: (payload: LocationsChangedPayload) => void;
 }
 
 export interface ClientToServerMessages {

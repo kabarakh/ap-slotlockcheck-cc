@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { Injectable, Logger } from '@nestjs/common';
 import type { Prisma, Room } from '../generated/prisma/client.js';
 import { LiveGateway } from '../live/live.gateway.js';
+import { LocationStatusService } from '../locations/location-status.service.js';
 import { detectLocks, detectStartSlots } from '../lock/lock.logic.js';
 import type { LockDetectionResult } from '../lock/lock.types.js';
 import { estimateUnlockTime } from '../lock/unlock-time.logic.js';
@@ -34,6 +35,7 @@ export class SyncService {
     private readonly roomSource: RoomSourceService,
     private readonly cheese: CheeseService,
     private readonly live: LiveGateway,
+    private readonly locationStatus: LocationStatusService,
   ) {}
 
   async syncRoom(roomId: number, trigger: SyncTrigger): Promise<SyncOutcome> {
@@ -49,7 +51,7 @@ export class SyncService {
       const source = await this.roomSource.fetch(room.cheeseTrackerId);
       await this.saveSnapshots(roomId, run.id, source);
       const isFirstSync = room.lastSuccessfulSyncAt === null;
-      await this.applySource(room, source, startedAt, isFirstSync);
+      const changedLocations = await this.applySource(room, source, startedAt, isFirstSync);
       if (isFirstSync) {
         await this.estimateUnknownUnlockTimes(room);
       }
@@ -62,6 +64,9 @@ export class SyncService {
         room: this.rooms.toDetail(updatedRoom, after, await this.rooms.hasSeed(roomId)),
         ...diffRoster(before, after),
       });
+      if (changedLocations > 0) {
+        await this.locationStatus.publishChanged(room.slug, roomId, changedLocations);
+      }
       return 'success';
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -113,9 +118,9 @@ export class SyncService {
     }
   }
 
-  private async applySource(room: Room, source: RoomSource, now: Date, isFirstSync: boolean): Promise<void> {
+  private async applySource(room: Room, source: RoomSource, now: Date, isFirstSync: boolean): Promise<number> {
     const records = slotRecordsFromCheese(source.cheese, archipelagoSlotsByPosition(source.roomStatus, source.tracker));
-    await this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx) => {
       await tx.slot.deleteMany({
         where: { roomId: room.id, position: { notIn: records.map((record) => record.position) } },
       });
@@ -169,6 +174,7 @@ export class SyncService {
           lastSyncError: null,
         },
       });
+      return this.locationStatus.applyChecks(tx, room.id, source.tracker.player_checks_done, now);
     });
   }
 

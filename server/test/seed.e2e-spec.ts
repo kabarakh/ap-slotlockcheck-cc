@@ -1,7 +1,9 @@
 import request from 'supertest';
 import type { App } from 'supertest/types.js';
+import { LiveGateway } from '../src/live/live.gateway.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
-import { multidataFixturePath } from './fixtures/fixtures.js';
+import { SyncService } from '../src/sync/sync.service.js';
+import { loadFixture, multidataFixturePath } from './fixtures/fixtures.js';
 import { createRoom, login, OWNER, PLAYER } from './support/room.js';
 import { createTestApp, type TestApp } from './support/test-app.js';
 
@@ -106,5 +108,33 @@ describe('seed upload (integration)', () => {
     const response = await upload(ownerCookie, multidataFixturePath('big-chill')).expect(409);
     expect(response.body).toMatchObject({ code: 'SEED_ALREADY_UPLOADED' });
     expect(await testApp.app.get(PrismaService).seedLocation.count()).toBe(15);
+  });
+
+  it('marks the locations that Archipelago reports as checked', async () => {
+    const prisma = testApp.app.get(PrismaService);
+    const checked = await prisma.seedLocation.findMany({ where: { checked: true }, orderBy: { locationName: 'asc' } });
+    expect(checked.map((location) => location.locationName)).toEqual([
+      'Free Item Alice 1',
+      'Kakariko Well (Top)',
+      "Link's House",
+      'Sanctuary',
+    ]);
+    expect(checked.every((location) => location.checkedFirstSeenAt !== null)).toBe(true);
+  });
+
+  it('marks new checks in the next synchronization and sends a live message', async () => {
+    const tracker = loadFixture('ap-tracker') as { player_checks_done: { player: number; locations: number[] }[] };
+    tracker.player_checks_done[2]?.locations.push(20001);
+    testApp.fixtureOverrides.set('ap-tracker', tracker);
+    const publish = vi.spyOn(testApp.app.get(LiveGateway), 'publishLocationsChanged');
+    const room = (await request(server).get('/api/rooms/big-chill').expect(200)).body as { id: number };
+    await expect(testApp.app.get(SyncService).syncRoom(room.id, 'schedule')).resolves.toBe('success');
+    const location = await testApp.app
+      .get(PrismaService)
+      .seedLocation.findFirstOrThrow({ where: { locationName: 'Mothwing_Cloak' } });
+    expect(location.checked).toBe(true);
+    expect(publish).toHaveBeenCalledWith({ slug: 'big-chill', lowestOpenSphere: 0, changedCount: 1 });
+    testApp.fixtureOverrides.delete('ap-tracker');
+    publish.mockRestore();
   });
 });

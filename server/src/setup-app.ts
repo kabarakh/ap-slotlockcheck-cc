@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { ApiErrorDto } from './common/api-error.dto.js';
 import {
   LiveMessageCatalogDto,
+  LocationsChangedPayloadDto,
   RoomSyncedPayloadDto,
   RoomSyncFailedPayloadDto,
   RoomUpdatedPayloadDto,
@@ -29,6 +30,7 @@ export function createOpenApiDocument(app: INestApplication): OpenAPIObject {
     extraModels: [
       ApiErrorDto,
       LiveMessageCatalogDto,
+      LocationsChangedPayloadDto,
       RoomSyncedPayloadDto,
       RoomSyncFailedPayloadDto,
       RoomUpdatedPayloadDto,

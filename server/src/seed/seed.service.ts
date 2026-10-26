@@ -1,6 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { AuthUser } from '../auth/auth.types.js';
 import type { Prisma } from '../generated/prisma/client.js';
+import { LocationStatusService } from '../locations/location-status.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RoomUpdatesService } from '../rooms/room-updates.service.js';
 import { RoomsService } from '../rooms/rooms.service.js';
@@ -21,6 +22,7 @@ export class SeedService {
     private readonly rooms: RoomsService,
     private readonly updates: RoomUpdatesService,
     private readonly sync: SyncService,
+    private readonly locationStatus: LocationStatusService,
   ) {}
 
   async get(slug: string): Promise<SeedDataDto> {
@@ -76,6 +78,7 @@ export class SeedService {
     this.logger.log(`Seed ${content.seedName} with ${content.locations.length} locations saved for room ${slug}`);
     await this.sync.syncRoom(room.id, 'seed');
     await this.updates.publish(slug);
+    await this.locationStatus.publishChanged(slug, room.id, content.locations.length);
     return this.get(slug);
   }
 
