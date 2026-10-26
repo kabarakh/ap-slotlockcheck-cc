@@ -38,6 +38,10 @@ The DTO classes of the server are the only source of the API types. The server w
 
 The browser calculates inactivity, player summaries and statistics from the roster. The inactivity counts from the latest of these times: last activity in Cheese, last "Still BK" click in Cheese, activity timer of Archipelago, unlock time. Slots with reached goal have no inactivity. It uses the current time, so the colors change without a new synchronization.
 
+### Inactivity reminder
+
+Admins and admin helpers make an English text for Discord with the slots in the yellow or red inactivity range, like the sphere clean-up. A filter selects yellow, red or both. Slots with reached goal or with all checks done are not in the text. Each line has the color, the user, the slot, the game, the inactivity and the checks. The longest inactivity is first; the lines of one user stay together. The browser makes the text from the roster, so it needs no seed and no request to the server. The sphere clean-up and the inactivity reminder share the split into messages of at most 10 pings and 2000 characters (`ping-messages.ts`).
+
 ### Unlock tree
 
 The unlock tree shows which slot sent the unlock item of which slot. The SlotLock slot is the root. A slot that needed more than one unlock item is below the sender of the last item. Start slots are below the SlotLock slot. The browser builds the tree from the roster; `d3-hierarchy` calculates the layout.

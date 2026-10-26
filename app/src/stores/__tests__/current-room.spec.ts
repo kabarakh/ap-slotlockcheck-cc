@@ -38,6 +38,17 @@ describe('useCurrentRoomStore', () => {
     expect(store.room?.unknownSlotNames).toEqual([]);
   });
 
+  it('lists slots without a Discord user, but not goaled slots and slots with all checks', () => {
+    const store = useCurrentRoomStore();
+    store.slots = [
+      slotRow({ id: 1, name: 'Open' }),
+      slotRow({ id: 2, name: 'Goaled', completionStatus: 'goal' }),
+      slotRow({ id: 3, name: 'Done', checksDone: 10 }),
+      slotRow({ id: 4, name: 'Claimed', discordUserId: '1' }),
+    ];
+    expect(store.slotsWithoutDiscord.map((slot) => slot.name)).toEqual(['Open']);
+  });
+
   it('ignores messages of other rooms', () => {
     const store = useCurrentRoomStore();
     store.slug = 'big-chill';

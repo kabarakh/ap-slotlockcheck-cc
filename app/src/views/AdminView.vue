@@ -11,6 +11,7 @@ import Tabs from 'primevue/tabs';
 
 import AdminListPanel from '@/components/admin/AdminListPanel.vue';
 import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel.vue';
+import InactivityReminderPanel from '@/components/admin/InactivityReminderPanel.vue';
 import InvitationPanel from '@/components/admin/InvitationPanel.vue';
 import LockAssignmentPanel from '@/components/admin/LockAssignmentPanel.vue';
 import RoomOwnershipPanel from '@/components/admin/RoomOwnershipPanel.vue';
@@ -49,6 +50,7 @@ onMounted(() => {
         <Tab value="seed" data-testid="tab-seed">{{ t('admin.tabs.seed') }}</Tab>
         <Tab v-if="room?.hasSeed" value="server" data-testid="tab-server">{{ t('admin.tabs.server') }}</Tab>
       </template>
+      <Tab value="reminder" data-testid="tab-reminder">{{ t('admin.tabs.reminder') }}</Tab>
       <Tab v-if="room?.hasSeed" value="cleanup" data-testid="tab-cleanup">{{ t('admin.tabs.cleanup') }}</Tab>
       <Tab value="room" data-testid="tab-room">{{ t('admin.tabs.room') }}</Tab>
     </TabList>
@@ -72,6 +74,7 @@ onMounted(() => {
           <ServerCommandsPanel />
         </TabPanel>
       </template>
+      <TabPanel value="reminder"><InactivityReminderPanel /></TabPanel>
       <TabPanel v-if="room?.hasSeed" value="cleanup"><SphereCleanupPanel /></TabPanel>
       <TabPanel value="room"><RoomOwnershipPanel /></TabPanel>
     </TabPanels>

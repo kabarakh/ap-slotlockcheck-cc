@@ -11,6 +11,7 @@ import type {
   RoomUpdatedPayload,
   SlotRow,
 } from '@/api/types';
+import { hasAllChecks, isGoaled } from '@/domain/summary';
 import { useAuthStore } from './auth';
 import { useLiveStore } from './live';
 import { useLocationsStore } from './locations';
@@ -46,7 +47,9 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
   const selectedLockers = computed(() => sortedSlots.value.filter((slot) => slot.isSelectedSlotLock));
   const slotLockSlots = computed(() => sortedSlots.value.filter((slot) => slot.isSlotLock));
   const playableSlots = computed(() => sortedSlots.value.filter((slot) => !slot.isSlotLock));
-  const slotsWithoutDiscord = computed(() => playableSlots.value.filter((slot) => slot.discordUserId === null));
+  const slotsWithoutDiscord = computed(() =>
+    playableSlots.value.filter((slot) => slot.discordUserId === null && !isGoaled(slot) && !hasAllChecks(slot)),
+  );
 
   const fetchMembership = async (roomSlug: string): Promise<void> => {
     membership.value = await unwrap(api.GET('/api/rooms/{slug}/me', { params: { path: { slug: roomSlug } } }));
