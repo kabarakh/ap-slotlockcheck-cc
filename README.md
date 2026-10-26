@@ -38,6 +38,15 @@ The DTO classes of the server are the only source of the API types. The server w
 
 The browser calculates inactivity, player summaries and statistics from the roster. The inactivity counts from the latest of these times: last activity in Cheese, last "Still BK" click in Cheese, activity timer of Archipelago, unlock time. Slots with reached goal have no inactivity. It uses the current time, so the colors change without a new synchronization.
 
+### Game control and setup
+
+Admins and admin helpers have two areas:
+
+- **Game control** (`/control`) contains the work during the game: spheres, the admin view of the locations, messages (inactivity reminder and sphere clean-up), warnings and the Archipelago server. A click on a sphere shows its open locations in a side panel. From there, the admin opens the clean-up text for this sphere or the location list with this sphere as filter. The tabs show counters: the lowest open sphere, the red and yellow slots, the warnings.
+- **Setup** (`/admin`) contains the work for the setup of a room: settings, lock assignment, admins, seed, unlock times and room.
+
+The URL contains the active tab, so the back button and bookmarks work. Old links with `?view=admin` go to the game control. The browser keeps the selections of the clean-up and of the reminder. In the roster, admins and admin helpers click the inactivity of a slot to copy its reminder or to give a warning.
+
 ### Inactivity reminder
 
 Admins and admin helpers make an English text for Discord with the slots in the yellow or red inactivity range, like the sphere clean-up. A filter selects yellow, red or both. Slots with reached goal or with all checks done are not in the text. Each line has the color, the user, the slot, the game, the inactivity and the checks. The longest inactivity is first; the lines of one user stay together. The browser makes the text from the roster, so it needs no seed and no request to the server. The sphere clean-up and the inactivity reminder share the split into messages of at most 10 pings and 2000 characters (`ping-messages.ts`).
@@ -77,6 +86,7 @@ The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sp
 - **Functional components** get all data from Pinia stores and call store actions. They have no props, no emits, no provide and no inject.
 - **Presentational components** (`app/src/components/ui`) get props only. They do not use stores and send no events.
 - Only store actions send HTTP requests or use the socket.
+- A functional component that uses a presentational component with other content fills a slot of it (for example the sphere column of `SphereOverviewTable` or the inactivity column of `SlotTable`).
 - The imports are in four groups with an empty line between them: libraries, PrimeVue, own components, own code (stores, domain, API). ESLint (`perfectionist/sort-imports`) checks and corrects the groups. The server has two groups: libraries and own code.
 
 ## Development

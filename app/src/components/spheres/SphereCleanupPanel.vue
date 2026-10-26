@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, useTemplateRef } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
@@ -21,11 +21,17 @@ const slotModeOptions = computed(() =>
   (['all', 'progression'] as CleanupSlotMode[]).map((value) => ({ value, label: t(`cleanup.slotModes.${value}`) })),
 );
 
-onMounted(() => cleanup.prepare());
+const section = useTemplateRef<HTMLElement>('section');
+
+onMounted(async () => {
+  if (await cleanup.prepare()) {
+    section.value?.scrollIntoView({ behavior: 'smooth' });
+  }
+});
 </script>
 
 <template>
-  <section class="cleanup">
+  <section ref="section" class="cleanup">
     <h2>{{ t('cleanup.title') }}</h2>
     <p class="app-muted">{{ t('cleanup.intro') }}</p>
     <form class="app-toolbar" @submit.prevent="cleanup.fetch()">

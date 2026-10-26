@@ -138,6 +138,10 @@ export const useLocationsStore = defineStore(
       await fetchPage();
     };
 
+    const showSphere = (sphere: number) => {
+      filters.value = { ...emptyFilters(), sphereRange: [sphere, sphere] };
+    };
+
     const resetFilters = async (): Promise<void> => {
       filters.value = emptyFilters();
       await applyFilters();
@@ -188,6 +192,7 @@ export const useLocationsStore = defineStore(
       setPage,
       setSort,
       applyFilters,
+      showSphere,
       resetFilters,
       setFillerMark,
       refresh,

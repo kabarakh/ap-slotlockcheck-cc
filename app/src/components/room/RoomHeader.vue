@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRoute } from 'vue-router';
 
 import Button from 'primevue/button';
 import Message from 'primevue/message';
@@ -19,16 +19,21 @@ const { room, isAdmin, isHelper, isPlayer, canSeeLocations, syncRequested, slots
 const { isConnected } = storeToRefs(useLiveStore());
 const { t } = useI18n();
 
+const route = useRoute();
+
 const tabs = computed(() => [
-  { name: 'roster', label: t('room.tabs.roster'), visible: true },
-  { name: 'players', label: t('room.tabs.players'), visible: true },
-  { name: 'statistics', label: t('room.tabs.statistics'), visible: true },
-  { name: 'unlock-tree', label: t('room.tabs.unlockTree'), visible: true },
-  { name: 'spheres', label: t('room.tabs.spheres'), visible: canSeeLocations.value },
-  { name: 'locations-open', label: t('room.tabs.locations'), visible: canSeeLocations.value },
-  { name: 'my-slots', label: t('room.tabs.mySlots'), visible: isPlayer.value },
-  { name: 'admin', label: t('room.tabs.admin'), visible: isHelper.value },
+  { name: 'roster', section: '', label: t('room.tabs.roster'), visible: true },
+  { name: 'players', section: 'players', label: t('room.tabs.players'), visible: true },
+  { name: 'statistics', section: 'statistics', label: t('room.tabs.statistics'), visible: true },
+  { name: 'unlock-tree', section: 'unlock-tree', label: t('room.tabs.unlockTree'), visible: true },
+  { name: 'spheres', section: 'spheres', label: t('room.tabs.spheres'), visible: canSeeLocations.value },
+  { name: 'locations-open', section: 'locations', label: t('room.tabs.locations'), visible: canSeeLocations.value },
+  { name: 'my-slots', section: 'my-slots', label: t('room.tabs.mySlots'), visible: isPlayer.value },
+  { name: 'control', section: 'control', label: t('room.tabs.control'), visible: isHelper.value },
+  { name: 'admin', section: 'admin', label: t('room.tabs.admin'), visible: isHelper.value },
 ]);
+
+const activeSection = computed(() => route.path.split('/')[3] ?? '');
 </script>
 
 <template>
@@ -75,7 +80,13 @@ const tabs = computed(() => [
     </Message>
     <nav class="room-tabs">
       <template v-for="tab in tabs" :key="tab.name">
-        <RouterLink v-if="tab.visible" :to="{ name: tab.name, params: { slug: room.slug } }" class="room-tab">
+        <RouterLink
+          v-if="tab.visible"
+          :to="{ name: tab.name, params: { slug: room.slug } }"
+          class="room-tab"
+          :class="{ active: activeSection === tab.section }"
+          :data-testid="`room-tab-${tab.name}`"
+        >
           {{ tab.label }}
         </RouterLink>
       </template>
@@ -107,7 +118,7 @@ const tabs = computed(() => [
   border-bottom: 2px solid transparent;
 }
 
-.room-tab.router-link-exact-active {
+.room-tab.active {
   border-bottom-color: var(--p-primary-color);
   font-weight: 600;
 }

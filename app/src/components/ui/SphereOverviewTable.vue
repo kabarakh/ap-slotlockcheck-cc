@@ -42,7 +42,11 @@ const totals = computed(() =>
 <template>
   <DataTable :value="rows" data-key="sphere" size="small" striped-rows data-testid="sphere-table">
     <template #empty>{{ t('spheres.empty') }}</template>
-    <Column field="sphere" :header="t('spheres.columns.sphere')" />
+    <Column field="sphere" :header="t('spheres.columns.sphere')">
+      <template #body="{ data }">
+        <slot name="sphere" :sphere="(data as SphereRow).sphere">{{ (data as SphereRow).sphere }}</slot>
+      </template>
+    </Column>
     <Column field="open" :header="t('spheres.columns.open')" />
     <Column field="found" :header="t('spheres.columns.found')" />
     <Column field="total" :header="t('spheres.columns.total')" />

@@ -5,13 +5,15 @@ import RoomListView from '@/views/RoomListView.vue';
 import { useAuthStore } from '@/stores/auth';
 import type { LocationState } from '@/api/types';
 import { useCurrentRoomStore } from '@/stores/current-room';
-import { useLocationsStore } from '@/stores/locations';
+import { useLocationsStore, type LocationView } from '@/stores/locations';
 
 declare module 'vue-router' {
   interface RouteMeta {
     requiresLogin?: boolean;
     requiresRole?: 'player' | 'helper' | 'admin';
     locationState?: LocationState;
+    locationView?: LocationView;
+    sphereLocations?: boolean;
     requiresLocations?: boolean;
   }
 }
@@ -58,7 +60,44 @@ const router = createRouter({
           meta: { requiresRole: 'player' },
         },
         {
-          path: 'admin',
+          path: 'control',
+          component: () => import('@/views/ControlView.vue'),
+          meta: { requiresRole: 'helper' },
+          children: [
+            { path: '', name: 'control', component: () => import('@/views/ControlMessagesView.vue') },
+            {
+              path: 'spheres',
+              name: 'control-spheres',
+              component: () => import('@/views/ControlSpheresView.vue'),
+              meta: { requiresLocations: true, sphereLocations: true },
+            },
+            ...(['open', 'found', 'filler'] as LocationState[]).map((state) => ({
+              path: `locations/${state}`,
+              name: `control-locations-${state}`,
+              component: () => import('@/views/LocationsView.vue'),
+              meta: { locationState: state, locationView: 'admin' as const, requiresLocations: true },
+            })),
+            {
+              path: 'messages',
+              name: 'control-messages',
+              component: () => import('@/views/ControlMessagesView.vue'),
+            },
+            {
+              path: 'warnings',
+              name: 'control-warnings',
+              component: () => import('@/components/admin/WarningsPanel.vue'),
+              meta: { requiresRole: 'admin' },
+            },
+            {
+              path: 'server',
+              name: 'control-server',
+              component: () => import('@/views/ControlServerView.vue'),
+              meta: { requiresRole: 'admin', requiresLocations: true },
+            },
+          ],
+        },
+        {
+          path: 'admin/:tab?',
           name: 'admin',
           component: () => import('@/views/AdminView.vue'),
           meta: { requiresRole: 'helper' },
@@ -104,9 +143,16 @@ router.beforeResolve(async (to) => {
   if (to.meta.requiresLocations && !useCurrentRoomStore().canSeeLocations) {
     return { name: 'roster', params: { slug: roomSlug(to) } };
   }
+  if (to.name === 'control') {
+    const target = useCurrentRoomStore().canSeeLocations ? 'control-spheres' : 'control-messages';
+    return { name: target, params: { slug: roomSlug(to) } };
+  }
   const state = to.meta.locationState;
+  if (state && to.query['view'] === 'admin' && hasRole('helper')) {
+    return { name: `control-locations-${state}`, params: { slug: roomSlug(to) } };
+  }
   if (state) {
-    await useLocationsStore().enter(state, to.query['view'] === 'admin' ? 'admin' : 'user');
+    await useLocationsStore().enter(state, to.meta.locationView ?? 'user');
   }
   return true;
 });

@@ -92,10 +92,12 @@ type Row = (typeof rows.value)[number];
     </Column>
     <Column field="inactivityHours" :header="t('slot.columns.inactivity')" sortable>
       <template #body="{ data }">
-        <InactivityText
-          :hours="props.hoursBySlotId.get((data as Row).id) ?? null"
-          :level="props.levelBySlotId.get((data as Row).id) ?? 'none'"
-        />
+        <slot name="inactivity" :row="data as Row">
+          <InactivityText
+            :hours="props.hoursBySlotId.get((data as Row).id) ?? null"
+            :level="props.levelBySlotId.get((data as Row).id) ?? 'none'"
+          />
+        </slot>
       </template>
     </Column>
     <Column field="checksDone" :header="t('slot.columns.checks')" sortable>

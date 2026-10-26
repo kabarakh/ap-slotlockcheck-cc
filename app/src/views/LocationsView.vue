@@ -14,12 +14,15 @@ import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLocationsStore } from '@/stores/locations';
 import { useServerAdminStore } from '@/stores/server-admin';
 
-const { room, isHelper, isAdmin } = storeToRefs(useCurrentRoomStore());
+const { room, isHelper, isAdmin, slotById } = storeToRefs(useCurrentRoomStore());
 const { locationState, view } = storeToRefs(useLocationsStore());
+const { loggedIn, status } = storeToRefs(useServerAdminStore());
 const { t } = useI18n();
 
 const states: LocationState[] = ['open', 'found', 'filler'];
-const query = computed(() => (view.value === 'admin' ? { view: 'admin' } : {}));
+const routePrefix = computed(() => (view.value === 'admin' ? 'control-locations-' : 'locations-'));
+const otherRoutePrefix = computed(() => (view.value === 'admin' ? 'locations-' : 'control-locations-'));
+const connectedSlotName = computed(() => slotById.value.get(status.value?.slotId ?? -1)?.name ?? '');
 
 onMounted(() => {
   if (isAdmin.value) {
@@ -34,7 +37,7 @@ onMounted(() => {
       <RouterLink
         v-for="state in states"
         :key="state"
-        :to="{ name: `locations-${state}`, params: { slug: room.slug }, query }"
+        :to="{ name: `${routePrefix}${state}`, params: { slug: room.slug } }"
         class="location-tab"
         :class="{ active: locationState === state }"
         :data-testid="`location-tab-${state}`"
@@ -44,17 +47,22 @@ onMounted(() => {
       <span class="app-spacer" />
       <RouterLink
         v-if="isHelper && locationState"
-        :to="{
-          name: `locations-${locationState}`,
-          params: { slug: room.slug },
-          query: view === 'admin' ? {} : { view: 'admin' },
-        }"
+        :to="{ name: `${otherRoutePrefix}${locationState}`, params: { slug: room.slug } }"
         data-testid="location-view-switch"
       >
         {{ view === 'admin' ? t('locations.userView') : t('locations.adminView') }}
       </RouterLink>
     </nav>
     <Message v-if="view === 'admin'" severity="warn" :closable="false">{{ t('locations.adminViewHint') }}</Message>
+    <p v-if="view === 'admin' && isAdmin" class="app-muted" data-testid="location-server-status">
+      <template v-if="loggedIn">{{ t('server.loggedInAs', { slot: connectedSlotName }) }}</template>
+      <template v-else>
+        {{ t('control.serverNotLoggedIn') }}
+        <RouterLink :to="{ name: 'control-server', params: { slug: room.slug } }">
+          {{ t('control.tabs.server') }}
+        </RouterLink>
+      </template>
+    </p>
     <LocationFilterBar />
     <LocationListPanel />
   </section>

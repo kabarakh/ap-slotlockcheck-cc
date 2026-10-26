@@ -2,19 +2,26 @@
 import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 
+import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import ProgressSpinner from 'primevue/progressspinner';
 
 import SphereOverviewTable from '@/components/ui/SphereOverviewTable.vue';
 
 import { useCurrentRoomStore } from '@/stores/current-room';
+import { useSphereLocationsStore } from '@/stores/sphere-locations';
 import { useSphereOverviewStore } from '@/stores/sphere-overview';
 
 const sphereStore = useSphereOverviewStore();
 const { overview, excludeGoaled, loading } = storeToRefs(sphereStore);
 const { isHelper } = storeToRefs(useCurrentRoomStore());
+const sphereLocations = useSphereLocationsStore();
+const route = useRoute();
 const { t } = useI18n();
+
+const showsSphereLocations = computed(() => route.meta.sphereLocations === true);
 
 const excludeGoaledModel = computed({
   get: () => excludeGoaled.value,
@@ -44,7 +51,19 @@ onMounted(() => sphereStore.fetch());
         }}
         <template v-if="!isHelper">{{ t('spheres.visibleUpTo', { sphere: overview.visibleMaxSphere }) }}</template>
       </p>
-      <SphereOverviewTable :spheres="overview.spheres" :item-types="overview.itemTypes" />
+      <p v-if="showsSphereLocations" class="app-muted">{{ t('control.sphereLocations.hint') }}</p>
+      <SphereOverviewTable :spheres="overview.spheres" :item-types="overview.itemTypes">
+        <template v-if="showsSphereLocations" #sphere="{ sphere }">
+          <Button
+            :label="String(sphere)"
+            link
+            size="small"
+            class="sphere-link"
+            :data-testid="`sphere-open-${sphere}`"
+            @click="sphereLocations.open(sphere)"
+          />
+        </template>
+      </SphereOverviewTable>
     </template>
   </section>
 </template>
@@ -54,6 +73,10 @@ onMounted(() => sphereStore.fetch());
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.sphere-link {
+  padding: 0;
 }
 
 .sphere-overview h2 {

@@ -1,19 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
+import Menu from 'primevue/menu';
 import MultiSelect from 'primevue/multiselect';
+import type { MenuItem } from 'primevue/menuitem';
 
+import WarningDialog from '@/components/admin/WarningDialog.vue';
+import InactivityText from '@/components/ui/InactivityText.vue';
 import SlotTable from '@/components/ui/SlotTable.vue';
 
-import type { LockStatus } from '@/api/types';
+import type { LockStatus, SlotRow } from '@/api/types';
 import type { InactivityLevel } from '@/domain/inactivity';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useInactivityStore } from '@/stores/inactivity';
+import { useInactivityReminderStore } from '@/stores/inactivity-reminder';
 import { useStatisticsStore } from '@/stores/statistics';
 import { useWarningsStore } from '@/stores/warnings';
 import { useTableFiltersStore } from '@/stores/table-filters';
@@ -21,8 +26,10 @@ import { useTableFiltersStore } from '@/stores/table-filters';
 const filters = useTableFiltersStore();
 const { roster, filteredRoster } = storeToRefs(filters);
 const { hoursBySlotId, levelBySlotId } = storeToRefs(useInactivityStore());
-const { isAdmin } = storeToRefs(useCurrentRoomStore());
-const { countBySlotId } = storeToRefs(useWarningsStore());
+const { isAdmin, isHelper } = storeToRefs(useCurrentRoomStore());
+const warningsStore = useWarningsStore();
+const { countBySlotId } = storeToRefs(warningsStore);
+const reminder = useInactivityReminderStore();
 const { globalStatistics } = storeToRefs(useStatisticsStore());
 const { t } = useI18n();
 
@@ -35,6 +42,38 @@ const lockStatusOptions = computed(() =>
 const inactivityOptions = computed(() =>
   (['none', 'yellow', 'red'] as InactivityLevel[]).map((value) => ({ value, label: t(`inactivity.level.${value}`) })),
 );
+
+const slotMenu = useTemplateRef<InstanceType<typeof Menu>>('slotMenu');
+const menuSlot = ref<SlotRow | null>(null);
+
+const slotMenuItems = computed<MenuItem[]>(() => {
+  const slot = menuSlot.value;
+  if (!slot) {
+    return [];
+  }
+  return [
+    {
+      label: t('roster.copyReminder'),
+      icon: 'pi pi-copy',
+      disabled: !reminder.canRemind(slot.id),
+      command: () => void reminder.copyForSlot(slot.id),
+    },
+    ...(isAdmin.value
+      ? [
+          {
+            label: t('warnings.add'),
+            icon: 'pi pi-exclamation-triangle',
+            command: () => warningsStore.startDraft(slot.id),
+          },
+        ]
+      : []),
+  ];
+});
+
+const openSlotMenu = (event: MouseEvent, slot: SlotRow) => {
+  menuSlot.value = slot;
+  slotMenu.value?.toggle(event);
+};
 </script>
 
 <template>
@@ -81,6 +120,38 @@ const inactivityOptions = computed(() =>
       :level-by-slot-id="levelBySlotId"
       :warning-count-by-slot-id="isAdmin ? countBySlotId : null"
       test-id="roster-table"
-    />
+    >
+      <template v-if="isHelper" #inactivity="{ row }">
+        <button
+          type="button"
+          class="inactivity-action"
+          data-testid="inactivity-action"
+          @click="openSlotMenu($event, row)"
+        >
+          <InactivityText :hours="hoursBySlotId.get(row.id) ?? null" :level="levelBySlotId.get(row.id) ?? 'none'" />
+          <i class="pi pi-angle-down" />
+        </button>
+      </template>
+    </SlotTable>
+    <Menu ref="slotMenu" :model="slotMenuItems" popup data-testid="slot-menu" />
+    <WarningDialog v-if="isAdmin" />
   </section>
 </template>
+
+<style scoped>
+.inactivity-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.inactivity-action .pi {
+  font-size: 0.75rem;
+}
+</style>

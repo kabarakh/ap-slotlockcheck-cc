@@ -45,7 +45,7 @@ test('an admin switches to the admin view and filters by item type', async ({ pa
   await loginAs(page, OWNER);
   await page.goto('/room/big-chill/locations/open');
   await page.getByTestId('location-view-switch').click();
-  await expect(page).toHaveURL(/view=admin/);
+  await expect(page).toHaveURL(/control\/locations\/open$/);
   const table = page.getByTestId('location-table');
   await expect(table.getByRole('columnheader', { name: 'Item' })).toBeVisible();
   await page.getByTestId('location-item-types').click();
@@ -61,7 +61,33 @@ test('an admin switches to the admin view and filters by item type', async ({ pa
   await page.getByTestId('apply-filters').click();
   await expect(table.locator('tbody tr').filter({ hasText: 'Unlock Alice' })).toHaveCount(2);
   await page.getByTestId('location-tab-found').click();
-  await expect(page).toHaveURL(/locations\/found\?view=admin/);
+  await expect(page).toHaveURL(/control\/locations\/found$/);
+});
+
+test('an admin opens the open locations of a sphere and makes the clean-up text', async ({ page }) => {
+  await ensureSeed(page);
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/control');
+  await expect(page).toHaveURL(/control\/spheres$/);
+  await expect(page.getByTestId('control-badge-sphere')).toHaveText('0');
+  await page.getByTestId('sphere-open-0').click();
+  const drawer = page.getByTestId('sphere-locations');
+  await expect(drawer).toContainText('Sphere 0');
+  await expect(drawer.getByTestId('sphere-locations-table')).toContainText('Salubra_(Requires_Charms)');
+  await drawer.getByTestId('sphere-cleanup').click();
+  await expect(page).toHaveURL(/control\/messages$/);
+  await expect(page.getByTestId('cleanup-message').locator('textarea')).toHaveValue(/^# Sphere 0\n/);
+});
+
+test('an admin opens a tab of the setup with its URL', async ({ page }) => {
+  await ensureSeed(page);
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/admin/seed');
+  await expect(page.getByTestId('seed-data')).toBeVisible();
+  await page.getByTestId('tab-unlock-times').click();
+  await expect(page).toHaveURL(/admin\/unlockTimes$/);
+  await page.goBack();
+  await expect(page.getByTestId('seed-data')).toBeVisible();
 });
 
 test('a visitor sees the locations only with the room setting', async ({ page }) => {
@@ -101,7 +127,7 @@ test('a player marks an own location as filler and the admin sees who marked it'
   await expect(foreignRow.getByTestId('mark-filler')).toHaveCount(0);
 
   await loginAs(page, OWNER);
-  await page.goto('/room/big-chill/locations/filler?view=admin');
+  await page.goto('/room/big-chill/control/locations/filler');
   await expect(page.getByTestId('location-table')).toContainText('Old Site: Strawberry 2');
   await expect(page.getByTestId('location-table')).toContainText('Carol');
 });
@@ -122,8 +148,12 @@ test('an admin makes a player an admin helper', async ({ page }) => {
   await page.goto('/room/big-chill/locations/open');
   await page.getByTestId('location-view-switch').click();
   await expect(page.getByTestId('location-table').getByRole('columnheader', { name: 'Item' })).toBeVisible();
-  await page.getByRole('link', { name: 'Admin', exact: true }).click();
+  await page.getByRole('link', { name: 'Setup', exact: true }).click();
+  await expect(page.getByTestId('tab-room')).toBeVisible();
   await expect(page.getByTestId('tab-settings')).toHaveCount(0);
+  await page.getByRole('link', { name: 'Game control', exact: true }).click();
+  await expect(page.getByTestId('control-tab-warnings')).toHaveCount(0);
+  await page.getByTestId('control-tab-messages').click();
   await page.getByTestId('cleanup-to').locator('input').fill('3');
   await page.getByTestId('cleanup-create').click();
   const message = page.getByTestId('cleanup-message');
@@ -137,13 +167,14 @@ test('an admin makes a player an admin helper', async ({ page }) => {
 test('an admin sees the login form of the Archipelago server', async ({ page }) => {
   await ensureSeed(page);
   await loginAs(page, OWNER);
-  await page.goto('/room/big-chill/admin');
-  await page.getByTestId('tab-server').click();
+  await page.goto('/room/big-chill/control/server');
   await expect(page.getByText('All players see the admin commands')).toBeVisible();
   await expect(page.getByTestId('server-slot')).toBeVisible();
   await expect(page.getByTestId('server-login')).toBeDisabled();
   await expect(page.getByTestId('release-spheres')).toBeDisabled();
   await page.goto('/room/big-chill/locations/open?view=admin');
+  await expect(page).toHaveURL(/control\/locations\/open$/);
+  await expect(page.getByTestId('location-server-status')).toContainText('not logged in');
   await expect(page.getByTestId('location-table')).toBeVisible();
   await expect(page.getByTestId('send-location')).toHaveCount(0);
 });
@@ -156,7 +187,7 @@ test('a helper leaves the room and the owner sees transfer and delete', async ({
   await page.getByTestId('leave-room').click();
   await page.getByTestId('confirm-leave').click();
   await expect(page).toHaveURL(/\/room\/big-chill$/);
-  await expect(page.getByRole('link', { name: 'Admin', exact: true })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Setup', exact: true })).toHaveCount(0);
 
   await loginAs(page, OWNER);
   await page.goto('/room/big-chill/admin');

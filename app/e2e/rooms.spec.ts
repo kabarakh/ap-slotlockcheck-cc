@@ -55,7 +55,8 @@ test('a visitor opens a room with its link and sees the roster', async ({ page }
   await expect(page.getByTestId('roster-checks')).toContainText('Checks: 201 of 752');
   await expect(row(roster, 'Locker2')).toHaveCount(0);
   await expect(page.getByTestId('sync-now')).toHaveCount(0);
-  await expect(page.getByRole('link', { name: 'Admin' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Setup' })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: 'Game control' })).toHaveCount(0);
 });
 
 test('the roster filter reduces the rows', async ({ page }) => {
@@ -115,8 +116,7 @@ test('an admin gives a warning that only admins see', async ({ page, browser }) 
   await expect(admin.getByTestId('live-indicator')).toHaveText('Live');
 
   await loginAs(page, OWNER);
-  await page.goto('/room/big-chill/admin');
-  await page.getByTestId('tab-warnings').click();
+  await page.goto('/room/big-chill/control/warnings');
   await page.getByTestId('add-warning').click();
   await page.getByTestId('warning-slot').click();
   await page.getByRole('option', { name: /Dave/ }).click();
@@ -134,6 +134,17 @@ test('an admin gives a warning that only admins see', async ({ page, browser }) 
   await visitor.goto('/room/big-chill/players');
   await expect(visitor.getByTestId('players-table').getByRole('columnheader', { name: 'Warnings' })).toHaveCount(0);
   await visitor.close();
+});
+
+test('an admin opens the slot menu from the inactivity in the roster', async ({ page }) => {
+  await ensureRoom(page);
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill');
+  await row(page.getByTestId('roster-table'), 'Alice').getByTestId('inactivity-action').click();
+  const menu = page.getByTestId('slot-menu');
+  await expect(menu).toContainText('Copy inactivity reminder');
+  await menu.getByText('Give warning').click();
+  await expect(page.getByTestId('warning-slot')).toContainText('Alice');
 });
 
 test('an invitation link makes a guest admin', async ({ page, browser }) => {

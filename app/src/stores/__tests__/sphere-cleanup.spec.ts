@@ -53,4 +53,14 @@ describe('useSphereCleanupStore', () => {
     cleanup.draft.pings = false;
     expect(cleanup.messages[0]).toContain('Kabarakh, HerbMC');
   });
+
+  it('uses a preset sphere one time and loads the text at once', async () => {
+    const cleanup = useSphereCleanupStore();
+    cleanup.presetSphere(4);
+    expect(await cleanup.prepare()).toBe(true);
+    expect(cleanup.draft.fromSphere).toBe(4);
+    expect(cleanup.draft.toSphere).toBe(4);
+    expect(cleanup.messages).toHaveLength(1);
+    expect(apiGet).toHaveBeenCalledTimes(1);
+  });
 });
