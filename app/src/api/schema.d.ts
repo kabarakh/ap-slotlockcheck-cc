@@ -1192,6 +1192,7 @@ export interface operations {
                 state: components["schemas"]["LocationState"];
                 slots?: components["schemas"]["LocationSlotScope"];
                 slotIds?: number[];
+                receiverSlotIds?: number[];
                 itemTypes?: components["schemas"]["ItemType"][];
                 sort?: components["schemas"]["LocationSortField"];
                 order?: components["schemas"]["SortOrder"];
@@ -1265,6 +1266,7 @@ export interface operations {
                 state: components["schemas"]["LocationState"];
                 slots?: components["schemas"]["LocationSlotScope"];
                 slotIds?: number[];
+                receiverSlotIds?: number[];
                 itemTypes?: components["schemas"]["ItemType"][];
                 sort?: components["schemas"]["LocationSortField"];
                 order?: components["schemas"]["SortOrder"];

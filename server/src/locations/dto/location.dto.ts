@@ -49,6 +49,15 @@ export class LocationQueryDto extends SphereQueryDto {
   @IsInt({ each: true })
   slotIds?: number[];
 
+  @ApiProperty({ type: [Number], required: false })
+  @IsOptional()
+  @Transform(toArray)
+  @IsArray()
+  @ArrayMaxSize(1000)
+  @Type(() => Number)
+  @IsInt({ each: true })
+  receiverSlotIds?: number[];
+
   @ApiProperty({ enum: ITEM_TYPES, enumName: 'ItemType', isArray: true, required: false })
   @IsOptional()
   @Transform(toArray)

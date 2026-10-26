@@ -37,6 +37,7 @@ interface RoomAccess {
 interface PageOverrides {
   toSphere: number | null;
   itemTypes: ItemType[];
+  receiverSlotIds: number[];
   sort: LocationSortField;
 }
 
@@ -91,7 +92,12 @@ export class LocationsService {
       ? Math.min(query.toSphere ?? access.visibleMaxSphere, access.visibleMaxSphere)
       : (query.toSphere ?? null);
     const sort = query.sort === 'receiver' || query.sort === 'item' ? 'sphere' : query.sort;
-    const page = await this.findPage(access, user, query, { toSphere, itemTypes: [], sort: sort ?? 'sphere' });
+    const page = await this.findPage(access, user, query, {
+      toSphere,
+      itemTypes: [],
+      receiverSlotIds: [],
+      sort: sort ?? 'sphere',
+    });
     return { total: page.total, rows: page.rows.map((row) => this.toUserRow(access, user, row)) };
   }
 
@@ -103,6 +109,7 @@ export class LocationsService {
     const page = await this.findPage(access, user, query, {
       toSphere: query.toSphere ?? null,
       itemTypes: query.itemTypes ?? [],
+      receiverSlotIds: query.receiverSlotIds ?? [],
       sort: query.sort ?? 'sphere',
     });
     return { total: page.total, rows: page.rows.map((row) => this.toAdminRow(access, user, row)) };
@@ -200,6 +207,7 @@ export class LocationsService {
       state: query.state,
       slots: query.slots ?? 'all',
       slotIds: query.slotIds ?? [],
+      receiverSlotIds: overrides.receiverSlotIds,
       discordUserId: user?.discordId ?? null,
       itemTypes: overrides.itemTypes,
       fromSphere: query.fromSphere ?? null,

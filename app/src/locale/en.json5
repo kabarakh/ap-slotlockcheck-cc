@@ -259,6 +259,7 @@
     filters: {
       scope: { all: 'All slots', mine: 'My slots', selected: 'Selected slots' },
       slots: 'Select slots',
+      receivers: 'Receiver',
       itemTypes: 'Item types',
       spheres: 'Spheres',
       apply: 'Apply',

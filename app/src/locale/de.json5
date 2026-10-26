@@ -265,6 +265,7 @@
     filters: {
       scope: { all: 'Alle Slots', mine: 'Meine Slots', selected: 'Ausgewählte Slots' },
       slots: 'Slots auswählen',
+      receivers: 'Empfänger',
       itemTypes: 'Item-Typen',
       spheres: 'Spheres',
       apply: 'Anwenden',

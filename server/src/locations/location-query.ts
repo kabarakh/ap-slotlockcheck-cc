@@ -8,6 +8,7 @@ export interface LocationFilter {
   state: LocationState;
   slots: LocationSlotScope;
   slotIds: number[];
+  receiverSlotIds: number[];
   discordUserId: string | null;
   itemTypes: ItemType[];
   fromSphere: number | null;
@@ -28,6 +29,9 @@ export function locationWhere(filter: LocationFilter): Prisma.SeedLocationWhereI
   }
   if (filter.slots === 'selected') {
     conditions.push({ finderSlotId: { in: filter.slotIds } });
+  }
+  if (filter.receiverSlotIds.length > 0) {
+    conditions.push({ receiverSlotId: { in: filter.receiverSlotIds } });
   }
   if (filter.itemTypes.length > 0) {
     conditions.push({ itemType: { in: filter.itemTypes } });

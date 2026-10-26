@@ -96,7 +96,13 @@ describe('useLocationsStore', () => {
     useCurrentRoomStore().membership = { role: 'admin', isOwner: true };
     const locations = useLocationsStore();
     useSphereOverviewStore().excludeGoaled = true;
-    locations.filters = { slots: 'selected', slotIds: [4], itemTypes: ['trap'], sphereRange: [2, 6] };
+    locations.filters = {
+      slots: 'selected',
+      slotIds: [4],
+      receiverSlotIds: [1],
+      itemTypes: ['trap'],
+      sphereRange: [2, 6],
+    };
     await locations.enter('open', 'admin');
     await locations.setSort('item', 'desc');
     expect(apiGet).toHaveBeenLastCalledWith('/api/rooms/{slug}/locations/admin', {
@@ -106,6 +112,7 @@ describe('useLocationsStore', () => {
           state: 'open',
           slots: 'selected',
           slotIds: [4],
+          receiverSlotIds: [1],
           itemTypes: ['trap'],
           fromSphere: 2,
           toSphere: 6,

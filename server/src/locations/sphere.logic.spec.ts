@@ -91,6 +91,7 @@ describe('locationWhere', () => {
     state: 'open',
     slots: 'all',
     slotIds: [],
+    receiverSlotIds: [],
     discordUserId: null,
     itemTypes: [],
     fromSphere: null,
@@ -126,6 +127,7 @@ describe('locationWhere', () => {
       { sphere: { lte: 5 } },
       { finderSlot: { archipelagoGoal: false, completionStatus: { notIn: ['goal', 'done', 'released'] } } },
     ]);
+    expect(locationWhere({ ...filter, receiverSlotIds: [1] }).AND).toContainEqual({ receiverSlotId: { in: [1] } });
     expect(locationWhere({ ...filter, slots: 'selected', slotIds: [3, 4] }).AND).toContainEqual({
       finderSlotId: { in: [3, 4] },
     });

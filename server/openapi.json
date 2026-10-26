@@ -326,6 +326,18 @@
             }
           },
           {
+            "name": "receiverSlotIds",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 1000,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
             "name": "itemTypes",
             "required": false,
             "in": "query",
@@ -505,6 +517,18 @@
           },
           {
             "name": "slotIds",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 1000,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "name": "receiverSlotIds",
             "required": false,
             "in": "query",
             "schema": {

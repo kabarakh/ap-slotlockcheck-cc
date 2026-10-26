@@ -19,7 +19,7 @@ const locations = useLocationsStore();
 const { filters, isAdminView, sphereBounds } = storeToRefs(locations);
 const sphereStore = useSphereOverviewStore();
 const { excludeGoaled } = storeToRefs(sphereStore);
-const { playableSlots } = storeToRefs(useCurrentRoomStore());
+const { sortedSlots } = storeToRefs(useCurrentRoomStore());
 const { isLoggedIn } = storeToRefs(useAuthStore());
 const { t } = useI18n();
 
@@ -29,7 +29,7 @@ const scopeOptions = computed(() =>
     .map((value) => ({ value, label: t(`locations.filters.scope.${value}`) })),
 );
 const slotOptions = computed(() =>
-  playableSlots.value.map((slot) => ({ value: slot.id, label: `#${slot.position} ${slot.name}` })),
+  sortedSlots.value.map((slot) => ({ value: slot.id, label: `#${slot.position} ${slot.name}` })),
 );
 const itemTypeOptions = computed(() => ITEM_TYPES.map((value) => ({ value, label: t(`itemTypes.${value}`) })));
 
@@ -87,6 +87,18 @@ const apply = async () => {
         size="small"
         display="chip"
         data-testid="location-slots"
+      />
+      <MultiSelect
+        v-if="isAdminView"
+        v-model="filters.receiverSlotIds"
+        :options="slotOptions"
+        option-label="label"
+        option-value="value"
+        :placeholder="t('locations.filters.receivers')"
+        filter
+        size="small"
+        display="chip"
+        data-testid="location-receivers"
       />
       <MultiSelect
         v-if="isAdminView"

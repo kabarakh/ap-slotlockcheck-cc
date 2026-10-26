@@ -124,6 +124,26 @@ describe('spheres and locations (integration)', () => {
     await get('/locations?state=closed', ownerCookie).expect(400);
   });
 
+  it('finds the unlock items with the receiver filter of the admin view', async () => {
+    const prisma = testApp.app.get(PrismaService);
+    const locker = await prisma.slot.findFirstOrThrow({ where: { name: 'Locker' } });
+    const page = (await get(`/locations/admin?state=open&receiverSlotIds=${locker.id}`, ownerCookie).expect(200))
+      .body as LocationAdminPageDto;
+    expect(page.rows.map((row) => [row.finderName, row.itemName])).toEqual([
+      ['Alice', 'Nothing'],
+      ['Bob', 'Unlock Alice'],
+      ['Carol', 'Unlock Bonus Slot 1'],
+      ['Davey (Dave)', 'Unlock Alice'],
+    ]);
+    const lockerAsFinder = (
+      await get(`/locations/admin?state=open&slots=selected&slotIds=${locker.id}`, ownerCookie).expect(200)
+    ).body as LocationAdminPageDto;
+    expect(lockerAsFinder.rows.map((row) => row.locationName)).toEqual(['Free Item Bob 1']);
+    const userPage = (await get(`/locations?state=open&receiverSlotIds=${locker.id}`, playerCookie).expect(200))
+      .body as LocationUserPageDto;
+    expect(userPage.total).toBe(2);
+  });
+
   it('shows the own slots with "mine"', async () => {
     await settings({ sphereOffset: 3 });
     const page = (await get('/locations?state=open&slots=mine', playerCookie).expect(200)).body as LocationUserPageDto;

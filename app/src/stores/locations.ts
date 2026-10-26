@@ -19,13 +19,20 @@ export type LocationView = 'user' | 'admin';
 export interface LocationFilters {
   slots: LocationSlotScope;
   slotIds: number[];
+  receiverSlotIds: number[];
   itemTypes: ItemType[];
   sphereRange: [number, number] | null;
 }
 
 export const DEFAULT_PAGE_SIZE = 50;
 
-const emptyFilters = (): LocationFilters => ({ slots: 'all', slotIds: [], itemTypes: [], sphereRange: null });
+const emptyFilters = (): LocationFilters => ({
+  slots: 'all',
+  slotIds: [],
+  receiverSlotIds: [],
+  itemTypes: [],
+  sphereRange: null,
+});
 
 export const useLocationsStore = defineStore(
   'locations',
@@ -60,6 +67,8 @@ export const useLocationsStore = defineStore(
         state: locationState.value ?? 'open',
         slots: current.slots,
         slotIds: current.slots === 'selected' ? current.slotIds : undefined,
+        receiverSlotIds:
+          isAdminView.value && (current.receiverSlotIds ?? []).length > 0 ? current.receiverSlotIds : undefined,
         itemTypes: isAdminView.value && current.itemTypes.length > 0 ? current.itemTypes : undefined,
         fromSphere: current.sphereRange?.[0],
         toSphere: current.sphereRange?.[1],

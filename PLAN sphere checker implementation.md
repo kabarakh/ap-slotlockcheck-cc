@@ -547,3 +547,4 @@ The developer answered these questions on 2026-10-26. The column "Decision" show
 19. **Development packages:** `ws` and `@types/ws` for the fake Archipelago server in the tests.
 20. **Item names (9.5.3):** from the newest datapackage of the game of the slot. Without a datapackage, the names of the items that the slot receives in the seed.
 21. **Clean-up entries (5.5):** each entry has `lowestSphere`, the lowest sphere with open locations of the slot in the selected spheres. The server sorts the entries by it (13.10).
+22. **SlotLock slots in the filters (F 4.1):** the slot selection also contains the SlotLock slots. The admin view has an additional filter "Receiver" (`receiverSlotIds`). With the receiver filter on a SlotLock slot, an admin sees the locations of the unlock items. The user view ignores this filter, because it would show where the items are.

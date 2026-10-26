@@ -51,6 +51,12 @@ test('an admin switches to the admin view and filters by item type', async ({ pa
   await page.getByTestId('apply-filters').click();
   await expect(table.locator('tbody tr')).toHaveCount(1);
   await expect(table).toContainText('Evolution Trap');
+  await page.getByRole('button', { name: 'Reset' }).click();
+  await page.getByTestId('location-receivers').click();
+  await page.getByRole('option', { name: '#1 Locker', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await page.getByTestId('apply-filters').click();
+  await expect(table.locator('tbody tr').filter({ hasText: 'Unlock Alice' })).toHaveCount(2);
   await page.getByTestId('location-tab-found').click();
   await expect(page).toHaveURL(/locations\/found\?view=admin/);
 });
