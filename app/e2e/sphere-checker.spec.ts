@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ensureRoom, ensureSeed, loginAs, multidataFixture, OWNER, PLAYER } from './support';
+import { ensureRoom, ensureSeed, generationOutputFixture, loginAs, multidataFixture, OWNER, PLAYER } from './support';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -10,7 +10,9 @@ test('the admin uploads the multidata file only one time', async ({ page }) => {
   await page.getByTestId('tab-seed').click();
   await page.getByTestId('seed-file').setInputFiles(multidataFixture('other-room'));
   await expect(page.getByTestId('seed-differences')).toContainText('Alicia');
-  await page.getByTestId('seed-file').setInputFiles(multidataFixture('big-chill'));
+  await page.getByTestId('seed-file').setInputFiles(generationOutputFixture('without-multidata'));
+  await expect(page.getByText('The ZIP file contains no multidata file')).toBeVisible();
+  await page.getByTestId('seed-file').setInputFiles(generationOutputFixture('big-chill'));
   await expect(page.getByTestId('seed-data')).toContainText('12345678901234567890');
   await expect(page.getByTestId('seed-file')).toHaveCount(0);
 });

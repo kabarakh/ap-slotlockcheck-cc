@@ -7,7 +7,13 @@ export const SUPPORTED_MULTIDATA_VERSIONS = [3];
 export const MAXIMUM_MULTIDATA_SIZE = 500 * 1024 * 1024;
 const PLAYER_SLOT_TYPE = 0b01;
 
-export type MultidataErrorCode = 'UNSUPPORTED_MULTIDATA_VERSION' | 'MULTIDATA_TOO_LARGE' | 'INVALID_MULTIDATA';
+export type MultidataErrorCode =
+  | 'UNSUPPORTED_MULTIDATA_VERSION'
+  | 'MULTIDATA_TOO_LARGE'
+  | 'INVALID_MULTIDATA'
+  | 'INVALID_ZIP'
+  | 'ZIP_WITHOUT_MULTIDATA'
+  | 'ZIP_WITH_MORE_MULTIDATA';
 
 export class MultidataFormatError extends Error {
   constructor(

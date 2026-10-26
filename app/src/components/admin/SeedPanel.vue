@@ -48,7 +48,7 @@ onMounted(() => seedStore.fetch());
     <template v-else-if="!room?.hasSeed">
       <p class="app-muted">{{ t('seed.intro') }}</p>
       <Message severity="warn">{{ t('seed.onlyOnce') }}</Message>
-      <input type="file" accept=".archipelago" :disabled="busy" data-testid="seed-file" @change="onFileSelected" />
+      <input type="file" accept=".archipelago,.zip" :disabled="busy" data-testid="seed-file" @change="onFileSelected" />
       <ProgressSpinner v-if="busy" class="seed-spinner" />
       <Message v-if="differences.length > 0" severity="error" data-testid="seed-differences">
         <p>{{ t('seed.differences') }}</p>

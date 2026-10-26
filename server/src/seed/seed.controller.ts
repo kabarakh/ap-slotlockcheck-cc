@@ -1,3 +1,4 @@
+import { tmpdir } from 'node:os';
 import { Controller, Get, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -6,7 +7,7 @@ import type { AuthUser } from '../auth/auth.types.js';
 import { SeedDataDto, SeedUploadDto } from './dto/seed.dto.js';
 import { SeedService } from './seed.service.js';
 
-export const MAXIMUM_SEED_UPLOAD_BYTES = 50 * 1024 * 1024;
+export const MAXIMUM_SEED_UPLOAD_BYTES = 500 * 1024 * 1024;
 
 @Controller('rooms/:slug/seed')
 export class SeedController {
@@ -22,12 +23,14 @@ export class SeedController {
   @RequireRoomRole('admin')
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: SeedUploadDto })
-  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: MAXIMUM_SEED_UPLOAD_BYTES, files: 1 } }))
+  @UseInterceptors(
+    FileInterceptor('file', { dest: tmpdir(), limits: { fileSize: MAXIMUM_SEED_UPLOAD_BYTES, files: 1 } }),
+  )
   upload(
     @Param('slug') slug: string,
     @CurrentUser() admin: AuthUser,
-    @UploadedFile() file: { buffer: Buffer } | undefined,
+    @UploadedFile() file: { path: string } | undefined,
   ): Promise<SeedDataDto> {
-    return this.seed.upload(slug, admin, file?.buffer);
+    return this.seed.upload(slug, admin, file?.path);
   }
 }

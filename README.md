@@ -46,7 +46,7 @@ The unlock tree shows which slot sent the unlock item of which slot. The SlotLoc
 
 The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sphere checker implementation.md`.
 
-- An admin uploads the multidata file (`AP_<seed>.archipelago`) one time for each room. It contains the item, the receiver and the sphere of each location. The server compares its players with the slots of the room before it saves data.
+- An admin uploads the multidata file (`AP_<seed>.archipelago`) or the ZIP file of the generation one time for each room. From a ZIP file, the server reads only the multidata file. It contains the item, the receiver and the sphere of each location. The server compares its players with the slots of the room before it saves data.
 - The multidata file is a compressed Python pickle. A pickle can run code when Python reads it. The server never runs code from the file: an own decoder accepts only simple values and four known Archipelago classes, and it stops at all other content.
 - The server keeps only the locations and the item names. It ignores the server options of the file, because they contain the passwords of the room.
 - Archipelago does not put locations that are not reachable into a sphere. The server puts them after the last sphere.

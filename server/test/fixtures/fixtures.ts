@@ -16,6 +16,12 @@ export function loadFixture(name: FixtureName): unknown {
 
 export type MultidataFixtureName = 'big-chill' | 'item-link' | 'other-room';
 
+export type GenerationOutputFixtureName = 'big-chill' | 'without-multidata' | 'two-multidata';
+
+export function generationOutputFixturePath(name: GenerationOutputFixtureName): string {
+  return join(import.meta.dirname, `generation-${name}.zip`);
+}
+
 export function multidataFixturePath(name: MultidataFixtureName): string {
   return join(import.meta.dirname, `multidata-${name}.archipelago`);
 }

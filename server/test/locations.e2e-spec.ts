@@ -7,7 +7,7 @@ import type {
   SphereOverviewDto,
 } from '../src/locations/dto/location.dto.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
-import { multidataFixturePath } from './fixtures/fixtures.js';
+import { generationOutputFixturePath } from './fixtures/fixtures.js';
 import { CAROL, createRoom, login, OWNER, PLAYER, STRANGER } from './support/room.js';
 import { createTestApp, type TestApp } from './support/test-app.js';
 
@@ -32,7 +32,7 @@ describe('spheres and locations (integration)', () => {
     await request(server)
       .post('/api/rooms/big-chill/seed')
       .set('Cookie', ownerCookie)
-      .attach('file', multidataFixturePath('big-chill'))
+      .attach('file', generationOutputFixturePath('big-chill'))
       .expect(201);
   });
 

@@ -332,7 +332,7 @@
   },
   seed: {
     title: 'Multidata file',
-    intro: 'Upload the multidata file of the room (AP_<seed>.archipelago). It is in the ZIP file that Archipelago makes when it generates the room. It gives the spheres and the items of all locations.',
+    intro: 'Upload the ZIP file that Archipelago makes when it generates the room, or only the multidata file from it (AP_<seed>.archipelago). The server reads only the multidata file. It gives the spheres and the items of all locations. Maximum size: 500 MB for a ZIP file, 50 MB for the multidata file.',
     onlyOnce: 'You can upload the file only one time. The server compares the players of the file with the slots of the room.',
     differences: 'The file does not agree with the room:',
     uploaded: 'Uploaded',
@@ -374,6 +374,9 @@
     SEED_DOES_NOT_MATCH_ROOM: 'The multidata file does not agree with the slots of the room.',
     UNSUPPORTED_MULTIDATA_VERSION: 'This file is not a multidata file of a supported Archipelago version.',
     MULTIDATA_TOO_LARGE: 'The multidata file is too large.',
+    INVALID_ZIP: 'The ZIP file is not valid.',
+    ZIP_WITHOUT_MULTIDATA: 'The ZIP file contains no multidata file (.archipelago).',
+    ZIP_WITH_MORE_MULTIDATA: 'The ZIP file contains more than one multidata file (.archipelago).',
     INVALID_MULTIDATA: 'The multidata file is not valid.',
     LOCATIONS_NOT_PUBLIC: 'Log in to see the locations of this room.',
     LOGIN_REQUIRED: 'Log in to use this filter.',

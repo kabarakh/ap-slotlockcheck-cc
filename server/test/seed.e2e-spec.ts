@@ -3,7 +3,7 @@ import type { App } from 'supertest/types.js';
 import { LiveGateway } from '../src/live/live.gateway.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
 import { SyncService } from '../src/sync/sync.service.js';
-import { loadFixture, multidataFixturePath } from './fixtures/fixtures.js';
+import { generationOutputFixturePath, loadFixture, multidataFixturePath } from './fixtures/fixtures.js';
 import { createRoom, login, OWNER, PLAYER } from './support/room.js';
 import { createTestApp, type TestApp } from './support/test-app.js';
 
@@ -62,6 +62,13 @@ describe('seed upload (integration)', () => {
       .attach('file', Buffer.from('not a multidata file'), 'AP_1.archipelago')
       .expect(400);
     expect(response.body).toMatchObject({ code: 'UNSUPPORTED_MULTIDATA_VERSION' });
+  });
+
+  it('rejects a ZIP file without exactly one multidata file', async () => {
+    const without = await upload(ownerCookie, generationOutputFixturePath('without-multidata')).expect(400);
+    expect(without.body).toMatchObject({ code: 'ZIP_WITHOUT_MULTIDATA' });
+    const two = await upload(ownerCookie, generationOutputFixturePath('two-multidata')).expect(400);
+    expect(two.body).toMatchObject({ code: 'ZIP_WITH_MORE_MULTIDATA' });
   });
 
   it('rejects the file of another room and saves nothing', async () => {

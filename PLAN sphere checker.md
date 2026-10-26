@@ -132,7 +132,7 @@ The developer decided these points on 2026-10-26.
 | Topic | Decision |
 |---|---|
 | Place | The sphere checker is a part of the Slotlock Tracker. It uses the same rooms, the same Discord login and the same Cheese data. |
-| Data source | An admin uploads the multidata file `AP_<seed>.archipelago`. It gives the spheres, the items and the item types. |
+| Data source | An admin uploads the multidata file `AP_<seed>.archipelago` or the ZIP file of the generation that contains it. It gives the spheres, the items and the item types. |
 | Admin password (`server_password`) | The server keeps the password only in memory for the current session. It does not write it to the disk. After a restart of the server, the admin enters it again. |
 | Slot for the server login | The server connects as the selected SlotLock slot of the room. Then it sends `!admin login`. |
 | Admin helper | An admin helper can see the admin view and can mark locations as filler and remove the marks. An admin helper cannot send items or locations and cannot release or collect. |

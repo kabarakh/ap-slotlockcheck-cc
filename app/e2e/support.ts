@@ -31,6 +31,9 @@ export async function ensureRoom(page: Page): Promise<void> {
 export const multidataFixture = (name: 'big-chill' | 'other-room'): string =>
   fileURLToPath(new URL(`../../server/test/fixtures/multidata-${name}.archipelago`, import.meta.url));
 
+export const generationOutputFixture = (name: 'big-chill' | 'without-multidata'): string =>
+  fileURLToPath(new URL(`../../server/test/fixtures/generation-${name}.zip`, import.meta.url));
+
 export async function ensureSeed(page: Page): Promise<void> {
   await ensureRoom(page);
   const room = await page.request.get('/api/rooms/big-chill');

@@ -1,3 +1,4 @@
+import { rm } from 'node:fs/promises';
 import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import type { AuthUser } from '../auth/auth.types.js';
 import type { Prisma } from '../generated/prisma/client.js';
@@ -8,6 +9,7 @@ import { RoomsService } from '../rooms/rooms.service.js';
 import { SyncService } from '../sync/sync.service.js';
 import type { SeedDataDto } from './dto/seed.dto.js';
 import { MultidataFormatError, readMultidata, type MultidataContent } from './multidata.reader.js';
+import { readSeedFile } from './seed-file.reader.js';
 import { seedDifferences } from './seed-match.logic.js';
 
 const INSERT_BLOCK_SIZE = 1000;
@@ -42,15 +44,25 @@ export class SeedService {
     };
   }
 
-  async upload(slug: string, admin: AuthUser, file: Uint8Array | undefined): Promise<SeedDataDto> {
+  async upload(slug: string, admin: AuthUser, path: string | undefined): Promise<SeedDataDto> {
+    try {
+      return await this.save(slug, admin, path);
+    } finally {
+      if (path) {
+        await rm(path, { force: true });
+      }
+    }
+  }
+
+  private async save(slug: string, admin: AuthUser, path: string | undefined): Promise<SeedDataDto> {
     const room = await this.rooms.findRoomBySlug(slug);
     if (await this.rooms.hasSeed(room.id)) {
       throw new ConflictException('SEED_ALREADY_UPLOADED');
     }
-    if (!file || file.length === 0) {
+    if (!path) {
       throw new BadRequestException('SEED_FILE_MISSING');
     }
-    const content = this.read(file);
+    const content = await this.read(path);
     const slots = await this.prisma.slot.findMany({ where: { roomId: room.id } });
     const differences = seedDifferences(slots, content.players);
     if (differences.length > 0) {
@@ -82,9 +94,9 @@ export class SeedService {
     return this.get(slug);
   }
 
-  private read(file: Uint8Array): MultidataContent {
+  private async read(path: string): Promise<MultidataContent> {
     try {
-      return readMultidata(file);
+      return readMultidata(await readSeedFile(path));
     } catch (error) {
       if (error instanceof MultidataFormatError) {
         throw new BadRequestException({ message: error.code, reason: error.message });

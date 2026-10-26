@@ -338,7 +338,7 @@
   },
   seed: {
     title: 'Multidata-Datei',
-    intro: 'Lade die Multidata-Datei des Raums hoch (AP_<seed>.archipelago). Sie ist in der ZIP-Datei, die Archipelago beim Generieren des Raums macht. Sie enthält die Spheres und die Items aller Locations.',
+    intro: 'Lade die ZIP-Datei hoch, die Archipelago beim Generieren des Raums macht, oder nur die Multidata-Datei daraus (AP_<seed>.archipelago). Der Server liest nur die Multidata-Datei. Sie enthält die Spheres und die Items aller Locations. Höchstens 500 MB für eine ZIP-Datei, 50 MB für die Multidata-Datei.',
     onlyOnce: 'Du kannst die Datei nur einmal hochladen. Der Server vergleicht die Spieler der Datei mit den Slots des Raums.',
     differences: 'Die Datei passt nicht zum Raum:',
     uploaded: 'Hochgeladen',
@@ -380,6 +380,9 @@
     SEED_DOES_NOT_MATCH_ROOM: 'Die Multidata-Datei passt nicht zu den Slots des Raums.',
     UNSUPPORTED_MULTIDATA_VERSION: 'Diese Datei ist keine Multidata-Datei einer unterstützten Archipelago-Version.',
     MULTIDATA_TOO_LARGE: 'Die Multidata-Datei ist zu groß.',
+    INVALID_ZIP: 'Die ZIP-Datei ist nicht gültig.',
+    ZIP_WITHOUT_MULTIDATA: 'Die ZIP-Datei enthält keine Multidata-Datei (.archipelago).',
+    ZIP_WITH_MORE_MULTIDATA: 'Die ZIP-Datei enthält mehr als eine Multidata-Datei (.archipelago).',
     INVALID_MULTIDATA: 'Die Multidata-Datei ist nicht gültig.',
     LOCATIONS_NOT_PUBLIC: 'Melde dich an, um die Locations dieses Raums zu sehen.',
     LOGIN_REQUIRED: 'Melde dich an, um diesen Filter zu nutzen.',
