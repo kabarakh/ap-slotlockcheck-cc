@@ -21,6 +21,8 @@ export class RoomSummaryDto {
   lockedSlotCount: number;
   unlockedSlotCount: number;
   unlockedPercentage: number;
+  checksDone: number;
+  checksTotal: number;
   syncStatus: SyncStatusDto;
 }
 

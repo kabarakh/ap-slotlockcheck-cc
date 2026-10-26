@@ -22,6 +22,19 @@ const { t } = useI18n();
         <div class="app-stat-value">{{ globalStatistics.goaledCount }} / {{ globalStatistics.slotCount }}</div>
         <div>{{ t('statistics.percentage', { value: globalStatistics.goaledPercentage }) }}</div>
       </div>
+      <div class="app-stat" data-testid="statistics-checks">
+        <div class="app-muted">{{ t('statistics.checks') }}</div>
+        <div class="app-stat-value">{{ globalStatistics.checksDone }} / {{ globalStatistics.checksTotal }}</div>
+        <div>{{ t('statistics.percentage', { value: globalStatistics.checksPercentage }) }}</div>
+      </div>
+      <div class="app-stat">
+        <div class="app-muted">{{ t('statistics.openChecksInOpenSlots') }}</div>
+        <div class="app-stat-value">{{ globalStatistics.openChecksInOpenSlots }}</div>
+      </div>
+      <div class="app-stat">
+        <div class="app-muted">{{ t('statistics.openChecksInLockedSlots') }}</div>
+        <div class="app-stat-value">{{ globalStatistics.openChecksInLockedSlots }}</div>
+      </div>
       <div class="app-stat">
         <div class="app-muted">{{ t('statistics.allChecks') }}</div>
         <div class="app-stat-value">{{ globalStatistics.allChecksCount }} / {{ globalStatistics.slotCount }}</div>

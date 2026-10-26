@@ -6,7 +6,7 @@ import DataTable from 'primevue/datatable';
 import type { SlotRow } from '@/api/types';
 import { formatGameName } from '@/domain/game-name';
 import type { InactivityLevel } from '@/domain/inactivity';
-import { isGoaled } from '@/domain/summary';
+import { checksPercentage, isGoaled } from '@/domain/summary';
 import CheeseStatusTag from './CheeseStatusTag.vue';
 import InactivityText from './InactivityText.vue';
 import LockStatusTag from './LockStatusTag.vue';
@@ -98,6 +98,11 @@ type Row = (typeof rows.value)[number];
     <Column field="checksDone" :header="t('slot.columns.checks')" sortable>
       <template #body="{ data }">
         <span class="nowrap">{{ (data as Row).checksDone }} / {{ (data as Row).checksTotal }}</span>
+        <span class="app-muted nowrap check-percentage">
+          {{
+            t('statistics.percentage', { value: checksPercentage((data as Row).checksDone, (data as Row).checksTotal) })
+          }}
+        </span>
       </template>
     </Column>
     <Column field="completionStatus" :header="t('slot.columns.cheeseStatus')" sortable>
@@ -176,6 +181,10 @@ type Row = (typeof rows.value)[number];
 
 .nowrap {
   white-space: nowrap;
+}
+
+.check-percentage {
+  margin-left: 0.35rem;
 }
 
 .notes {

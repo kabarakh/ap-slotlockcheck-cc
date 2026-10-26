@@ -1,4 +1,4 @@
-import type { SlotRow } from '@/api/types';
+import type { RoomDetail, SlotRow } from '@/api/types';
 
 export function slotRow(overrides: Partial<SlotRow>): SlotRow {
   return {
@@ -27,6 +27,34 @@ export function slotRow(overrides: Partial<SlotRow>): SlotRow {
     unlockTime: null,
     unlockTimeSource: null,
     unlocksSent: 0,
+    ...overrides,
+  };
+}
+
+export function roomDetail(overrides: Partial<RoomDetail> = {}): RoomDetail {
+  return {
+    id: 1,
+    slug: 'big-chill',
+    title: 'Big Chill',
+    slotCount: 2,
+    lockedSlotCount: 1,
+    unlockedSlotCount: 0,
+    unlockedPercentage: 0,
+    checksDone: 0,
+    checksTotal: 0,
+    syncStatus: { lastSyncAt: null, lastSuccessfulSyncAt: null, lastSyncError: null, running: false },
+    cheeseTrackerId: 'AbCdEfGhIjKlMnOpQrStUv',
+    cheeseTrackerUrl: 'https://cheese.test/tracker/AbCdEfGhIjKlMnOpQrStUv',
+    archipelagoTrackerUrl: 'https://archipelago.gg/tracker/x',
+    yellowLimitHours: 24,
+    redLimitHours: 48,
+    limitsOverridden: false,
+    unknownSlotNames: [],
+    manualSyncCooldownSeconds: 60,
+    hasSeed: false,
+    sphereOffset: 0,
+    visitorsSeeLocations: false,
+    playersMarkFiller: false,
     ...overrides,
   };
 }

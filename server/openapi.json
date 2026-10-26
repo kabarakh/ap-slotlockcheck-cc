@@ -1978,6 +1978,12 @@
           "unlockedPercentage": {
             "type": "number"
           },
+          "checksDone": {
+            "type": "number"
+          },
+          "checksTotal": {
+            "type": "number"
+          },
           "syncStatus": {
             "$ref": "#/components/schemas/SyncStatusDto"
           }
@@ -1991,6 +1997,8 @@
           "lockedSlotCount",
           "unlockedSlotCount",
           "unlockedPercentage",
+          "checksDone",
+          "checksTotal",
           "syncStatus"
         ]
       },
@@ -2057,6 +2065,12 @@
           "unlockedPercentage": {
             "type": "number"
           },
+          "checksDone": {
+            "type": "number"
+          },
+          "checksTotal": {
+            "type": "number"
+          },
           "syncStatus": {
             "$ref": "#/components/schemas/SyncStatusDto"
           }
@@ -2081,6 +2095,8 @@
           "lockedSlotCount",
           "unlockedSlotCount",
           "unlockedPercentage",
+          "checksDone",
+          "checksTotal",
           "syncStatus"
         ]
       },

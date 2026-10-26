@@ -75,6 +75,8 @@ describe('rooms (integration)', () => {
       lockedSlotCount: 4,
       unlockedSlotCount: 1,
       unlockedPercentage: 25,
+      checksDone: 201,
+      checksTotal: 752,
       yellowLimitHours: 24,
       redLimitHours: 48,
     });

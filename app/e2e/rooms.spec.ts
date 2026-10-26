@@ -29,6 +29,8 @@ test('the room list shows only the own rooms', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('link', { name: 'Big Chill' })).toBeVisible();
   await expect(page.getByTestId('room-role')).toHaveText('Owner');
+  await expect(page.getByTestId('room-unlocks')).toContainText('1/4 (25 %)');
+  await expect(page.getByTestId('room-checks')).toContainText('201/752 (26.7 %)');
   await expect(page).toHaveTitle('SlotLockCheck');
   await page.getByRole('link', { name: 'Big Chill' }).click();
   await expect(page).toHaveTitle('Big Chill - SlotLockCheck');
@@ -49,6 +51,7 @@ test('a visitor opens a room with its link and sees the roster', async ({ page }
   await expect(row(roster, 'Alice')).toContainText('Unlocked');
   await expect(row(roster, 'Bob')).toContainText('Locked');
   await expect(row(roster, 'Carol')).toContainText('Partially unlocked');
+  await expect(page.getByTestId('roster-checks')).toContainText('Checks: 201 of 752');
   await expect(row(roster, 'Locker2')).toHaveCount(0);
   await expect(page.getByTestId('sync-now')).toHaveCount(0);
   await expect(page.getByRole('link', { name: 'Admin' })).toHaveCount(0);
@@ -70,6 +73,7 @@ test('players and statistics show the summaries', async ({ page }) => {
   await expect(page.getByTestId('players-table').getByRole('row', { name: /carol/ })).toBeVisible();
   await page.goto('/room/big-chill/statistics');
   await expect(page.getByTestId('statistics')).toContainText('1 / 4');
+  await expect(page.getByTestId('statistics-checks')).toContainText('201 / 752');
 });
 
 test('an admin sees the slots without Discord user and the extra statistics', async ({ page }) => {

@@ -25,7 +25,9 @@
     loginForRooms: 'Log in with Discord to see your rooms. You can also open a room with its link.',
     columns: { title: 'Title', role: 'My role', slots: 'Slots', progress: 'Unlocked', status: 'Synchronization' },
     roles: { owner: 'Owner', admin: 'Admin', helper: 'Admin helper', player: 'Player' },
-    unlockedOf: '{unlocked} of {locked} locked slots unlocked',
+    unlocks: 'Unlocks:',
+    checks: 'Checks:',
+    progressValue: '{done}/{total} ({percentage} %)',
   },
   roomSetup: {
     title: 'New room',
@@ -137,12 +139,18 @@
     unlocked: 'Unlocked slots',
     goaled: 'Goaled slots',
     allChecks: 'Slots with all checks',
+    checks: 'Checks done',
+    openChecksInOpenSlots: 'Open checks in playable slots',
+    openChecksInLockedSlots: 'Open checks in locked slots',
     percentage: '{value} %',
     playersByLocked: 'Players by number of locked slots',
     playersByUnlocked: 'Players by number of unlocked slots',
     unlockedCount: 'Unlocked slots',
     lockedCount: 'Locked slots',
     playerCount: 'Players',
+  },
+  roster: {
+    checks: 'Checks: {done} of {total} ({percentage} %). {locked} open checks are in locked slots.',
   },
   admin: {
     tabs: {

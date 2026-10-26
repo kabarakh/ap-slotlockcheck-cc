@@ -665,6 +665,8 @@ export interface components {
             lockedSlotCount: number;
             unlockedSlotCount: number;
             unlockedPercentage: number;
+            checksDone: number;
+            checksTotal: number;
             syncStatus: components["schemas"]["SyncStatusDto"];
         };
         RoomDetailDto: {
@@ -687,6 +689,8 @@ export interface components {
             lockedSlotCount: number;
             unlockedSlotCount: number;
             unlockedPercentage: number;
+            checksDone: number;
+            checksTotal: number;
             syncStatus: components["schemas"]["SyncStatusDto"];
         };
         /** @enum {string} */

@@ -25,7 +25,9 @@
     loginForRooms: 'Melde dich mit Discord an, um deine Räume zu sehen. Einen Raum kannst du auch direkt über seinen Link öffnen.',
     columns: { title: 'Titel', role: 'Meine Rolle', slots: 'Slots', progress: 'Entsperrt', status: 'Synchronisierung' },
     roles: { owner: 'Eigentümer', admin: 'Admin', helper: 'Admin-Helfer', player: 'Spieler' },
-    unlockedOf: '{unlocked} von {locked} gesperrten Slots entsperrt',
+    unlocks: 'Unlocks:',
+    checks: 'Checks:',
+    progressValue: '{done}/{total} ({percentage} %)',
   },
   roomSetup: {
     title: 'Neuer Raum',
@@ -143,12 +145,18 @@
     unlocked: 'Entsperrte Slots',
     goaled: 'Slots mit Ziel',
     allChecks: 'Slots mit allen Checks',
+    checks: 'Erledigte Checks',
+    openChecksInOpenSlots: 'Offene Checks in spielbaren Slots',
+    openChecksInLockedSlots: 'Offene Checks in gesperrten Slots',
     percentage: '{value} %',
     playersByLocked: 'Spieler nach Anzahl gesperrter Slots',
     playersByUnlocked: 'Spieler nach Anzahl entsperrter Slots',
     unlockedCount: 'Entsperrte Slots',
     lockedCount: 'Gesperrte Slots',
     playerCount: 'Spieler',
+  },
+  roster: {
+    checks: 'Checks: {done} von {total} ({percentage} %). {locked} offene Checks sind in gesperrten Slots.',
   },
   admin: {
     tabs: {

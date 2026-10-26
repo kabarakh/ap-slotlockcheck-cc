@@ -11,6 +11,7 @@ import SlotTable from '@/components/ui/SlotTable.vue';
 import type { InactivityLevel } from '@/domain/inactivity';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useInactivityStore } from '@/stores/inactivity';
+import { useStatisticsStore } from '@/stores/statistics';
 import { useWarningsStore } from '@/stores/warnings';
 import { useTableFiltersStore } from '@/stores/table-filters';
 
@@ -19,6 +20,7 @@ const { roster, filteredRoster } = storeToRefs(filters);
 const { hoursBySlotId, levelBySlotId } = storeToRefs(useInactivityStore());
 const { isAdmin } = storeToRefs(useCurrentRoomStore());
 const { countBySlotId } = storeToRefs(useWarningsStore());
+const { globalStatistics } = storeToRefs(useStatisticsStore());
 const { t } = useI18n();
 
 const lockStatusOptions = computed(() =>
@@ -60,6 +62,16 @@ const inactivityOptions = computed(() =>
       </label>
       <Button :label="t('filters.reset')" size="small" text @click="filters.resetRosterFilter()" />
     </div>
+    <p class="app-muted" data-testid="roster-checks">
+      {{
+        t('roster.checks', {
+          done: globalStatistics.checksDone,
+          total: globalStatistics.checksTotal,
+          percentage: globalStatistics.checksPercentage,
+          locked: globalStatistics.openChecksInLockedSlots,
+        })
+      }}
+    </p>
     <SlotTable
       :slots="filteredRoster"
       :hours-by-slot-id="hoursBySlotId"

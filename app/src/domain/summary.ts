@@ -28,6 +28,11 @@ export interface GlobalStatistics {
   goaledPercentage: number;
   allChecksCount: number;
   allChecksPercentage: number;
+  checksDone: number;
+  checksTotal: number;
+  checksPercentage: number;
+  openChecksInLockedSlots: number;
+  openChecksInOpenSlots: number;
   playersByLockedCount: { lockedCount: number; playerCount: number }[];
   playersByUnlockedCount: PlayerDistributionEntry[];
 }
@@ -40,6 +45,14 @@ export function isGoaled(slot: SlotRow): boolean {
 
 export function isLocked(slot: SlotRow): boolean {
   return slot.lockStatus === 'locked' || slot.lockStatus === 'partially_unlocked';
+}
+
+export function openChecks(slot: SlotRow): number {
+  return Math.max(0, slot.checksTotal - slot.checksDone);
+}
+
+export function checksPercentage(done: number, total: number): number {
+  return percentage(done, total);
 }
 
 export function hasAllChecks(slot: SlotRow): boolean {
@@ -109,6 +122,8 @@ export function calculateStatistics(slots: SlotRow[]): GlobalStatistics {
   const unlockedCount = lockable.filter((slot) => slot.lockStatus === 'unlocked').length;
   const goaledCount = playable.filter(isGoaled).length;
   const allChecksCount = playable.filter(hasAllChecks).length;
+  const checksDone = slots.reduce((sum, slot) => sum + slot.checksDone, 0);
+  const checksTotal = slots.reduce((sum, slot) => sum + slot.checksTotal, 0);
   const players = summarizePlayers(slots);
   return {
     slotCount: playable.length,
@@ -119,6 +134,11 @@ export function calculateStatistics(slots: SlotRow[]): GlobalStatistics {
     goaledPercentage: percentage(goaledCount, playable.length),
     allChecksCount,
     allChecksPercentage: percentage(allChecksCount, playable.length),
+    checksDone,
+    checksTotal,
+    checksPercentage: percentage(checksDone, checksTotal),
+    openChecksInLockedSlots: playable.filter(isLocked).reduce((sum, slot) => sum + openChecks(slot), 0),
+    openChecksInOpenSlots: playable.filter((slot) => !isLocked(slot)).reduce((sum, slot) => sum + openChecks(slot), 0),
     playersByLockedCount: distribution(players.map((player) => player.lockedCount)).map((entry) => ({
       lockedCount: entry.slotCount,
       playerCount: entry.playerCount,

@@ -59,6 +59,11 @@ describe('calculateStatistics', () => {
       goaledPercentage: 50,
       allChecksCount: 1,
       allChecksPercentage: 25,
+      checksDone: 10,
+      checksTotal: 50,
+      checksPercentage: 20,
+      openChecksInLockedSlots: 10,
+      openChecksInOpenSlots: 20,
       playersByLockedCount: [
         { lockedCount: 0, playerCount: 2 },
         { lockedCount: 2, playerCount: 1 },

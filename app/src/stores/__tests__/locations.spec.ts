@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import type { LocationUserRow, RoomDetail, SphereOverview } from '@/api/types';
-import { slotRow } from '@/domain/__tests__/fixtures';
+import { roomDetail, slotRow } from '@/domain/__tests__/fixtures';
 import { useAuthStore } from '../auth';
 import { useCurrentRoomStore } from '../current-room';
 import { useLocationsStore } from '../locations';
@@ -14,29 +14,7 @@ vi.mock('@/api/client', async (importOriginal) => ({
   api: { GET: apiGet },
 }));
 
-const room = (overrides: Partial<RoomDetail>): RoomDetail => ({
-  id: 1,
-  slug: 'big-chill',
-  title: 'Big Chill',
-  slotCount: 2,
-  lockedSlotCount: 1,
-  unlockedSlotCount: 0,
-  unlockedPercentage: 0,
-  syncStatus: { lastSyncAt: null, lastSuccessfulSyncAt: null, lastSyncError: null, running: false },
-  cheeseTrackerId: 'AbCdEfGhIjKlMnOpQrStUv',
-  cheeseTrackerUrl: 'https://cheese.test/tracker/AbCdEfGhIjKlMnOpQrStUv',
-  archipelagoTrackerUrl: 'https://archipelago.gg/tracker/x',
-  yellowLimitHours: 24,
-  redLimitHours: 48,
-  limitsOverridden: false,
-  unknownSlotNames: [],
-  manualSyncCooldownSeconds: 60,
-  hasSeed: true,
-  sphereOffset: 0,
-  visitorsSeeLocations: false,
-  playersMarkFiller: false,
-  ...overrides,
-});
+const room = (overrides: Partial<RoomDetail>): RoomDetail => roomDetail({ hasSeed: true, ...overrides });
 
 const overview: SphereOverview = {
   lowestOpenSphere: 3,
