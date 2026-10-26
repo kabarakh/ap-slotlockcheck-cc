@@ -96,7 +96,7 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
               <ProgressBar
                 :value="checksPercentage((data as RoomListEntry).checksDone, (data as RoomListEntry).checksTotal)"
                 :show-value="false"
-                class="room-progress"
+                class="room-progress checks-progress"
               />
               <span class="progress-text">
                 {{
@@ -137,6 +137,10 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
 
 .room-progress {
   height: 1.25rem;
+}
+
+.checks-progress :deep(.p-progressbar-value) {
+  background: var(--p-emerald-500);
 }
 
 .progress-text {
