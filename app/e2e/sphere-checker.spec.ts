@@ -111,5 +111,14 @@ test('an admin makes a player an admin helper', async ({ page }) => {
   await page.goto('/room/big-chill/locations/open');
   await page.getByTestId('location-view-switch').click();
   await expect(page.getByTestId('location-table').getByRole('columnheader', { name: 'Item' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Admin', exact: true })).toHaveCount(0);
+  await page.getByRole('link', { name: 'Admin', exact: true }).click();
+  await expect(page.getByTestId('tab-settings')).toHaveCount(0);
+  await page.getByTestId('cleanup-to').locator('input').fill('3');
+  await page.getByTestId('cleanup-create').click();
+  const message = page.getByTestId('cleanup-message');
+  await expect(message).toHaveCount(1);
+  const text = message.locator('textarea');
+  await expect(text).toHaveValue(/^# Spheres 0–3\n<@100000000000000001>, Locker: 1 progression/);
+  await expect(text).toHaveValue(/\nalice_owner, Alice: 1 progression/);
+  await expect(text).toHaveValue(/\n<@100000000000000002>, Bob: 2 progression/);
 });

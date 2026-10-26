@@ -133,6 +133,12 @@ Reference: `PLAN sphere checker implementation.md` (section numbers in brackets)
 - [x] Filler marks with permissions (5.8), setting `playersMarkFiller`
 - [x] E2E tests: player marks an own location, admin sees who marked it, admin makes a helper
 
+### Phase P5 – Sphere clean-up
+
+- [x] Clean-up data endpoint (5.5) with unit and integration tests
+- [x] `buildCleanupMessages` with tests: 0, 10, 11 and 25 pings, users with more slots, slots without Discord user, 2,000 characters (6.6)
+- [x] `SphereCleanupPanel` in the admin tab "Sphere clean-up", also for helpers
+
 ## Open decisions for the developer
 
 See `PLAN slotlock.md`, section 23: production domain, responsibility on the proServer, GitHub repository, PrimeVue license, Node 26 or Node 24 LTS, comparison with the Google sheet.
@@ -150,3 +156,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-26 | Sphere checker P2 | ok | ok | 120 unit, 24 integration ok | |
 | 2026-10-26 | Sphere checker P3 | ok | ok | 132 unit, 34 integration, 36 unit app, 16 e2e ok | Visual check in the browser |
 | 2026-10-26 | Sphere checker P4 | ok | ok | 137 unit, 39 integration, 37 unit app, 18 e2e ok | |
+| 2026-10-26 | Sphere checker P5 | ok | ok | 140 unit, 40 integration, 46 unit app, 18 e2e ok | |

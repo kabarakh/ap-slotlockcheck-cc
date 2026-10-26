@@ -11,7 +11,8 @@ import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLiveStore } from '@/stores/live';
 
 const roomStore = useCurrentRoomStore();
-const { room, isAdmin, isPlayer, canSeeLocations, syncRequested, slotsWithoutDiscord } = storeToRefs(roomStore);
+const { room, isAdmin, isHelper, isPlayer, canSeeLocations, syncRequested, slotsWithoutDiscord } =
+  storeToRefs(roomStore);
 const { isConnected } = storeToRefs(useLiveStore());
 const { t } = useI18n();
 
@@ -23,7 +24,7 @@ const tabs = computed(() => [
   { name: 'spheres', label: t('room.tabs.spheres'), visible: canSeeLocations.value },
   { name: 'locations-open', label: t('room.tabs.locations'), visible: canSeeLocations.value },
   { name: 'my-slots', label: t('room.tabs.mySlots'), visible: isPlayer.value },
-  { name: 'admin', label: t('room.tabs.admin'), visible: isAdmin.value },
+  { name: 'admin', label: t('room.tabs.admin'), visible: isHelper.value },
 ]);
 </script>
 

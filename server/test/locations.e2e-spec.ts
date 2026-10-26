@@ -2,6 +2,7 @@ import request from 'supertest';
 import type { App } from 'supertest/types.js';
 import type {
   LocationAdminPageDto,
+  SphereCleanupDto,
   LocationUserPageDto,
   SphereOverviewDto,
 } from '../src/locations/dto/location.dto.js';
@@ -225,5 +226,31 @@ describe('spheres and locations (integration)', () => {
     const strangerCookie = await login(server, STRANGER);
     await request(server).post(`/api/invitations/${token}/accept`).set('Cookie', strangerCookie).expect(200);
     await get('/me', strangerCookie).expect(200, { role: 'helper', isOwner: false });
+  });
+
+  it('gives the helpers the open items of each slot for the sphere clean-up', async () => {
+    await get('/sphere-cleanup?fromSphere=0&toSphere=3').expect(403);
+    const cleanup = (await get('/sphere-cleanup?fromSphere=3&toSphere=0', playerCookie).expect(200))
+      .body as SphereCleanupDto;
+    expect(cleanup.fromSphere).toBe(0);
+    expect(cleanup.toSphere).toBe(3);
+    expect(
+      cleanup.entries.map((entry) => [entry.slotName, entry.progression, entry.useful, entry.normal, entry.trap]),
+    ).toEqual([
+      ['Locker', 1, 0, 0, 0],
+      ['Alice', 1, 0, 1, 0],
+      ['Bob', 2, 0, 0, 0],
+      ['Carol', 0, 1, 1, 0],
+      ['Davey (Dave)', 1, 0, 0, 1],
+      ['Locker2', 0, 1, 0, 0],
+    ]);
+    expect(cleanup.entries[2]).toMatchObject({ discordUserId: PLAYER.discordId });
+    const progression = (
+      await get('/sphere-cleanup?fromSphere=0&toSphere=3&slots=progression&excludeGoaled=true', playerCookie).expect(
+        200,
+      )
+    ).body as SphereCleanupDto;
+    expect(progression.entries.map((entry) => entry.slotName)).toEqual(['Locker', 'Alice', 'Bob', 'Davey (Dave)']);
+    await get('/sphere-cleanup?fromSphere=0', playerCookie).expect(400);
   });
 });

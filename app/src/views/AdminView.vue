@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
+import Message from 'primevue/message';
 import Tab from 'primevue/tab';
 import TabList from 'primevue/tablist';
 import TabPanel from 'primevue/tabpanel';
@@ -14,37 +16,51 @@ import SeedPanel from '@/components/admin/SeedPanel.vue';
 import SphereCheckerSettingsPanel from '@/components/admin/SphereCheckerSettingsPanel.vue';
 import UnlockTimesPanel from '@/components/admin/UnlockTimesPanel.vue';
 import WarningsPanel from '@/components/admin/WarningsPanel.vue';
+import SphereCleanupPanel from '@/components/spheres/SphereCleanupPanel.vue';
 import { useAdminStore } from '@/stores/admin';
+import { useCurrentRoomStore } from '@/stores/current-room';
 
 const admin = useAdminStore();
+const { isAdmin, room } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 
-onMounted(() => admin.load());
+onMounted(() => {
+  if (isAdmin.value) {
+    void admin.load();
+  }
+});
 </script>
 
 <template>
-  <Tabs value="settings" lazy>
+  <Message v-if="!isAdmin && !room?.hasSeed" severity="info">{{ t('admin.helperWithoutSeed') }}</Message>
+  <Tabs v-else :value="isAdmin ? 'settings' : 'cleanup'" lazy>
     <TabList>
-      <Tab value="settings">{{ t('admin.tabs.settings') }}</Tab>
-      <Tab value="locks">{{ t('admin.tabs.locks') }}</Tab>
-      <Tab value="admins">{{ t('admin.tabs.admins') }}</Tab>
-      <Tab value="warnings" data-testid="tab-warnings">{{ t('admin.tabs.warnings') }}</Tab>
-      <Tab value="unlockTimes" data-testid="tab-unlock-times">{{ t('admin.tabs.unlockTimes') }}</Tab>
-      <Tab value="seed" data-testid="tab-seed">{{ t('admin.tabs.seed') }}</Tab>
+      <template v-if="isAdmin">
+        <Tab value="settings">{{ t('admin.tabs.settings') }}</Tab>
+        <Tab value="locks">{{ t('admin.tabs.locks') }}</Tab>
+        <Tab value="admins">{{ t('admin.tabs.admins') }}</Tab>
+        <Tab value="warnings" data-testid="tab-warnings">{{ t('admin.tabs.warnings') }}</Tab>
+        <Tab value="unlockTimes" data-testid="tab-unlock-times">{{ t('admin.tabs.unlockTimes') }}</Tab>
+        <Tab value="seed" data-testid="tab-seed">{{ t('admin.tabs.seed') }}</Tab>
+      </template>
+      <Tab v-if="room?.hasSeed" value="cleanup" data-testid="tab-cleanup">{{ t('admin.tabs.cleanup') }}</Tab>
     </TabList>
     <TabPanels>
-      <TabPanel value="settings"><AdminSettingsPanel /></TabPanel>
-      <TabPanel value="locks"><LockAssignmentPanel /></TabPanel>
-      <TabPanel value="admins">
-        <AdminListPanel />
-        <InvitationPanel />
-      </TabPanel>
-      <TabPanel value="warnings"><WarningsPanel /></TabPanel>
-      <TabPanel value="unlockTimes"><UnlockTimesPanel /></TabPanel>
-      <TabPanel value="seed">
-        <SeedPanel />
-        <SphereCheckerSettingsPanel />
-      </TabPanel>
+      <template v-if="isAdmin">
+        <TabPanel value="settings"><AdminSettingsPanel /></TabPanel>
+        <TabPanel value="locks"><LockAssignmentPanel /></TabPanel>
+        <TabPanel value="admins">
+          <AdminListPanel />
+          <InvitationPanel />
+        </TabPanel>
+        <TabPanel value="warnings"><WarningsPanel /></TabPanel>
+        <TabPanel value="unlockTimes"><UnlockTimesPanel /></TabPanel>
+        <TabPanel value="seed">
+          <SeedPanel />
+          <SphereCheckerSettingsPanel />
+        </TabPanel>
+      </template>
+      <TabPanel v-if="room?.hasSeed" value="cleanup"><SphereCleanupPanel /></TabPanel>
     </TabPanels>
   </Tabs>
 </template>

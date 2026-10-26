@@ -163,3 +163,46 @@ export class LocationAdminPageDto {
   @ApiProperty({ type: [LocationAdminRowDto] })
   rows: LocationAdminRowDto[];
 }
+
+export const CLEANUP_SLOT_MODES = ['all', 'progression'] as const;
+
+export class SphereCleanupQueryDto extends SphereQueryDto {
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  fromSphere: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  toSphere: number;
+
+  @ApiProperty({ enum: CLEANUP_SLOT_MODES, enumName: 'CleanupSlotMode', required: false })
+  @IsOptional()
+  @IsIn(CLEANUP_SLOT_MODES)
+  slots?: (typeof CLEANUP_SLOT_MODES)[number];
+}
+
+export class SphereCleanupEntryDto {
+  slotId: number;
+  slotName: string;
+
+  @ApiProperty({ type: String, nullable: true })
+  discordUserId: string | null;
+
+  @ApiProperty({ type: String, nullable: true })
+  discordName: string | null;
+
+  progression: number;
+  useful: number;
+  normal: number;
+  trap: number;
+}
+
+export class SphereCleanupDto {
+  fromSphere: number;
+  toSphere: number;
+
+  @ApiProperty({ type: [SphereCleanupEntryDto] })
+  entries: SphereCleanupEntryDto[];
+}

@@ -41,3 +41,6 @@ export type SphereRow = Schemas['SphereRowDto'];
 export type SphereItemTypes = Schemas['SphereItemTypesDto'];
 export type LocationUserRow = Schemas['LocationUserRowDto'];
 export type LocationAdminRow = Schemas['LocationAdminRowDto'];
+export type SphereCleanup = Schemas['SphereCleanupDto'];
+export type SphereCleanupEntry = Schemas['SphereCleanupEntryDto'];
+export type CleanupSlotMode = Schemas['CleanupSlotMode'];

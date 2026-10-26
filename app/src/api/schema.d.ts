@@ -132,6 +132,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/sphere-cleanup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Locations_getCleanup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/rooms/{slug}/locations": {
         parameters: {
             query?: never;
@@ -538,6 +554,23 @@ export interface components {
             sphereCount: number;
         };
         /** @enum {string} */
+        CleanupSlotMode: "all" | "progression";
+        SphereCleanupEntryDto: {
+            discordUserId: string | null;
+            discordName: string | null;
+            slotId: number;
+            slotName: string;
+            progression: number;
+            useful: number;
+            normal: number;
+            trap: number;
+        };
+        SphereCleanupDto: {
+            entries: components["schemas"]["SphereCleanupEntryDto"][];
+            fromSphere: number;
+            toSphere: number;
+        };
+        /** @enum {string} */
         LocationState: "open" | "found" | "filler";
         /** @enum {string} */
         LocationSlotScope: "all" | "mine" | "selected";
@@ -897,6 +930,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SphereOverviewDto"];
+                };
+            };
+        };
+    };
+    Locations_getCleanup: {
+        parameters: {
+            query: {
+                slots?: components["schemas"]["CleanupSlotMode"];
+                fromSphere: number;
+                toSphere: number;
+                excludeGoaled?: boolean;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SphereCleanupDto"];
                 };
             };
         };

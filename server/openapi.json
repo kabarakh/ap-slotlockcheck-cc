@@ -221,6 +221,70 @@
         ]
       }
     },
+    "/api/rooms/{slug}/sphere-cleanup": {
+      "get": {
+        "operationId": "Locations_getCleanup",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "slots",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/CleanupSlotMode"
+            }
+          },
+          {
+            "name": "fromSphere",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "toSphere",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "excludeGoaled",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SphereCleanupDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Locations"
+        ]
+      }
+    },
     "/api/rooms/{slug}/locations": {
       "get": {
         "operationId": "Locations_getUserPage",
@@ -1767,6 +1831,76 @@
           "itemTypes",
           "visibleMaxSphere",
           "sphereCount"
+        ]
+      },
+      "CleanupSlotMode": {
+        "type": "string",
+        "enum": [
+          "all",
+          "progression"
+        ]
+      },
+      "SphereCleanupEntryDto": {
+        "type": "object",
+        "properties": {
+          "discordUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "discordName": {
+            "type": "string",
+            "nullable": true
+          },
+          "slotId": {
+            "type": "number"
+          },
+          "slotName": {
+            "type": "string"
+          },
+          "progression": {
+            "type": "number"
+          },
+          "useful": {
+            "type": "number"
+          },
+          "normal": {
+            "type": "number"
+          },
+          "trap": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "discordUserId",
+          "discordName",
+          "slotId",
+          "slotName",
+          "progression",
+          "useful",
+          "normal",
+          "trap"
+        ]
+      },
+      "SphereCleanupDto": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SphereCleanupEntryDto"
+            }
+          },
+          "fromSphere": {
+            "type": "number"
+          },
+          "toSphere": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "entries",
+          "fromSphere",
+          "toSphere"
         ]
       },
       "LocationState": {

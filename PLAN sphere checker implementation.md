@@ -519,6 +519,8 @@ The implementation uses the solution in the column "Solution now". The developer
 | 13.6 | Do the location filters stay for each room? | The filters stay in the browser for all rooms together, as the roster filters. |
 | 13.7 | Can an admin change the role of an existing admin or helper? | Yes: "Make admin" with the other role changes the role. The tracker owner always stays admin. An invitation link for a helper does not make an admin a helper. |
 | 13.8 | Who can remove a filler mark? | The same users who can set it (5.8), also when the location is checked in the meantime. |
+| 13.9 | In which language is the Discord text? | In the language of the app of the user who makes the text (German or English). |
+| 13.10 | In which order are the lines of the Discord text? | In the order of the slot numbers. The lines of a Discord user with more slots stay together at the position of the first slot. |
 
 ## 14. Deviations during the implementation
 
@@ -534,3 +536,5 @@ The implementation uses the solution in the column "Solution now". The developer
 10. **View switch (6.1.2):** the router gives `view=admin` to the store action `locations.enter`. The store opens the admin view only for helpers and admins.
 11. **Filler marks (5.4):** the endpoints give HTTP 204 and send `room:locations-changed`. The app then loads the current page again.
 12. **Tests of the role calculation:** new unit tests for `RoomRoleService` (main 19.1), also for the role `helper`.
+13. **Admin page for helpers (6.4.1):** a helper opens the admin page and sees only the tab "Sphere clean-up". Without seed data, the page shows a message. The data of the other admin tabs is loaded only for admins.
+14. **Clean-up endpoint (5.5):** `fromSphere` and `toSphere` are necessary. The server changes their order if `fromSphere` is larger.

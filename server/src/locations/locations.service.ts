@@ -13,8 +13,11 @@ import type {
   LocationSortField,
   LocationUserPageDto,
   LocationUserRowDto,
+  SphereCleanupDto,
+  SphereCleanupQueryDto,
   SphereOverviewDto,
 } from './dto/location.dto.js';
+import { cleanupEntries } from './cleanup.logic.js';
 import { canChangeFillerMark, canMarkFiller } from './filler-permission.logic.js';
 import { isGoaled } from './goal.logic.js';
 import { LocationStatusService } from './location-status.service.js';
@@ -103,6 +106,32 @@ export class LocationsService {
       sort: query.sort ?? 'sphere',
     });
     return { total: page.total, rows: page.rows.map((row) => this.toAdminRow(access, user, row)) };
+  }
+
+  async getCleanup(slug: string, query: SphereCleanupQueryDto): Promise<SphereCleanupDto> {
+    const room = await this.rooms.findRoomBySlug(slug);
+    const fromSphere = Math.min(query.fromSphere, query.toSphere);
+    const toSphere = Math.max(query.fromSphere, query.toSphere);
+    const slots = await this.prisma.slot.findMany({ where: { roomId: room.id } });
+    const goaled = new Map(slots.map((slot) => [slot.id, isGoaled(slot)]));
+    const groups = await this.prisma.seedLocation.groupBy({
+      by: ['finderSlotId', 'itemType', 'receiverSlotId'],
+      where: { roomId: room.id, checked: false, sphere: { gte: fromSphere, lte: toSphere } },
+      _count: { _all: true },
+    });
+    const entries = cleanupEntries(
+      groups.map((group) => ({
+        finderSlotId: group.finderSlotId,
+        itemType: group.itemType as ItemType,
+        finderGoaled: goaled.get(group.finderSlotId) ?? false,
+        receiverGoaled: group.receiverSlotId === null ? false : (goaled.get(group.receiverSlotId) ?? false),
+        count: group._count._all,
+      })),
+      slots,
+      query.slots ?? 'all',
+      query.excludeGoaled ?? false,
+    );
+    return { fromSphere, toSphere, entries };
   }
 
   async setFillerMark(slug: string, user: AuthUser | undefined, locationId: number, marked: boolean): Promise<void> {

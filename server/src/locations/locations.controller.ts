@@ -1,10 +1,12 @@
 import { Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Put, Query } from '@nestjs/common';
-import { CurrentUser } from '../auth/auth.decorators.js';
+import { CurrentUser, RequireRoomRole } from '../auth/auth.decorators.js';
 import type { AuthUser } from '../auth/auth.types.js';
 import {
   LocationAdminPageDto,
   LocationQueryDto,
   LocationUserPageDto,
+  SphereCleanupDto,
+  SphereCleanupQueryDto,
   SphereOverviewDto,
   SphereQueryDto,
 } from './dto/location.dto.js';
@@ -21,6 +23,12 @@ export class LocationsController {
     @Query() query: SphereQueryDto,
   ): Promise<SphereOverviewDto> {
     return this.locations.getSpheres(slug, user, query.excludeGoaled ?? false);
+  }
+
+  @Get('sphere-cleanup')
+  @RequireRoomRole('helper')
+  getCleanup(@Param('slug') slug: string, @Query() query: SphereCleanupQueryDto): Promise<SphereCleanupDto> {
+    return this.locations.getCleanup(slug, query);
   }
 
   @Get('locations')
