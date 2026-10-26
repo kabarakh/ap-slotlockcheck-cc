@@ -11,6 +11,7 @@ import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel.vue';
 import InvitationPanel from '@/components/admin/InvitationPanel.vue';
 import LockAssignmentPanel from '@/components/admin/LockAssignmentPanel.vue';
 import SeedPanel from '@/components/admin/SeedPanel.vue';
+import SphereCheckerSettingsPanel from '@/components/admin/SphereCheckerSettingsPanel.vue';
 import UnlockTimesPanel from '@/components/admin/UnlockTimesPanel.vue';
 import WarningsPanel from '@/components/admin/WarningsPanel.vue';
 import { useAdminStore } from '@/stores/admin';
@@ -40,7 +41,10 @@ onMounted(() => admin.load());
       </TabPanel>
       <TabPanel value="warnings"><WarningsPanel /></TabPanel>
       <TabPanel value="unlockTimes"><UnlockTimesPanel /></TabPanel>
-      <TabPanel value="seed"><SeedPanel /></TabPanel>
+      <TabPanel value="seed">
+        <SeedPanel />
+        <SphereCheckerSettingsPanel />
+      </TabPanel>
     </TabPanels>
   </Tabs>
 </template>

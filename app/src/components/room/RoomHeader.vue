@@ -11,7 +11,7 @@ import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLiveStore } from '@/stores/live';
 
 const roomStore = useCurrentRoomStore();
-const { room, isAdmin, isPlayer, syncRequested, slotsWithoutDiscord } = storeToRefs(roomStore);
+const { room, isAdmin, isPlayer, canSeeLocations, syncRequested, slotsWithoutDiscord } = storeToRefs(roomStore);
 const { isConnected } = storeToRefs(useLiveStore());
 const { t } = useI18n();
 
@@ -20,6 +20,8 @@ const tabs = computed(() => [
   { name: 'players', label: t('room.tabs.players'), visible: true },
   { name: 'statistics', label: t('room.tabs.statistics'), visible: true },
   { name: 'unlock-tree', label: t('room.tabs.unlockTree'), visible: true },
+  { name: 'spheres', label: t('room.tabs.spheres'), visible: canSeeLocations.value },
+  { name: 'locations-open', label: t('room.tabs.locations'), visible: canSeeLocations.value },
   { name: 'my-slots', label: t('room.tabs.mySlots'), visible: isPlayer.value },
   { name: 'admin', label: t('room.tabs.admin'), visible: isAdmin.value },
 ]);

@@ -53,6 +53,20 @@ export class UpdateRoomSettingsDto {
   @ArrayUnique()
   @IsInt({ each: true })
   slotLockPositions?: number[];
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(1000)
+  sphereOffset?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  visitorsSeeLocations?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  playersMarkFiller?: boolean;
 }
 
 export const LOCK_SOURCES = ['detected', 'admin'] as const;

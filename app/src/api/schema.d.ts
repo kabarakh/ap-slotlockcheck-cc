@@ -116,6 +116,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/spheres": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Locations_getSpheres"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rooms/{slug}/locations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Locations_getUserPage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rooms/{slug}/locations/admin": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Locations_getAdminPage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/room-setup/preview": {
         parameters: {
             query?: never;
@@ -453,6 +501,72 @@ export interface components {
             role: components["schemas"]["RoomRole"];
             isOwner: boolean;
         };
+        SphereRowDto: {
+            sphere: number;
+            open: number;
+            found: number;
+            total: number;
+        };
+        SphereItemTypesDto: {
+            sphere: number;
+            progression: number;
+            useful: number;
+            normal: number;
+            trap: number;
+        };
+        SphereOverviewDto: {
+            lowestOpenSphere: number | null;
+            spheres: components["schemas"]["SphereRowDto"][];
+            itemTypes: components["schemas"]["SphereItemTypesDto"][] | null;
+            visibleMaxSphere: number;
+            sphereCount: number;
+        };
+        /** @enum {string} */
+        LocationState: "open" | "found" | "filler";
+        /** @enum {string} */
+        LocationSlotScope: "all" | "mine" | "selected";
+        /** @enum {string} */
+        ItemType: "progression" | "useful" | "normal" | "trap";
+        /** @enum {string} */
+        LocationSortField: "sphere" | "finder" | "location" | "game" | "receiver" | "item";
+        /** @enum {string} */
+        SortOrder: "asc" | "desc";
+        LocationUserRowDto: {
+            discordName: string | null;
+            id: number;
+            sphere: number;
+            finderSlotId: number;
+            finderName: string;
+            game: string;
+            locationName: string;
+            fillerMarked: boolean;
+            canMarkFiller: boolean;
+        };
+        LocationUserPageDto: {
+            rows: components["schemas"]["LocationUserRowDto"][];
+            total: number;
+        };
+        LocationAdminRowDto: {
+            discordName: string | null;
+            itemType: components["schemas"]["ItemType"];
+            fillerMarkedByName: string | null;
+            /** Format: date-time */
+            fillerMarkedAt: string | null;
+            receiverName: string;
+            itemName: string;
+            id: number;
+            sphere: number;
+            finderSlotId: number;
+            finderName: string;
+            game: string;
+            locationName: string;
+            fillerMarked: boolean;
+            canMarkFiller: boolean;
+        };
+        LocationAdminPageDto: {
+            rows: components["schemas"]["LocationAdminRowDto"][];
+            total: number;
+        };
         RoomPreviewRequestDto: {
             cheeseTrackerId: string;
         };
@@ -492,6 +606,9 @@ export interface components {
             redLimitHours?: number;
             useCheeseLimits?: boolean;
             slotLockPositions?: number[];
+            sphereOffset?: number;
+            visitorsSeeLocations?: boolean;
+            playersMarkFiller?: boolean;
         };
         /** @enum {string} */
         LockSource: "detected" | "admin";
@@ -733,6 +850,95 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SyncStatusDto"];
+                };
+            };
+        };
+    };
+    Locations_getSpheres: {
+        parameters: {
+            query?: {
+                excludeGoaled?: boolean;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SphereOverviewDto"];
+                };
+            };
+        };
+    };
+    Locations_getUserPage: {
+        parameters: {
+            query: {
+                state: components["schemas"]["LocationState"];
+                slots?: components["schemas"]["LocationSlotScope"];
+                slotIds?: number[];
+                itemTypes?: components["schemas"]["ItemType"][];
+                sort?: components["schemas"]["LocationSortField"];
+                order?: components["schemas"]["SortOrder"];
+                fromSphere?: number;
+                toSphere?: number;
+                offset?: number;
+                limit?: number;
+                excludeGoaled?: boolean;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationUserPageDto"];
+                };
+            };
+        };
+    };
+    Locations_getAdminPage: {
+        parameters: {
+            query: {
+                state: components["schemas"]["LocationState"];
+                slots?: components["schemas"]["LocationSlotScope"];
+                slotIds?: number[];
+                itemTypes?: components["schemas"]["ItemType"][];
+                sort?: components["schemas"]["LocationSortField"];
+                order?: components["schemas"]["SortOrder"];
+                fromSphere?: number;
+                toSphere?: number;
+                offset?: number;
+                limit?: number;
+                excludeGoaled?: boolean;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocationAdminPageDto"];
                 };
             };
         };

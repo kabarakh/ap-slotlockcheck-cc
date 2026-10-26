@@ -12,6 +12,12 @@ export interface SettingsDraft {
   slotLockPositions: number[];
 }
 
+export interface SphereSettingsDraft {
+  sphereOffset: number;
+  visitorsSeeLocations: boolean;
+  playersMarkFiller: boolean;
+}
+
 export interface PlayerOption {
   discordId: string;
   name: string;
@@ -21,6 +27,11 @@ export const useAdminStore = defineStore('admin', () => {
   const admins = ref<RoomAdmin[]>([]);
   const lockAssignments = ref<LockAssignment[]>([]);
   const settingsDraft = ref<SettingsDraft>({ title: '', yellowLimitHours: 0, redLimitHours: 0, slotLockPositions: [] });
+  const sphereSettingsDraft = ref<SphereSettingsDraft>({
+    sphereOffset: 0,
+    visitorsSeeLocations: false,
+    playersMarkFiller: false,
+  });
   const newAdminDiscordId = ref<string | null>(null);
   const busy = ref(false);
 
@@ -82,8 +93,18 @@ export const useAdminStore = defineStore('admin', () => {
     };
   };
 
+  const resetSphereSettingsDraft = () => {
+    const room = useCurrentRoomStore().room;
+    sphereSettingsDraft.value = {
+      sphereOffset: room?.sphereOffset ?? 0,
+      visitorsSeeLocations: room?.visitorsSeeLocations ?? false,
+      playersMarkFiller: room?.playersMarkFiller ?? false,
+    };
+  };
+
   const load = async (): Promise<void> => {
     resetSettingsDraft();
+    resetSphereSettingsDraft();
     await run(async () => {
       const [adminList, assignments] = await Promise.all([
         unwrap(api.GET('/api/rooms/{slug}/admins', slugPath())),
@@ -108,6 +129,12 @@ export const useAdminStore = defineStore('admin', () => {
             },
           }),
         ),
+      'admin.settingsSaved',
+    );
+
+  const saveSphereSettings = () =>
+    run(
+      () => unwrap(api.PATCH('/api/rooms/{slug}/settings', { ...slugPath(), body: { ...sphereSettingsDraft.value } })),
       'admin.settingsSaved',
     );
 
@@ -170,14 +197,17 @@ export const useAdminStore = defineStore('admin', () => {
     admins,
     lockAssignments,
     settingsDraft,
+    sphereSettingsDraft,
     newAdminDiscordId,
     busy,
     playerOptions,
     isLocked,
     isOverridden,
     resetSettingsDraft,
+    resetSphereSettingsDraft,
     load,
     saveSettings,
+    saveSphereSettings,
     useCheeseLimits,
     addAdmin,
     removeAdmin,

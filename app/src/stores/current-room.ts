@@ -2,6 +2,7 @@ import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 import { api, ApiRequestError, unwrap } from '@/api/client';
 import type {
+  LocationsChangedPayload,
   RoomDetail,
   RoomMembership,
   RoomSyncedPayload,
@@ -11,7 +12,9 @@ import type {
 } from '@/api/types';
 import { useAuthStore } from './auth';
 import { useLiveStore } from './live';
+import { useLocationsStore } from './locations';
 import { useSeedStore } from './seed';
+import { useSphereOverviewStore } from './sphere-overview';
 import { useUiStore } from './ui';
 import { useWarningsStore } from './warnings';
 
@@ -25,6 +28,12 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
   const syncRequested = ref(false);
 
   const isAdmin = computed(() => membership.value.role === 'admin');
+  const isHelper = computed(() => membership.value.role === 'admin' || membership.value.role === 'helper');
+  const canSeeLocations = computed(
+    () =>
+      (room.value?.hasSeed ?? false) &&
+      (membership.value.role !== 'visitor' || room.value?.visitorsSeeLocations === true),
+  );
   const isPlayer = computed(() => membership.value.role !== 'visitor');
   const slotById = computed(() => new Map(slots.value.map((slot) => [slot.id, slot])));
   const sortedSlots = computed(() => [...slots.value].sort((a, b) => a.position - b.position));
@@ -99,6 +108,8 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     membership.value = { role: 'visitor', isOwner: false };
     useWarningsStore().clear();
     useSeedStore().clear();
+    useSphereOverviewStore().clear();
+    useLocationsStore().leave();
   };
 
   const applySynced = (payload: RoomSyncedPayload) => {
@@ -125,6 +136,16 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
       slots.value = payload.slots;
       void refreshWarnings();
     }
+  };
+
+  const applyLocationsChanged = async (payload: LocationsChangedPayload): Promise<void> => {
+    if (payload.slug !== slug.value) {
+      return;
+    }
+    if (useSphereOverviewStore().overview) {
+      await useSphereOverviewStore().fetch();
+    }
+    await useLocationsStore().refresh();
   };
 
   const requestSync = async (): Promise<void> => {
@@ -158,6 +179,8 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     notFound,
     syncRequested,
     isAdmin,
+    isHelper,
+    canSeeLocations,
     isPlayer,
     slotById,
     sortedSlots,
@@ -172,6 +195,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     applySynced,
     applySyncFailed,
     applyUpdated,
+    applyLocationsChanged,
     requestSync,
   };
 });

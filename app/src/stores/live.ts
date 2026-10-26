@@ -29,6 +29,7 @@ export const useLiveStore = defineStore('live', () => {
     socket.on(LIVE_MESSAGES.roomSynced, (payload) => useCurrentRoomStore().applySynced(payload));
     socket.on(LIVE_MESSAGES.roomSyncFailed, (payload) => useCurrentRoomStore().applySyncFailed(payload));
     socket.on(LIVE_MESSAGES.roomUpdated, (payload) => useCurrentRoomStore().applyUpdated(payload));
+    socket.on(LIVE_MESSAGES.locationsChanged, (payload) => void useCurrentRoomStore().applyLocationsChanged(payload));
     socket.connect();
   };
 

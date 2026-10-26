@@ -515,6 +515,8 @@ The implementation uses the solution in the column "Solution now". The developer
 | 13.2 | With "minimal accessibility", some locations are in no sphere. Where do they go? | Sphere = number of spheres (after the last sphere). The seed data shows the number of these locations. |
 | 13.3 | `Slot.position` must be the Archipelago player number (4.5.1). | Checked with the fixtures and with the multidata file of the Big Chill room (player numbers 1 to 116 in the order of the names). Not checked with the real Cheese tracker of the Big Chill room. |
 | 13.4 | A game without a checksum in the datapackage of the multidata file. | The server does not save its datapackage. The item names for "Send item" then come only from the locations of the seed. |
+| 13.5 | "Items for slots with reached goal count as filler" (F 2.3): in which filler type? | With the switch "Exclude slots with reached goal", a progression item for such a slot counts as "normal". Useful items and traps keep their type. |
+| 13.6 | Do the location filters stay for each room? | The filters stay in the browser for all rooms together, as the roster filters. |
 
 ## 14. Deviations during the implementation
 
@@ -523,3 +525,8 @@ The implementation uses the solution in the column "Solution now". The developer
 3. **`SeedData`:** new field `unreachableLocationCount` (13.2).
 4. **`SeedLocation`:** `receiverSlotId` is optional and `receiverName` is new (13.1).
 5. **Visitors:** a request of a visitor to an endpoint with `@RequireRoomRole` gives HTTP 403, as all other endpoints of the application.
+6. **Location list (5.6):** two endpoints instead of the parameter `view`: `GET /api/rooms/{slug}/locations` (user view) and `GET /api/rooms/{slug}/locations/admin` (helper). So each endpoint has exactly one row type in the OpenAPI document.
+7. **Slot filter (5.6.1):** `slots` has the values `all`, `mine` and `selected`. With `selected`, the parameter `slotIds` gives the slots.
+8. **Sphere overview (5.3):** the item types come in a separate list `itemTypes`. It is `null` for players and visitors.
+9. **Live message (7.2):** the live store gives the message to `currentRoom.applyLocationsChanged`, because only `currentRoom` receives socket data (main 16.4.3). This action loads the sphere overview and the current page again.
+10. **View switch (6.1.2):** the router gives `view=admin` to the store action `locations.enter`. The store opens the admin view only for helpers and admins.

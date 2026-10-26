@@ -82,6 +82,9 @@ export class AdminsService {
           yellowLimitHours: yellow,
           redLimitHours: red,
           limitsOverridden: settings.useCheeseLimits ? false : limitsChanged || room.limitsOverridden,
+          sphereOffset: settings.sphereOffset ?? room.sphereOffset,
+          visitorsSeeLocations: settings.visitorsSeeLocations ?? room.visitorsSeeLocations,
+          playersMarkFiller: settings.playersMarkFiller ?? room.playersMarkFiller,
         },
       });
       if (settings.slotLockPositions) {

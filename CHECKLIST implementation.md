@@ -118,6 +118,15 @@ Reference: `PLAN sphere checker implementation.md` (section numbers in brackets)
 - [x] `applyChecks` in the synchronization (7.1)
 - [x] Live message `room:locations-changed` without items (7.2)
 
+### Phase P3 – Views
+
+- [x] Sphere limit and sphere overview with tests (5.2, 5.3)
+- [x] Location lists with filters, paging and sort (5.6), user view and admin view as separate endpoints
+- [x] Routes, stores, components (6.1 to 6.3), header tabs only with seed data and access
+- [x] Settings `sphereOffset`, `visitorsSeeLocations`, `playersMarkFiller` (8)
+- [x] E2E tests: upload, sphere overview, locations, admin view, visitor setting
+- [x] Visual check in the browser (spheres, admin view of the locations, Seed tab)
+
 ## Open decisions for the developer
 
 See `PLAN slotlock.md`, section 23: production domain, responsibility on the proServer, GitHub repository, PrimeVue license, Node 26 or Node 24 LTS, comparison with the Google sheet.
@@ -133,3 +142,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-24 | Phase 8 files | ok | ok | – | `post-deploy.sh` syntax check only |
 | 2026-10-26 | Sphere checker P1 | ok | ok | 110 unit, 22 integration, 29 unit app, 13 e2e ok | Real multidata file of the Big Chill room checked with `seed:report` |
 | 2026-10-26 | Sphere checker P2 | ok | ok | 120 unit, 24 integration ok | |
+| 2026-10-26 | Sphere checker P3 | ok | ok | 132 unit, 34 integration, 36 unit app, 16 e2e ok | Visual check in the browser |

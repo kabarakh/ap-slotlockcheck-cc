@@ -183,6 +183,304 @@
         ]
       }
     },
+    "/api/rooms/{slug}/spheres": {
+      "get": {
+        "operationId": "Locations_getSpheres",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeGoaled",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SphereOverviewDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Locations"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/locations": {
+      "get": {
+        "operationId": "Locations_getUserPage",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LocationState"
+            }
+          },
+          {
+            "name": "slots",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LocationSlotScope"
+            }
+          },
+          {
+            "name": "slotIds",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 1000,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "name": "itemTypes",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ItemType"
+              }
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LocationSortField"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/SortOrder"
+            }
+          },
+          {
+            "name": "fromSphere",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "toSphere",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "excludeGoaled",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationUserPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Locations"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/locations/admin": {
+      "get": {
+        "operationId": "Locations_getAdminPage",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LocationState"
+            }
+          },
+          {
+            "name": "slots",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LocationSlotScope"
+            }
+          },
+          {
+            "name": "slotIds",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 1000,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          {
+            "name": "itemTypes",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ItemType"
+              }
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/LocationSortField"
+            }
+          },
+          {
+            "name": "order",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/SortOrder"
+            }
+          },
+          {
+            "name": "fromSphere",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "toSphere",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 200,
+              "type": "number"
+            }
+          },
+          {
+            "name": "excludeGoaled",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocationAdminPageDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Locations"
+        ]
+      }
+    },
     "/api/room-setup/preview": {
       "post": {
         "operationId": "RoomSetup_preview",
@@ -1316,6 +1614,285 @@
           "isOwner"
         ]
       },
+      "SphereRowDto": {
+        "type": "object",
+        "properties": {
+          "sphere": {
+            "type": "number"
+          },
+          "open": {
+            "type": "number"
+          },
+          "found": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "sphere",
+          "open",
+          "found",
+          "total"
+        ]
+      },
+      "SphereItemTypesDto": {
+        "type": "object",
+        "properties": {
+          "sphere": {
+            "type": "number"
+          },
+          "progression": {
+            "type": "number"
+          },
+          "useful": {
+            "type": "number"
+          },
+          "normal": {
+            "type": "number"
+          },
+          "trap": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "sphere",
+          "progression",
+          "useful",
+          "normal",
+          "trap"
+        ]
+      },
+      "SphereOverviewDto": {
+        "type": "object",
+        "properties": {
+          "lowestOpenSphere": {
+            "type": "number",
+            "nullable": true
+          },
+          "spheres": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SphereRowDto"
+            }
+          },
+          "itemTypes": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SphereItemTypesDto"
+            }
+          },
+          "visibleMaxSphere": {
+            "type": "number"
+          },
+          "sphereCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lowestOpenSphere",
+          "spheres",
+          "itemTypes",
+          "visibleMaxSphere",
+          "sphereCount"
+        ]
+      },
+      "LocationState": {
+        "type": "string",
+        "enum": [
+          "open",
+          "found",
+          "filler"
+        ]
+      },
+      "LocationSlotScope": {
+        "type": "string",
+        "enum": [
+          "all",
+          "mine",
+          "selected"
+        ]
+      },
+      "ItemType": {
+        "type": "string",
+        "enum": [
+          "progression",
+          "useful",
+          "normal",
+          "trap"
+        ]
+      },
+      "LocationSortField": {
+        "type": "string",
+        "enum": [
+          "sphere",
+          "finder",
+          "location",
+          "game",
+          "receiver",
+          "item"
+        ]
+      },
+      "SortOrder": {
+        "type": "string",
+        "enum": [
+          "asc",
+          "desc"
+        ]
+      },
+      "LocationUserRowDto": {
+        "type": "object",
+        "properties": {
+          "discordName": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "number"
+          },
+          "sphere": {
+            "type": "number"
+          },
+          "finderSlotId": {
+            "type": "number"
+          },
+          "finderName": {
+            "type": "string"
+          },
+          "game": {
+            "type": "string"
+          },
+          "locationName": {
+            "type": "string"
+          },
+          "fillerMarked": {
+            "type": "boolean"
+          },
+          "canMarkFiller": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "discordName",
+          "id",
+          "sphere",
+          "finderSlotId",
+          "finderName",
+          "game",
+          "locationName",
+          "fillerMarked",
+          "canMarkFiller"
+        ]
+      },
+      "LocationUserPageDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationUserRowDto"
+            }
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "rows",
+          "total"
+        ]
+      },
+      "LocationAdminRowDto": {
+        "type": "object",
+        "properties": {
+          "discordName": {
+            "type": "string",
+            "nullable": true
+          },
+          "itemType": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ItemType"
+              }
+            ]
+          },
+          "fillerMarkedByName": {
+            "type": "string",
+            "nullable": true
+          },
+          "fillerMarkedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "receiverName": {
+            "type": "string"
+          },
+          "itemName": {
+            "type": "string"
+          },
+          "id": {
+            "type": "number"
+          },
+          "sphere": {
+            "type": "number"
+          },
+          "finderSlotId": {
+            "type": "number"
+          },
+          "finderName": {
+            "type": "string"
+          },
+          "game": {
+            "type": "string"
+          },
+          "locationName": {
+            "type": "string"
+          },
+          "fillerMarked": {
+            "type": "boolean"
+          },
+          "canMarkFiller": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "discordName",
+          "itemType",
+          "fillerMarkedByName",
+          "fillerMarkedAt",
+          "receiverName",
+          "itemName",
+          "id",
+          "sphere",
+          "finderSlotId",
+          "finderName",
+          "game",
+          "locationName",
+          "fillerMarked",
+          "canMarkFiller"
+        ]
+      },
+      "LocationAdminPageDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationAdminRowDto"
+            }
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "rows",
+          "total"
+        ]
+      },
       "RoomPreviewRequestDto": {
         "type": "object",
         "properties": {
@@ -1485,6 +2062,17 @@
             "items": {
               "type": "number"
             }
+          },
+          "sphereOffset": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "visitorsSeeLocations": {
+            "type": "boolean"
+          },
+          "playersMarkFiller": {
+            "type": "boolean"
           }
         }
       },
