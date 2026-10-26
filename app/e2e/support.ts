@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import type { Page } from '@playwright/test';
 
 export const CHEESE_TRACKER_ID = 'AbCdEfGhIjKlMnOpQrStUv';
@@ -23,5 +25,29 @@ export async function ensureRoom(page: Page): Promise<void> {
   });
   if (!created.ok()) {
     throw new Error(`Room setup failed: ${created.status()} ${await created.text()}`);
+  }
+}
+
+export const multidataFixture = (name: 'big-chill' | 'other-room'): string =>
+  fileURLToPath(new URL(`../../server/test/fixtures/multidata-${name}.archipelago`, import.meta.url));
+
+export async function ensureSeed(page: Page): Promise<void> {
+  await ensureRoom(page);
+  const room = await page.request.get('/api/rooms/big-chill');
+  if (((await room.json()) as { hasSeed: boolean }).hasSeed) {
+    return;
+  }
+  await loginAs(page, OWNER);
+  const uploaded = await page.request.post('/api/rooms/big-chill/seed', {
+    multipart: {
+      file: {
+        name: 'AP_1.archipelago',
+        mimeType: 'application/octet-stream',
+        buffer: readFileSync(multidataFixture('big-chill')),
+      },
+    },
+  });
+  if (!uploaded.ok()) {
+    throw new Error(`Seed upload failed: ${uploaded.status()} ${await uploaded.text()}`);
   }
 }

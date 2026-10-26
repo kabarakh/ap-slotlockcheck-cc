@@ -100,6 +100,19 @@ Do these checks after each step. Use Node 26 (`nvm use`). Write the result into 
 - [-] Server preparation and first deployment: needs access to the proServer
 - [-] Parallel use with the Google sheet: needs a live room
 
+## Sphere checker
+
+Reference: `PLAN sphere checker implementation.md` (section numbers in brackets). Open questions and deviations: same file, sections 13 and 14.
+
+### Phase P1 – Seed data
+
+- [x] Restricted pickle decoder with tests (4.2, 4.7)
+- [x] Multidata reader, item type, fixtures from `server/scripts/make-multidata-fixture.py` (4.3, 4.4)
+- [x] Command `seed:report`, checked with the multidata file of the Big Chill room: 87,747 locations, 111 spheres, same numbers as Spheretracker
+- [x] Prisma migration `sphere_checker` (3)
+- [x] Upload with check against the room, only one upload for each room (4.5, 4.6), nginx limit
+- [x] Admin tab "Seed" with `SeedPanel`
+
 ## Open decisions for the developer
 
 See `PLAN slotlock.md`, section 23: production domain, responsibility on the proServer, GitHub repository, PrimeVue license, Node 26 or Node 24 LTS, comparison with the Google sheet.

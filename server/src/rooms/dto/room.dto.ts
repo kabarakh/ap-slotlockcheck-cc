@@ -33,9 +33,13 @@ export class RoomDetailDto extends RoomSummaryDto {
   limitsOverridden: boolean;
   unknownSlotNames: string[];
   manualSyncCooldownSeconds: number;
+  hasSeed: boolean;
+  sphereOffset: number;
+  visitorsSeeLocations: boolean;
+  playersMarkFiller: boolean;
 }
 
-export const ROOM_ROLES = ['visitor', 'player', 'admin'] as const;
+export const ROOM_ROLES = ['visitor', 'player', 'helper', 'admin'] as const;
 export type RoomRole = (typeof ROOM_ROLES)[number];
 
 export class RoomMembershipDto {

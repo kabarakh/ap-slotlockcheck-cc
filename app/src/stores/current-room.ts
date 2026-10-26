@@ -11,6 +11,7 @@ import type {
 } from '@/api/types';
 import { useAuthStore } from './auth';
 import { useLiveStore } from './live';
+import { useSeedStore } from './seed';
 import { useUiStore } from './ui';
 import { useWarningsStore } from './warnings';
 
@@ -97,6 +98,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     slots.value = [];
     membership.value = { role: 'visitor', isOwner: false };
     useWarningsStore().clear();
+    useSeedStore().clear();
   };
 
   const applySynced = (payload: RoomSyncedPayload) => {

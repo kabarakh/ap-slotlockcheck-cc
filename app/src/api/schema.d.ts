@@ -324,6 +324,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/seed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Seed_get"];
+        put?: never;
+        post: operations["Seed_upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -373,6 +389,10 @@ export interface components {
             limitsOverridden: boolean;
             unknownSlotNames: string[];
             manualSyncCooldownSeconds: number;
+            hasSeed: boolean;
+            sphereOffset: number;
+            visitorsSeeLocations: boolean;
+            playersMarkFiller: boolean;
         };
         /** @enum {string} */
         TrackerStatus: "disconnected" | "connected" | "ready" | "playing" | "goal_completed";
@@ -428,7 +448,7 @@ export interface components {
             unlocksSent: number;
         };
         /** @enum {string} */
-        RoomRole: "visitor" | "player" | "admin";
+        RoomRole: "visitor" | "player" | "helper" | "admin";
         RoomMembershipDto: {
             role: components["schemas"]["RoomRole"];
             isOwner: boolean;
@@ -521,6 +541,20 @@ export interface components {
         UnlockTimeImportResultDto: {
             updated: number;
             errors: string[];
+        };
+        SeedDataDto: {
+            /** Format: date-time */
+            uploadedAt: string;
+            seedName: string;
+            archipelagoVersion: string;
+            locationCount: number;
+            sphereCount: number;
+            unreachableLocationCount: number;
+            uploadedByName: string;
+        };
+        SeedUploadDto: {
+            /** Format: binary */
+            file: string;
         };
         ApiErrorDto: {
             details?: {
@@ -1060,6 +1094,52 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UnlockTimeImportResultDto"];
+                };
+            };
+        };
+    };
+    Seed_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedDataDto"];
+                };
+            };
+        };
+    };
+    Seed_upload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["SeedUploadDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeedDataDto"];
                 };
             };
         };

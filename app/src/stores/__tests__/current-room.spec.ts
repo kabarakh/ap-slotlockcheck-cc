@@ -21,6 +21,10 @@ const room: RoomDetail = {
   limitsOverridden: false,
   unknownSlotNames: [],
   manualSyncCooldownSeconds: 60,
+  hasSeed: false,
+  sphereOffset: 0,
+  visitorsSeeLocations: false,
+  playersMarkFiller: false,
 };
 
 describe('useCurrentRoomStore', () => {

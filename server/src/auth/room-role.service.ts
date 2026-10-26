@@ -4,7 +4,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import type { RoomMembershipDto, RoomRole } from '../rooms/dto/room.dto.js';
 import type { AuthUser } from './auth.types.js';
 
-const ROLE_RANK: Record<RoomRole, number> = { visitor: 0, player: 1, admin: 2 };
+const ROLE_RANK: Record<RoomRole, number> = { visitor: 0, player: 1, helper: 2, admin: 3 };
 
 @Injectable()
 export class RoomRoleService {
@@ -22,7 +22,7 @@ export class RoomRoleService {
       where: { roomId_userId: { roomId: room.id, userId: user.id } },
     });
     if (admin) {
-      return { role: 'admin', isOwner: admin.isOwner };
+      return { role: admin.role === 'helper' && !admin.isOwner ? 'helper' : 'admin', isOwner: admin.isOwner };
     }
     const slotCount = await this.prisma.slot.count({ where: { roomId: room.id, discordUserId: user.discordId } });
     return { role: slotCount > 0 ? 'player' : 'visitor', isOwner: false };

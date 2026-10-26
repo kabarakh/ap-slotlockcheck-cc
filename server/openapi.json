@@ -757,6 +757,74 @@
           "UnlockTimes"
         ]
       }
+    },
+    "/api/rooms/{slug}/seed": {
+      "get": {
+        "operationId": "Seed_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeedDataDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Seed"
+        ]
+      },
+      "post": {
+        "operationId": "Seed_upload",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/SeedUploadDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeedDataDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Seed"
+        ]
+      }
     }
   },
   "info": {
@@ -934,6 +1002,18 @@
           },
           "manualSyncCooldownSeconds": {
             "type": "number"
+          },
+          "hasSeed": {
+            "type": "boolean"
+          },
+          "sphereOffset": {
+            "type": "number"
+          },
+          "visitorsSeeLocations": {
+            "type": "boolean"
+          },
+          "playersMarkFiller": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -952,7 +1032,11 @@
           "redLimitHours",
           "limitsOverridden",
           "unknownSlotNames",
-          "manualSyncCooldownSeconds"
+          "manualSyncCooldownSeconds",
+          "hasSeed",
+          "sphereOffset",
+          "visitorsSeeLocations",
+          "playersMarkFiller"
         ]
       },
       "TrackerStatus": {
@@ -1209,6 +1293,7 @@
         "enum": [
           "visitor",
           "player",
+          "helper",
           "admin"
         ]
       },
@@ -1596,6 +1681,54 @@
         "required": [
           "updated",
           "errors"
+        ]
+      },
+      "SeedDataDto": {
+        "type": "object",
+        "properties": {
+          "uploadedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "seedName": {
+            "type": "string"
+          },
+          "archipelagoVersion": {
+            "type": "string"
+          },
+          "locationCount": {
+            "type": "number"
+          },
+          "sphereCount": {
+            "type": "number"
+          },
+          "unreachableLocationCount": {
+            "type": "number"
+          },
+          "uploadedByName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "uploadedAt",
+          "seedName",
+          "archipelagoVersion",
+          "locationCount",
+          "sphereCount",
+          "unreachableLocationCount",
+          "uploadedByName"
+        ]
+      },
+      "SeedUploadDto": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        },
+        "required": [
+          "file"
         ]
       },
       "ApiErrorDto": {

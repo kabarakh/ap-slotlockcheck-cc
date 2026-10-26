@@ -42,6 +42,16 @@ The browser calculates inactivity, player summaries and statistics from the rost
 
 The unlock tree shows which slot sent the unlock item of which slot. The SlotLock slot is the root. A slot that needed more than one unlock item is below the sender of the last item. Start slots are below the SlotLock slot. The browser builds the tree from the roster; `d3-hierarchy` calculates the layout.
 
+### Sphere checker
+
+The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sphere checker implementation.md`.
+
+- An admin uploads the multidata file (`AP_<seed>.archipelago`) one time for each room. It contains the item, the receiver and the sphere of each location. The server compares its players with the slots of the room before it saves data.
+- The multidata file is a compressed Python pickle. A pickle can run code when Python reads it. The server never runs code from the file: an own decoder accepts only simple values and four known Archipelago classes, and it stops at all other content.
+- The server keeps only the locations and the item names. It ignores the server options of the file, because they contain the passwords of the room.
+- Archipelago does not put locations that are not reachable into a sphere. The server puts them after the last sphere.
+- An item for an item link group has the group as receiver. The group is not a slot of the room.
+
 ### Vue components
 
 - **Functional components** get all data from Pinia stores and call store actions. They have no props, no emits, no provide and no inject.

@@ -10,6 +10,7 @@ import AdminListPanel from '@/components/admin/AdminListPanel.vue';
 import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel.vue';
 import InvitationPanel from '@/components/admin/InvitationPanel.vue';
 import LockAssignmentPanel from '@/components/admin/LockAssignmentPanel.vue';
+import SeedPanel from '@/components/admin/SeedPanel.vue';
 import UnlockTimesPanel from '@/components/admin/UnlockTimesPanel.vue';
 import WarningsPanel from '@/components/admin/WarningsPanel.vue';
 import { useAdminStore } from '@/stores/admin';
@@ -28,6 +29,7 @@ onMounted(() => admin.load());
       <Tab value="admins">{{ t('admin.tabs.admins') }}</Tab>
       <Tab value="warnings" data-testid="tab-warnings">{{ t('admin.tabs.warnings') }}</Tab>
       <Tab value="unlockTimes" data-testid="tab-unlock-times">{{ t('admin.tabs.unlockTimes') }}</Tab>
+      <Tab value="seed" data-testid="tab-seed">{{ t('admin.tabs.seed') }}</Tab>
     </TabList>
     <TabPanels>
       <TabPanel value="settings"><AdminSettingsPanel /></TabPanel>
@@ -38,6 +40,7 @@ onMounted(() => admin.load());
       </TabPanel>
       <TabPanel value="warnings"><WarningsPanel /></TabPanel>
       <TabPanel value="unlockTimes"><UnlockTimesPanel /></TabPanel>
+      <TabPanel value="seed"><SeedPanel /></TabPanel>
     </TabPanels>
   </Tabs>
 </template>

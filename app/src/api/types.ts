@@ -28,3 +28,4 @@ export type LiveMessageName = Schemas['LiveMessageName'];
 export type RoomSyncedPayload = Schemas['RoomSyncedPayloadDto'];
 export type RoomSyncFailedPayload = Schemas['RoomSyncFailedPayloadDto'];
 export type RoomUpdatedPayload = Schemas['RoomUpdatedPayloadDto'];
+export type SeedData = Schemas['SeedDataDto'];

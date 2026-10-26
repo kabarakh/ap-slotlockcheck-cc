@@ -12,6 +12,7 @@ export class RoomUpdatesService {
   async publish(slug: string): Promise<void> {
     const room = await this.rooms.findRoomBySlug(slug);
     const slots = await this.rooms.getRosterForRoom(room.id);
-    this.live.publishUpdated({ slug, room: this.rooms.toDetail(room, slots), slots });
+    const hasSeed = await this.rooms.hasSeed(room.id);
+    this.live.publishUpdated({ slug, room: this.rooms.toDetail(room, slots, hasSeed), slots });
   }
 }

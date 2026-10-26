@@ -19,7 +19,7 @@ import {
 import { RoomSourceService, type RoomSource } from './room-source.service.js';
 import { diffRoster } from './roster.diff.js';
 
-export type SyncTrigger = 'schedule' | 'manual' | 'create';
+export type SyncTrigger = 'schedule' | 'manual' | 'create' | 'seed';
 export type SyncOutcome = 'success' | 'failed' | 'skipped';
 
 type SlotIdByPosition = Map<number, number>;
@@ -59,7 +59,7 @@ export class SyncService {
       const after = await this.rooms.getRosterForRoom(roomId);
       this.live.publishSynced({
         slug: room.slug,
-        room: this.rooms.toDetail(updatedRoom, after),
+        room: this.rooms.toDetail(updatedRoom, after, await this.rooms.hasSeed(roomId)),
         ...diffRoster(before, after),
       });
       return 'success';

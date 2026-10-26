@@ -9,15 +9,17 @@ datasource db {
 }
 
 model User {
-  id          Int         @id @default(autoincrement())
-  discordId   String      @unique
+  id          Int            @id @default(autoincrement())
+  discordId   String         @unique
   name        String
-  username    String      @default("")
+  username    String         @default("")
   avatar      String?
   lastLoginAt DateTime?
-  createdAt   DateTime    @default(now())
+  createdAt   DateTime       @default(now())
   roomAdmins  RoomAdmin[]
   warnings    Warning[]
+  seedUploads SeedData[]
+  fillerMarks SeedLocation[]
 }
 
 model Room {
@@ -38,6 +40,9 @@ model Room {
   lastSuccessfulSyncAt DateTime?
   lastSyncError        String?
   unknownSlotNames     String            @default("[]")
+  sphereOffset         Int               @default(0)
+  visitorsSeeLocations Boolean           @default(false)
+  playersMarkFiller    Boolean           @default(false)
   slots                Slot[]
   admins               RoomAdmin[]
   lockAssignments      LockAssignment[]
@@ -46,12 +51,15 @@ model Room {
   syncRuns             SyncRun[]
   snapshots            SyncSnapshot[]
   invitations          AdminInvitation[]
+  seed                 SeedData?
+  seedLocations        SeedLocation[]
 }
 
 model RoomAdmin {
   roomId  Int
   userId  Int
   isOwner Boolean @default(false)
+  role    String  @default("admin")
   room    Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -89,6 +97,8 @@ model Slot {
   unlocksAsLocked     UnlockItem[]     @relation("UnlockLocked")
   unlocksAsSender     UnlockItem[]     @relation("UnlockSender")
   warnings            Warning[]
+  foundLocations      SeedLocation[]   @relation("LocationFinder")
+  receivedLocations   SeedLocation[]   @relation("LocationReceiver")
 
   @@unique([roomId, position])
 }
@@ -163,10 +173,11 @@ model SyncSnapshot {
 }
 
 model Datapackage {
-  checksum  String   @id
-  game      String
-  itemNames String
-  createdAt DateTime @default(now())
+  checksum      String   @id
+  game          String
+  itemNames     String
+  locationNames String?
+  createdAt     DateTime @default(now())
 }
 
 model AdminInvitation {
@@ -177,5 +188,46 @@ model AdminInvitation {
   createdByUserId Int
   usedByUserId    Int?
   usedAt          DateTime?
+  role            String    @default("admin")
   room            Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+model SeedData {
+  roomId                   Int      @id
+  seedName                 String
+  archipelagoVersion       String
+  locationCount            Int
+  sphereCount              Int
+  unreachableLocationCount Int
+  uploadedAt               DateTime @default(now())
+  uploadedByUserId         Int
+  room                     Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  uploadedBy               User     @relation(fields: [uploadedByUserId], references: [id])
+}
+
+model SeedLocation {
+  id                   Int       @id @default(autoincrement())
+  roomId               Int
+  finderSlotId         Int
+  receiverSlotId       Int?
+  receiverName         String
+  locationId           BigInt
+  locationName         String
+  itemId               BigInt
+  itemName             String
+  itemType             String
+  sphere               Int
+  checked              Boolean   @default(false)
+  checkedFirstSeenAt   DateTime?
+  fillerMarkedAt       DateTime?
+  fillerMarkedByUserId Int?
+  room                 Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  finderSlot           Slot      @relation("LocationFinder", fields: [finderSlotId], references: [id], onDelete: Cascade)
+  receiverSlot         Slot?     @relation("LocationReceiver", fields: [receiverSlotId], references: [id], onDelete: SetNull)
+  fillerMarkedBy       User?     @relation(fields: [fillerMarkedByUserId], references: [id], onDelete: SetNull)
+
+  @@unique([roomId, finderSlotId, locationId])
+  @@index([roomId, sphere])
+  @@index([roomId, checked, sphere])
+  @@index([roomId, finderSlotId])
 }

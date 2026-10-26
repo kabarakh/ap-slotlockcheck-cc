@@ -53,7 +53,11 @@ export class RoomsService {
 
   async getRoom(slug: string): Promise<RoomDetailDto> {
     const room = await this.findRoomBySlug(slug);
-    return this.toDetail(room, await this.getRosterForRoom(room.id));
+    return this.toDetail(room, await this.getRosterForRoom(room.id), await this.hasSeed(room.id));
+  }
+
+  async hasSeed(roomId: number): Promise<boolean> {
+    return (await this.prisma.seedData.count({ where: { roomId } })) > 0;
   }
 
   async getRoster(slug: string): Promise<SlotRowDto[]> {
@@ -97,7 +101,7 @@ export class RoomsService {
     };
   }
 
-  toDetail(room: Room, roster: SlotRowDto[]): RoomDetailDto {
+  toDetail(room: Room, roster: SlotRowDto[], hasSeed: boolean): RoomDetailDto {
     return {
       ...this.toSummary(room, roster),
       cheeseTrackerId: room.cheeseTrackerId,
@@ -108,6 +112,10 @@ export class RoomsService {
       limitsOverridden: room.limitsOverridden,
       unknownSlotNames: JSON.parse(room.unknownSlotNames) as string[],
       manualSyncCooldownSeconds: this.config.get('MANUAL_SYNC_COOLDOWN_SECONDS'),
+      hasSeed,
+      sphereOffset: room.sphereOffset,
+      visitorsSeeLocations: room.visitorsSeeLocations,
+      playersMarkFiller: room.playersMarkFiller,
     };
   }
 }

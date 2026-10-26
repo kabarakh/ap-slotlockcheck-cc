@@ -504,3 +504,22 @@ Each phase ends with the standard check of `CHECKLIST implementation.md`.
 4. **Passwords in memory:** a crash dump of the Node process can contain the passwords. The passwords are not on the disk.
 5. **Chat:** all players see the admin commands in the chat (F 7.1.6). This is accepted (F 8).
 6. **Wrong release:** a release cannot be undone. The confirmation dialog (9.6.5) shows the numbers before the run.
+
+## 13. Open questions from the implementation
+
+The implementation uses the solution in the column "Solution now". The developer can change it later.
+
+| No. | Question | Solution now |
+|---|---|---|
+| 13.1 | An item for an item link group has the group as receiver. The group is not a slot. How must the views show it? | `SeedLocation.receiverSlotId` is empty, `receiverName` is the name of the group. Filters by receiver do not find these items. |
+| 13.2 | With "minimal accessibility", some locations are in no sphere. Where do they go? | Sphere = number of spheres (after the last sphere). The seed data shows the number of these locations. |
+| 13.3 | `Slot.position` must be the Archipelago player number (4.5.1). | Checked with the fixtures and with the multidata file of the Big Chill room (player numbers 1 to 116 in the order of the names). Not checked with the real Cheese tracker of the Big Chill room. |
+| 13.4 | A game without a checksum in the datapackage of the multidata file. | The server does not save its datapackage. The item names for "Send item" then come only from the locations of the seed. |
+
+## 14. Deviations during the implementation
+
+1. **Prisma types:** location IDs and item IDs can be larger than 2^31. `SeedLocation.locationId` and `SeedLocation.itemId` are `BigInt`. The DTOs give them as numbers.
+2. **`@types/multer`:** not added. The controller uses a small own type for the uploaded file. `FileInterceptor` uses the memory storage of `multer` by default.
+3. **`SeedData`:** new field `unreachableLocationCount` (13.2).
+4. **`SeedLocation`:** `receiverSlotId` is optional and `receiverName` is new (13.1).
+5. **Visitors:** a request of a visitor to an endpoint with `@RequireRoomRole` gives HTTP 403, as all other endpoints of the application.

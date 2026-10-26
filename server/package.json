@@ -32,6 +32,8 @@
     "preopenapi:export": "nest build",
     "prototype:report": "node dist/prototype/prototype-report.main.js",
     "preprototype:report": "nest build",
+    "seed:report": "node dist/seed/seed-report.main.js",
+    "preseed:report": "nest build",
     "test:integration": "vitest run --config ./vitest.config.e2e.ts"
   },
   "dependencies": {

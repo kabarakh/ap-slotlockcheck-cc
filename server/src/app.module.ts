@@ -17,6 +17,7 @@ import { RoomsModule } from './rooms/rooms.module.js';
 import { SyncModule } from './sync/sync.module.js';
 import { UnlockTimesModule } from './unlock-times/unlock-times.module.js';
 import { WarningsModule } from './warnings/warnings.module.js';
+import { SeedModule } from './seed/seed.module.js';
 
 function staticAppModules(): DynamicModule[] {
   const appDistPath = process.env.APP_DIST_PATH ?? join(import.meta.dirname, '..', '..', 'app', 'dist');
@@ -39,6 +40,7 @@ function staticAppModules(): DynamicModule[] {
     WarningsModule,
     UnlockTimesModule,
     HealthModule,
+    SeedModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: ApiErrorFilter }],
 })
