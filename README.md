@@ -111,9 +111,9 @@ The app runs on `http://localhost:5173`. Vite sends `/api` and `/socket.io` to t
 
 ### Public test mode
 
-`npm run dev:public` starts the development environment so that it is reachable from the internet through `https://slotlock.example.com`.
+`npm run dev:public` starts the development environment so that it is reachable from the internet through the public domain, for example `https://slotlock.example.com`. Vite and `npm run cert:dev` take the domain from `PUBLIC_BASE_URL` in `server/.env.development`, so the domain is not in version control.
 
-1. Set `PUBLIC_BASE_URL` and `DISCORD_CALLBACK_URL` in `server/.env.development` to `https://slotlock.example.com` (without port). Set `ADDITIONAL_ORIGINS=http://localhost:5173,https://localhost:5173`, so that `localhost` also works.
+1. Set `PUBLIC_BASE_URL` and `DISCORD_CALLBACK_URL` in `server/.env.development` to the public domain, for example `https://slotlock.example.com` (without port). `example.com` is only a placeholder: Let's Encrypt does not issue certificates for it. Set `ADDITIONAL_ORIGINS=http://localhost:5173,https://localhost:5173`, so that `localhost` also works.
 2. Add the callback URL to the Discord application.
 3. Forward the external port 443 in the router to the internal port 5173 of this computer and allow the port 5173 in the firewall. If you use another external port, set `SLOTLOCK_PUBLIC_DEV_PORT` to it, so that the live reload of Vite uses the correct port.
 4. Stop the test mode and close the port after the test. The Vite development server is not made for the internet.

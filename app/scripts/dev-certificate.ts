@@ -3,10 +3,11 @@ import { join } from 'node:path';
 import acme from 'acme-client';
 
 import { remainingValidDays, startChallengeServer, type ChallengeTokens } from './acme-challenge.ts';
+import { publicDevHost } from './public-dev-host.ts';
 
 const RENEW_BEFORE_DAYS = 30;
 const certificateDirectory = join(import.meta.dirname, '..', '.certs');
-const domain = (process.env.SLOTLOCK_PUBLIC_DEV_HOSTS ?? 'slotlock.example.com').split(',')[0]?.trim() ?? '';
+const domain = publicDevHost();
 const port = Number(process.env.ACME_HTTP_PORT ?? 80);
 const email = process.env.ACME_EMAIL;
 const useStaging = process.argv.includes('--staging');

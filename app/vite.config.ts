@@ -6,11 +6,10 @@ import basicSsl from '@vitejs/plugin-basic-ssl';
 import vueDevTools from 'vite-plugin-vue-devtools';
 import json5 from 'vite-plugin-json5';
 
+import { publicDevHost } from './scripts/public-dev-host.ts';
+
 const serverUrl = process.env.SLOTLOCK_SERVER_URL ?? 'http://localhost:3000';
-const publicHosts = (process.env.SLOTLOCK_PUBLIC_DEV_HOSTS ?? '')
-  .split(',')
-  .map((host) => host.trim())
-  .filter((host) => host.length > 0);
+const publicHosts = process.env.SLOTLOCK_PUBLIC_DEV === 'true' ? [publicDevHost()] : [];
 const isPublicDev = publicHosts.length > 0;
 const publicPort = Number(process.env.SLOTLOCK_PUBLIC_DEV_PORT ?? 443);
 
