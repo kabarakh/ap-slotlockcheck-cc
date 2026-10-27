@@ -157,6 +157,7 @@ Husky runs lint and type check before each commit, and the audit and the tests b
 - Unit tests check the lock logic, the estimation of unlock times, the mapping of the source data, the CSV import and the store getters.
 - Integration tests start the full NestJS application with a temporary SQLite database and fixture data.
 - Playwright tests start the built server with a mock server for Cheese and Archipelago. A test login replaces Discord. The test login exists only with `NODE_ENV=test`.
+- `server/test/e2e-server.ts` imports the built server through a calculated path. The type check runs before the build, so `server/dist/main.js` does not exist yet, and a static import fails the type check.
 - The fixtures follow the source code of Cheese Tracker and Archipelago. They are not copies of real responses.
 
 ## Tool settings

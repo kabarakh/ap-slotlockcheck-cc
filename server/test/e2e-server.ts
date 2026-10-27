@@ -1,6 +1,7 @@
 import { mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 import { applyMigrations } from './support/migrations.ts';
 import { startMockSources } from './support/mock-sources.ts';
@@ -27,4 +28,5 @@ Object.assign(process.env, {
   APP_DIST_PATH: join(import.meta.dirname, '..', '..', 'app', 'dist'),
 });
 
-await import('../dist/main.js');
+const builtServerEntry = pathToFileURL(join(import.meta.dirname, '..', 'dist', 'main.js')).href;
+await import(builtServerEntry);

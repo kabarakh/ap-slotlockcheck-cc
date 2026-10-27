@@ -8,8 +8,8 @@ describe('allowedOrigins', () => {
   });
 
   it('adds the additional origins', () => {
-    expect(
-      allowedOrigins('http://slotlock.example.com:5173', 'http://localhost:5173, http://127.0.0.1:5173/'),
-    ).toEqual(new Set(['http://slotlock.example.com:5173', 'http://localhost:5173', 'http://127.0.0.1:5173']));
+    expect(allowedOrigins('http://slotlock.example.com:5173', 'http://localhost:5173, http://127.0.0.1:5173/')).toEqual(
+      new Set(['http://slotlock.example.com:5173', 'http://localhost:5173', 'http://127.0.0.1:5173']),
+    );
   });
 });
