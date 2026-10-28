@@ -1,9 +1,9 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
+import { useUiStore } from './ui';
 import { api, unwrap } from '@/api/client';
 import type { RoomListEntry } from '@/api/types';
-import { useUiStore } from './ui';
 
 export const useRoomsStore = defineStore('rooms', () => {
   const rooms = ref<RoomListEntry[]>([]);

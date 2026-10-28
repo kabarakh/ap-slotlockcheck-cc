@@ -1,8 +1,8 @@
-import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-import { createLiveSocket, LIVE_MESSAGES, type LiveSocket } from '@/api/socket';
 import { useCurrentRoomStore } from './current-room';
+import { createLiveSocket, LIVE_MESSAGES, type LiveSocket } from '@/api/socket';
 
 export const useLiveStore = defineStore('live', () => {
   const isConnected = ref(false);

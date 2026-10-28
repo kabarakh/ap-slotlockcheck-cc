@@ -1,5 +1,5 @@
-import { createHash, randomBytes } from 'node:crypto';
 import { GoneException, Injectable, NotFoundException } from '@nestjs/common';
+import { createHash, randomBytes } from 'node:crypto';
 
 import type { AuthUser } from '../auth/auth.types.js';
 import { AppConfigService } from '../config/app-config.service.js';

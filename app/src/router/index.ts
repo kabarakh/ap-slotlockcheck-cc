@@ -2,8 +2,8 @@ import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vu
 
 import RoomListView from '@/views/RoomListView.vue';
 
-import { useAuthStore } from '@/stores/auth';
 import type { LocationState } from '@/api/types';
+import { useAuthStore } from '@/stores/auth';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLocationsStore, type LocationView } from '@/stores/locations';
 

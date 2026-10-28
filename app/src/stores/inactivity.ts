@@ -1,9 +1,9 @@
-import { computed } from 'vue';
-import { defineStore } from 'pinia';
 import { useIntervalFn, useNow } from '@vueuse/core';
+import { defineStore } from 'pinia';
+import { computed } from 'vue';
 
-import { inactivityHours, inactivityLevel, type InactivityLevel } from '@/domain/inactivity';
 import { useCurrentRoomStore } from './current-room';
+import { inactivityHours, inactivityLevel, type InactivityLevel } from '@/domain/inactivity';
 
 const MINUTE_MS = 60_000;
 

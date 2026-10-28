@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  HUSKY: 0
+  VP_GIT_HOOKS: 0
   CHECKPOINT_DISABLE: 1
 
 jobs:

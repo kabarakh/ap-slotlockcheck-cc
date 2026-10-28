@@ -1,5 +1,5 @@
-import process from 'node:process';
 import { defineConfig, devices } from '@playwright/test';
+import process from 'node:process';
 
 const BASE_URL = 'http://localhost:4173';
 

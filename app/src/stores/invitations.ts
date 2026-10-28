@@ -1,10 +1,10 @@
-import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-import { api, unwrap } from '@/api/client';
-import type { AdminRole } from '@/api/types';
 import { useCurrentRoomStore } from './current-room';
 import { useUiStore } from './ui';
+import { api, unwrap } from '@/api/client';
+import type { AdminRole } from '@/api/types';
 
 export type InvitationState = 'idle' | 'accepting' | 'accepted' | 'failed';
 

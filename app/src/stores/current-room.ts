@@ -1,6 +1,14 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
+import { useAuthStore } from './auth';
+import { useLiveStore } from './live';
+import { useLocationsStore } from './locations';
+import { useSeedStore } from './seed';
+import { useServerAdminStore } from './server-admin';
+import { useSphereOverviewStore } from './sphere-overview';
+import { useUiStore } from './ui';
+import { useWarningsStore } from './warnings';
 import { api, ApiRequestError, unwrap } from '@/api/client';
 import type {
   LocationsChangedPayload,
@@ -12,14 +20,6 @@ import type {
   SlotRow,
 } from '@/api/types';
 import { hasAllChecks, isGoaled } from '@/domain/summary';
-import { useAuthStore } from './auth';
-import { useLiveStore } from './live';
-import { useLocationsStore } from './locations';
-import { useSeedStore } from './seed';
-import { useServerAdminStore } from './server-admin';
-import { useSphereOverviewStore } from './sphere-overview';
-import { useUiStore } from './ui';
-import { useWarningsStore } from './warnings';
 
 export const useCurrentRoomStore = defineStore('currentRoom', () => {
   const slug = ref<string | null>(null);

@@ -10,7 +10,7 @@ previous_release="$(readlink -f "$app_root/current" 2>/dev/null || true)"
 
 export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 source "$NVM_DIR/nvm.sh"
-export HUSKY=0 CHECKPOINT_DISABLE=1 NODE_ENV=production SLOTLOCK_ROOT="$app_root"
+export VP_GIT_HOOKS=0 CHECKPOINT_DISABLE=1 NODE_ENV=production SLOTLOCK_ROOT="$app_root"
 
 cd "$release_dir"
 nvm install

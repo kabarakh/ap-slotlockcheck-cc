@@ -1,7 +1,7 @@
-import { randomBytes } from 'node:crypto';
 import { BadRequestException, Controller, Get, HttpCode, Post, Query, Req, Res } from '@nestjs/common';
 import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
+import { randomBytes } from 'node:crypto';
 
 import { AppConfigService } from '../config/app-config.service.js';
 import { CurrentUser } from './auth.decorators.js';

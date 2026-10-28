@@ -1,11 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
-import type { ServerJob } from '@/api/types';
-import { slotRow } from '@/domain/__tests__/fixtures';
 import { useCurrentRoomStore } from '../current-room';
 import { JOB_POLL_MILLISECONDS, useServerAdminStore } from '../server-admin';
 import { useUiStore } from '../ui';
+import type { ServerJob } from '@/api/types';
+import { slotRow } from '@/domain/__tests__/fixtures';
 
 type Call = (path: string, options?: unknown) => Promise<unknown>;
 

@@ -2100,6 +2100,13 @@
           "syncStatus"
         ]
       },
+      "GoalTimeSource": {
+        "type": "string",
+        "enum": [
+          "sync",
+          "estimated"
+        ]
+      },
       "TrackerStatus": {
         "type": "string",
         "enum": [
@@ -2233,6 +2240,19 @@
             "nullable": true,
             "format": "date-time"
           },
+          "goalTime": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "goalTimeSource": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GoalTimeSource"
+              }
+            ]
+          },
           "trackerStatus": {
             "allOf": [
               {
@@ -2328,6 +2348,8 @@
           "discordName",
           "lastActivity",
           "lastChecked",
+          "goalTime",
+          "goalTimeSource",
           "trackerStatus",
           "progressionStatus",
           "completionStatus",

@@ -87,7 +87,7 @@ The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sp
 - **Presentational components** (`app/src/components/ui`) get props only. They do not use stores and send no events.
 - Only store actions send HTTP requests or use the socket.
 - A functional component that uses a presentational component with other content fills a slot of it (for example the sphere column of `SphereOverviewTable` or the inactivity column of `SlotTable`).
-- The imports are in four groups with an empty line between them: libraries, PrimeVue, own components, own code (stores, domain, API). ESLint (`perfectionist/sort-imports`) checks and corrects the groups. The server has two groups: libraries and own code.
+- The imports are in four groups with an empty line between them: libraries, PrimeVue, own components, own code (stores, domain, API). Inside a group the imports are in alphabetical order. Oxfmt (`fmt.sortImports` in `vite.config.ts`) checks and corrects the order. The server has two groups: libraries and own code.
 
 ## Development
 
@@ -140,7 +140,8 @@ The production server uses its own Let's Encrypt certificate through nginx (see 
 | `npm run cert:dev` | Gets a Let's Encrypt certificate for the public test mode |
 | `npm run icons` | Makes `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png` and `logo-512.png` from `app/public/favicon.svg` and `app/public/logo.svg` |
 | `npm run build` | Server build, OpenAPI export, type generation, app build |
-| `npm run lint` / `npm run lint:check` | Lint with fixes / without changes |
+| `npm run lint` / `npm run lint:check` | Lint and format with fixes / check without changes (`vp check`) |
+| `npm run format` | Format only (`vp fmt`) |
 | `npm run typecheck` | Type check of both workspaces |
 | `npm test` | Unit and integration tests of both workspaces |
 | `npm run test:e2e` | Playwright tests against the built server with mocked Cheese and Archipelago data |
@@ -148,9 +149,17 @@ The production server uses its own Let's Encrypt certificate through nginx (see 
 | `npm run audit:check` | Security audit of the production packages |
 | `npm run prototype:report -w server -- <trackerId>` | Prints the roster and the player summary of a real Cheese tracker |
 
+### Tooling
+
+The project uses [Vite+](https://viteplus.dev/) (`vp`). Vite+ contains Vite, Vitest, Oxlint and Oxfmt. The lint and format configuration for both workspaces is in the `vite.config.ts` of the root. Oxlint uses different rules for `app/**` and `server/**` through `overrides`, because Vite+ ignores the configuration files in the subfolders.
+
+- Oxlint cannot read Vue templates. The template rules of `eslint-plugin-vue` are not checked. `vue-tsc` and the Vue compiler find most template errors. A missing `:key` at `v-for` is not found.
+- The type check stays with `tsc` (server) and `vue-tsc` (app). `vp check` does not check types.
+- The Playwright rules come from `eslint-plugin-playwright` through the JS plugins of Oxlint.
+
 ### Git hooks
 
-Husky runs lint and type check before each commit, and the audit and the tests before each push.
+Vite+ runs the hooks in `.vite-hooks` (`npm install` sets them up through `vp config`): lint and type check before each commit, and the audit and the tests before each push. `VP_GIT_HOOKS=0` switches them off.
 
 ### Tests
 

@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 import { useCurrentRoomStore } from '../current-room';
 import { useSphereCleanupStore } from '../sphere-cleanup';

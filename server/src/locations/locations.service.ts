@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import type { RoomMembershipDto } from '../rooms/dto/room.dto.js';
 import { RoomsService } from '../rooms/rooms.service.js';
 import type { ItemType } from '../seed/item-type.js';
+import { cleanupEntries } from './cleanup.logic.js';
 import type {
   LocationAdminPageDto,
   LocationAdminRowDto,
@@ -18,11 +19,10 @@ import type {
   SphereCleanupQueryDto,
   SphereOverviewDto,
 } from './dto/location.dto.js';
-import { cleanupEntries } from './cleanup.logic.js';
 import { canMarkFiller, canRemoveFillerMark } from './filler-permission.logic.js';
 import { isGoaled } from './goal.logic.js';
-import { LocationStatusService } from './location-status.service.js';
 import { locationOrderBy, locationWhere } from './location-query.js';
+import { LocationStatusService } from './location-status.service.js';
 import { summarizeSpheres, visibleMaxSphere } from './sphere.logic.js';
 
 const DEFAULT_PAGE_SIZE = 50;

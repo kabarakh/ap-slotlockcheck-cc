@@ -1,6 +1,6 @@
+import type { Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import type { Page } from '@playwright/test';
 
 export const CHEESE_TRACKER_ID = 'AbCdEfGhIjKlMnOpQrStUv';
 

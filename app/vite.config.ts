@@ -1,10 +1,10 @@
+import basicSsl from '@vitejs/plugin-basic-ssl';
+import vue from '@vitejs/plugin-vue';
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig, type PluginOption } from 'vite';
-import vue from '@vitejs/plugin-vue';
-import basicSsl from '@vitejs/plugin-basic-ssl';
-import vueDevTools from 'vite-plugin-vue-devtools';
 import json5 from 'vite-plugin-json5';
+import vueDevTools from 'vite-plugin-vue-devtools';
+import { defineConfig, type PluginOption } from 'vite-plus';
 
 import { publicDevHost } from './scripts/public-dev-host.ts';
 

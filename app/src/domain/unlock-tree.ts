@@ -1,5 +1,5 @@
-import type { LockStatus, SlotLock, SlotRow } from '@/api/types';
 import { isGoaled } from './summary';
+import type { LockStatus, SlotLock, SlotRow } from '@/api/types';
 
 export type UnlockTreeNodeKind = 'slotlock' | 'start' | 'unlocked' | 'partial';
 

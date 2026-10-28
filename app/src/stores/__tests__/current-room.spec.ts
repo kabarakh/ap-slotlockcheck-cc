@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it } from 'vite-plus/test';
 
+import { useCurrentRoomStore } from '../current-room';
 import type { RoomDetail } from '@/api/types';
 import { roomDetail, slotRow } from '@/domain/__tests__/fixtures';
-import { useCurrentRoomStore } from '../current-room';
 
 const room: RoomDetail = roomDetail();
 

@@ -1,10 +1,10 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-import { api, unwrap } from '@/api/client';
-import type { ReleaseMode, ReleasePreview, ServerAdminStatus, ServerJob } from '@/api/types';
 import { useCurrentRoomStore } from './current-room';
 import { useUiStore } from './ui';
+import { api, unwrap } from '@/api/client';
+import type { ReleaseMode, ReleasePreview, ServerAdminStatus, ServerJob } from '@/api/types';
 
 export const JOB_POLL_MILLISECONDS = 1000;
 

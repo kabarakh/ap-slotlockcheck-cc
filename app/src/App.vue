@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, watchEffect } from 'vue';
-import { storeToRefs } from 'pinia';
 import { useTitle } from '@vueuse/core';
-import { RouterView } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { computed, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { RouterView } from 'vue-router';
 
 import AppHeader from '@/components/layout/AppHeader.vue';
 import AppMessages from '@/components/layout/AppMessages.vue';

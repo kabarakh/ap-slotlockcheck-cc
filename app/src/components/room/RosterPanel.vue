@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue';
 import { storeToRefs } from 'pinia';
+import { computed, ref, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import Menu from 'primevue/menu';
-import MultiSelect from 'primevue/multiselect';
 import type { MenuItem } from 'primevue/menuitem';
+import MultiSelect from 'primevue/multiselect';
 
 import WarningDialog from '@/components/admin/WarningDialog.vue';
 import InactivityText from '@/components/ui/InactivityText.vue';
@@ -20,8 +20,8 @@ import { useCurrentRoomStore } from '@/stores/current-room';
 import { useInactivityStore } from '@/stores/inactivity';
 import { useInactivityReminderStore } from '@/stores/inactivity-reminder';
 import { useStatisticsStore } from '@/stores/statistics';
-import { useWarningsStore } from '@/stores/warnings';
 import { useTableFiltersStore } from '@/stores/table-filters';
+import { useWarningsStore } from '@/stores/warnings';
 
 const filters = useTableFiltersStore();
 const { roster, filteredRoster } = storeToRefs(filters);

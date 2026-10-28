@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
+import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import Button from 'primevue/button';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 
-import DateTimeText from '@/components/ui/DateTimeText.vue';
 import WarningDialog from './WarningDialog.vue';
+import DateTimeText from '@/components/ui/DateTimeText.vue';
 
 import type { Warning } from '@/api/types';
 import { useWarningsStore } from '@/stores/warnings';

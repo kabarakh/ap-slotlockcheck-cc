@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import { generateKeyPairSync } from 'node:crypto';
 import type { AddressInfo } from 'node:net';
+import { describe, expect, it } from 'vite-plus/test';
 
 import { remainingValidDays, startChallengeServer } from './acme-challenge';
 

@@ -82,6 +82,8 @@ model Slot {
   checksTotal         Int
   lastActivity        DateTime?
   lastChecked         DateTime?
+  goalTime            DateTime?
+  goalTimeSource      String?
   trackerStatus       String
   progressionStatus   String
   completionStatus    String

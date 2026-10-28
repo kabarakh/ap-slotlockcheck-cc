@@ -1,7 +1,7 @@
-import { writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { NestFactory } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const EXPORT_ENVIRONMENT: Record<string, string> = {
   NODE_ENV: 'development',

@@ -1,6 +1,9 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
+import { useCurrentRoomStore } from './current-room';
+import { useSphereOverviewStore } from './sphere-overview';
+import { useUiStore } from './ui';
 import { api, unwrap } from '@/api/client';
 import type {
   ItemType,
@@ -11,9 +14,6 @@ import type {
   LocationUserRow,
   SortOrder,
 } from '@/api/types';
-import { useCurrentRoomStore } from './current-room';
-import { useSphereOverviewStore } from './sphere-overview';
-import { useUiStore } from './ui';
 
 export type LocationView = 'user' | 'admin';
 
