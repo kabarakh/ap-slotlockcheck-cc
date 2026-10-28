@@ -28,6 +28,9 @@
     unlocks: 'Unlocks:',
     checks: 'Checks:',
     progressValue: '{done}/{total} ({percentage} %)',
+    showArchived: 'Archivierte Räume zeigen',
+    archived: 'Archiviert',
+    archivedAt: 'Archiviert:',
   },
   roomSetup: {
     title: 'Neuer Raum',
@@ -75,6 +78,7 @@
     unknownSlotNames: 'Zu diesen Unlock-Items gibt es keinen Slot: {names}',
     notFound: 'Diesen Raum gibt es nicht.',
     slotsWithoutDiscord: '{count} Slots haben in Cheese keinen Discord-Benutzer: {names}. Diese Slots fehlen bei "Meine Slots" und in der Spieler-Übersicht eines Spielers.',
+    archived: 'Archiviert:',
   },
   slot: {
     empty: 'Kein Slot passt zu den Filtern.',
@@ -220,6 +224,7 @@
     useCheeseLimits: 'Wieder die Cheese-Grenzen nutzen',
     slotLockSlots: 'SlotLock-Slots',
     slotLockSlotsHint: 'Eine Änderung gilt ab der nächsten Synchronisierung.',
+    autoArchive: 'Den Raum automatisch archivieren, wenn alle Slots fertig sind. SlotLock-Slots zählen nicht.',
     settingsSaved: 'Die Einstellungen sind gespeichert.',
   },
   locks: {
@@ -499,6 +504,21 @@
       errors: 'Antworten des Servers:',
     },
   },
+  archive: {
+    title: 'Archiv',
+    intro: 'Ein archivierter Raum wird nicht synchronisiert. Alle Daten bleiben sichtbar. Du kannst den Raum wieder öffnen.',
+    autoOn: 'Der Raum kommt automatisch ins Archiv, wenn alle Slots fertig sind.',
+    autoOff: 'Das automatische Archivieren ist aus. Schalte es in den Einstellungen ein.',
+    archive: 'Raum archivieren',
+    confirm: 'Den Raum jetzt archivieren? Die Synchronisierung stoppt.',
+    archivedAt: 'Archiviert:',
+    reasons: { manual: 'von einem Admin', auto: 'automatisch, alle Slots sind fertig' },
+    reopen: 'Raum wieder öffnen',
+    reopenHint: 'Beim Öffnen startet die Synchronisierung sofort wieder.',
+    reopenAutoHint: 'Beim Öffnen startet die Synchronisierung sofort wieder und das automatische Archivieren wird ausgeschaltet. Du kannst es in den Einstellungen wieder einschalten.',
+    archived: 'Der Raum ist archiviert.',
+    reopened: 'Der Raum ist wieder offen.',
+  },
   ownership: {
     transferTitle: 'Raum übertragen',
     transferIntro: 'Gib den Raum an einen anderen Admin oder Spieler. Der neue Eigentümer bekommt alle Admin-Rechte. Wenn sich der Owner des Cheese Trackers ändert, macht die Synchronisierung den neuen Cheese-Owner ebenfalls zum Eigentümer des Raums.',
@@ -534,6 +554,8 @@
   notFound: { title: 'Diese Seite gibt es nicht.' },
   errors: {
     OWNER_REQUIRED: 'Nur der Eigentümer des Raums kann das.',
+    ROOM_ARCHIVED: 'Der Raum ist archiviert. Öffne den Raum zuerst wieder.',
+    ROOM_NOT_ARCHIVED: 'Der Raum ist nicht archiviert.',
     OWNER_CANNOT_LEAVE: 'Der Eigentümer kann den Raum nicht verlassen. Übertrage den Raum zuerst.',
     ALREADY_OWNER: 'Du bist schon der Eigentümer.',
     ROOM_TITLE_MISMATCH: 'Der Titel stimmt nicht mit dem Titel des Raums überein.',

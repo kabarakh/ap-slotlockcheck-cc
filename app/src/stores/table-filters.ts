@@ -48,6 +48,7 @@ export const useTableFiltersStore = defineStore(
     const mySlots = ref<SlotFilter>({ ...emptySlotFilter(), hideSlotLockSlots: false });
     const playerText = ref('');
     const roomText = ref('');
+    const showArchivedRooms = ref(false);
 
     const applySlotFilter = (slots: SlotRow[], filter: SlotFilter): SlotRow[] => {
       const levels = useInactivityStore().levelBySlotId;
@@ -80,6 +81,7 @@ export const useTableFiltersStore = defineStore(
       mySlots,
       playerText,
       roomText,
+      showArchivedRooms,
       filteredRoster,
       filteredMySlots,
       filteredPlayers,
@@ -87,5 +89,5 @@ export const useTableFiltersStore = defineStore(
       resetMySlotsFilter,
     };
   },
-  { persist: { pick: ['roster', 'mySlots'] } },
+  { persist: { pick: ['roster', 'mySlots', 'showArchivedRooms'] } },
 );

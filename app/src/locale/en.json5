@@ -28,6 +28,9 @@
     unlocks: 'Unlocks:',
     checks: 'Checks:',
     progressValue: '{done}/{total} ({percentage} %)',
+    showArchived: 'Show archived rooms',
+    archived: 'Archived',
+    archivedAt: 'Archived:',
   },
   roomSetup: {
     title: 'New room',
@@ -75,6 +78,7 @@
     unknownSlotNames: 'These unlock items have no matching slot: {names}',
     notFound: 'This room does not exist.',
     slotsWithoutDiscord: '{count} slots have no Discord user in Cheese: {names}. These slots are not in "My slots" and not in the player summary of a player.',
+    archived: 'Archived:',
   },
   slot: {
     empty: 'No slots agree with the filters.',
@@ -214,6 +218,7 @@
     useCheeseLimits: 'Use the Cheese limits again',
     slotLockSlots: 'SlotLock slots',
     slotLockSlotsHint: 'A change applies after the next synchronization.',
+    autoArchive: 'Archive the room automatically when all slots are finished. SlotLock slots do not count.',
     settingsSaved: 'The settings are saved.',
   },
   locks: {
@@ -493,6 +498,21 @@
       errors: 'Answers of the server:',
     },
   },
+  archive: {
+    title: 'Archive',
+    intro: 'An archived room is not synchronized. All data stays visible. You can reopen the room.',
+    autoOn: 'The room goes into the archive automatically when all slots are finished.',
+    autoOff: 'The automatic archive is off. Switch it on in the settings.',
+    archive: 'Archive room',
+    confirm: 'Archive the room now? The synchronization stops.',
+    archivedAt: 'Archived:',
+    reasons: { manual: 'by an admin', auto: 'automatically, all slots are finished' },
+    reopen: 'Reopen room',
+    reopenHint: 'Reopen starts the synchronization again at once.',
+    reopenAutoHint: 'Reopen starts the synchronization again at once and switches the automatic archive off. You can switch it on again in the settings.',
+    archived: 'The room is archived.',
+    reopened: 'The room is open again.',
+  },
   ownership: {
     transferTitle: 'Transfer the room',
     transferIntro: 'Give the room to another admin or player. The new owner gets all admin rights. When the owner of the Cheese Tracker changes, the synchronization also makes the new Cheese owner the owner of the room.',
@@ -528,6 +548,8 @@
   notFound: { title: 'This page does not exist.' },
   errors: {
     OWNER_REQUIRED: 'Only the owner of the room can do this.',
+    ROOM_ARCHIVED: 'The room is archived. Reopen the room first.',
+    ROOM_NOT_ARCHIVED: 'The room is not archived.',
     OWNER_CANNOT_LEAVE: 'The owner cannot leave the room. Transfer the room first.',
     ALREADY_OWNER: 'You are the owner already.',
     ROOM_TITLE_MISMATCH: 'The title does not agree with the title of the room.',

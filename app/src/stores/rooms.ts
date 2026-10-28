@@ -9,7 +9,11 @@ export const useRoomsStore = defineStore('rooms', () => {
   const rooms = ref<RoomListEntry[]>([]);
   const loading = ref(false);
 
-  const sortedRooms = computed(() => [...rooms.value].sort((a, b) => a.title.localeCompare(b.title)));
+  const sortedRooms = computed(() =>
+    [...rooms.value].sort(
+      (a, b) => Number(a.archivedAt !== null) - Number(b.archivedAt !== null) || a.title.localeCompare(b.title),
+    ),
+  );
 
   const fetchRooms = async (): Promise<void> => {
     loading.value = true;

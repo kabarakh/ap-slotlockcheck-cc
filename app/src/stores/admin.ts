@@ -11,6 +11,7 @@ export interface SettingsDraft {
   yellowLimitHours: number;
   redLimitHours: number;
   slotLockPositions: number[];
+  autoArchive: boolean;
 }
 
 export interface SphereSettingsDraft {
@@ -32,7 +33,13 @@ export interface PlayerOption {
 export const useAdminStore = defineStore('admin', () => {
   const admins = ref<RoomAdmin[]>([]);
   const lockAssignments = ref<LockAssignment[]>([]);
-  const settingsDraft = ref<SettingsDraft>({ title: '', yellowLimitHours: 0, redLimitHours: 0, slotLockPositions: [] });
+  const settingsDraft = ref<SettingsDraft>({
+    title: '',
+    yellowLimitHours: 0,
+    redLimitHours: 0,
+    slotLockPositions: [],
+    autoArchive: true,
+  });
   const sphereSettingsDraft = ref<SphereSettingsDraft>({
     sphereOffset: 0,
     visitorsSeeLocations: false,
@@ -98,6 +105,7 @@ export const useAdminStore = defineStore('admin', () => {
       yellowLimitHours: room.room?.yellowLimitHours ?? 0,
       redLimitHours: room.room?.redLimitHours ?? 0,
       slotLockPositions: room.selectedLockers.map((slot) => slot.position),
+      autoArchive: room.room?.autoArchive ?? true,
     };
   };
 
@@ -142,6 +150,7 @@ export const useAdminStore = defineStore('admin', () => {
               title: settingsDraft.value.title,
               yellowLimitHours: settingsDraft.value.yellowLimitHours,
               redLimitHours: settingsDraft.value.redLimitHours,
+              autoArchive: settingsDraft.value.autoArchive,
               ...(useCurrentRoomStore().hasSlotLock
                 ? { slotLockPositions: settingsDraft.value.slotLockPositions }
                 : {}),

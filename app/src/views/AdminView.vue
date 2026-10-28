@@ -15,6 +15,7 @@ import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel.vue';
 import InvitationPanel from '@/components/admin/InvitationPanel.vue';
 import LockAssignmentPanel from '@/components/admin/LockAssignmentPanel.vue';
 import PaceSettingsPanel from '@/components/admin/PaceSettingsPanel.vue';
+import RoomArchivePanel from '@/components/admin/RoomArchivePanel.vue';
 import RoomOwnershipPanel from '@/components/admin/RoomOwnershipPanel.vue';
 import SeedPanel from '@/components/admin/SeedPanel.vue';
 import SphereCheckerSettingsPanel from '@/components/admin/SphereCheckerSettingsPanel.vue';
@@ -87,7 +88,20 @@ onMounted(() => {
         </TabPanel>
         <TabPanel v-if="hasSlotLock" value="unlockTimes"><UnlockTimesPanel /></TabPanel>
       </template>
-      <TabPanel value="room"><RoomOwnershipPanel /></TabPanel>
+      <TabPanel value="room">
+        <div class="room-panels">
+          <RoomArchivePanel v-if="isAdmin" />
+          <RoomOwnershipPanel />
+        </div>
+      </TabPanel>
     </TabPanels>
   </Tabs>
 </template>
+
+<style scoped>
+.room-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+</style>

@@ -8,14 +8,24 @@ import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Tag from 'primevue/tag';
 
+import DateTimeText from '@/components/ui/DateTimeText.vue';
 import SyncStatusText from '@/components/ui/SyncStatusText.vue';
 
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLiveStore } from '@/stores/live';
 
 const roomStore = useCurrentRoomStore();
-const { room, isAdmin, isHelper, isPlayer, canSeeLocations, hasSlotLock, syncRequested, slotsWithoutDiscord } =
-  storeToRefs(roomStore);
+const {
+  room,
+  isAdmin,
+  isHelper,
+  isPlayer,
+  isArchived,
+  canSeeLocations,
+  hasSlotLock,
+  syncRequested,
+  slotsWithoutDiscord,
+} = storeToRefs(roomStore);
 const { isConnected } = storeToRefs(useLiveStore());
 const { t } = useI18n();
 
@@ -45,10 +55,13 @@ const activeSection = computed(() => route.path.split('/')[3] ?? '');
         :value="isConnected ? t('room.live') : t('room.offline')"
         data-testid="live-indicator"
       />
+      <Tag v-if="isArchived" severity="secondary" icon="pi pi-box" data-testid="archived-tag">
+        {{ t('room.archived') }}&nbsp;<DateTimeText :value="room.archivedAt" />
+      </Tag>
       <span class="app-spacer" />
-      <SyncStatusText :status="room.syncStatus" />
+      <SyncStatusText v-if="!isArchived" :status="room.syncStatus" />
       <Button
-        v-if="isAdmin"
+        v-if="isAdmin && !isArchived"
         :label="t('room.syncNow')"
         icon="pi pi-refresh"
         size="small"

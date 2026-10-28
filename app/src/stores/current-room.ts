@@ -46,6 +46,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     return discordId ? sortedSlots.value.filter((slot) => slot.discordUserId === discordId) : [];
   });
   const hasSlotLock = computed(() => room.value?.hasSlotLock ?? true);
+  const isArchived = computed(() => (room.value?.archivedAt ?? null) !== null);
   const selectedLockers = computed(() => sortedSlots.value.filter((slot) => slot.isSelectedSlotLock));
   const slotLockSlots = computed(() => sortedSlots.value.filter((slot) => slot.isSlotLock));
   const playableSlots = computed(() => sortedSlots.value.filter((slot) => !slot.isSlotLock));
@@ -194,6 +195,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     canSeeLocations,
     isPlayer,
     hasSlotLock,
+    isArchived,
     slotById,
     sortedSlots,
     mySlots,

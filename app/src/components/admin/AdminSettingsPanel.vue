@@ -41,6 +41,10 @@ const { t } = useI18n();
       </label>
       <span class="app-muted">{{ t('admin.slotLockSlotsHint') }}</span>
     </fieldset>
+    <label class="app-toolbar">
+      <Checkbox v-model="settingsDraft.autoArchive" binary data-testid="auto-archive" />
+      {{ t('admin.autoArchive') }}
+    </label>
     <div class="app-toolbar">
       <Button type="submit" :label="t('common.save')" :loading="busy" />
       <Button :label="t('common.reset')" text @click="admin.resetSettingsDraft()" />

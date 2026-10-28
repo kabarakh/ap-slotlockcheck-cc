@@ -4,12 +4,14 @@ import { computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink } from 'vue-router';
 
+import Checkbox from 'primevue/checkbox';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 import InputText from 'primevue/inputtext';
 import ProgressBar from 'primevue/progressbar';
 import Tag from 'primevue/tag';
 
+import DateTimeText from '@/components/ui/DateTimeText.vue';
 import SyncStatusText from '@/components/ui/SyncStatusText.vue';
 
 import type { RoomListEntry } from '@/api/types';
@@ -22,13 +24,15 @@ type RoomRoleKey = 'owner' | 'admin' | 'helper' | 'player';
 
 const roomsStore = useRoomsStore();
 const { sortedRooms, loading } = storeToRefs(roomsStore);
-const { roomText } = storeToRefs(useTableFiltersStore());
+const { roomText, showArchivedRooms } = storeToRefs(useTableFiltersStore());
 const { isLoggedIn } = storeToRefs(useAuthStore());
 const { t } = useI18n();
 
 const visibleRooms = computed(() => {
   const needle = roomText.value.trim().toLocaleLowerCase();
-  return sortedRooms.value.filter((room) => room.title.toLocaleLowerCase().includes(needle));
+  return sortedRooms.value.filter(
+    (room) => (showArchivedRooms.value || room.archivedAt === null) && room.title.toLocaleLowerCase().includes(needle),
+  );
 });
 
 const roleKey = (room: RoomListEntry): RoomRoleKey =>
@@ -50,18 +54,29 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
     <div class="app-toolbar">
       <h1>{{ t('rooms.title') }}</h1>
       <span class="app-spacer" />
+      <label class="app-toolbar">
+        <Checkbox v-model="showArchivedRooms" binary data-testid="show-archived-rooms" />
+        {{ t('rooms.showArchived') }}
+      </label>
       <InputText v-model="roomText" :placeholder="t('filters.search')" size="small" />
     </div>
     <p class="app-muted" data-testid="rooms-hint">
       {{ isLoggedIn ? t('rooms.onlyOwnRooms') : t('rooms.loginForRooms') }}
     </p>
-    <DataTable :value="visibleRooms" :loading="loading" data-key="id" sort-field="title" :sort-order="1" striped-rows>
+    <DataTable :value="visibleRooms" :loading="loading" data-key="id" striped-rows>
       <template #empty>{{ isLoggedIn ? t('rooms.empty') : t('rooms.emptyVisitor') }}</template>
       <Column field="title" :header="t('rooms.columns.title')" sortable>
         <template #body="{ data }">
           <RouterLink :to="{ name: 'roster', params: { slug: (data as RoomListEntry).slug } }">
             {{ (data as RoomListEntry).title }}
           </RouterLink>
+          <Tag
+            v-if="(data as RoomListEntry).archivedAt"
+            :value="t('rooms.archived')"
+            severity="secondary"
+            class="archived-tag"
+            data-testid="room-archived"
+          />
         </template>
       </Column>
       <Column field="membership.role" :header="t('rooms.columns.role')" sortable>
@@ -121,7 +136,10 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
       </Column>
       <Column :header="t('rooms.columns.status')">
         <template #body="{ data }">
-          <SyncStatusText :status="(data as RoomListEntry).syncStatus" />
+          <span v-if="(data as RoomListEntry).archivedAt">
+            {{ t('rooms.archivedAt') }} <DateTimeText :value="(data as RoomListEntry).archivedAt" />
+          </span>
+          <SyncStatusText v-else :status="(data as RoomListEntry).syncStatus" />
         </template>
       </Column>
     </DataTable>
@@ -129,6 +147,10 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
 </template>
 
 <style scoped>
+.archived-tag {
+  margin-left: 0.5rem;
+}
+
 .progress-lines {
   display: grid;
   grid-template-columns: max-content minmax(12rem, 1fr);

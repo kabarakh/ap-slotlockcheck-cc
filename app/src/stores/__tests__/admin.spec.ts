@@ -27,7 +27,13 @@ describe('useAdminStore', () => {
   const savedBody = async (hasSlotLock: boolean): Promise<unknown> => {
     useCurrentRoomStore().room = roomDetail({ hasSlotLock });
     const admin = useAdminStore();
-    admin.settingsDraft = { title: 'Big Chill', yellowLimitHours: 24, redLimitHours: 48, slotLockPositions: [1] };
+    admin.settingsDraft = {
+      title: 'Big Chill',
+      yellowLimitHours: 24,
+      redLimitHours: 48,
+      slotLockPositions: [1],
+      autoArchive: false,
+    };
     await admin.saveSettings();
     const [, options] = api.PATCH.mock.calls[0] ?? [];
     return (options as { body: unknown } | undefined)?.body;
@@ -38,11 +44,17 @@ describe('useAdminStore', () => {
       title: 'Big Chill',
       yellowLimitHours: 24,
       redLimitHours: 48,
+      autoArchive: false,
       slotLockPositions: [1],
     });
   });
 
   it('saves no SlotLock slots for a room without SlotLock', async () => {
-    expect(await savedBody(false)).toEqual({ title: 'Big Chill', yellowLimitHours: 24, redLimitHours: 48 });
+    expect(await savedBody(false)).toEqual({
+      title: 'Big Chill',
+      yellowLimitHours: 24,
+      redLimitHours: 48,
+      autoArchive: false,
+    });
   });
 });
