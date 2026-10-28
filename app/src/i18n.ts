@@ -8,6 +8,8 @@ type AppLocale = 'de' | 'en';
 
 const dateTimeFormat = {
   dateTime: { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' },
+  day: { month: '2-digit', day: '2-digit' },
+  time: { hour: '2-digit', minute: '2-digit' },
 } as const;
 
 const numberFormat = {

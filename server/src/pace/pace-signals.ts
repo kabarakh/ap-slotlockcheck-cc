@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { networkItemSchema, type NetworkItem } from '../sources/archipelago/archipelago.schemas.js';
+import { progressionStatusSchema, type ProgressionStatus } from '../sources/cheese/cheese.schemas.js';
 
 export type SignalSource = 'cheese' | 'ap_tracker';
 
@@ -25,10 +26,16 @@ export interface PlayerPeriod extends SignalPeriod {
   discordName: string | null;
 }
 
+export interface StatusChange {
+  time: Date;
+  status: ProgressionStatus;
+}
+
 export interface SlotSignals {
   progressionItemTimes: Date[];
   bkPeriods: SignalPeriod[];
   playerPeriods: PlayerPeriod[];
+  statusChanges: StatusChange[];
   signalsFrom: Date | null;
 }
 
@@ -98,6 +105,8 @@ export function createSignalsReader(slots: readonly SignalSlot[]): SignalsReader
   const openBkStarts = new Map<number, Date>();
   const closedPlayerPeriods = new Map<number, PlayerPeriod[]>();
   const openPlayers = new Map<number, OpenPlayerPeriod>();
+  const statusChanges = new Map<number, StatusChange[]>();
+  const lastStatuses = new Map<number, ProgressionStatus>();
   let signalsFrom: Date | null = null;
 
   const readCheese = (status: CheeseStatus, validFrom: Date): void => {
@@ -115,6 +124,11 @@ export function createSignalsReader(slots: readonly SignalSlot[]): SignalsReader
       }
     }
     for (const game of games) {
+      const status = progressionStatusSchema.safeParse(game.progression_status);
+      if (status.success && lastStatuses.get(game.id) !== status.data) {
+        listFor(statusChanges, game.id).push({ time: validFrom, status: status.data });
+        lastStatuses.set(game.id, status.data);
+      }
       const discordUserId = game.effective_discord_user_id ?? null;
       const discordName = game.effective_discord_username ?? game.discord_username ?? null;
       const open = openPlayers.get(game.id);
@@ -187,6 +201,7 @@ export function createSignalsReader(slots: readonly SignalSlot[]): SignalsReader
             bkPeriods: openFrom === undefined ? [...closed] : [...closed, { from: openFrom, to: now }],
             playerPeriods:
               openPlayer === undefined ? [...closedPlayers] : [...closedPlayers, { ...openPlayer, to: now }],
+            statusChanges: [...(statusChanges.get(slot.cheeseGameId) ?? [])],
             signalsFrom,
           },
         ];

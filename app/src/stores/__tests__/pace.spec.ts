@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { useCurrentRoomStore } from '../current-room';
 import { usePaceStore } from '../pace';
 import { useUiStore } from '../ui';
-import type { GamePace, RoomPace, SlotPace } from '@/api/types';
+import type { GamePace, RoomPace, SlotPace, SlotTimeline } from '@/api/types';
 import { roomDetail } from '@/domain/__tests__/fixtures';
 
 type Call = (path: string, options?: unknown) => Promise<unknown>;
@@ -60,6 +60,22 @@ const roomPace: RoomPace = {
   slots: [slotPace({ slotId: 1 }), slotPace({ slotId: 2, hasRange: false })],
   games: [gamePace({ game: 'Game' }), gamePace({ game: 'Other', slotCount: 0 })],
 };
+
+const slotTimeline: SlotTimeline = {
+  slotId: 1,
+  from: '2026-10-28T10:00:00.000Z',
+  to: '2026-10-28T12:00:00.000Z',
+  segments: [{ kind: 'active', from: '2026-10-28T10:00:00.000Z', to: '2026-10-28T12:00:00.000Z', checks: 10 }],
+  progressionItemTimes: [],
+  statusChanges: [],
+  playerPeriods: [],
+  unreadableSnapshots: [],
+};
+
+const TIMELINE_PATH = '/api/rooms/{slug}/pace/slots/{slotId}';
+
+const respond = (timelineResult: () => Promise<unknown>, paceResult: RoomPace = roomPace) =>
+  api.GET.mockImplementation((path: string) => (path === TIMELINE_PATH ? timelineResult() : ok(paceResult)));
 
 describe('usePaceStore', () => {
   beforeEach(() => {
@@ -133,5 +149,64 @@ describe('usePaceStore', () => {
     await store.open();
     expect(store.historyUnavailable).toBe(false);
     expect(useUiStore().messages.map((message) => message.key)).toEqual(['errors.INTERNAL_ERROR']);
+  });
+
+  it('loads the timeline of a clicked row with time range', async () => {
+    respond(() => ok(slotTimeline));
+    const store = usePaceStore();
+    await store.open();
+    await store.openTimeline(slotPace({ slotId: 1, from: '2026-10-28T10:00:00.000Z' }));
+    expect(api.GET).toHaveBeenCalledWith(TIMELINE_PATH, { params: { path: { slug: 'big-chill', slotId: 1 } } });
+    expect(store.timeline).toEqual(slotTimeline);
+    expect(store.timelineRow?.slotId).toBe(1);
+  });
+
+  it('does not open the timeline of a row without time range', async () => {
+    const store = usePaceStore();
+    await store.openTimeline(slotPace({ slotId: 2, hasRange: false }));
+    expect(store.timelineRow).toBeNull();
+    expect(api.GET).not.toHaveBeenCalled();
+  });
+
+  it('shows a missing slot and a missing checks history in the side panel', async () => {
+    const store = usePaceStore();
+    respond(() => failed(404, 'SLOT_NOT_FOUND'));
+    await store.openTimeline(slotPace({ slotId: 1 }));
+    expect(store.timelineError).toBe('SLOT_NOT_FOUND');
+    respond(() => failed(503, 'CHECKS_HISTORY_NOT_AVAILABLE'));
+    await store.fetchTimeline(1);
+    expect(store.timelineError).toBe('CHECKS_HISTORY_NOT_AVAILABLE');
+    expect(store.timeline).toBeNull();
+    expect(useUiStore().messages).toEqual([]);
+  });
+
+  it('loads the open timeline again on a room update', async () => {
+    respond(() => ok(slotTimeline));
+    const store = usePaceStore();
+    await store.open();
+    await store.openTimeline(slotPace({ slotId: 1 }));
+    await store.refresh();
+    expect(api.GET.mock.calls.filter(([path]) => path === TIMELINE_PATH)).toHaveLength(2);
+    expect(store.timelineRow?.slotId).toBe(1);
+  });
+
+  it('closes the timeline when the slot has no time range after a room update', async () => {
+    respond(() => ok(slotTimeline));
+    const store = usePaceStore();
+    await store.open();
+    await store.openTimeline(slotPace({ slotId: 1 }));
+    respond(() => ok(slotTimeline), { ...roomPace, slots: [slotPace({ slotId: 1, hasRange: false })] });
+    await store.refresh();
+    expect(store.timelineRow).toBeNull();
+    expect(store.timeline).toBeNull();
+  });
+
+  it('closes the timeline when the view closes', async () => {
+    respond(() => ok(slotTimeline));
+    const store = usePaceStore();
+    await store.open();
+    await store.openTimeline(slotPace({ slotId: 1 }));
+    store.close();
+    expect(store.timelineRow).toBeNull();
   });
 });

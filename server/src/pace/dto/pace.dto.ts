@@ -1,8 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import type { SlotStartKind } from '../pace.logic.js';
+import { PROGRESSION_STATUSES } from '../../rooms/dto/slot-row.dto.js';
+import type { ProgressionStatus } from '../../sources/cheese/cheese.schemas.js';
+import type { SegmentKind, SlotStartKind } from '../pace.logic.js';
 
 export const SLOT_START_KINDS: SlotStartKind[] = ['unlock', 'estimated', 'history_start', 'unknown'];
+export const SEGMENT_KINDS: SegmentKind[] = ['locked', 'active', 'pause', 'bk', 'break', 'bulk', 'after_goal'];
 
 export class PaceLimitsDto {
   breakLimitMinutes: number;
@@ -88,4 +91,60 @@ export class RoomPaceDto {
 
   @ApiProperty({ type: [GamePaceDto] })
   games: GamePaceDto[];
+}
+
+export class TimePeriodDto {
+  @ApiProperty({ type: String, format: 'date-time' })
+  from: string;
+
+  @ApiProperty({ type: String, format: 'date-time' })
+  to: string;
+}
+
+export class SegmentDto extends TimePeriodDto {
+  @ApiProperty({ enum: SEGMENT_KINDS, enumName: 'SegmentKind' })
+  kind: SegmentKind;
+
+  checks: number;
+}
+
+export class StatusChangeDto {
+  @ApiProperty({ type: String, format: 'date-time' })
+  time: string;
+
+  @ApiProperty({ enum: PROGRESSION_STATUSES, enumName: 'ProgressionStatus' })
+  status: ProgressionStatus;
+}
+
+export class TimelinePlayerPeriodDto extends TimePeriodDto {
+  @ApiProperty({ type: String, nullable: true })
+  discordUserId: string | null;
+
+  @ApiProperty({ type: String, nullable: true })
+  discordName: string | null;
+}
+
+export class SlotTimelineDto {
+  slotId: number;
+
+  @ApiProperty({ type: String, format: 'date-time' })
+  from: string;
+
+  @ApiProperty({ type: String, format: 'date-time' })
+  to: string;
+
+  @ApiProperty({ type: [SegmentDto] })
+  segments: SegmentDto[];
+
+  @ApiProperty({ type: String, format: 'date-time', isArray: true })
+  progressionItemTimes: string[];
+
+  @ApiProperty({ type: [StatusChangeDto] })
+  statusChanges: StatusChangeDto[];
+
+  @ApiProperty({ type: [TimelinePlayerPeriodDto] })
+  playerPeriods: TimelinePlayerPeriodDto[];
+
+  @ApiProperty({ type: [TimePeriodDto] })
+  unreadableSnapshots: TimePeriodDto[];
 }

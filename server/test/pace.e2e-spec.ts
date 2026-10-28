@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import request from 'supertest';
 import type { App } from 'supertest/types.js';
 
-import type { RoomPaceDto, SlotPaceDto } from '../src/pace/dto/pace.dto.js';
+import type { RoomPaceDto, SlotPaceDto, SlotTimelineDto } from '../src/pace/dto/pace.dto.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
 import { CheeseService } from '../src/sources/cheese/cheese.service.js';
 import { CAROL, createRoom, login, OWNER, PLAYER, STRANGER } from './support/room.js';
@@ -32,6 +32,9 @@ describe('pace statistics (integration)', () => {
   let carolCookie: string[];
 
   const pace = (cookie: string[] = []) => request(server).get('/api/rooms/big-chill/pace').set('Cookie', cookie);
+
+  const timeline = (slotId: number | undefined, cookie: string[] = ownerCookie) =>
+    request(server).get(`/api/rooms/big-chill/pace/slots/${slotId}`).set('Cookie', cookie);
 
   const rowsByName = (body: RoomPaceDto): Record<string, SlotPaceDto> =>
     Object.fromEntries(body.slots.map((slot) => [slot.name, slot]));
@@ -188,5 +191,54 @@ describe('pace statistics (integration)', () => {
     expect(after.calculatedAt).not.toBe(before.calculatedAt);
     expect(rowsByName(after)['Alice']).toMatchObject({ from: '2026-10-21T12:00:00.000Z', startKind: 'unlock' });
     expect(checksHistory).not.toHaveBeenCalled();
+  });
+
+  it('gives the timeline of a slot only to admins and helpers', async () => {
+    const before = (await pace(ownerCookie).expect(200)).body as RoomPaceDto;
+    const alice = rowsByName(before)['Alice'];
+    const body = (await timeline(alice?.slotId, carolCookie).expect(200)).body as SlotTimelineDto;
+    expect(Object.keys(body).sort()).toEqual([
+      'from',
+      'playerPeriods',
+      'progressionItemTimes',
+      'segments',
+      'slotId',
+      'statusChanges',
+      'to',
+      'unreadableSnapshots',
+    ]);
+    expect(body).toMatchObject({
+      slotId: alice?.slotId,
+      from: '2026-10-21T12:00:00.000Z',
+      segments: [
+        { kind: 'locked', from: '2026-10-20T10:00:00.000Z', to: '2026-10-21T12:00:00.000Z', checks: 0 },
+        { kind: 'active', from: '2026-10-21T12:00:00.000Z', to: '2026-10-21T14:30:00.000Z', checks: 5 },
+        { kind: 'bulk', from: '2026-10-21T14:30:00.000Z', to: '2026-10-22T09:00:00.000Z', checks: 115 },
+      ],
+      progressionItemTimes: [],
+      statusChanges: [{ status: 'bk' }],
+      playerPeriods: [{ discordUserId: OWNER.discordId, discordName: 'alice_owner' }],
+    });
+    expect(body.to).toBe(alice?.to);
+    expect(body.unreadableSnapshots).toHaveLength(1);
+    await timeline(alice?.slotId, ownerCookie).expect(200);
+    await timeline(alice?.slotId, playerCookie).expect(403);
+    await timeline(alice?.slotId, []).expect(403);
+  });
+
+  it('gives 404 for the timeline of a SlotLock slot, a slot of another room, an unknown slot and a slot without time range', async () => {
+    const prisma = testApp.app.get(PrismaService);
+    const { id: _id, ...room } = await prisma.room.findUniqueOrThrow({ where: { slug: 'big-chill' } });
+    const locker = await prisma.slot.findFirstOrThrow({ where: { name: 'Locker' } });
+    const { id: _slotId, roomId: _roomId, ...alice } = await prisma.slot.findFirstOrThrow({ where: { name: 'Alice' } });
+    expect(locker.isSlotLock).toBe(true);
+    const other = await prisma.room.create({ data: { ...room, slug: 'other-room', cheeseTrackerId: 'other-tracker' } });
+    const foreign = await prisma.slot.create({ data: { ...alice, roomId: other.id } });
+    const rows = rowsByName((await pace(ownerCookie).expect(200)).body as RoomPaceDto);
+    for (const slotId of [locker.id, foreign.id, 999_999, rows['Bob']?.slotId]) {
+      const response = await timeline(slotId).expect(404);
+      expect(response.body).toMatchObject({ statusCode: 404, code: 'SLOT_NOT_FOUND' });
+    }
+    await timeline(undefined).expect(400);
   });
 });

@@ -1,8 +1,15 @@
 import type { SlotLockState } from '../lock/lock.types.js';
 import type { ChecksHistoryPoint } from '../lock/unlock-time.logic.js';
-import type { GamePaceDto, SlotPaceDto } from './dto/pace.dto.js';
-import type { SignalPeriod, SignalSource } from './pace-signals.js';
-import { gamePaceValues, type PaceHistoryPoint, type SlotPaceRow, type SlotRangeLock } from './pace.logic.js';
+import type { GamePaceDto, SlotPaceDto, SlotTimelineDto, TimePeriodDto } from './dto/pace.dto.js';
+import type { SignalPeriod, SignalSource, SlotSignals } from './pace-signals.js';
+import {
+  gamePaceValues,
+  type PaceHistoryPoint,
+  type Segment,
+  type SlotPaceRow,
+  type SlotRange,
+  type SlotRangeLock,
+} from './pace.logic.js';
 
 export interface PaceSlot {
   id: number;
@@ -21,6 +28,14 @@ export interface SnapshotEntry {
 export interface OrderedSnapshot extends SignalPeriod {
   id: number;
   source: SignalSource;
+}
+
+export interface TimelineInput {
+  slotId: number;
+  range: SlotRange;
+  segments: Segment[];
+  signals: SlotSignals;
+  unreadableSnapshots: SignalPeriod[];
 }
 
 export interface SnapshotOrder {
@@ -130,4 +145,30 @@ export function gamePaceDtos(slots: Pick<PaceSlot, 'game'>[], rows: SlotPaceDto[
       game,
       ...gamePaceValues(rows.filter((row) => row.game === game && row.hasRange)),
     }));
+}
+
+const periodDto = ({ from, to }: SignalPeriod): TimePeriodDto => ({ from: from.toISOString(), to: to.toISOString() });
+
+export function slotTimelineDto(input: TimelineInput): SlotTimelineDto {
+  const { signals } = input;
+  return {
+    slotId: input.slotId,
+    from: input.range.start.toISOString(),
+    to: input.range.end.toISOString(),
+    segments: input.segments.map((segment) => ({
+      kind: segment.kind,
+      from: segment.from.toISOString(),
+      to: segment.to.toISOString(),
+      checks: segment.checks,
+    })),
+    progressionItemTimes: signals.progressionItemTimes.map((time) => time.toISOString()),
+    statusChanges: signals.statusChanges.map(({ time, status }) => ({ time: time.toISOString(), status })),
+    playerPeriods: signals.playerPeriods.map((period) => ({
+      from: period.from.toISOString(),
+      to: period.to.toISOString(),
+      discordUserId: period.discordUserId,
+      discordName: period.discordName,
+    })),
+    unreadableSnapshots: input.unreadableSnapshots.map(periodDto),
+  };
 }

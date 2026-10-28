@@ -68,7 +68,13 @@ describe('createSignalsReader', () => {
   it('has no signals without snapshots', () => {
     const signals = read([]);
     expect([...signals.keys()]).toEqual([1, 2, 3, 4, 5, 6]);
-    expect(signals.get(1)).toEqual({ progressionItemTimes: [], bkPeriods: [], playerPeriods: [], signalsFrom: null });
+    expect(signals.get(1)).toEqual({
+      progressionItemTimes: [],
+      bkPeriods: [],
+      playerPeriods: [],
+      statusChanges: [],
+      signalsFrom: null,
+    });
   });
 
   it('starts the signals with the first snapshot of the room', () => {
@@ -191,6 +197,27 @@ describe('createSignalsReader', () => {
     expect(signals.get(2)?.bkPeriods).toEqual([{ from: t2, to: now }]);
   });
 
+  it('gives the first Cheese status and each change to another status', () => {
+    const signals = read([cheese(t1), cheese(t2), cheese(t3, { 103: 'bk' }), cheese(t4, { 103: 'soft_bk' })]);
+    expect(signals.get(3)?.statusChanges).toEqual([
+      { time: t1, status: 'unknown' },
+      { time: t3, status: 'bk' },
+      { time: t4, status: 'soft_bk' },
+    ]);
+    expect(signals.get(2)?.statusChanges).toEqual([{ time: t1, status: 'bk' }]);
+    expect(signals.get(4)?.statusChanges).toEqual([{ time: t1, status: 'go' }]);
+  });
+
+  it('skips an unknown Cheese status and keeps the last known status', () => {
+    const signals = read([
+      cheese(t1, { 103: 'new' }),
+      cheese(t2, { 103: 'go' }),
+      cheese(t3, { 103: 'new' }),
+      cheese(t4, { 103: 'go' }),
+    ]);
+    expect(signals.get(3)?.statusChanges).toEqual([{ time: t2, status: 'go' }]);
+  });
+
   it('does not accept snapshots that are not sorted by time', () => {
     const reader = createSignalsReader(slots);
     reader.add(cheese(t2));
@@ -259,6 +286,7 @@ describe('createSignalsReader', () => {
       progressionItemTimes: [t4],
       bkPeriods: [{ from: t2, to: now }],
       playerPeriods: [{ from: t2, to: now, discordUserId: '100000000000000002', discordName: 'bob' }],
+      statusChanges: [{ time: t2, status: 'bk' }],
       signalsFrom: t2,
     });
   });

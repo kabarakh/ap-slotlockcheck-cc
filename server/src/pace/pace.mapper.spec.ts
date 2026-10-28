@@ -9,6 +9,7 @@ import {
   slotHistory,
   slotPaceDtos,
   slotRangeLock,
+  slotTimelineDto,
   type PaceSlot,
 } from './pace.mapper.js';
 
@@ -170,5 +171,52 @@ describe('pace mapping', () => {
         medianChecksPerHour: null,
       },
     ]);
+  });
+
+  it('gives the timeline of a slot with ISO times and the changes of the Cheese status', () => {
+    expect(
+      slotTimelineDto({
+        slotId: 7,
+        range: { start: t('10:00'), end: t('13:00'), startKind: 'unlock' },
+        segments: [
+          { kind: 'active', from: t('10:00'), to: t('10:30'), checks: 12 },
+          { kind: 'bk', from: t('10:30'), to: t('11:00'), checks: 0 },
+        ],
+        signals: {
+          progressionItemTimes: [t('10:50')],
+          bkPeriods: [{ from: t('10:30'), to: t('10:50') }],
+          playerPeriods: [
+            { from: t('09:00'), to: t('11:30'), discordUserId: '42', discordName: 'alice' },
+            { from: t('11:30'), to: t('13:00'), discordUserId: null, discordName: 'bob' },
+          ],
+          statusChanges: [
+            { time: t('10:00'), status: 'go' },
+            { time: t('10:30'), status: 'bk' },
+            { time: t('10:50'), status: 'unblocked' },
+          ],
+          signalsFrom: t('09:00'),
+        },
+        unreadableSnapshots: [{ from: t('11:00'), to: t('11:10') }],
+      }),
+    ).toEqual({
+      slotId: 7,
+      from: '2026-10-20T10:00:00.000Z',
+      to: '2026-10-20T13:00:00.000Z',
+      segments: [
+        { kind: 'active', from: '2026-10-20T10:00:00.000Z', to: '2026-10-20T10:30:00.000Z', checks: 12 },
+        { kind: 'bk', from: '2026-10-20T10:30:00.000Z', to: '2026-10-20T11:00:00.000Z', checks: 0 },
+      ],
+      progressionItemTimes: ['2026-10-20T10:50:00.000Z'],
+      statusChanges: [
+        { time: '2026-10-20T10:00:00.000Z', status: 'go' },
+        { time: '2026-10-20T10:30:00.000Z', status: 'bk' },
+        { time: '2026-10-20T10:50:00.000Z', status: 'unblocked' },
+      ],
+      playerPeriods: [
+        { from: '2026-10-20T09:00:00.000Z', to: '2026-10-20T11:30:00.000Z', discordUserId: '42', discordName: 'alice' },
+        { from: '2026-10-20T11:30:00.000Z', to: '2026-10-20T13:00:00.000Z', discordUserId: null, discordName: 'bob' },
+      ],
+      unreadableSnapshots: [{ from: '2026-10-20T11:00:00.000Z', to: '2026-10-20T11:10:00.000Z' }],
+    });
   });
 });

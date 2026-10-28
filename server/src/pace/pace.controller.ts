@@ -1,7 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 
 import { RequireRoomRole } from '../auth/auth.decorators.js';
-import { RoomPaceDto } from './dto/pace.dto.js';
+import { RoomPaceDto, SlotTimelineDto } from './dto/pace.dto.js';
 import { PaceService } from './pace.service.js';
 
 @Controller('rooms/:slug/pace')
@@ -12,5 +12,14 @@ export class PaceController {
   @RequireRoomRole('helper')
   get(@Param('slug') slug: string): Promise<RoomPaceDto> {
     return this.pace.getRoomPace(slug);
+  }
+
+  @Get('slots/:slotId')
+  @RequireRoomRole('helper')
+  getSlotTimeline(
+    @Param('slug') slug: string,
+    @Param('slotId', ParseIntPipe) slotId: number,
+  ): Promise<SlotTimelineDto> {
+    return this.pace.getSlotTimeline(slug, slotId);
   }
 }

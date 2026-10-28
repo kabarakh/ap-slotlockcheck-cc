@@ -35,6 +35,7 @@ const signals = (overrides: Partial<SlotSignals> = {}): SlotSignals => ({
   progressionItemTimes: [],
   bkPeriods: [],
   playerPeriods: [player(-1000, 1000, '1', 'alice')],
+  statusChanges: [],
   signalsFrom: at(-1000),
   ...overrides,
 });

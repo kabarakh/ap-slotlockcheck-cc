@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, OnModuleInit, ServiceUnavailableException } from '@nestjs/common';
 
 import type { Room } from '../generated/prisma/client.js';
 import { isGoaled } from '../locations/goal.logic.js';
@@ -11,7 +11,7 @@ import { RoomsService } from '../rooms/rooms.service.js';
 import { CheeseService } from '../sources/cheese/cheese.service.js';
 import { SourceFormatError, SourceRequestError } from '../sources/http/source-errors.js';
 import { checksHistoryPoints } from '../sync/room-source.mapper.js';
-import type { RoomPaceDto } from './dto/pace.dto.js';
+import type { RoomPaceDto, SlotTimelineDto } from './dto/pace.dto.js';
 import {
   createSignalsReader,
   type SignalPeriod,
@@ -29,6 +29,7 @@ import {
   slotHistory,
   slotPaceDtos,
   slotRangeLock,
+  slotTimelineDto,
   type SnapshotEntry,
 } from './pace.mapper.js';
 
@@ -56,7 +57,13 @@ interface RoomSignals {
 }
 
 const SIGNAL_SOURCES: SignalSource[] = ['cheese', 'ap_tracker'];
-const NO_SIGNALS: SlotSignals = { progressionItemTimes: [], bkPeriods: [], playerPeriods: [], signalsFrom: null };
+const NO_SIGNALS: SlotSignals = {
+  progressionItemTimes: [],
+  bkPeriods: [],
+  playerPeriods: [],
+  statusChanges: [],
+  signalsFrom: null,
+};
 const MS_PER_MINUTE = 60_000;
 
 @Injectable()
@@ -80,6 +87,23 @@ export class PaceService implements OnModuleInit {
   async getRoomPace(slug: string): Promise<RoomPaceDto> {
     const room = await this.rooms.findRoomBySlug(slug);
     return (await this.calculation(room)).result;
+  }
+
+  async getSlotTimeline(slug: string, slotId: number): Promise<SlotTimelineDto> {
+    const room = await this.rooms.findRoomBySlug(slug);
+    const calculation = await this.calculation(room);
+    const slot = calculation.slots.get(slotId);
+    const hasRange = calculation.result.slots.some((row) => row.slotId === slotId && row.hasRange);
+    if (slot === undefined || slot.range === null || !hasRange) {
+      throw new NotFoundException('SLOT_NOT_FOUND');
+    }
+    return slotTimelineDto({
+      slotId,
+      range: slot.range,
+      segments: slot.segments,
+      signals: slot.signals,
+      unreadableSnapshots: calculation.unreadableSnapshots,
+    });
   }
 
   async calculation(room: Room): Promise<PaceCalculation> {

@@ -3,10 +3,12 @@ import { storeToRefs } from 'pinia';
 import { computed, onMounted, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
 
+import PaceTimelineDrawer from '@/components/pace/PaceTimelineDrawer.vue';
 import GamePaceTable from '@/components/ui/GamePaceTable.vue';
 import SlotPaceTable from '@/components/ui/SlotPaceTable.vue';
 
@@ -49,11 +51,26 @@ onUnmounted(() => paceStore.close());
         </p>
       </div>
       <h3>{{ t('pace.slotsTitle') }}</h3>
-      <SlotPaceTable :rows="visibleSlots" />
+      <SlotPaceTable :rows="visibleSlots">
+        <template #slot="{ row }">
+          <Button
+            v-if="row.hasRange"
+            :label="row.name"
+            link
+            size="small"
+            class="slot-link"
+            :title="t('pace.timeline.open')"
+            :data-testid="`pace-timeline-open-${row.slotId}`"
+            @click="paceStore.openTimeline(row)"
+          />
+          <span v-else class="wrap-anywhere">{{ row.name }}</span>
+        </template>
+      </SlotPaceTable>
       <h3>{{ t('pace.gamesTitle') }}</h3>
       <p class="app-muted">{{ t('pace.compare') }}</p>
       <GamePaceTable :games="visibleGames" />
     </template>
+    <PaceTimelineDrawer />
   </section>
 </template>
 
@@ -62,6 +79,16 @@ onUnmounted(() => paceStore.close());
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+.slot-link {
+  padding: 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.wrap-anywhere {
+  overflow-wrap: anywhere;
 }
 
 .pace h2,

@@ -98,7 +98,9 @@ const decimal = (value: number | null): string => (value === null ? '' : n(value
     <template #empty>{{ t('pace.emptySlots') }}</template>
     <Column field="name" :sort-field="cycleSortField(sort, SLOT_SORT)" :header="slotHeader" sortable>
       <template #body="{ data }">
-        <span class="wrap-anywhere">{{ (data as Row).name }}</span>
+        <slot name="slot" :row="data as Row">
+          <span class="wrap-anywhere">{{ (data as Row).name }}</span>
+        </slot>
         <span class="app-muted second-line" :title="(data as Row).game">{{ (data as Row).gameName }}</span>
       </template>
     </Column>

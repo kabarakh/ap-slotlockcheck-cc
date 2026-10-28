@@ -1868,6 +1868,44 @@
           "Pace"
         ]
       }
+    },
+    "/api/rooms/{slug}/pace/slots/{slotId}": {
+      "get": {
+        "operationId": "Pace_getSlotTimeline",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SlotTimelineDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Pace"
+        ]
+      }
     }
   },
   "info": {
@@ -3678,6 +3716,168 @@
           "limits",
           "slots",
           "games"
+        ]
+      },
+      "SegmentKind": {
+        "type": "string",
+        "enum": [
+          "locked",
+          "active",
+          "pause",
+          "bk",
+          "break",
+          "bulk",
+          "after_goal"
+        ]
+      },
+      "SegmentDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "kind": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SegmentKind"
+              }
+            ]
+          },
+          "checks": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "kind",
+          "checks"
+        ]
+      },
+      "StatusChangeDto": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ProgressionStatus"
+              }
+            ]
+          }
+        },
+        "required": [
+          "time",
+          "status"
+        ]
+      },
+      "TimelinePlayerPeriodDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "discordUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "discordName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "discordUserId",
+          "discordName"
+        ]
+      },
+      "TimePeriodDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ]
+      },
+      "SlotTimelineDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SegmentDto"
+            }
+          },
+          "progressionItemTimes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "statusChanges": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StatusChangeDto"
+            }
+          },
+          "playerPeriods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimelinePlayerPeriodDto"
+            }
+          },
+          "unreadableSnapshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimePeriodDto"
+            }
+          },
+          "slotId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "segments",
+          "progressionItemTimes",
+          "statusChanges",
+          "playerPeriods",
+          "unreadableSnapshots",
+          "slotId"
         ]
       },
       "ApiErrorDto": {

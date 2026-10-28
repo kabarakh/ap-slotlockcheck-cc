@@ -644,6 +644,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/pace/slots/{slotId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Pace_getSlotTimeline"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1070,6 +1086,47 @@ export interface components {
             limits: components["schemas"]["PaceLimitsDto"];
             slots: components["schemas"]["SlotPaceDto"][];
             games: components["schemas"]["GamePaceDto"][];
+        };
+        /** @enum {string} */
+        SegmentKind: "locked" | "active" | "pause" | "bk" | "break" | "bulk" | "after_goal";
+        SegmentDto: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: string;
+            kind: components["schemas"]["SegmentKind"];
+            checks: number;
+        };
+        StatusChangeDto: {
+            /** Format: date-time */
+            time: string;
+            status: components["schemas"]["ProgressionStatus"];
+        };
+        TimelinePlayerPeriodDto: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: string;
+            discordUserId: string | null;
+            discordName: string | null;
+        };
+        TimePeriodDto: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: string;
+        };
+        SlotTimelineDto: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: string;
+            segments: components["schemas"]["SegmentDto"][];
+            progressionItemTimes: string[];
+            statusChanges: components["schemas"]["StatusChangeDto"][];
+            playerPeriods: components["schemas"]["TimelinePlayerPeriodDto"][];
+            unreadableSnapshots: components["schemas"]["TimePeriodDto"][];
+            slotId: number;
         };
         ApiErrorDto: {
             details?: {
@@ -2192,6 +2249,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RoomPaceDto"];
+                };
+            };
+        };
+    };
+    Pace_getSlotTimeline: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+                slotId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SlotTimelineDto"];
                 };
             };
         };

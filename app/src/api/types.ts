@@ -52,3 +52,5 @@ export type RoomPace = Schemas['RoomPaceDto'];
 export type SlotPace = Schemas['SlotPaceDto'];
 export type GamePace = Schemas['GamePaceDto'];
 export type SlotStartKind = Schemas['SlotStartKind'];
+export type SlotTimeline = Schemas['SlotTimelineDto'];
+export type SegmentKind = Schemas['SegmentKind'];
