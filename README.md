@@ -28,6 +28,15 @@ The DTO classes of the server are the only source of the API types. The server w
 - Slot names are compared without case. Unknown names are shown to the admins.
 - An admin can add or remove a lock assignment. This replaces the detected value until the admin resets it.
 
+### Rooms without SlotLock
+
+The functions are in `PLAN async without slotlock.md`.
+
+- A room without a selected SlotLock slot is a room without SlotLock. The admin sets this when the room is made; it cannot be changed later.
+- The synchronization makes each slot that is not a SlotLock slot a start slot. So the inactivity, the statistics and the pace statistics work without changes.
+- The app hides the lock functions (`hasSlotLock` of the room): lock columns and filters, unlock tree, lock tabs of the setup, lock parts of the statistics and of the room list.
+- The server commands connect as a slot that the admin selects from all slots that are not SlotLock slots.
+
 ### Unlock times
 
 - Archipelago gives no time for received items. The server records the time when a synchronization finds an unlock item for the first time.

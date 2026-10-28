@@ -178,6 +178,25 @@ Reference: `PLAN pace statistics implementation.md` (section numbers in brackets
 - [x] E2E tests (5.4)
 - [x] README: section "Pace statistics" under "Concepts"
 
+## Rooms without SlotLock
+
+Reference: `PLAN async without slotlock.md` (section numbers in brackets).
+
+- [x] `CreateRoomDto` accepts an empty selection (5.1)
+- [x] `detectStartSlots` with `slotLockPositions`, callers updated (5.2)
+- [x] `hasSlotLock` in `RoomSummaryDto`, API types generated (5.3)
+- [x] `connectionSlot` with playable slots, error code `CONNECTION_SLOT_REQUIRED` (5.5)
+- [x] Room setup form and store (6.1)
+- [x] Room list, room tabs, route guard (6.2)
+- [x] `SlotTable` prop `showLocks`, roster and my slots (6.3)
+- [x] Player summary and statistics (6.4)
+- [x] Setup tabs, settings panel, settings save (6.5)
+- [x] Server connection panel (6.6)
+- [x] Pace timeline legend without `locked` (6.7)
+- [x] Texts in German and English (6.8)
+- [x] Tests: unit, integration, end-to-end (7)
+- [-] Test with a real tracker without SlotLock (10.1)
+
 ## Open decisions for the developer
 
 See `PLAN slotlock.md`, section 23: production domain, responsibility on the proServer, GitHub repository, PrimeVue license, Node 26 or Node 24 LTS, comparison with the Google sheet.
@@ -202,3 +221,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-28 | Pace P3 | ok | ok | 246 unit, 67 integration, 91 unit app, 23 e2e ok | Visual check in the browser at 1024 px |
 | 2026-10-28 | Pace P4 | ok | ok | 249 unit, 69 integration, 104 unit app, 26 e2e ok | Visual check of the timeline in light and dark mode |
 | 2026-10-28 | Pace grid and saved signals | ok | ok | 259 unit, 73 integration, 104 unit app, 26 e2e ok | Measured with the payloads of a real active room: 20 ms for one new snapshot pair |
+| 2026-10-28 | Rooms without SlotLock | ok | ok | 260 unit, 78 integration, 108 unit app, 29 e2e ok | No test with a real tracker without SlotLock |
