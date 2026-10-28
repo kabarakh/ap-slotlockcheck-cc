@@ -4,6 +4,7 @@ import { computed, ref } from 'vue';
 import { useAuthStore } from './auth';
 import { useLiveStore } from './live';
 import { useLocationsStore } from './locations';
+import { usePaceStore } from './pace';
 import { useSeedStore } from './seed';
 import { useServerAdminStore } from './server-admin';
 import { useSphereOverviewStore } from './sphere-overview';
@@ -116,6 +117,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     useSphereOverviewStore().clear();
     useLocationsStore().leave();
     useServerAdminStore().clear();
+    usePaceStore().clear();
   };
 
   const applySynced = (payload: RoomSyncedPayload) => {
@@ -128,6 +130,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     const kept = slots.value.filter((slot) => !removed.has(slot.id)).map((slot) => changed.get(slot.id) ?? slot);
     const added = payload.changedSlots.filter((slot) => !slots.value.some((existing) => existing.id === slot.id));
     slots.value = [...kept, ...added];
+    void usePaceStore().refresh();
   };
 
   const applySyncFailed = (payload: RoomSyncFailedPayload) => {
@@ -141,6 +144,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
       room.value = payload.room;
       slots.value = payload.slots;
       void refreshWarnings();
+      void usePaceStore().refresh();
     }
   };
 

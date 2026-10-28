@@ -83,6 +83,12 @@ const router = createRouter({
               component: () => import('@/views/ControlMessagesView.vue'),
             },
             {
+              path: 'pace',
+              name: 'control-pace',
+              component: () => import('@/views/ControlPaceView.vue'),
+              meta: { requiresRole: 'helper' },
+            },
+            {
               path: 'warnings',
               name: 'control-warnings',
               component: () => import('@/components/admin/WarningsPanel.vue'),

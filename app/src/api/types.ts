@@ -48,3 +48,7 @@ export type ServerAdminStatus = Schemas['ServerAdminStatusDto'];
 export type ServerJob = Schemas['ServerJobDto'];
 export type ReleaseMode = Schemas['ReleaseMode'];
 export type ReleasePreview = Schemas['ReleasePreviewDto'];
+export type RoomPace = Schemas['RoomPaceDto'];
+export type SlotPace = Schemas['SlotPaceDto'];
+export type GamePace = Schemas['GamePaceDto'];
+export type SlotStartKind = Schemas['SlotStartKind'];

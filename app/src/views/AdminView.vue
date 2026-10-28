@@ -14,6 +14,7 @@ import AdminListPanel from '@/components/admin/AdminListPanel.vue';
 import AdminSettingsPanel from '@/components/admin/AdminSettingsPanel.vue';
 import InvitationPanel from '@/components/admin/InvitationPanel.vue';
 import LockAssignmentPanel from '@/components/admin/LockAssignmentPanel.vue';
+import PaceSettingsPanel from '@/components/admin/PaceSettingsPanel.vue';
 import RoomOwnershipPanel from '@/components/admin/RoomOwnershipPanel.vue';
 import SeedPanel from '@/components/admin/SeedPanel.vue';
 import SphereCheckerSettingsPanel from '@/components/admin/SphereCheckerSettingsPanel.vue';
@@ -63,7 +64,10 @@ onMounted(() => {
     </TabList>
     <TabPanels>
       <template v-if="isAdmin">
-        <TabPanel value="settings"><AdminSettingsPanel /></TabPanel>
+        <TabPanel value="settings">
+          <AdminSettingsPanel />
+          <PaceSettingsPanel />
+        </TabPanel>
         <TabPanel value="locks"><LockAssignmentPanel /></TabPanel>
         <TabPanel value="admins">
           <AdminListPanel />

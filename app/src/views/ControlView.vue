@@ -20,7 +20,7 @@ interface ControlTab {
   badges: { value: number | string; severity: 'danger' | 'warn' | 'info' | 'secondary'; testId: string }[];
 }
 
-const { room, isAdmin, canSeeLocations } = storeToRefs(useCurrentRoomStore());
+const { room, isAdmin, isHelper, canSeeLocations } = storeToRefs(useCurrentRoomStore());
 const { overview } = storeToRefs(useSphereOverviewStore());
 const { levelCounts } = storeToRefs(useInactivityReminderStore());
 const { warnings } = storeToRefs(useWarningsStore());
@@ -58,6 +58,13 @@ const tabs = computed<ControlTab[]>(() => [
         ? [{ value: levelCounts.value.yellow, severity: 'warn' as const, testId: 'control-badge-yellow' }]
         : []),
     ],
+  },
+  {
+    name: 'control-pace',
+    label: t('control.tabs.pace'),
+    section: 'pace',
+    visible: isHelper.value,
+    badges: [],
   },
   {
     name: 'control-warnings',

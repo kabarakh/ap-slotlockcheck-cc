@@ -19,6 +19,11 @@ export interface SphereSettingsDraft {
   playersMarkFiller: boolean;
 }
 
+export interface PaceSettingsDraft {
+  paceBreakLimitMinutes: number;
+  paceBulkLimitChecks: number;
+}
+
 export interface PlayerOption {
   discordId: string;
   name: string;
@@ -33,6 +38,7 @@ export const useAdminStore = defineStore('admin', () => {
     visitorsSeeLocations: false,
     playersMarkFiller: false,
   });
+  const paceSettingsDraft = ref<PaceSettingsDraft>({ paceBreakLimitMinutes: 30, paceBulkLimitChecks: 40 });
   const newAdminDiscordId = ref<string | null>(null);
   const newAdminRole = ref<AdminRole>('admin');
   const busy = ref(false);
@@ -104,9 +110,18 @@ export const useAdminStore = defineStore('admin', () => {
     };
   };
 
+  const resetPaceSettingsDraft = () => {
+    const room = useCurrentRoomStore().room;
+    paceSettingsDraft.value = {
+      paceBreakLimitMinutes: room?.paceBreakLimitMinutes ?? 30,
+      paceBulkLimitChecks: room?.paceBulkLimitChecks ?? 40,
+    };
+  };
+
   const load = async (): Promise<void> => {
     resetSettingsDraft();
     resetSphereSettingsDraft();
+    resetPaceSettingsDraft();
     await run(async () => {
       const [adminList, assignments] = await Promise.all([
         unwrap(api.GET('/api/rooms/{slug}/admins', slugPath())),
@@ -137,6 +152,12 @@ export const useAdminStore = defineStore('admin', () => {
   const saveSphereSettings = () =>
     run(
       () => unwrap(api.PATCH('/api/rooms/{slug}/settings', { ...slugPath(), body: { ...sphereSettingsDraft.value } })),
+      'admin.settingsSaved',
+    );
+
+  const savePaceSettings = () =>
+    run(
+      () => unwrap(api.PATCH('/api/rooms/{slug}/settings', { ...slugPath(), body: { ...paceSettingsDraft.value } })),
       'admin.settingsSaved',
     );
 
@@ -200,6 +221,7 @@ export const useAdminStore = defineStore('admin', () => {
     lockAssignments,
     settingsDraft,
     sphereSettingsDraft,
+    paceSettingsDraft,
     newAdminDiscordId,
     newAdminRole,
     busy,
@@ -208,9 +230,11 @@ export const useAdminStore = defineStore('admin', () => {
     isOverridden,
     resetSettingsDraft,
     resetSphereSettingsDraft,
+    resetPaceSettingsDraft,
     load,
     saveSettings,
     saveSphereSettings,
+    savePaceSettings,
     useCheeseLimits,
     addAdmin,
     removeAdmin,
