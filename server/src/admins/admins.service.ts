@@ -90,6 +90,8 @@ export class AdminsService {
           sphereOffset: settings.sphereOffset ?? room.sphereOffset,
           visitorsSeeLocations: settings.visitorsSeeLocations ?? room.visitorsSeeLocations,
           playersMarkFiller: settings.playersMarkFiller ?? room.playersMarkFiller,
+          paceBreakLimitMinutes: settings.paceBreakLimitMinutes ?? room.paceBreakLimitMinutes,
+          paceBulkLimitChecks: settings.paceBulkLimitChecks ?? room.paceBulkLimitChecks,
         },
       });
       if (settings.slotLockPositions) {

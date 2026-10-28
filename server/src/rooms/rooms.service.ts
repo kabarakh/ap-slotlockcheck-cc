@@ -133,6 +133,8 @@ export class RoomsService {
       sphereOffset: room.sphereOffset,
       visitorsSeeLocations: room.visitorsSeeLocations,
       playersMarkFiller: room.playersMarkFiller,
+      paceBreakLimitMinutes: room.paceBreakLimitMinutes,
+      paceBulkLimitChecks: room.paceBulkLimitChecks,
     };
   }
 }

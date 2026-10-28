@@ -57,6 +57,8 @@ export function roomDetail(overrides: Partial<RoomDetail> = {}): RoomDetail {
     sphereOffset: 0,
     visitorsSeeLocations: false,
     playersMarkFiller: false,
+    paceBreakLimitMinutes: 30,
+    paceBulkLimitChecks: 40,
     ...overrides,
   };
 }

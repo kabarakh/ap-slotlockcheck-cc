@@ -1,0 +1,1 @@
+export const MIN_ACTIVE_MINUTES_FOR_PACE = 30;

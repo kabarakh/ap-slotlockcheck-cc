@@ -39,6 +39,8 @@ export class RoomDetailDto extends RoomSummaryDto {
   sphereOffset: number;
   visitorsSeeLocations: boolean;
   playersMarkFiller: boolean;
+  paceBreakLimitMinutes: number;
+  paceBulkLimitChecks: number;
 }
 
 export const ROOM_ROLES = ['visitor', 'player', 'helper', 'admin'] as const;

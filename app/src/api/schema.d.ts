@@ -682,6 +682,8 @@ export interface components {
             sphereOffset: number;
             visitorsSeeLocations: boolean;
             playersMarkFiller: boolean;
+            paceBreakLimitMinutes: number;
+            paceBulkLimitChecks: number;
             id: number;
             slug: string;
             title: string;
@@ -881,6 +883,8 @@ export interface components {
             sphereOffset?: number;
             visitorsSeeLocations?: boolean;
             playersMarkFiller?: boolean;
+            paceBreakLimitMinutes?: number;
+            paceBulkLimitChecks?: number;
         };
         /** @enum {string} */
         LockSource: "detected" | "admin";

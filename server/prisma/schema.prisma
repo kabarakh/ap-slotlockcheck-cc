@@ -23,36 +23,38 @@ model User {
 }
 
 model Room {
-  id                   Int               @id @default(autoincrement())
-  slug                 String            @unique
-  title                String
-  cheeseTrackerId      String            @unique
-  archipelagoOrigin    String
-  archipelagoRoomId    String?
-  archipelagoTrackerId String
-  ownerCtUserId        Int?
-  ownerDiscordName     String?
-  yellowLimitHours     Int
-  redLimitHours        Int
-  limitsOverridden     Boolean           @default(false)
-  createdAt            DateTime          @default(now())
-  lastSyncAt           DateTime?
-  lastSuccessfulSyncAt DateTime?
-  lastSyncError        String?
-  unknownSlotNames     String            @default("[]")
-  sphereOffset         Int               @default(0)
-  visitorsSeeLocations Boolean           @default(false)
-  playersMarkFiller    Boolean           @default(false)
-  slots                Slot[]
-  admins               RoomAdmin[]
-  lockAssignments      LockAssignment[]
-  unlockItems          UnlockItem[]
-  warnings             Warning[]
-  syncRuns             SyncRun[]
-  snapshots            SyncSnapshot[]
-  invitations          AdminInvitation[]
-  seed                 SeedData?
-  seedLocations        SeedLocation[]
+  id                    Int               @id @default(autoincrement())
+  slug                  String            @unique
+  title                 String
+  cheeseTrackerId       String            @unique
+  archipelagoOrigin     String
+  archipelagoRoomId     String?
+  archipelagoTrackerId  String
+  ownerCtUserId         Int?
+  ownerDiscordName      String?
+  yellowLimitHours      Int
+  redLimitHours         Int
+  limitsOverridden      Boolean           @default(false)
+  createdAt             DateTime          @default(now())
+  lastSyncAt            DateTime?
+  lastSuccessfulSyncAt  DateTime?
+  lastSyncError         String?
+  unknownSlotNames      String            @default("[]")
+  sphereOffset          Int               @default(0)
+  visitorsSeeLocations  Boolean           @default(false)
+  playersMarkFiller     Boolean           @default(false)
+  paceBreakLimitMinutes Int               @default(30)
+  paceBulkLimitChecks   Int               @default(40)
+  slots                 Slot[]
+  admins                RoomAdmin[]
+  lockAssignments       LockAssignment[]
+  unlockItems           UnlockItem[]
+  warnings              Warning[]
+  syncRuns              SyncRun[]
+  snapshots             SyncSnapshot[]
+  invitations           AdminInvitation[]
+  seed                  SeedData?
+  seedLocations         SeedLocation[]
 }
 
 model RoomAdmin {

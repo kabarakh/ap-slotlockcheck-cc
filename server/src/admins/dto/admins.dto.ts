@@ -79,6 +79,18 @@ export class UpdateRoomSettingsDto {
   @IsOptional()
   @IsBoolean()
   playersMarkFiller?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @Min(10)
+  @Max(1440)
+  paceBreakLimitMinutes?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(10000)
+  paceBulkLimitChecks?: number;
 }
 
 export const LOCK_SOURCES = ['detected', 'admin'] as const;

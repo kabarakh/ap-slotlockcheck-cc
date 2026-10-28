@@ -211,6 +211,23 @@ describe('spheres and locations (integration)', () => {
     expect(adminPage.rows[0]?.fillerMarkedAt).toEqual(expect.any(String));
   });
 
+  it('has the default pace limits and lets the admin change them in the allowed range', async () => {
+    const room = async () => (await request(server).get('/api/rooms/big-chill').expect(200)).body as object;
+    expect(await room()).toMatchObject({ paceBreakLimitMinutes: 30, paceBulkLimitChecks: 40 });
+    await settings({ paceBreakLimitMinutes: 45, paceBulkLimitChecks: 100 });
+    expect(await room()).toMatchObject({ paceBreakLimitMinutes: 45, paceBulkLimitChecks: 100 });
+    for (const body of [
+      { paceBreakLimitMinutes: 9 },
+      { paceBreakLimitMinutes: 1441 },
+      { paceBreakLimitMinutes: 30.5 },
+      { paceBulkLimitChecks: 0 },
+      { paceBulkLimitChecks: 10001 },
+    ]) {
+      await request(server).patch('/api/rooms/big-chill/settings').set('Cookie', ownerCookie).send(body).expect(400);
+    }
+    expect(await room()).toMatchObject({ paceBreakLimitMinutes: 45, paceBulkLimitChecks: 100 });
+  });
+
   it('makes a helper who sees the admin view but cannot change the room', async () => {
     const admins = await request(server)
       .post('/api/rooms/big-chill/admins')
@@ -223,6 +240,11 @@ describe('spheres and locations (integration)', () => {
     await get('/locations/admin?state=open', playerCookie).expect(200);
     await get('/seed', playerCookie).expect(200);
     await request(server).patch('/api/rooms/big-chill/settings').set('Cookie', playerCookie).send({}).expect(403);
+    await request(server)
+      .patch('/api/rooms/big-chill/settings')
+      .set('Cookie', playerCookie)
+      .send({ paceBreakLimitMinutes: 60, paceBulkLimitChecks: 200 })
+      .expect(403);
     await request(server).get('/api/rooms/big-chill/warnings').set('Cookie', playerCookie).expect(403);
     await request(server)
       .delete(`/api/rooms/big-chill/locations/${await locationId('Old Site: Strawberry 2')}/filler-mark`)
