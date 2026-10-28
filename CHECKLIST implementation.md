@@ -148,6 +148,34 @@ Reference: `PLAN sphere checker implementation.md` (section numbers in brackets)
 - [x] Protocol test with `archipelago.js` against a fake Archipelago server
 - [-] Manual test with a real Archipelago server (9.7.3): needs a room with an admin password
 
+## Pace statistics
+
+Reference: `PLAN pace statistics implementation.md` (section numbers in brackets). Questions and deviations: same file, sections 8 and 9.
+
+### Phase P1 – Logic
+
+- [-] Real step length of the checks history of Cheese measured with a real room (6, P1.1): needs the Cheese tracker ID of a real room
+- [x] `pace.logic.ts` with range, classification, rows for each player and values (3.3, 3.4) and unit tests (5.1)
+
+### Phase P2 – Signals and endpoints
+
+- [x] `pace-signals.ts` with player periods and unit tests (3.2, 5.2)
+- [-] Time to read the signals of the Big Chill room measured, decision of the developer written into section 8: needs the snapshots of the Big Chill room
+- [x] Room settings `paceBreakLimitMinutes` and `paceBulkLimitChecks` with migration `pace_limits` (3.7)
+- [ ] Module `pace`, cache, endpoints for admins and helpers, DTOs, OpenAPI export, generated types (3.5, 3.6) with integration tests (5.3)
+
+### Phase P3 – View
+
+- [ ] Route `control-pace`, tab "Pace" for admins and helpers, store (4.1, 4.2)
+- [ ] Tables for slots and games, hint with signal start and limits, texts (4.3, 4.4)
+- [ ] `PaceSettingsPanel` in the setup tab "Settings" (4.3.3)
+
+### Phase P4 – Timeline
+
+- [ ] Timeline endpoint, `PaceTimeline`, side panel (3.5, 4.3)
+- [ ] E2E tests (5.4)
+- [ ] README: section "Pace statistics" under "Concepts"
+
 ## Open decisions for the developer
 
 See `PLAN slotlock.md`, section 23: production domain, responsibility on the proServer, GitHub repository, PrimeVue license, Node 26 or Node 24 LTS, comparison with the Google sheet.
@@ -167,3 +195,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-26 | Sphere checker P4 | ok | ok | 137 unit, 39 integration, 37 unit app, 18 e2e ok | |
 | 2026-10-26 | Sphere checker P5 | ok | ok | 140 unit, 40 integration, 46 unit app, 18 e2e ok | |
 | 2026-10-26 | Sphere checker P6 | ok | ok | 156 unit, 52 integration, 50 unit app, 19 e2e ok | No test with a real Archipelago server |
+| 2026-10-28 | Pace P1, P2.1, settings | ok | ok | 239 unit, 61 integration, 81 unit app, 23 e2e ok | P1.1 and P2.2 need real room data |
