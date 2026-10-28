@@ -8,6 +8,7 @@ import { LocationStatusService } from '../locations/location-status.service.js';
 import { detectLocks, detectStartSlots } from '../lock/lock.logic.js';
 import type { LockDetectionResult } from '../lock/lock.types.js';
 import { estimateUnlockTime } from '../lock/unlock-time.logic.js';
+import { PaceSignalsService } from '../pace/pace-signals.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { trackerOwnerIdentity } from '../room-setup/owner-check.js';
 import { RoomsService } from '../rooms/rooms.service.js';
@@ -40,6 +41,7 @@ export class SyncService {
     private readonly cheese: CheeseService,
     private readonly live: LiveGateway,
     private readonly locationStatus: LocationStatusService,
+    private readonly paceSignals: PaceSignalsService,
   ) {}
 
   async syncRoom(roomId: number, trigger: SyncTrigger): Promise<SyncOutcome> {
@@ -88,6 +90,15 @@ export class SyncService {
       return 'failed';
     } finally {
       this.rooms.markSyncRunning(roomId, false);
+      await this.updatePaceSignals(room);
+    }
+  }
+
+  private async updatePaceSignals(room: Room): Promise<void> {
+    try {
+      await this.paceSignals.updateSignals(room);
+    } catch (error) {
+      this.logger.warn(`Pace signals of room ${room.slug} not updated: ${String(error)}`);
     }
   }
 

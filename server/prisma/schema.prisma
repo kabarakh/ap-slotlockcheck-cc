@@ -55,6 +55,7 @@ model Room {
   invitations           AdminInvitation[]
   seed                  SeedData?
   seedLocations         SeedLocation[]
+  paceSignalState       PaceSignalState?
 }
 
 model RoomAdmin {
@@ -174,6 +175,15 @@ model SyncSnapshot {
   room           Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@index([roomId, source])
+}
+
+model PaceSignalState {
+  roomId              Int      @id
+  state               String
+  lastSnapshotIds     String
+  unreadableSnapshots String
+  updatedAt           DateTime @updatedAt
+  room                Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 model Datapackage {

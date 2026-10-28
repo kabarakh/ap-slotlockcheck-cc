@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { LiveModule } from '../live/live.module.js';
 import { LocationsModule } from '../locations/locations.module.js';
+import { PaceSignalsModule } from '../pace/pace-signals.module.js';
 import { RoomsModule } from '../rooms/rooms.module.js';
 import { ArchipelagoModule } from '../sources/archipelago/archipelago.module.js';
 import { CheeseModule } from '../sources/cheese/cheese.module.js';
@@ -11,7 +12,7 @@ import { SyncScheduler } from './sync.scheduler.js';
 import { SyncService } from './sync.service.js';
 
 @Module({
-  imports: [CheeseModule, ArchipelagoModule, RoomsModule, LiveModule, LocationsModule],
+  imports: [CheeseModule, ArchipelagoModule, RoomsModule, LiveModule, LocationsModule, PaceSignalsModule],
   controllers: [SyncController],
   providers: [SyncService, SyncScheduler, RoomSourceService],
   exports: [SyncService, RoomSourceService],

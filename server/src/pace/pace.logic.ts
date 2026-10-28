@@ -1,6 +1,6 @@
 import type { LockStatus, UnlockTimeSource } from '../lock/lock.types.js';
 import type { PlayerPeriod, SignalPeriod, SlotSignals } from './pace-signals.js';
-import { MIN_ACTIVE_MINUTES_FOR_PACE } from './pace.constants.js';
+import { CHECKS_HISTORY_STEP_MINUTES, MIN_ACTIVE_MINUTES_FOR_PACE } from './pace.constants.js';
 
 export interface PaceHistoryPoint {
   time: Date;
@@ -51,6 +51,7 @@ export interface SlotPaceInput {
   signals: SlotSignals;
   limits: PaceLimits;
   currentPlayer: SlotPlayer;
+  now: Date;
 }
 
 export interface SlotPaceValues {
@@ -114,6 +115,7 @@ interface Classification {
 type PlayerRow = Pick<SlotPaceRow, 'discordUserId' | 'discordName' | 'from' | 'to'>;
 
 const MS_PER_MINUTE = 60_000;
+const HISTORY_STEP_MS = CHECKS_HISTORY_STEP_MINUTES * MS_PER_MINUTE;
 
 export function slotRange(input: SlotRangeInput): SlotRange | null {
   const { lock } = input;
@@ -191,11 +193,11 @@ export function gamePaceValues(slots: GamePaceSlot[]): GamePaceValues {
   };
 }
 
-function classify({ history, signals, limits }: SlotPaceInput, range: SlotRange): Classification {
+function classify({ history, signals, limits, now }: SlotPaceInput, range: SlotRange): Classification {
   const before: Segment[] = [];
   const inside: Step[] = [];
   const after: Segment[] = [];
-  for (const step of steps(history)) {
+  for (const step of steps(history, now)) {
     if (step.to <= range.start) {
       before.push({ kind: 'locked', ...step });
     } else if (step.from >= range.end) {
@@ -299,13 +301,36 @@ function rowValues(segments: Segment[], bkPeriods: BkPeriod[]): Omit<SlotPaceVal
   };
 }
 
-function steps(history: PaceHistoryPoint[]): Step[] {
-  const points = [...history].sort((a, b) => a.time.getTime() - b.time.getTime());
+function steps(history: PaceHistoryPoint[], now: Date): Step[] {
+  const points = filledHistory(
+    [...history].sort((a, b) => a.time.getTime() - b.time.getTime()),
+    now,
+  );
   return points.slice(1).map((point, index) => ({
     from: points[index].time,
     to: point.time,
     checks: Math.max(0, point.checks - points[index].checks),
   }));
+}
+
+function filledHistory(points: PaceHistoryPoint[], now: Date): PaceHistoryPoint[] {
+  return points.flatMap((point, index) => {
+    const next = points[index + 1];
+    const start = point.time.getTime();
+    const count = Math.max(
+      0,
+      next === undefined
+        ? Math.floor((now.getTime() - start) / HISTORY_STEP_MS)
+        : Math.ceil((next.time.getTime() - start) / HISTORY_STEP_MS) - 1,
+    );
+    return [
+      point,
+      ...Array.from({ length: count }, (_, step) => ({
+        time: new Date(start + (step + 1) * HISTORY_STEP_MS),
+        checks: point.checks,
+      })),
+    ];
+  });
 }
 
 function quietKind(quiet: QuietPeriod, signals: SlotSignals, limits: PaceLimits): 'bk' | 'break' | 'pause' {

@@ -42,12 +42,16 @@ const signals = (overrides: Partial<SlotSignals> = {}): SlotSignals => ({
 
 const limits: PaceLimits = { breakLimitMinutes: 30, bulkLimitChecks: 40 };
 
+const lastTime = (points: SlotPaceInput['history'] = []) =>
+  new Date(Math.max(base.getTime(), ...points.map((point) => point.time.getTime())));
+
 const input = (overrides: Partial<SlotPaceInput> = {}): SlotPaceInput => ({
   history: [],
   range: range(0, 1000),
   signals: signals(),
   limits,
   currentPlayer: { discordUserId: '1', discordName: 'alice' },
+  now: lastTime(overrides.history),
   ...overrides,
 });
 
@@ -308,10 +312,14 @@ describe('classifySlot and slotPaceRows', () => {
     });
   });
 
-  it('accepts steps of different length', () => {
+  it('fills the missing grid points of a long step so that only its last 10 minutes are active', () => {
     const slot = input({ history: history([0, 0], [10, 5], [20, 10], [80, 40]), range: range(0, 80) });
-    expect(classifySlot(slot)).toEqual([segment('active', 0, 80, 40)]);
-    expect(onlyRow(slot)).toMatchObject({ activeMinutes: 80, checks: 40, checksPerHour: 30 });
+    expect(classifySlot(slot)).toEqual([
+      segment('active', 0, 20, 10),
+      segment('break', 20, 70),
+      segment('active', 70, 80, 30),
+    ]);
+    expect(onlyRow(slot)).toMatchObject({ activeMinutes: 30, checks: 40, checksPerHour: 80, breakMinutes: 50 });
     expect(
       classifySlot(input({ history: history([0, 0], [10, 5], [20, 10], [80, 10], [90, 15]), range: range(0, 90) })),
     ).toEqual([segment('active', 0, 20, 10), segment('break', 20, 80), segment('active', 80, 90, 5)]);
@@ -342,10 +350,61 @@ describe('classifySlot and slotPaceRows', () => {
     ).toEqual([segment('active', 0, 10, 5), segment('bk', 10, 30), segment('active', 30, 40, 4)]);
   });
 
-  it('has no segments after the last history point', () => {
-    const slot = input({ history: history([0, 0], [10, 5], [20, 5], [30, 5]), range: range(0, 100) });
+  it('fills the missing grid points between two points with the values of the point before', () => {
+    const slot = input({ history: history([0, 0], [10, 5], [60, 10]), range: range(0, 60) });
+    expect(classifySlot(slot)).toEqual([
+      segment('active', 0, 10, 5),
+      segment('break', 10, 50),
+      segment('active', 50, 60, 5),
+    ]);
+    expect(onlyRow(slot)).toMatchObject({ activeMinutes: 20, checks: 10, breakMinutes: 40 });
+    expect(classifySlot(input({ history: history([0, 0], [10, 5], [30, 9]), range: range(0, 30) }))).toEqual([
+      segment('active', 0, 10, 5),
+      segment('pause', 10, 20),
+      segment('active', 20, 30, 4),
+    ]);
+  });
+
+  it('keeps the last part of a step that is not a multiple of 10 minutes', () => {
+    expect(classifySlot(input({ history: history([0, 0], [10, 5], [35, 9]), range: range(0, 35) }))).toEqual([
+      segment('active', 0, 10, 5),
+      segment('pause', 10, 30),
+      segment('active', 30, 35, 4),
+    ]);
+  });
+
+  it('fills the history after the last point up to the last grid point not after now', () => {
+    const points = history([0, 0], [10, 5], [20, 5], [30, 5]);
+    const slot = input({ history: points, range: range(0, 100), now: at(100) });
+    expect(classifySlot(slot)).toEqual([segment('active', 0, 10, 5), segment('break', 10, 100)]);
+    expect(onlyRow(slot)).toMatchObject({ to: at(100), activeMinutes: 10, breakMinutes: 90 });
+    expect(classifySlot(input({ history: points, range: range(0, 95), now: at(95) }))).toEqual([
+      segment('active', 0, 10, 5),
+      segment('break', 10, 90),
+    ]);
+    expect(classifySlot(input({ history: points, range: range(0, 40), now: at(60) }))).toEqual([
+      segment('active', 0, 10, 5),
+      segment('pause', 10, 40),
+      segment('after_goal', 40, 60),
+    ]);
+  });
+
+  it('does not fill after a last point exactly at now', () => {
+    const slot = input({ history: history([0, 0], [10, 5], [20, 5], [30, 5]), range: range(0, 100), now: at(30) });
     expect(classifySlot(slot)).toEqual([segment('active', 0, 10, 5), segment('pause', 10, 30)]);
     expect(onlyRow(slot)).toMatchObject({ to: at(100), activeMinutes: 30, breakMinutes: 0 });
+  });
+
+  it('has no segments and no rows without history', () => {
+    const slot = input({ history: [], range: range(0, 100), now: at(100) });
+    expect(classifySlot(slot)).toEqual([]);
+    expect(slotPaceRows(slot)).toEqual([]);
+  });
+
+  it('fills the history after a single point up to now', () => {
+    expect(classifySlot(input({ history: history([0, 0]), range: range(0, 100), now: at(45) }))).toEqual([
+      segment('break', 0, 40),
+    ]);
   });
 
   it('has no segments and no rows without range', () => {

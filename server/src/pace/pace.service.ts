@@ -12,25 +12,18 @@ import { CheeseService } from '../sources/cheese/cheese.service.js';
 import { SourceFormatError, SourceRequestError } from '../sources/http/source-errors.js';
 import { checksHistoryPoints } from '../sync/room-source.mapper.js';
 import type { RoomPaceDto, SlotTimelineDto } from './dto/pace.dto.js';
-import {
-  createSignalsReader,
-  type SignalPeriod,
-  type SignalSlot,
-  type SignalSource,
-  type SlotSignals,
-} from './pace-signals.js';
-import { CHECKS_HISTORY_CACHE_MINUTES, SNAPSHOT_BATCH_SIZE } from './pace.constants.js';
+import { finishSignals, type SignalPeriod, type SlotSignals } from './pace-signals.js';
+import { PaceSignalsService, unreadablePeriods } from './pace-signals.service.js';
+import { CHECKS_HISTORY_CACHE_MINUTES } from './pace.constants.js';
 import { classifySlot, slotPaceRows, slotRange, type PaceLimits, type Segment, type SlotRange } from './pace.logic.js';
 import {
   firstHistoryTime,
   gamePaceDtos,
-  orderSnapshots,
   pacedSlots,
   slotHistory,
   slotPaceDtos,
   slotRangeLock,
   slotTimelineDto,
-  type SnapshotEntry,
 } from './pace.mapper.js';
 
 export interface SlotPaceCalculation {
@@ -51,12 +44,6 @@ interface CachedChecksHistory {
   points: ChecksHistoryPoint[];
 }
 
-interface RoomSignals {
-  signals: Map<number, SlotSignals>;
-  unreadableSnapshots: SignalPeriod[];
-}
-
-const SIGNAL_SOURCES: SignalSource[] = ['cheese', 'ap_tracker'];
 const NO_SIGNALS: SlotSignals = {
   progressionItemTimes: [],
   bkPeriods: [],
@@ -78,6 +65,7 @@ export class PaceService implements OnModuleInit {
     private readonly rooms: RoomsService,
     private readonly updates: RoomUpdatesService,
     private readonly cheese: CheeseService,
+    private readonly paceSignals: PaceSignalsService,
   ) {}
 
   onModuleInit(): void {
@@ -146,7 +134,9 @@ export class PaceService implements OnModuleInit {
       unlocks.map((unlock) => ({ ...unlock, timeSource: unlock.timeSource as UnlockTimeSource })),
       new Set(slots.filter((slot) => slot.isStartSlot).map((slot) => slot.id)),
     );
-    const { signals, unreadableSnapshots } = await this.readSignals(room, slots, now);
+    const stored = await this.paceSignals.updateSignals(room);
+    const signals = finishSignals(stored.state, slots, now);
+    const unreadableSnapshots = unreadablePeriods(stored.unreadableSnapshots, now);
     const limits: PaceLimits = {
       breakLimitMinutes: room.paceBreakLimitMinutes,
       bulkLimitChecks: room.paceBulkLimitChecks,
@@ -168,6 +158,7 @@ export class PaceService implements OnModuleInit {
         signals: signals.get(slot.position) ?? NO_SIGNALS,
         limits,
         currentPlayer: { discordUserId: slot.discordUserId, discordName: slot.discordName },
+        now,
       };
       slotCalculations.set(slot.id, { range, segments: classifySlot(input), signals: input.signals });
       return slotPaceDtos(slot, slotPaceRows(input));
@@ -204,51 +195,5 @@ export class PaceService implements OnModuleInit {
     }
     this.checksHistories.set(room.id, { fetchedAt: Date.now(), points });
     return points;
-  }
-
-  private async readSignals(room: Room, slots: SignalSlot[], now: Date): Promise<RoomSignals> {
-    const [entries, runs] = await Promise.all([
-      this.prisma.syncSnapshot.findMany({
-        where: { roomId: room.id, source: { in: SIGNAL_SOURCES } },
-        select: { id: true, source: true, firstSyncRunId: true },
-      }),
-      this.prisma.syncRun.findMany({ where: { roomId: room.id }, select: { id: true, startedAt: true } }),
-    ]);
-    const { snapshots, withoutRun } = orderSnapshots(
-      entries as SnapshotEntry[],
-      new Map(runs.map((run) => [run.id, run.startedAt])),
-      now,
-    );
-    for (const id of withoutRun) {
-      this.logger.warn(`Snapshot ${id} of room ${room.slug} has no synchronization run and is not used`);
-    }
-    const reader = createSignalsReader(slots);
-    const unreadableSnapshots: SignalPeriod[] = [];
-    for (let start = 0; start < snapshots.length; start += SNAPSHOT_BATCH_SIZE) {
-      const batch = snapshots.slice(start, start + SNAPSHOT_BATCH_SIZE);
-      const payloads = new Map(
-        (
-          await this.prisma.syncSnapshot.findMany({
-            where: { id: { in: batch.map((snapshot) => snapshot.id) } },
-            select: { id: true, payload: true },
-          })
-        ).map((row) => [row.id, row.payload]),
-      );
-      for (const snapshot of batch) {
-        const result = reader.add({
-          source: snapshot.source,
-          validFrom: snapshot.from,
-          payload: payloads.get(snapshot.id) ?? '',
-        });
-        if (!result.read) {
-          this.logger.warn(
-            `Snapshot ${snapshot.id} of room ${room.slug} cannot be read and is not used: ${result.error.message}`,
-          );
-          unreadableSnapshots.push({ from: snapshot.from, to: snapshot.to });
-        }
-        payloads.delete(snapshot.id);
-      }
-    }
-    return { signals: reader.finish(now), unreadableSnapshots };
   }
 }

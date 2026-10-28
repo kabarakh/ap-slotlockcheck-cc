@@ -1,7 +1,14 @@
 import { z } from 'zod';
 
 import { loadFixture } from '../../test/fixtures/fixtures.js';
-import { createSignalsReader, type SignalSlot, type SignalSnapshot, type SlotSignals } from './pace-signals.js';
+import {
+  createSignalsReader,
+  parseSignalsState,
+  serializeSignalsState,
+  type SignalSlot,
+  type SignalSnapshot,
+  type SlotSignals,
+} from './pace-signals.js';
 
 interface CheeseGameFixture {
   id: number;
@@ -289,5 +296,86 @@ describe('createSignalsReader', () => {
       statusChanges: [{ time: t2, status: 'bk' }],
       signalsFrom: t2,
     });
+  });
+});
+
+describe('serializeSignalsState and parseSignalsState', () => {
+  const t5 = new Date('2026-10-28T10:20:00Z');
+  const t6 = new Date('2026-10-28T10:25:00Z');
+  const sequence: SignalSnapshot[] = [
+    cheese(t1, { 103: 'bk' }),
+    tracker(t1),
+    { source: 'cheese', validFrom: t2, payload: 'not json' },
+    tracker(t2, { 1: [[2001, 20010, 2, 1]] }),
+    cheese(t3, { 103: 'soft_bk', 102: 'go' }, { 103: { effective_discord_user_id: '100000000000000004' } }),
+    { source: 'ap_tracker', validFrom: t3, payload: JSON.stringify({ games: [] }) },
+    cheese(t4, { 102: 'go', 104: 'bk' }, { 103: { effective_discord_username: 'dave' } }),
+    tracker(t4, {
+      1: [
+        [2001, 20010, 2, 1],
+        [2002, 20011, 2, 0],
+      ],
+      3: [[1, 40001, 1, 1]],
+    }),
+    cheese(t5, { 103: 'go' }),
+    tracker(t6, {
+      1: [
+        [2001, 20010, 2, 1],
+        [2002, 20011, 2, 0],
+        [2003, 20012, 3, 3],
+      ],
+      3: [[1, 40001, 1, 1]],
+    }),
+  ];
+
+  const readInTwoParts = (split: number, at: Date = now): Map<number, SlotSignals> => {
+    const first = createSignalsReader(slots);
+    for (const snapshot of sequence.slice(0, split)) {
+      first.add(snapshot);
+    }
+    const second = createSignalsReader(slots, parseSignalsState(serializeSignalsState(first.state())));
+    for (const snapshot of sequence.slice(split)) {
+      second.add(snapshot);
+    }
+    return second.finish(at);
+  };
+
+  it('gives the same signals after each split point as one reader of all snapshots', () => {
+    const expected = read(sequence);
+    expect(expected.get(3)).toMatchObject({ bkPeriods: [{ from: t1, to: t4 }], progressionItemTimes: [t4] });
+    expect(expected.get(1)?.progressionItemTimes).toEqual([t2, t6]);
+    for (let split = 0; split <= sequence.length; split += 1) {
+      expect(readInTwoParts(split)).toEqual(expected);
+    }
+  });
+
+  it('keeps the last snapshot of each source open up to the time of the finish', () => {
+    const later = new Date('2026-10-29T08:00:00Z');
+    expect(readInTwoParts(sequence.length, later)).toEqual(read(sequence, later));
+    expect(readInTwoParts(sequence.length, later).get(3)?.playerPeriods.at(-1)?.to).toEqual(later);
+  });
+
+  it('writes the dates as ISO strings', () => {
+    const reader = createSignalsReader(slots);
+    reader.add(cheese(t1, { 103: 'bk' }));
+    const json = JSON.parse(serializeSignalsState(reader.state())) as { signalsFrom: string };
+    expect(json.signalsFrom).toBe('2026-10-28T10:00:00.000Z');
+  });
+
+  it('keeps the signals of a slot that is not known when the state is written', () => {
+    const first = createSignalsReader([]);
+    for (const snapshot of sequence.slice(0, 5)) {
+      first.add(snapshot);
+    }
+    const second = createSignalsReader(slots, parseSignalsState(serializeSignalsState(first.state())));
+    for (const snapshot of sequence.slice(5)) {
+      second.add(snapshot);
+    }
+    expect(second.finish(now)).toEqual(read(sequence));
+  });
+
+  it('does not accept a state with a wrong format', () => {
+    expect(() => parseSignalsState(JSON.stringify({ signalsFrom: 'yesterday' }))).toThrow(z.ZodError);
+    expect(() => parseSignalsState('{')).toThrow(SyntaxError);
   });
 });
