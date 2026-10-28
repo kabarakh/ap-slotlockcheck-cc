@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import type { GoalTimeSource } from '../../locations/goal-time.logic.js';
 import type { LockStatus, UnlockTimeSource } from '../../lock/lock.types.js';
 import type {
   AvailabilityStatus,
@@ -10,6 +11,7 @@ import type {
 
 export const LOCK_STATUSES: LockStatus[] = ['not_locked', 'start_slot', 'locked', 'partially_unlocked', 'unlocked'];
 export const UNLOCK_TIME_SOURCES: UnlockTimeSource[] = ['sync', 'estimated', 'manual', 'csv', 'unknown'];
+export const GOAL_TIME_SOURCES: GoalTimeSource[] = ['sync', 'estimated'];
 export const TRACKER_STATUSES: TrackerStatus[] = ['disconnected', 'connected', 'ready', 'playing', 'goal_completed'];
 export const PROGRESSION_STATUSES: ProgressionStatus[] = ['unknown', 'unblocked', 'bk', 'go', 'soft_bk'];
 export const COMPLETION_STATUSES: CompletionStatus[] = ['incomplete', 'all_checks', 'goal', 'done', 'released'];
@@ -62,6 +64,12 @@ export class SlotRowDto {
 
   @ApiProperty({ type: String, format: 'date-time', nullable: true })
   lastChecked: string | null;
+
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
+  goalTime: string | null;
+
+  @ApiProperty({ enum: GOAL_TIME_SOURCES, enumName: 'GoalTimeSource', nullable: true })
+  goalTimeSource: GoalTimeSource | null;
 
   @ApiProperty({ enum: TRACKER_STATUSES, enumName: 'TrackerStatus' })
   trackerStatus: TrackerStatus;

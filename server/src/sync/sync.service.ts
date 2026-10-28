@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import type { Prisma, Room } from '../generated/prisma/client.js';
 import { LiveGateway } from '../live/live.gateway.js';
+import { nextGoalTime, type GoalTimeSource } from '../locations/goal-time.logic.js';
 import { LocationStatusService } from '../locations/location-status.service.js';
 import { detectLocks, detectStartSlots } from '../lock/lock.logic.js';
 import type { LockDetectionResult } from '../lock/lock.types.js';
@@ -127,11 +128,19 @@ export class SyncService {
       await tx.slot.deleteMany({
         where: { roomId: room.id, position: { notIn: records.map((record) => record.position) } },
       });
+      const previousSlots = await tx.slot.findMany({ where: { roomId: room.id } });
+      const previousByPosition = new Map(
+        previousSlots.map((slot) => [
+          slot.position,
+          { ...slot, goalTimeSource: slot.goalTimeSource as GoalTimeSource | null },
+        ]),
+      );
       for (const record of records) {
+        const data = { ...record, ...nextGoalTime(previousByPosition.get(record.position), record, now) };
         await tx.slot.upsert({
           where: { roomId_position: { roomId: room.id, position: record.position } },
-          create: { roomId: room.id, ...record },
-          update: record,
+          create: { roomId: room.id, ...data },
+          update: data,
         });
       }
       const slots = await tx.slot.findMany({ where: { roomId: room.id } });

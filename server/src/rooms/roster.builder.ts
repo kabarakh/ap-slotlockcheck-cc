@@ -1,3 +1,4 @@
+import type { GoalTimeSource } from '../locations/goal-time.logic.js';
 import { evaluateSlotLockStates } from '../lock/lock.logic.js';
 import type { StoredLock, StoredUnlock, UnlockTimeSource } from '../lock/lock.types.js';
 import type {
@@ -22,6 +23,8 @@ export interface RosterSlot {
   checksTotal: number;
   lastActivity: Date | null;
   lastChecked: Date | null;
+  goalTime: Date | null;
+  goalTimeSource: string | null;
   trackerStatus: string;
   progressionStatus: string;
   completionStatus: string;
@@ -68,6 +71,8 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
         checksTotal: slot.checksTotal,
         lastActivity: toIso(slot.lastActivity),
         lastChecked: toIso(slot.lastChecked),
+        goalTime: toIso(slot.goalTime),
+        goalTimeSource: slot.goalTimeSource as GoalTimeSource | null,
         trackerStatus: slot.trackerStatus as TrackerStatus,
         progressionStatus: slot.progressionStatus as ProgressionStatus,
         completionStatus: slot.completionStatus as CompletionStatus,
