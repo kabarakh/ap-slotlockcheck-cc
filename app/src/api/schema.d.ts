@@ -628,6 +628,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/pace": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Pace_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1008,6 +1024,52 @@ export interface components {
         };
         ItemNamesDto: {
             itemNames: string[];
+        };
+        PaceLimitsDto: {
+            breakLimitMinutes: number;
+            bulkLimitChecks: number;
+        };
+        /** @enum {string} */
+        SlotStartKind: "unlock" | "estimated" | "history_start" | "unknown";
+        SlotPaceDto: {
+            discordUserId: string | null;
+            discordName: string | null;
+            /** Format: date-time */
+            from: string | null;
+            /** Format: date-time */
+            to: string | null;
+            activeMinutes: number | null;
+            checks: number | null;
+            checksPerHour: number | null;
+            minutesPerCheck: number | null;
+            bkMinutes: number | null;
+            bkShare: number | null;
+            bkCount: number | null;
+            longestBkMinutes: number | null;
+            breakMinutes: number | null;
+            startKind: components["schemas"]["SlotStartKind"] | null;
+            slotId: number;
+            name: string;
+            game: string;
+            hasRange: boolean;
+            partialSignals: boolean;
+        };
+        GamePaceDto: {
+            checksPerHour: number | null;
+            medianChecksPerHour: number | null;
+            game: string;
+            slotCount: number;
+            activeMinutes: number;
+            checks: number;
+        };
+        RoomPaceDto: {
+            /** Format: date-time */
+            calculatedAt: string;
+            /** Format: date-time */
+            signalsFrom: string | null;
+            limits: components["schemas"]["PaceLimitsDto"];
+            slots: components["schemas"]["SlotPaceDto"][];
+            games: components["schemas"]["GamePaceDto"][];
         };
         ApiErrorDto: {
             details?: {
@@ -2109,6 +2171,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ServerJobDto"];
+                };
+            };
+        };
+    };
+    Pace_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomPaceDto"];
                 };
             };
         };

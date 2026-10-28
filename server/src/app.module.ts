@@ -14,6 +14,7 @@ import { HealthModule } from './health/health.module.js';
 import { LiveModule } from './live/live.module.js';
 import { LocationsModule } from './locations/locations.module.js';
 import { LockModule } from './lock/lock.module.js';
+import { PaceModule } from './pace/pace.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { RoomSetupModule } from './room-setup/room-setup.module.js';
 import { RoomsModule } from './rooms/rooms.module.js';
@@ -46,6 +47,7 @@ function staticAppModules(): DynamicModule[] {
     SeedModule,
     LocationsModule,
     ArchipelagoAdminModule,
+    PaceModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: ApiErrorFilter }],
 })

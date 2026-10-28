@@ -1838,6 +1838,36 @@
           "ArchipelagoAdmin"
         ]
       }
+    },
+    "/api/rooms/{slug}/pace": {
+      "get": {
+        "operationId": "Pace_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomPaceDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Pace"
+        ]
+      }
     }
   },
   "info": {
@@ -3452,6 +3482,202 @@
         },
         "required": [
           "itemNames"
+        ]
+      },
+      "PaceLimitsDto": {
+        "type": "object",
+        "properties": {
+          "breakLimitMinutes": {
+            "type": "number"
+          },
+          "bulkLimitChecks": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "breakLimitMinutes",
+          "bulkLimitChecks"
+        ]
+      },
+      "SlotStartKind": {
+        "type": "string",
+        "enum": [
+          "unlock",
+          "estimated",
+          "history_start",
+          "unknown"
+        ]
+      },
+      "SlotPaceDto": {
+        "type": "object",
+        "properties": {
+          "discordUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "discordName": {
+            "type": "string",
+            "nullable": true
+          },
+          "from": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "activeMinutes": {
+            "type": "number",
+            "nullable": true
+          },
+          "checks": {
+            "type": "number",
+            "nullable": true
+          },
+          "checksPerHour": {
+            "type": "number",
+            "nullable": true
+          },
+          "minutesPerCheck": {
+            "type": "number",
+            "nullable": true
+          },
+          "bkMinutes": {
+            "type": "number",
+            "nullable": true
+          },
+          "bkShare": {
+            "type": "number",
+            "nullable": true
+          },
+          "bkCount": {
+            "type": "number",
+            "nullable": true
+          },
+          "longestBkMinutes": {
+            "type": "number",
+            "nullable": true
+          },
+          "breakMinutes": {
+            "type": "number",
+            "nullable": true
+          },
+          "startKind": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SlotStartKind"
+              }
+            ]
+          },
+          "slotId": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "game": {
+            "type": "string"
+          },
+          "hasRange": {
+            "type": "boolean"
+          },
+          "partialSignals": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "discordUserId",
+          "discordName",
+          "from",
+          "to",
+          "activeMinutes",
+          "checks",
+          "checksPerHour",
+          "minutesPerCheck",
+          "bkMinutes",
+          "bkShare",
+          "bkCount",
+          "longestBkMinutes",
+          "breakMinutes",
+          "startKind",
+          "slotId",
+          "name",
+          "game",
+          "hasRange",
+          "partialSignals"
+        ]
+      },
+      "GamePaceDto": {
+        "type": "object",
+        "properties": {
+          "checksPerHour": {
+            "type": "number",
+            "nullable": true
+          },
+          "medianChecksPerHour": {
+            "type": "number",
+            "nullable": true
+          },
+          "game": {
+            "type": "string"
+          },
+          "slotCount": {
+            "type": "number"
+          },
+          "activeMinutes": {
+            "type": "number"
+          },
+          "checks": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "checksPerHour",
+          "medianChecksPerHour",
+          "game",
+          "slotCount",
+          "activeMinutes",
+          "checks"
+        ]
+      },
+      "RoomPaceDto": {
+        "type": "object",
+        "properties": {
+          "calculatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "signalsFrom": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "limits": {
+            "$ref": "#/components/schemas/PaceLimitsDto"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SlotPaceDto"
+            }
+          },
+          "games": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GamePaceDto"
+            }
+          }
+        },
+        "required": [
+          "calculatedAt",
+          "signalsFrom",
+          "limits",
+          "slots",
+          "games"
         ]
       },
       "ApiErrorDto": {
