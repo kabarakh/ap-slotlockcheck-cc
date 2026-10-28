@@ -1,11 +1,11 @@
-import { beforeEach, describe, expect, it } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it } from 'vite-plus/test';
 
-import { slotRow } from '@/domain/__tests__/fixtures';
 import { useAdminStore } from '../admin';
 import { useAuthStore } from '../auth';
 import { useCurrentRoomStore } from '../current-room';
 import { useRoomOwnershipStore } from '../room-ownership';
+import { slotRow } from '@/domain/__tests__/fixtures';
 
 describe('useRoomOwnershipStore', () => {
   beforeEach(() => {

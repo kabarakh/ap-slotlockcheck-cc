@@ -1,8 +1,8 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 
-import type { SlotLock } from '@/api/types';
 import { buildUnlockForest, type UnlockTreeNode } from '../unlock-tree';
 import { slotRow } from './fixtures';
+import type { SlotLock } from '@/api/types';
 
 const lock = (lockerSlotId: number, senderSlotId: number | null, unlockTime: string | null): SlotLock => ({
   lockerSlotId,

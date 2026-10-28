@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { hierarchy, tree, type HierarchyPointNode } from 'd3-hierarchy';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { hierarchy, tree, type HierarchyPointNode } from 'd3-hierarchy';
 
 import type { UnlockTreeNode } from '@/domain/unlock-tree';
 

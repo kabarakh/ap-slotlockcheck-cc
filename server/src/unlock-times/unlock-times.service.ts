@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { createSlotFinder } from '../lock/lock.logic.js';
-import { slotIdentity } from '../sync/room-source.mapper.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RoomUpdatesService } from '../rooms/room-updates.service.js';
 import { RoomsService } from '../rooms/rooms.service.js';
+import { slotIdentity } from '../sync/room-source.mapper.js';
 import type { SetUnlockTimeDto, UnlockTimeImportResultDto } from './dto/unlock-time.dto.js';
 import { parseUnlockTimeCsv } from './unlock-time-csv.js';
 

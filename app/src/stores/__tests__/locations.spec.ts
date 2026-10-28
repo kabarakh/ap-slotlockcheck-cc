@@ -1,12 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
-import type { LocationUserRow, RoomDetail, SphereOverview } from '@/api/types';
-import { roomDetail, slotRow } from '@/domain/__tests__/fixtures';
 import { useAuthStore } from '../auth';
 import { useCurrentRoomStore } from '../current-room';
 import { useLocationsStore } from '../locations';
 import { useSphereOverviewStore } from '../sphere-overview';
+import type { LocationUserRow, RoomDetail, SphereOverview } from '@/api/types';
+import { roomDetail, slotRow } from '@/domain/__tests__/fixtures';
 
 const apiGet = vi.hoisted(() => vi.fn<(path: string, options?: unknown) => Promise<unknown>>());
 

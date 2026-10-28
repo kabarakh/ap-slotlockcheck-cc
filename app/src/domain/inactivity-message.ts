@@ -1,7 +1,7 @@
-import type { SlotRow } from '@/api/types';
 import type { InactivityLevel } from './inactivity';
 import { buildPingMessages, type PingLineTexts } from './ping-messages';
 import { hasAllChecks } from './summary';
+import type { SlotRow } from '@/api/types';
 
 export type InactivityLevelFilter = 'all' | 'yellow' | 'red';
 

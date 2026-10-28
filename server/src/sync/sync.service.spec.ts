@@ -1,7 +1,7 @@
+import type { SlotRowDto } from '../rooms/dto/slot-row.dto.js';
+import { diffRoster } from './roster.diff.js';
 import { manualSyncWaitSeconds } from './sync.controller.js';
 import { isSyncDue } from './sync.scheduler.js';
-import { diffRoster } from './roster.diff.js';
-import type { SlotRowDto } from '../rooms/dto/slot-row.dto.js';
 
 describe('isSyncDue', () => {
   const now = new Date('2026-10-24T12:00:00Z');

@@ -1,5 +1,5 @@
-import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { X509Certificate } from 'node:crypto';
+import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 
 const CHALLENGE_PREFIX = '/.well-known/acme-challenge/';
 const DAY_MS = 24 * 60 * 60 * 1000;

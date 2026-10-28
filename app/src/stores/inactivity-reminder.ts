@@ -1,15 +1,15 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
+import { useCurrentRoomStore } from './current-room';
+import { useInactivityStore } from './inactivity';
+import { useUiStore } from './ui';
 import {
   buildInactivityReminderMessages,
   ENGLISH_INACTIVITY_REMINDER_TEXTS,
   inactivityReminderEntries,
   type InactivityLevelFilter,
 } from '@/domain/inactivity-message';
-import { useCurrentRoomStore } from './current-room';
-import { useInactivityStore } from './inactivity';
-import { useUiStore } from './ui';
 
 export interface InactivityReminderDraft {
   levels: InactivityLevelFilter;

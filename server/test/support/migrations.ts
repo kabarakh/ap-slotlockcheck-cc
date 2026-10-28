@@ -1,6 +1,6 @@
+import Database from 'better-sqlite3';
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import Database from 'better-sqlite3';
 
 const MIGRATIONS_PATH = join(import.meta.dirname, '..', '..', 'prisma', 'migrations');
 

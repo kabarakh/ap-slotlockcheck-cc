@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -14,8 +14,8 @@ import ItemTypeTag from '@/components/ui/ItemTypeTag.vue';
 import type { LocationAdminRow } from '@/api/types';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useLocationsStore } from '@/stores/locations';
-import { SPHERE_LOCATIONS_PAGE_SIZE, useSphereLocationsStore } from '@/stores/sphere-locations';
 import { useSphereCleanupStore } from '@/stores/sphere-cleanup';
+import { SPHERE_LOCATIONS_PAGE_SIZE, useSphereLocationsStore } from '@/stores/sphere-locations';
 
 const sphereLocations = useSphereLocationsStore();
 const { sphere, rows, total, offset, loading } = storeToRefs(sphereLocations);

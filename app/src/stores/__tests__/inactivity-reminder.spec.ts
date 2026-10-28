@@ -1,9 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
-import { roomDetail, slotRow } from '@/domain/__tests__/fixtures';
 import { useCurrentRoomStore } from '../current-room';
 import { useInactivityReminderStore } from '../inactivity-reminder';
+import { roomDetail, slotRow } from '@/domain/__tests__/fixtures';
 
 const writeText = vi.fn<(text: string) => Promise<void>>();
 

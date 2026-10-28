@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 
 import { activeCycleField, cycleSortField, nextTableSort, type SortCycle, type TableSort } from '../table-sort';
 

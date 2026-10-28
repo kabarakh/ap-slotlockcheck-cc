@@ -1,6 +1,6 @@
+import acme from 'acme-client';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import acme from 'acme-client';
 
 import { remainingValidDays, startChallengeServer, type ChallengeTokens } from './acme-challenge.ts';
 

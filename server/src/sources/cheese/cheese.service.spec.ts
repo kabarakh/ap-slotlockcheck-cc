@@ -1,5 +1,5 @@
-import type { AppConfigService } from '../../config/app-config.service.js';
 import { loadFixture } from '../../../test/fixtures/fixtures.js';
+import type { AppConfigService } from '../../config/app-config.service.js';
 import { SourceFormatError } from '../http/source-errors.js';
 import { SourceHttpService } from '../http/source-http.service.js';
 import { CheeseService } from './cheese.service.js';

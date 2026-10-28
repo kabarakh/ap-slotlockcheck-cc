@@ -1,5 +1,5 @@
-import type { SlotRow } from '@/api/types';
 import type { SortCycle } from './table-sort';
+import type { SlotRow } from '@/api/types';
 
 export const UNLOCK_SORT: SortCycle = { first: 'unlockSender', second: 'lastUnlockTime' };
 

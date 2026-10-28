@@ -1,6 +1,6 @@
-import { computed, ref } from 'vue';
-import { defineStore } from 'pinia';
 import { usePreferredDark } from '@vueuse/core';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
 import { ApiRequestError } from '@/api/client';
 

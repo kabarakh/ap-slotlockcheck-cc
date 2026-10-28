@@ -1,5 +1,5 @@
-import type { SlotRow } from '@/api/types';
 import { isGoaled } from './summary';
+import type { SlotRow } from '@/api/types';
 
 export type InactivityLevel = 'none' | 'yellow' | 'red';
 

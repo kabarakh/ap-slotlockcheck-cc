@@ -1,6 +1,6 @@
+import { isGoaled } from '../locations/goal.logic.js';
 import { detectLocks, detectStartSlots, evaluateSlotLockStates } from '../lock/lock.logic.js';
 import type { SlotLockState } from '../lock/lock.types.js';
-import { isGoaled } from '../locations/goal.logic.js';
 import {
   archipelagoSlotsByPosition,
   lockedSlotNamesByPosition,

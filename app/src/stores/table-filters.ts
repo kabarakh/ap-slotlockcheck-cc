@@ -1,12 +1,12 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-import type { LockStatus, SlotRow } from '@/api/types';
-import { formatGameName } from '@/domain/game-name';
-import type { InactivityLevel } from '@/domain/inactivity';
 import { useCurrentRoomStore } from './current-room';
 import { useInactivityStore } from './inactivity';
 import { useStatisticsStore } from './statistics';
+import type { LockStatus, SlotRow } from '@/api/types';
+import { formatGameName } from '@/domain/game-name';
+import type { InactivityLevel } from '@/domain/inactivity';
 
 export interface SlotFilter {
   text: string;

@@ -1,6 +1,6 @@
-import type { SlotRow } from '@/api/types';
 import { isGoaled } from './summary';
 import type { SortCycle } from './table-sort';
+import type { SlotRow } from '@/api/types';
 
 export const STATUS_SORT: SortCycle = { first: 'statusOrder', second: 'goalTimeOrder' };
 

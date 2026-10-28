@@ -1,10 +1,10 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-import { api, unwrap } from '@/api/client';
-import type { AdminRole, LockAssignment, RoomAdmin } from '@/api/types';
 import { useCurrentRoomStore } from './current-room';
 import { useUiStore } from './ui';
+import { api, unwrap } from '@/api/client';
+import type { AdminRole, LockAssignment, RoomAdmin } from '@/api/types';
 
 export interface SettingsDraft {
   title: string;

@@ -1,5 +1,5 @@
-import { createHash } from 'node:crypto';
 import { Injectable, Logger } from '@nestjs/common';
+import { createHash } from 'node:crypto';
 
 import type { Prisma, Room } from '../generated/prisma/client.js';
 import { LiveGateway } from '../live/live.gateway.js';

@@ -1,12 +1,12 @@
-import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-import { api, unwrap } from '@/api/client';
-import type { CleanupSlotMode, SphereCleanupEntry } from '@/api/types';
-import { buildCleanupMessages, ENGLISH_CLEANUP_TEXTS } from '@/domain/cleanup-message';
 import { useCurrentRoomStore } from './current-room';
 import { useSphereOverviewStore } from './sphere-overview';
 import { useUiStore } from './ui';
+import { api, unwrap } from '@/api/client';
+import type { CleanupSlotMode, SphereCleanupEntry } from '@/api/types';
+import { buildCleanupMessages, ENGLISH_CLEANUP_TEXTS } from '@/domain/cleanup-message';
 
 export interface CleanupDraft {
   fromSphere: number;

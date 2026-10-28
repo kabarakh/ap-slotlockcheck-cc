@@ -6,9 +6,9 @@ import Button from 'primevue/button';
 import Message from 'primevue/message';
 import Textarea from 'primevue/textarea';
 
+import UnlockTimeDialog from './UnlockTimeDialog.vue';
 import LockStatusTag from '@/components/ui/LockStatusTag.vue';
 import UnlockTimeText from '@/components/ui/UnlockTimeText.vue';
-import UnlockTimeDialog from './UnlockTimeDialog.vue';
 
 import { useUnlockTimesStore } from '@/stores/unlock-times';
 

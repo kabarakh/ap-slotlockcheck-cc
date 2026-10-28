@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vite-plus/test';
 
 import { lastUnlockTimeKey, unlockSenderKey } from '../unlock-order';
 import { slotRow } from './fixtures';

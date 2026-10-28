@@ -1,5 +1,5 @@
-import type { AppConfigService } from '../../config/app-config.service.js';
 import { loadFixture, type FixtureName } from '../../../test/fixtures/fixtures.js';
+import type { AppConfigService } from '../../config/app-config.service.js';
 import { SourceHttpService } from '../http/source-http.service.js';
 import { parseArchipelagoLink } from './archipelago-link.js';
 import { ArchipelagoService } from './archipelago.service.js';

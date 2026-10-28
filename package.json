@@ -11,40 +11,41 @@
     "node": ">=26.0.0"
   },
   "scripts": {
-    "dev": "run-p dev:server dev:app",
-    "dev:server": "npm run start:dev -w server",
+    "dev": "vp run --parallel -F @slotlock/server -F @slotlock/app dev",
+    "dev:server": "npm run dev -w server",
     "dev:app": "npm run dev -w app",
     "api:sync": "npm run openapi:export -w server && npm run api:generate -w app",
     "api:check": "npm run api:sync && git diff --exit-code -- server/openapi.json app/src/api/schema.d.ts",
-    "build": "run-s api:sync build:app",
+    "build": "npm run api:sync && npm run build:app",
     "build:app": "npm run build -w app",
     "start": "npm run start:prod -w server",
-    "lint": "npm run lint --workspaces",
-    "lint:check": "npm run lint:check --workspaces",
-    "format": "npm run format --workspaces",
+    "lint": "npm run prisma:generate -w server && vp lint --fix && vp fmt",
+    "lint:check": "npm run prisma:generate -w server && vp check",
+    "format": "vp fmt",
     "typecheck": "npm run typecheck --workspaces",
     "test": "npm run test --workspaces",
     "test:e2e": "npm run test:e2e -w app",
     "outdated": "npm outdated --workspaces --include-workspace-root",
     "audit:check": "npm audit --omit=dev --audit-level=moderate --workspaces --include-workspace-root",
-    "prepare": "husky",
+    "prepare": "vp config --hooks --no-agent",
     "prototype:report": "npm run prototype:report -w server --",
     "seed:report": "npm run seed:report -w server --",
-    "dev:public": "cross-env SLOTLOCK_PUBLIC_DEV_HOSTS=slotlock.example.com run-p dev:server dev:app",
+    "dev:public": "cross-env SLOTLOCK_PUBLIC_DEV_HOSTS=slotlock.example.com npm run dev",
     "cert:dev": "cross-env SLOTLOCK_PUBLIC_DEV_HOSTS=slotlock.example.com npm run cert:dev -w app",
     "icons": "npm run icons -w app"
   },
   "devDependencies": {
     "cross-env": "^10.1.0",
-    "husky": "^9.1.7",
-    "npm-run-all2": "^9.0.4",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "vite-plus": "1.4.0"
   },
   "overrides": {
     "multer": "2.5.0",
     "openapi-typescript": {
       "typescript": "~6.0.3"
-    }
+    },
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.4.0",
+    "vitest": "5.0.5"
   },
   "allowScripts": {
     "@scarf/scarf": false,
