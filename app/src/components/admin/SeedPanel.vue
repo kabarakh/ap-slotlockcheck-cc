@@ -13,7 +13,7 @@ import { useSeedStore } from '@/stores/seed';
 
 const seedStore = useSeedStore();
 const { seed, differences, busy } = storeToRefs(seedStore);
-const { room } = storeToRefs(useCurrentRoomStore());
+const { room, isAdmin } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 
 const onFileSelected = async (event: Event) => {
@@ -48,7 +48,7 @@ onMounted(() => seedStore.fetch());
         {{ t('seed.unreachable', { count: seed.unreachableLocationCount }) }}
       </Message>
     </template>
-    <template v-else-if="!room?.hasSeed">
+    <template v-else-if="!room?.hasSeed && isAdmin">
       <p class="app-muted">{{ t('seed.intro') }}</p>
       <Message severity="warn">{{ t('seed.onlyOnce') }}</Message>
       <input type="file" accept=".archipelago,.zip" :disabled="busy" data-testid="seed-file" @change="onFileSelected" />

@@ -4,12 +4,14 @@ import { ref } from 'vue';
 import { useCurrentRoomStore } from './current-room';
 import { useUiStore } from './ui';
 import { api, ApiRequestError, unwrap } from '@/api/client';
-import type { SeedData } from '@/api/types';
+import type { SeedComparison, SeedData } from '@/api/types';
 
 export const useSeedStore = defineStore('seed', () => {
   const seed = ref<SeedData | null>(null);
   const differences = ref<string[]>([]);
   const busy = ref(false);
+  const comparison = ref<SeedComparison | null>(null);
+  const comparing = ref(false);
 
   const slugPath = () => ({ params: { path: { slug: useCurrentRoomStore().slug ?? '' } } });
 
@@ -50,10 +52,22 @@ export const useSeedStore = defineStore('seed', () => {
     }
   };
 
+  const compare = async (): Promise<void> => {
+    comparing.value = true;
+    try {
+      comparison.value = await unwrap(api.GET('/api/rooms/{slug}/seed/comparison', slugPath()));
+    } catch (error) {
+      useUiStore().notifyError(error);
+    } finally {
+      comparing.value = false;
+    }
+  };
+
   const clear = () => {
     seed.value = null;
     differences.value = [];
+    comparison.value = null;
   };
 
-  return { seed, differences, busy, fetch, upload, clear };
+  return { seed, differences, busy, comparison, comparing, fetch, upload, compare, clear };
 });

@@ -30,6 +30,7 @@ export type RoomSyncedPayload = Schemas['RoomSyncedPayloadDto'];
 export type RoomSyncFailedPayload = Schemas['RoomSyncFailedPayloadDto'];
 export type RoomUpdatedPayload = Schemas['RoomUpdatedPayloadDto'];
 export type SeedData = Schemas['SeedDataDto'];
+export type SeedComparison = Schemas['SeedComparisonDto'];
 export type LocationsChangedPayload = Schemas['LocationsChangedPayloadDto'];
 export type ItemType = Schemas['ItemType'];
 export type LocationState = Schemas['LocationState'];
