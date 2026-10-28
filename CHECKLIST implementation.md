@@ -166,9 +166,9 @@ Reference: `PLAN pace statistics implementation.md` (section numbers in brackets
 
 ### Phase P3 – View
 
-- [ ] Route `control-pace`, tab "Pace" for admins and helpers, store (4.1, 4.2)
-- [ ] Tables for slots and games, hint with signal start and limits, texts (4.3, 4.4)
-- [ ] `PaceSettingsPanel` in the setup tab "Settings" (4.3.3)
+- [x] Route `control-pace`, tab "Pace" for admins and helpers, store with new load on `room:updated` and `room:synced` (4.1, 4.2)
+- [x] Tables for slots and games (fit 1024 px), hint with signal start and limits, switch for slots without time range, texts (4.3, 4.4)
+- [x] `PaceSettingsPanel` in the setup tab "Settings" (4.3.3)
 
 ### Phase P4 – Timeline
 
@@ -197,3 +197,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-26 | Sphere checker P6 | ok | ok | 156 unit, 52 integration, 50 unit app, 19 e2e ok | No test with a real Archipelago server |
 | 2026-10-28 | Pace P1, P2.1, settings | ok | ok | 239 unit, 61 integration, 81 unit app, 23 e2e ok | P1.1 and P2.2 need real room data |
 | 2026-10-28 | Pace P2.4 | ok | ok | 246 unit, 67 integration, 81 unit app, 23 e2e ok | SlotLock slots left out, cache cleared on each publish |
+| 2026-10-28 | Pace P3 | ok | ok | 246 unit, 67 integration, 91 unit app, 23 e2e ok | Visual check in the browser at 1024 px |

@@ -161,7 +161,7 @@ interface Segment {
 
 ### 4.1 Route and tab
 
-1. Route `control-pace` (`/rooms/{slug}/control/pace`), component `ControlPaceView.vue`.
+1. Route `control-pace` (`/room/{slug}/control/pace`), component `ControlPaceView.vue`.
 2. New tab "Pace" in `ControlView.vue` with `visible: isHelper.value`. No badge.
 3. The route guard sends users without the role admin or helper to `control-messages`.
 
@@ -170,7 +170,7 @@ interface Segment {
 `stores/pace.ts`:
 
 1. `fetch()` loads `RoomPaceDto`. `fetchTimeline(slotId)` loads `SlotTimelineDto`.
-2. On the live message `room:updated`, load again, but only when the view is open.
+2. On the live messages `room:updated` and `room:synced`, load again, but only when the view is open.
 
 ### 4.3 Components
 
@@ -264,4 +264,7 @@ Open for phase P4: the answer of the timeline endpoint for a SlotLock slot (it h
 
 ## 9. Deviations during the implementation
 
-None yet.
+1. **Folder of the tables (4.3):** `SlotPaceTable.vue` and `GamePaceTable.vue` are in `components/ui/`, not in `components/pace/`. Standard check 7 permits props only in `components/ui`.
+2. **Route guard (4.1.3):** the parent route `control` already needs the role helper. Players and visitors go to the roster, as for the other tabs of the game control.
+3. **Width (4.3):** the slot table fits a screen of 1024 px without horizontal scrolling, as the roster (main 24.23). For this, the table has 9 columns with two-line cells: slot / game, active time / checks, pace / time per check, BK time / share, BK periods / longest, time of the player from / to. Each combined column sorts with the two-field cycle of the slot table.
+4. **German terms:** break = "Break", short pause = "Pause", break limit = "Break-Grenze".
