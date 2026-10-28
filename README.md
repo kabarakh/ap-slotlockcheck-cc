@@ -62,7 +62,7 @@ The browser calculates inactivity, player summaries and statistics from the rost
 Admins and admin helpers have two areas:
 
 - **Game control** (`/control`) contains the work during the game: spheres, the admin view of the locations, messages (inactivity reminder and sphere clean-up), warnings and the Archipelago server. A click on a sphere shows its open locations in a side panel. From there, the admin opens the clean-up text for this sphere or the location list with this sphere as filter. The tabs show counters: the lowest open sphere, the red and yellow slots, the warnings.
-- **Setup** (`/admin`) contains the work for the setup of a room: settings, lock assignment, admins, seed, unlock times and room.
+- **Setup** (`/admin`) contains the work for the setup of a room: settings, lock assignment, admins, seed, unlock times and room. Admin helpers see only the tabs seed and room.
 
 The URL contains the active tab, so the back button and bookmarks work. Old links with `?view=admin` go to the game control. The browser keeps the selections of the clean-up and of the reminder. In the roster, admins and admin helpers click the inactivity of a slot to copy its reminder or to give a warning.
 
@@ -84,6 +84,7 @@ The unlock tree shows which slot sent the unlock item of which slot. The SlotLoc
 The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sphere checker implementation.md`.
 
 - An admin uploads the multidata file (`AP_<seed>.archipelago`) or the ZIP file of the generation one time for each room. From a ZIP file, the server reads only the multidata file. It contains the item, the receiver and the sphere of each location. The server compares its players with the slots of the room before it saves data.
+- The seed check compares the seed name of the uploaded file with the seed name that the Archipelago server reports. They must be the same; otherwise the file is not the file of this room. The server wakes the room, connects to its websocket and reads the seed name from the first message (`RoomInfo`). It does not log in, so it needs no password. Admins and admin helpers start the check in the tab seed.
 - The multidata file is a compressed Python pickle. A pickle can run code when Python reads it. The server never runs code from the file: an own decoder accepts only simple values and four known Archipelago classes, and it stops at all other content.
 - The server keeps only the locations and the item names. It ignores the server options of the file, because they contain the passwords of the room.
 - Archipelago does not put locations that are not reachable into a sphere. The server puts them after the last sphere.
@@ -217,3 +218,10 @@ PrimeVue 5 and `@primeuix/themes` 3 need a license key (PrimeUI License). The ap
 ## Deployment
 
 See `deploy/README.md`.
+
+## Thanks
+
+- Malandor (Discord user)
+- [Archipelago](https://archipelago.gg) and the JavaScript library [archipelago.js](https://www.npmjs.com/package/archipelago.js)
+- [Cheese Tracker](https://cheesetrackers.theincrediblewheelofchee.se) ([source code](https://github.com/cdhowie/cheese-trackers))
+- [Spheretracker](https://spheretracker.de)
