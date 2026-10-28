@@ -1,19 +1,23 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import Column from 'primevue/column';
-import DataTable from 'primevue/datatable';
+import DataTable, { type DataTableSortEvent } from 'primevue/datatable';
 
 import CheeseStatusTag from './CheeseStatusTag.vue';
+import DateTimeText from './DateTimeText.vue';
 import InactivityText from './InactivityText.vue';
 import LockStatusTag from './LockStatusTag.vue';
 import UnlockInfo from './UnlockInfo.vue';
 
 import type { SlotRow } from '@/api/types';
+import { goalTimeSortKey, STATUS_SORT, statusSortKey } from '@/domain/completion-order';
 import { formatGameName } from '@/domain/game-name';
 import type { InactivityLevel } from '@/domain/inactivity';
 import { checksPercentage, isGoaled } from '@/domain/summary';
+import { activeCycleField, cycleSortField, nextTableSort, type SortCycle, type TableSort } from '@/domain/table-sort';
+import { lastUnlockTimeKey, UNLOCK_SORT, unlockSenderKey } from '@/domain/unlock-order';
 
 const props = defineProps<{
   slots: SlotRow[];
@@ -31,25 +35,53 @@ const rows = computed(() =>
   props.slots.map((slot) => ({
     ...slot,
     gameName: formatGameName(slot.game),
+    statusOrder: statusSortKey(slot),
+    goalTimeOrder: goalTimeSortKey(slot),
+    unlockSender: unlockSenderKey(slot),
+    lastUnlockTime: lastUnlockTimeKey(slot),
+    checksPercentage: checksPercentage(slot.checksDone, slot.checksTotal),
     inactivityHours: props.hoursBySlotId.get(slot.id) ?? -1,
     warningCount: props.warningCountBySlotId?.get(slot.id) ?? 0,
   })),
 );
 
 type Row = (typeof rows.value)[number];
+
+const sort = ref<TableSort>({ field: 'position', order: 1 });
+const CHECKS_SORT: SortCycle = { first: 'checksDone', second: 'checksPercentage' };
+const SORT_CYCLES = [UNLOCK_SORT, CHECKS_SORT, STATUS_SORT];
+
+const cycleHeader = (columnKey: string, cycle: SortCycle, modeKeys: [string, string]): string => {
+  const column = t(`slot.columns.${columnKey}`);
+  const active = activeCycleField(sort.value, cycle);
+  if (active === null) {
+    return column;
+  }
+  return t('slot.sortMode', { column, mode: t(`slot.sortModes.${modeKeys[active === 'first' ? 0 : 1]}`) });
+};
+const unlockHeader = computed(() => cycleHeader('unlockedBy', UNLOCK_SORT, ['person', 'time']));
+const checksHeader = computed(() => cycleHeader('checks', CHECKS_SORT, ['count', 'percentage']));
+const statusHeader = computed(() => cycleHeader('cheeseStatus', STATUS_SORT, ['status', 'goalTime']));
+
+const onSort = (event: DataTableSortEvent): void => {
+  const field = typeof event.sortField === 'string' ? event.sortField : null;
+  const order = event.sortOrder === 1 || event.sortOrder === -1 ? event.sortOrder : null;
+  sort.value = nextTableSort(sort.value, { field, order }, SORT_CYCLES);
+};
 </script>
 
 <template>
   <DataTable
     :value="rows"
     data-key="id"
-    sort-field="position"
-    :sort-order="1"
+    :sort-field="sort.field ?? undefined"
+    :sort-order="sort.order ?? undefined"
     removable-sort
     striped-rows
     size="small"
     class="slot-table"
     :data-testid="props.testId"
+    @sort="onSort"
   >
     <template #empty>{{ t('slot.empty') }}</template>
     <Column field="position" :header="t('slot.columns.position')" sortable />
@@ -85,7 +117,7 @@ type Row = (typeof rows.value)[number];
         <LockStatusTag :status="(data as Row).lockStatus" />
       </template>
     </Column>
-    <Column field="unlockTime" :header="t('slot.columns.unlockedBy')" sortable>
+    <Column field="unlockTime" :sort-field="cycleSortField(sort, UNLOCK_SORT)" :header="unlockHeader" sortable>
       <template #body="{ data }">
         <UnlockInfo :locks="(data as Row).locks" />
       </template>
@@ -100,17 +132,15 @@ type Row = (typeof rows.value)[number];
         </slot>
       </template>
     </Column>
-    <Column field="checksDone" :header="t('slot.columns.checks')" sortable>
+    <Column field="checksDone" :sort-field="cycleSortField(sort, CHECKS_SORT)" :header="checksHeader" sortable>
       <template #body="{ data }">
         <span class="nowrap">{{ (data as Row).checksDone }} / {{ (data as Row).checksTotal }}</span>
         <span class="app-muted nowrap check-percentage">
-          {{
-            t('statistics.percentage', { value: checksPercentage((data as Row).checksDone, (data as Row).checksTotal) })
-          }}
+          {{ t('statistics.percentage', { value: (data as Row).checksPercentage }) }}
         </span>
       </template>
     </Column>
-    <Column field="completionStatus" :header="t('slot.columns.cheeseStatus')" sortable>
+    <Column field="completionStatus" :sort-field="cycleSortField(sort, STATUS_SORT)" :header="statusHeader" sortable>
       <template #body="{ data }">
         <span class="status-stack">
           <CheeseStatusTag
@@ -118,6 +148,15 @@ type Row = (typeof rows.value)[number];
             kind="completion"
             :value="(data as Row).completionStatus"
           />
+          <span
+            v-if="(data as Row).goalTime"
+            v-tooltip.top="t(`goalTimeSource.${(data as Row).goalTimeSource}`)"
+            class="goal-time app-muted"
+            data-testid="goal-time"
+          >
+            <DateTimeText :value="(data as Row).goalTime" />
+            <i v-if="(data as Row).goalTimeSource === 'estimated'" class="pi pi-question-circle" />
+          </span>
           <CheeseStatusTag v-if="!isGoaled(data as Row)" kind="progression" :value="(data as Row).progressionStatus" />
         </span>
       </template>
@@ -185,6 +224,11 @@ type Row = (typeof rows.value)[number];
 }
 
 .nowrap {
+  white-space: nowrap;
+}
+
+.goal-time {
+  font-size: 0.7rem;
   white-space: nowrap;
 }
 

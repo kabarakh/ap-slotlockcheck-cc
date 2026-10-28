@@ -78,6 +78,15 @@
   slot: {
     empty: 'No slots agree with the filters.',
     warningCount: '{count} warning(s)',
+    sortMode: '{column} ({mode})',
+    sortModes: {
+      person: 'person',
+      time: 'time',
+      count: 'count',
+      percentage: '%',
+      status: 'status',
+      goalTime: 'goal time',
+    },
     columns: {
       position: '#',
       name: 'Slot',
@@ -102,6 +111,10 @@
     locked: 'Locked',
     partially_unlocked: 'Partially unlocked',
     unlocked: 'Unlocked',
+  },
+  goalTimeSource: {
+    sync: 'Found by the synchronization',
+    estimated: 'Estimated from the last Cheese activity',
   },
   unlockTimeSource: {
     sync: 'Found by the synchronization',

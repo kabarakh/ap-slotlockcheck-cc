@@ -694,6 +694,8 @@ export interface components {
             syncStatus: components["schemas"]["SyncStatusDto"];
         };
         /** @enum {string} */
+        GoalTimeSource: "sync" | "estimated";
+        /** @enum {string} */
         TrackerStatus: "disconnected" | "connected" | "ready" | "playing" | "goal_completed";
         /** @enum {string} */
         ProgressionStatus: "unknown" | "unblocked" | "bk" | "go" | "soft_bk";
@@ -725,6 +727,9 @@ export interface components {
             lastActivity: string | null;
             /** Format: date-time */
             lastChecked: string | null;
+            /** Format: date-time */
+            goalTime: string | null;
+            goalTimeSource: components["schemas"]["GoalTimeSource"] | null;
             trackerStatus: components["schemas"]["TrackerStatus"];
             progressionStatus: components["schemas"]["ProgressionStatus"];
             completionStatus: components["schemas"]["CompletionStatus"];
