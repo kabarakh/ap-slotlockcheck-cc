@@ -72,6 +72,8 @@ Rules:
 
 A slot can change its player: another Discord user takes it. The table has one row for each player of a slot.
 
+The SlotLock slots are not in the pace statistics: no rows, and they do not count in the values of the games.
+
 1. The player of a slot at a time is the Discord user that Cheese shows in the snapshot of this time.
 2. The classification of F 2 to F 5 is for the full slot. The change of the player cuts the parts of the slot at the time of the change. Each row gets the parts in the time of its player.
 3. The time before the first synchronization of the room goes to the player of the first snapshot.
@@ -112,6 +114,7 @@ A slot can change its player: another Discord user takes it. The table has one r
 2. The pace of a game is the sum of the checks divided by the sum of the active time. Slots with a long time have more weight. The sums contain all rows with a time range, also rows with less than 30 minutes of active time. The minimum of 30 minutes applies to the sum of the game.
 3. The median uses only rows with a pace.
 4. Checks of different games need different effort. Compare the pace of slots only in the same game.
+5. A game without a row with a time range is not shown. The switch of F 6.13 shows it.
 
 ## 8. Timeline of a slot
 
@@ -125,6 +128,7 @@ A slot can change its player: another Discord user takes it. The table has one r
 1. The admin sets the break limit (minutes) and the bulk limit (checks in one step) in the setup, tab "Settings".
 2. Admin helpers do not change the settings.
 3. A change calculates the pace statistics again.
+4. A change of the unlock times or of the lock assignments by an admin also calculates the pace statistics again, not only the next synchronization.
 
 ## 10. Decisions
 
@@ -175,3 +179,6 @@ The developer decided these points on 2026-10-28.
 | Marks of the start if the first row has no time | In the first shown row |
 | Slot with a time range but without parts | As a slot without time range |
 | Empty rows in the values of the games | Do not count |
+| SlotLock slots | Not in the pace statistics |
+| Game without a row with a time range | Not shown, the switch shows it |
+| New calculation | After each synchronization and after each change of the room by an admin |

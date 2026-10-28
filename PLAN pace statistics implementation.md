@@ -127,7 +127,8 @@ interface Segment {
 5. Marks: `startKind` (3.3) only in the first given row of the slot, else `null` (F 6.12). `partialSignals` (`signalsFrom` is after the start of the row).
 6. No player periods (no Cheese snapshot yet): one row with the current `Slot.discordUserId` and `Slot.discordName` (F 6.9).
 7. Rows without a segment of more than 0 minutes are not given (F 6.10). A `bulk` segment counts.
-8. For each game: the values of F 7. The sums use all rows with a time range. The median uses only rows with a pace. `slotCount` is the number of rows. The service gives only rows with `hasRange` `true` to `gamePaceValues` (F 6.13).
+8. Slots with `isSlotLock` are not used: no rows and not in the games.
+9. For each game: the values of F 7. The sums use all rows with a time range. The median uses only rows with a pace. `slotCount` is the number of rows. The service gives only rows with `hasRange` `true` to `gamePaceValues` (F 6.13).
 
 ### 3.5 Endpoints
 
@@ -146,6 +147,7 @@ interface Segment {
 ### 3.6 Cache
 
 1. Key: room ID, `Room.lastSuccessfulSyncAt`, `paceBreakLimitMinutes` and `paceBulkLimitChecks`. A new synchronization or a change of the limits makes the old result not valid.
+3. `RoomUpdatesService.publish` runs after each change of a room by an admin (unlock times, lock assignments, settings and more). Each publish removes the cached result of the room (F 9.4). Only the result, not the checks history.
 2. Keep the result of the last key for each room in memory. The timeline uses the same cached segments.
 
 ### 3.7 Room settings
@@ -181,7 +183,7 @@ interface Segment {
 | `components/pace/PaceTimelineDrawer.vue` | functional | Side panel with the timeline, as `SphereLocationsDrawer.vue` |
 
 1. Durations: `domain/duration.ts` formats minutes as "3 h 25 min".
-2. Above the tables: a hint with `signalsFrom` and the limits, and a switch "Show slots without time range" (F 6.13, default off).
+2. Above the tables: a hint with `signalsFrom` and the limits, and a switch "Show slots without time range" (F 6.13, default off). The switch also shows the games with `slotCount` 0 (F 7.5).
 3. Settings: a new panel `components/admin/PaceSettingsPanel.vue` in the setup tab "Settings", as `SphereCheckerSettingsPanel.vue`. The admin store (`stores/admin.ts`) gets the two fields.
 
 ### 4.4 Texts
@@ -254,7 +256,11 @@ The developer answered these questions on 2026-10-28. The answers are in F 2, F 
 5. Lists of received items that get shorter: not possible (F 3.8).
 6. Change of the player: one row for each player, with the details of F 6.
 
+7. Phase P2.4: SlotLock slots are not in the pace statistics. Each publish of a room clears the cached result.
+
 Open: the real length of the steps of the checks history (phase P1.1) and the time to read the snapshots of the Big Chill room (phase P2.2).
+
+Open for phase P4: the answer of the timeline endpoint for a SlotLock slot (it has no calculation).
 
 ## 9. Deviations during the implementation
 

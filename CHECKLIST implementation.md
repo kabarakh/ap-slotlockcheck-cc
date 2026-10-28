@@ -162,7 +162,7 @@ Reference: `PLAN pace statistics implementation.md` (section numbers in brackets
 - [x] `pace-signals.ts` with player periods and unit tests (3.2, 5.2)
 - [-] Time to read the signals of the Big Chill room measured, decision of the developer written into section 8: needs the snapshots of the Big Chill room
 - [x] Room settings `paceBreakLimitMinutes` and `paceBulkLimitChecks` with migration `pace_limits` (3.7)
-- [ ] Module `pace`, cache, endpoints for admins and helpers, DTOs, OpenAPI export, generated types (3.5, 3.6) with integration tests (5.3)
+- [x] Module `pace`, cache with new calculation after each publish, endpoint `GET /pace` for admins and helpers, DTOs, OpenAPI export, generated types (3.5, 3.6) with integration tests (5.3). Timeline endpoint: phase P4.
 
 ### Phase P3 – View
 
@@ -196,3 +196,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-26 | Sphere checker P5 | ok | ok | 140 unit, 40 integration, 46 unit app, 18 e2e ok | |
 | 2026-10-26 | Sphere checker P6 | ok | ok | 156 unit, 52 integration, 50 unit app, 19 e2e ok | No test with a real Archipelago server |
 | 2026-10-28 | Pace P1, P2.1, settings | ok | ok | 239 unit, 61 integration, 81 unit app, 23 e2e ok | P1.1 and P2.2 need real room data |
+| 2026-10-28 | Pace P2.4 | ok | ok | 246 unit, 67 integration, 81 unit app, 23 e2e ok | SlotLock slots left out, cache cleared on each publish |
