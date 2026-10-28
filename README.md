@@ -37,6 +37,16 @@ The functions are in `PLAN async without slotlock.md`.
 - The app hides the lock functions (`hasSlotLock` of the room): lock columns and filters, unlock tree, lock tabs of the setup, lock parts of the statistics and of the room list.
 - The server commands connect as a slot that the admin selects from all slots that are not SlotLock slots.
 
+### Room archive
+
+The functions are in `PLAN room archive.md`.
+
+- An archived room (`Room.archivedAt`) is not synchronized: the scheduler ignores it, and a manual synchronization answers `ROOM_ARCHIVED`. All data stays visible, and admins can still change the room.
+- Admins archive and reopen a room in the setup tab "Room". The synchronization archives a room automatically when all slots that are not SlotLock slots have reached the goal (`autoArchive`, on by default, in the settings).
+- Reopen starts a synchronization at once. Reopen of an automatic archive switches `autoArchive` off, so that the next synchronization does not archive the room again.
+- Inactivity and pace use the archive time as the current time, so the values do not change after the archive.
+- The room list hides archived rooms. A checkbox shows them.
+
 ### Unlock times
 
 - Archipelago gives no time for received items. The server records the time when a synchronization finds an unlock item for the first time.

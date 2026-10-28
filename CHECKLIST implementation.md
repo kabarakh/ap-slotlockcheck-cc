@@ -197,6 +197,16 @@ Reference: `PLAN async without slotlock.md` (section numbers in brackets).
 - [x] Tests: unit, integration, end-to-end (7)
 - [-] Test with a real tracker without SlotLock (10.1)
 
+## Room archive
+
+Reference: `PLAN room archive.md` (section numbers in brackets).
+
+- [x] Room fields `archivedAt`, `archiveReason`, `autoArchive`, migration (5)
+- [x] Archive and reopen endpoints, automatic archive in the synchronization, no synchronization of archived rooms (5)
+- [x] Frozen time for inactivity and pace (3.6)
+- [x] Room list filter, header tag, setup panel, settings checkbox, texts (6)
+- [x] Tests: unit, integration, end-to-end (7)
+
 ## Open decisions for the developer
 
 See `PLAN slotlock.md`, section 23: production domain, responsibility on the proServer, GitHub repository, PrimeVue license, Node 26 or Node 24 LTS, comparison with the Google sheet.
@@ -222,3 +232,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-28 | Pace P4 | ok | ok | 249 unit, 69 integration, 104 unit app, 26 e2e ok | Visual check of the timeline in light and dark mode |
 | 2026-10-28 | Pace grid and saved signals | ok | ok | 259 unit, 73 integration, 104 unit app, 26 e2e ok | Measured with the payloads of a real active room: 20 ms for one new snapshot pair |
 | 2026-10-28 | Rooms without SlotLock | ok | ok | 260 unit, 78 integration, 108 unit app, 29 e2e ok | No test with a real tracker without SlotLock |
+| 2026-10-28 | Room archive | ok | ok | 266 unit, 85 integration, 114 unit app, 31 e2e ok | No test with a real finished room |
