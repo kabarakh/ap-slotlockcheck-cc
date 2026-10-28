@@ -13,11 +13,14 @@ import { useServerAdminStore } from '@/stores/server-admin';
 
 const serverAdmin = useServerAdminStore();
 const { status, loginDraft, loggedIn, busy } = storeToRefs(serverAdmin);
-const { selectedLockers, slotById } = storeToRefs(useCurrentRoomStore());
+const { hasSlotLock, selectedLockers, playableSlots, slotById } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 
-const lockerOptions = computed(() =>
-  selectedLockers.value.map((slot) => ({ value: slot.id, label: `#${slot.position} ${slot.name}` })),
+const slotOptions = computed(() =>
+  (hasSlotLock.value ? selectedLockers.value : playableSlots.value).map((slot) => ({
+    value: slot.id,
+    label: `#${slot.position} ${slot.name}`,
+  })),
 );
 const connectedSlotName = computed(() => slotById.value.get(status.value?.slotId ?? -1)?.name ?? '');
 
@@ -27,7 +30,7 @@ onMounted(() => serverAdmin.fetchStatus());
 <template>
   <section class="app-form">
     <h2>{{ t('server.title') }}</h2>
-    <p class="app-muted">{{ t('server.intro') }}</p>
+    <p class="app-muted">{{ t(hasSlotLock ? 'server.intro' : 'server.introWithoutSlotLock') }}</p>
     <Message severity="warn" :closable="false">{{ t('server.chatHint') }}</Message>
     <template v-if="loggedIn">
       <p data-testid="server-status">{{ t('server.loggedInAs', { slot: connectedSlotName }) }}</p>
@@ -43,11 +46,11 @@ onMounted(() => serverAdmin.fetchStatus());
       </div>
     </template>
     <form v-else class="app-form" autocomplete="off" @submit.prevent="serverAdmin.login()">
-      <label v-if="lockerOptions.length > 1" class="app-field">
-        {{ t('server.slotLockSlot') }}
+      <label v-if="slotOptions.length > 1" class="app-field">
+        {{ t(hasSlotLock ? 'server.slotLockSlot' : 'server.connectionSlot') }}
         <Select
           v-model="loginDraft.slotId"
-          :options="lockerOptions"
+          :options="slotOptions"
           option-label="label"
           option-value="value"
           data-testid="server-slot"

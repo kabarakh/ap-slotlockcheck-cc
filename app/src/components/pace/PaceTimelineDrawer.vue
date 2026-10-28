@@ -9,10 +9,12 @@ import ProgressSpinner from 'primevue/progressspinner';
 
 import PaceTimeline from '@/components/ui/PaceTimeline.vue';
 
+import { useCurrentRoomStore } from '@/stores/current-room';
 import { usePaceStore } from '@/stores/pace';
 
 const paceStore = usePaceStore();
 const { timelineRow, timeline, timelineLoading, timelineError } = storeToRefs(paceStore);
+const { hasSlotLock } = storeToRefs(useCurrentRoomStore());
 const { t, d } = useI18n();
 
 const visible = computed({
@@ -55,7 +57,12 @@ const rowText = computed(() =>
       <ProgressSpinner v-else-if="timelineLoading && !timeline" />
       <template v-else-if="timeline && timelineRow">
         <p class="app-muted">{{ t('pace.timeline.hint') }}</p>
-        <PaceTimeline :timeline="timeline" :highlight="highlight" :slot-name="timelineRow.name" />
+        <PaceTimeline
+          :timeline="timeline"
+          :highlight="highlight"
+          :slot-name="timelineRow.name"
+          :show-locked="hasSlotLock"
+        />
       </template>
     </div>
   </Drawer>

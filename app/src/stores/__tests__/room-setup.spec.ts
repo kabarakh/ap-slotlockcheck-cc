@@ -1,6 +1,7 @@
+import { createPinia, setActivePinia } from 'pinia';
 import { describe, expect, it } from 'vite-plus/test';
 
-import { SLUG_PATTERN, trackerIdFromInput } from '../room-setup';
+import { SLUG_PATTERN, trackerIdFromInput, useRoomSetupStore } from '../room-setup';
 
 describe('trackerIdFromInput', () => {
   it('reads the tracker ID from a Cheese link', () => {
@@ -19,5 +20,25 @@ describe('SLUG_PATTERN', () => {
     expect(SLUG_PATTERN.test('big-chill-2')).toBe(true);
     expect(SLUG_PATTERN.test('-big')).toBe(false);
     expect(SLUG_PATTERN.test('Big Chill')).toBe(false);
+  });
+});
+
+describe('useRoomSetupStore', () => {
+  it('creates a room without a selected SlotLock slot', () => {
+    setActivePinia(createPinia());
+    const setup = useRoomSetupStore();
+    setup.preview = {
+      cheeseTrackerId: 'AbCdEfGhIjKlMnOpQrStUv',
+      title: 'Big Chill',
+      suggestedSlug: 'big-chill',
+      ownerCheck: 'slot',
+      ownerDiscordName: 'alice',
+      existingSlug: null,
+      slotLockSlots: [],
+    };
+    setup.title = 'Big Chill';
+    setup.slug = 'big-chill';
+    setup.slotLockPositions = [];
+    expect(setup.canCreate).toBe(true);
   });
 });

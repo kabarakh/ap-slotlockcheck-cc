@@ -32,7 +32,6 @@ export const useRoomSetupStore = defineStore('roomSetup', () => {
       preview.value.existingSlug === null &&
       isSlugValid.value &&
       title.value.trim().length > 0 &&
-      slotLockPositions.value.length > 0 &&
       !busy.value,
   );
 

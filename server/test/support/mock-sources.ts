@@ -3,6 +3,7 @@ import { createServer, type Server } from 'node:http';
 import { loadFixture, type FixtureName } from '../fixtures/fixtures.ts';
 
 export const MOCK_CHEESE_TRACKER_ID = 'AbCdEfGhIjKlMnOpQrStUv';
+export const MOCK_ASYNC_CHEESE_TRACKER_ID = 'AsyncTrackerNoSlotLock';
 
 function fixtureForPath(path: string, origin: string): unknown {
   const routes: [RegExp, FixtureName][] = [
@@ -16,7 +17,7 @@ function fixtureForPath(path: string, origin: string): unknown {
   if (route) {
     return loadFixture(route[1]);
   }
-  if (path === `/api/tracker/${MOCK_CHEESE_TRACKER_ID}`) {
+  if ([MOCK_CHEESE_TRACKER_ID, MOCK_ASYNC_CHEESE_TRACKER_ID].some((id) => path === `/api/tracker/${id}`)) {
     const tracker = loadFixture('cheese-tracker') as Record<string, unknown>;
     return {
       ...tracker,

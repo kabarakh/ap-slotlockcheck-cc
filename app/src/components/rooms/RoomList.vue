@@ -77,23 +77,25 @@ watch(isLoggedIn, () => roomsStore.fetchRooms());
       <Column field="unlockedPercentage" :header="t('rooms.columns.progress')" sortable>
         <template #body="{ data }">
           <div class="progress-lines">
-            <span>{{ t('rooms.unlocks') }}</span>
-            <div class="progress-bar" data-testid="room-unlocks">
-              <ProgressBar
-                :value="(data as RoomListEntry).unlockedPercentage"
-                :show-value="false"
-                class="room-list-bar"
-              />
-              <span class="room-list-bar-text">
-                {{
-                  t('rooms.progressValue', {
-                    done: (data as RoomListEntry).unlockedSlotCount,
-                    total: (data as RoomListEntry).lockedSlotCount,
-                    percentage: (data as RoomListEntry).unlockedPercentage,
-                  })
-                }}
-              </span>
-            </div>
+            <template v-if="(data as RoomListEntry).hasSlotLock">
+              <span>{{ t('rooms.unlocks') }}</span>
+              <div class="progress-bar" data-testid="room-unlocks">
+                <ProgressBar
+                  :value="(data as RoomListEntry).unlockedPercentage"
+                  :show-value="false"
+                  class="room-list-bar"
+                />
+                <span class="room-list-bar-text">
+                  {{
+                    t('rooms.progressValue', {
+                      done: (data as RoomListEntry).unlockedSlotCount,
+                      total: (data as RoomListEntry).lockedSlotCount,
+                      percentage: (data as RoomListEntry).unlockedPercentage,
+                    })
+                  }}
+                </span>
+              </div>
+            </template>
             <span>{{ t('rooms.checks') }}</span>
             <div class="progress-bar" data-testid="room-checks">
               <ProgressBar

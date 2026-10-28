@@ -142,7 +142,9 @@ export const useAdminStore = defineStore('admin', () => {
               title: settingsDraft.value.title,
               yellowLimitHours: settingsDraft.value.yellowLimitHours,
               redLimitHours: settingsDraft.value.redLimitHours,
-              slotLockPositions: settingsDraft.value.slotLockPositions,
+              ...(useCurrentRoomStore().hasSlotLock
+                ? { slotLockPositions: settingsDraft.value.slotLockPositions }
+                : {}),
             },
           }),
         ),

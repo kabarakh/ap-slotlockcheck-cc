@@ -10,12 +10,14 @@ import MultiSelect from 'primevue/multiselect';
 import SlotTable from '@/components/ui/SlotTable.vue';
 
 import type { LockStatus } from '@/api/types';
+import { useCurrentRoomStore } from '@/stores/current-room';
 import { useInactivityStore } from '@/stores/inactivity';
 import { useTableFiltersStore } from '@/stores/table-filters';
 
 const filters = useTableFiltersStore();
 const { mySlots, filteredMySlots } = storeToRefs(filters);
 const { hoursBySlotId, levelBySlotId } = storeToRefs(useInactivityStore());
+const { hasSlotLock } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 
 const lockStatusOptions = computed(() =>
@@ -31,6 +33,7 @@ const lockStatusOptions = computed(() =>
     <div class="app-toolbar">
       <InputText v-model="mySlots.text" :placeholder="t('filters.search')" size="small" />
       <MultiSelect
+        v-if="hasSlotLock"
         v-model="mySlots.lockStatuses"
         :options="lockStatusOptions"
         option-label="label"
@@ -46,6 +49,7 @@ const lockStatusOptions = computed(() =>
       :hours-by-slot-id="hoursBySlotId"
       :level-by-slot-id="levelBySlotId"
       :warning-count-by-slot-id="null"
+      :show-locks="hasSlotLock"
       test-id="my-slots-table"
     />
   </section>

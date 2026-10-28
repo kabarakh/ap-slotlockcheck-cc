@@ -15,6 +15,7 @@ declare module 'vue-router' {
     locationView?: LocationView;
     sphereLocations?: boolean;
     requiresLocations?: boolean;
+    requiresSlotLock?: boolean;
   }
 }
 
@@ -40,7 +41,12 @@ const router = createRouter({
         { path: '', name: 'roster', component: () => import('@/views/RosterView.vue') },
         { path: 'players', name: 'players', component: () => import('@/views/PlayerSummaryView.vue') },
         { path: 'statistics', name: 'statistics', component: () => import('@/views/StatisticsView.vue') },
-        { path: 'unlock-tree', name: 'unlock-tree', component: () => import('@/views/UnlockTreeView.vue') },
+        {
+          path: 'unlock-tree',
+          name: 'unlock-tree',
+          component: () => import('@/views/UnlockTreeView.vue'),
+          meta: { requiresSlotLock: true },
+        },
         {
           path: 'spheres',
           name: 'spheres',
@@ -147,6 +153,9 @@ router.beforeResolve(async (to) => {
     return { name: 'roster', params: { slug: roomSlug(to) } };
   }
   if (to.meta.requiresLocations && !useCurrentRoomStore().canSeeLocations) {
+    return { name: 'roster', params: { slug: roomSlug(to) } };
+  }
+  if (to.meta.requiresSlotLock && !useCurrentRoomStore().hasSlotLock) {
     return { name: 'roster', params: { slug: roomSlug(to) } };
   }
   if (to.name === 'control') {

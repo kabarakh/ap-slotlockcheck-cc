@@ -26,7 +26,7 @@ import { useWarningsStore } from '@/stores/warnings';
 const filters = useTableFiltersStore();
 const { roster, filteredRoster } = storeToRefs(filters);
 const { hoursBySlotId, levelBySlotId } = storeToRefs(useInactivityStore());
-const { isAdmin, isHelper } = storeToRefs(useCurrentRoomStore());
+const { isAdmin, isHelper, hasSlotLock } = storeToRefs(useCurrentRoomStore());
 const warningsStore = useWarningsStore();
 const { countBySlotId } = storeToRefs(warningsStore);
 const reminder = useInactivityReminderStore();
@@ -81,6 +81,7 @@ const openSlotMenu = (event: MouseEvent, slot: SlotRow) => {
     <div class="app-toolbar">
       <InputText v-model="roster.text" :placeholder="t('filters.search')" size="small" data-testid="roster-search" />
       <MultiSelect
+        v-if="hasSlotLock"
         v-model="roster.lockStatuses"
         :options="lockStatusOptions"
         option-label="label"
@@ -98,7 +99,7 @@ const openSlotMenu = (event: MouseEvent, slot: SlotRow) => {
         size="small"
         display="chip"
       />
-      <label class="app-toolbar">
+      <label v-if="hasSlotLock" class="app-toolbar">
         <Checkbox v-model="roster.hideSlotLockSlots" binary />
         {{ t('filters.hideSlotLock') }}
       </label>
@@ -106,7 +107,7 @@ const openSlotMenu = (event: MouseEvent, slot: SlotRow) => {
     </div>
     <p class="app-muted" data-testid="roster-checks">
       {{
-        t('roster.checks', {
+        t(hasSlotLock ? 'roster.checks' : 'roster.checksWithoutLocks', {
           done: globalStatistics.checksDone,
           total: globalStatistics.checksTotal,
           percentage: globalStatistics.checksPercentage,
@@ -119,6 +120,7 @@ const openSlotMenu = (event: MouseEvent, slot: SlotRow) => {
       :hours-by-slot-id="hoursBySlotId"
       :level-by-slot-id="levelBySlotId"
       :warning-count-by-slot-id="isAdmin ? countBySlotId : null"
+      :show-locks="hasSlotLock"
       test-id="roster-table"
     >
       <template v-if="isHelper" #inactivity="{ row }">

@@ -13,7 +13,7 @@ import { useCurrentRoomStore } from '@/stores/current-room';
 import { useTableFiltersStore } from '@/stores/table-filters';
 
 const { playerText, filteredPlayers } = storeToRefs(useTableFiltersStore());
-const { isAdmin } = storeToRefs(useCurrentRoomStore());
+const { isAdmin, hasSlotLock } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 </script>
 
@@ -35,7 +35,7 @@ const { t } = useI18n();
       <template #empty>{{ t('players.empty') }}</template>
       <Column field="name" :header="t('players.columns.name')" sortable />
       <Column field="slotCount" :header="t('players.columns.slots')" sortable />
-      <Column field="unlockedCount" :header="t('players.columns.unlocked')" sortable>
+      <Column v-if="hasSlotLock" field="unlockedCount" :header="t('players.columns.unlocked')" sortable>
         <template #body="{ data }">
           <SlotNameList :count="(data as PlayerSummary).unlockedCount" :names="(data as PlayerSummary).unlockedNames" />
         </template>
@@ -45,7 +45,7 @@ const { t } = useI18n();
           <SlotNameList :count="(data as PlayerSummary).goaledCount" :names="(data as PlayerSummary).goaledNames" />
         </template>
       </Column>
-      <Column field="lockedCount" :header="t('players.columns.locked')" sortable>
+      <Column v-if="hasSlotLock" field="lockedCount" :header="t('players.columns.locked')" sortable>
         <template #body="{ data }">
           <SlotNameList :count="(data as PlayerSummary).lockedCount" :names="(data as PlayerSummary).lockedNames" />
         </template>

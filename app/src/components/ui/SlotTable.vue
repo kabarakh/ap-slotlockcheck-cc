@@ -24,6 +24,7 @@ const props = defineProps<{
   hoursBySlotId: Map<number, number | null>;
   levelBySlotId: Map<number, InactivityLevel>;
   warningCountBySlotId: ReadonlyMap<number, number> | null;
+  showLocks: boolean;
   testId: string;
 }>();
 const { t } = useI18n();
@@ -112,12 +113,18 @@ const onSort = (event: DataTableSortEvent): void => {
         <span :title="(data as Row).game">{{ (data as Row).gameName }}</span>
       </template>
     </Column>
-    <Column field="lockStatus" :header="t('slot.columns.lockStatus')" sortable>
+    <Column v-if="props.showLocks" field="lockStatus" :header="t('slot.columns.lockStatus')" sortable>
       <template #body="{ data }">
         <LockStatusTag :status="(data as Row).lockStatus" />
       </template>
     </Column>
-    <Column field="unlockTime" :sort-field="cycleSortField(sort, UNLOCK_SORT)" :header="unlockHeader" sortable>
+    <Column
+      v-if="props.showLocks"
+      field="unlockTime"
+      :sort-field="cycleSortField(sort, UNLOCK_SORT)"
+      :header="unlockHeader"
+      sortable
+    >
       <template #body="{ data }">
         <UnlockInfo :locks="(data as Row).locks" />
       </template>
@@ -166,7 +173,7 @@ const onSort = (event: DataTableSortEvent): void => {
         <span class="notes">{{ (data as Row).notes }}</span>
       </template>
     </Column>
-    <Column field="unlocksSent" :header="t('slot.columns.unlocksSent')" sortable />
+    <Column v-if="props.showLocks" field="unlocksSent" :header="t('slot.columns.unlocksSent')" sortable />
   </DataTable>
 </template>
 

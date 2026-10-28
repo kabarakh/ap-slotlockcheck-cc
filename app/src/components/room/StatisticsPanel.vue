@@ -10,6 +10,7 @@ import BarChart from '@/components/ui/BarChart.vue';
 import DonutChart from '@/components/ui/DonutChart.vue';
 
 import type { ChartPart } from '@/domain/charts';
+import { useCurrentRoomStore } from '@/stores/current-room';
 import { useStatisticsStore } from '@/stores/statistics';
 
 interface StatisticCard {
@@ -22,13 +23,14 @@ interface StatisticCard {
 }
 
 const { globalStatistics } = storeToRefs(useStatisticsStore());
+const { hasSlotLock } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 
 const percentage = (value: number) => t('statistics.percentage', { value });
 
 const cards = computed<StatisticCard[]>(() => {
   const stats = globalStatistics.value;
-  return [
+  const cardList: StatisticCard[] = [
     {
       key: 'unlocked',
       title: t('statistics.unlocked'),
@@ -115,6 +117,12 @@ const cards = computed<StatisticCard[]>(() => {
       ],
     },
   ];
+  if (hasSlotLock.value) {
+    return cardList;
+  }
+  return cardList
+    .filter((card) => card.key !== 'unlocked')
+    .map((card) => ({ ...card, parts: card.parts.filter((part) => part.key !== 'lockedSlots') }));
 });
 
 const lockedBars = computed(() =>
@@ -147,7 +155,7 @@ const unlockedBars = computed(() =>
         </div>
       </div>
     </div>
-    <div class="distributions">
+    <div v-if="hasSlotLock" class="distributions">
       <div>
         <h2>{{ t('statistics.playersByLocked') }}</h2>
         <BarChart

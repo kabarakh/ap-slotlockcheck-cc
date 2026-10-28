@@ -46,7 +46,8 @@
     roomTitle: 'Title',
     slug: 'URL name',
     slotLockSlots: 'SlotLock slots of this room',
-    noSlotLockSlots: 'The tracker has no slot with the game SlotLock.',
+    noSlotLockSlots: 'The tracker has no slot with the game SlotLock. The room is a room without SlotLock.',
+    withoutSlotLock: 'No SlotLock slot is selected. The room is a room without SlotLock. You cannot change this later.',
     create: 'Make room',
   },
   room: {
@@ -176,6 +177,7 @@
   },
   roster: {
     checks: 'Checks: {done} of {total} ({percentage} %). {locked} open checks are in locked slots.',
+    checksWithoutLocks: 'Checks: {done} of {total} ({percentage} %).',
     copyReminder: 'Copy inactivity reminder',
   },
   control: {
@@ -448,7 +450,9 @@
     title: 'Archipelago server',
     intro: 'Log in to the Archipelago server of the room as admin. Then you can send locations and items, release and collect. The server connects as the SlotLock slot for each command and then disconnects.',
     chatHint: 'All players see the admin commands in the chat of the room. The server hides the passwords.',
+    introWithoutSlotLock: 'Log in to the Archipelago server of the room as admin. Then you can send locations and items, release and collect. The server connects as the selected slot for each command and then disconnects.',
     slotLockSlot: 'SlotLock slot for the connection',
+    connectionSlot: 'Slot for the connection',
     serverPassword: 'Admin password of the server',
     serverPasswordHint: 'On archipelago.gg, the room owner sets it first in the command field of the room page: /option server_password (password)',
     roomPassword: 'Room password (only if the room has one)',
@@ -571,7 +575,7 @@
     SERVER_LOGIN_TIMEOUT: 'The Archipelago server did not answer the login.',
     ROOM_NOT_REACHABLE: 'The Archipelago server of the room is not reachable.',
     ROOM_LINK_MISSING: 'The Cheese Tracker has no link to the Archipelago room.',
-    SLOTLOCK_SLOT_REQUIRED: 'Select the SlotLock slot for the connection.',
+    CONNECTION_SLOT_REQUIRED: 'Select a slot for the connection.',
     SERVER_COMMAND_RUNNING: 'Another command runs. Wait until it is finished.',
     SERVER_JOB_NOT_FOUND: 'There is no command.',
     SERVER_JOB_NOT_RUNNING: 'The command is not running.',

@@ -49,6 +49,15 @@ describe('useCurrentRoomStore', () => {
     expect(store.slotsWithoutDiscord.map((slot) => slot.name)).toEqual(['Open']);
   });
 
+  it('knows if the room has a selected SlotLock slot', () => {
+    const store = useCurrentRoomStore();
+    expect(store.hasSlotLock).toBe(true);
+    store.room = roomDetail({ hasSlotLock: false });
+    expect(store.hasSlotLock).toBe(false);
+    store.room = room;
+    expect(store.hasSlotLock).toBe(true);
+  });
+
   it('ignores messages of other rooms', () => {
     const store = useCurrentRoomStore();
     store.slug = 'big-chill';

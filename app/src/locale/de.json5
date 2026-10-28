@@ -46,7 +46,8 @@
     roomTitle: 'Titel',
     slug: 'URL-Name',
     slotLockSlots: 'SlotLock-Slots dieses Raums',
-    noSlotLockSlots: 'Der Tracker hat keinen Slot mit dem Spiel SlotLock.',
+    noSlotLockSlots: 'Der Tracker hat keinen Slot mit dem Spiel SlotLock. Der Raum ist ein Raum ohne SlotLock.',
+    withoutSlotLock: 'Kein SlotLock-Slot ist ausgewählt. Der Raum ist ein Raum ohne SlotLock. Das kann später nicht geändert werden.',
     create: 'Raum anlegen',
   },
   room: {
@@ -182,6 +183,7 @@
   },
   roster: {
     checks: 'Checks: {done} von {total} ({percentage} %). {locked} offene Checks sind in gesperrten Slots.',
+    checksWithoutLocks: 'Checks: {done} von {total} ({percentage} %).',
     copyReminder: 'Inaktivitäts-Erinnerung kopieren',
   },
   control: {
@@ -454,7 +456,9 @@
     title: 'Archipelago-Server',
     intro: 'Melde dich als Admin am Archipelago-Server des Raums an. Dann kannst du Locations und Items senden, releasen und collecten. Der Server verbindet sich für jeden Befehl als SlotLock-Slot und trennt danach die Verbindung.',
     chatHint: 'Alle Spieler sehen die Admin-Befehle im Chat des Raums. Der Server blendet die Passwörter aus.',
+    introWithoutSlotLock: 'Melde dich als Admin am Archipelago-Server des Raums an. Dann kannst du Locations und Items senden, releasen und collecten. Der Server verbindet sich für jeden Befehl als ausgewählter Slot und trennt danach die Verbindung.',
     slotLockSlot: 'SlotLock-Slot für die Verbindung',
+    connectionSlot: 'Slot für die Verbindung',
     serverPassword: 'Admin-Passwort des Servers',
     serverPasswordHint: 'Auf archipelago.gg setzt der Raum-Besitzer es zuerst im Befehlsfeld der Raumseite: /option server_password (Passwort)',
     roomPassword: 'Raum-Passwort (nur wenn der Raum eins hat)',
@@ -577,7 +581,7 @@
     SERVER_LOGIN_TIMEOUT: 'Der Archipelago-Server hat nicht auf die Anmeldung geantwortet.',
     ROOM_NOT_REACHABLE: 'Der Archipelago-Server des Raums ist nicht erreichbar.',
     ROOM_LINK_MISSING: 'Der Cheese Tracker hat keinen Link zum Archipelago-Raum.',
-    SLOTLOCK_SLOT_REQUIRED: 'Wähle den SlotLock-Slot für die Verbindung.',
+    CONNECTION_SLOT_REQUIRED: 'Wähle einen Slot für die Verbindung.',
     SERVER_COMMAND_RUNNING: 'Ein anderer Befehl läuft. Warte, bis er fertig ist.',
     SERVER_JOB_NOT_FOUND: 'Es gibt keinen Befehl.',
     SERVER_JOB_NOT_RUNNING: 'Der Befehl läuft nicht.',

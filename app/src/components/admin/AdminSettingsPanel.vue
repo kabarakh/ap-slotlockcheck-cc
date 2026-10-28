@@ -12,7 +12,7 @@ import { useCurrentRoomStore } from '@/stores/current-room';
 
 const admin = useAdminStore();
 const { settingsDraft, busy } = storeToRefs(admin);
-const { slotLockSlots, room } = storeToRefs(useCurrentRoomStore());
+const { slotLockSlots, hasSlotLock, room } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 </script>
 
@@ -33,7 +33,7 @@ const { t } = useI18n();
     <p class="app-muted">
       {{ room?.limitsOverridden ? t('admin.limitsOverridden') : t('admin.limitsFromCheese') }}
     </p>
-    <fieldset class="app-field">
+    <fieldset v-if="hasSlotLock" class="app-field">
       <legend>{{ t('admin.slotLockSlots') }}</legend>
       <label v-for="slot in slotLockSlots" :key="slot.id" class="app-toolbar">
         <Checkbox v-model="settingsDraft.slotLockPositions" :value="slot.position" />

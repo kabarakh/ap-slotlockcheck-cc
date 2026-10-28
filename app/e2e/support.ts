@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 export const CHEESE_TRACKER_ID = 'AbCdEfGhIjKlMnOpQrStUv';
+export const ASYNC_CHEESE_TRACKER_ID = 'AsyncTrackerNoSlotLock';
 
 export const OWNER = { discordId: '100000000000000001', name: 'Alice', username: 'alice_owner' };
 export const PLAYER = { discordId: '100000000000000003', name: 'Carol', username: 'carol' };

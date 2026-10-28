@@ -71,7 +71,12 @@ const createRoom = async () => {
         </label>
         <fieldset class="app-field">
           <legend>{{ t('roomSetup.slotLockSlots') }}</legend>
-          <p v-if="preview.slotLockSlots.length === 0" class="app-muted">{{ t('roomSetup.noSlotLockSlots') }}</p>
+          <p v-if="preview.slotLockSlots.length === 0" class="app-muted" data-testid="no-slotlock-slots">
+            {{ t('roomSetup.noSlotLockSlots') }}
+          </p>
+          <Message v-else-if="slotLockPositions.length === 0" severity="info" data-testid="without-slotlock">
+            {{ t('roomSetup.withoutSlotLock') }}
+          </Message>
           <label v-for="candidate in preview.slotLockSlots" :key="candidate.position" class="app-toolbar">
             <Checkbox v-model="slotLockPositions" :value="candidate.position" />
             #{{ candidate.position }} {{ candidate.name }}

@@ -24,14 +24,20 @@ import { useAdminStore } from '@/stores/admin';
 import { useCurrentRoomStore } from '@/stores/current-room';
 
 const ADMIN_TABS = ['settings', 'locks', 'admins', 'seed', 'unlockTimes', 'room'] as const;
+const LOCK_TABS: readonly string[] = ['locks', 'unlockTimes'];
 
 const admin = useAdminStore();
-const { isAdmin, slug } = storeToRefs(useCurrentRoomStore());
+const { isAdmin, hasSlotLock, slug } = storeToRefs(useCurrentRoomStore());
 const route = useRoute();
 const router = useRouter();
 const { t } = useI18n();
 
-const availableTabs = computed<readonly string[]>(() => (isAdmin.value ? ADMIN_TABS : ['room']));
+const availableTabs = computed<readonly string[]>(() => {
+  if (!isAdmin.value) {
+    return ['room'];
+  }
+  return hasSlotLock.value ? ADMIN_TABS : ADMIN_TABS.filter((tab) => !LOCK_TABS.includes(tab));
+});
 
 const activeTab = computed({
   get: () => {
@@ -55,10 +61,12 @@ onMounted(() => {
     <TabList>
       <template v-if="isAdmin">
         <Tab value="settings" data-testid="tab-settings">{{ t('admin.tabs.settings') }}</Tab>
-        <Tab value="locks">{{ t('admin.tabs.locks') }}</Tab>
+        <Tab v-if="hasSlotLock" value="locks">{{ t('admin.tabs.locks') }}</Tab>
         <Tab value="admins">{{ t('admin.tabs.admins') }}</Tab>
         <Tab value="seed" data-testid="tab-seed">{{ t('admin.tabs.seed') }}</Tab>
-        <Tab value="unlockTimes" data-testid="tab-unlock-times">{{ t('admin.tabs.unlockTimes') }}</Tab>
+        <Tab v-if="hasSlotLock" value="unlockTimes" data-testid="tab-unlock-times">{{
+          t('admin.tabs.unlockTimes')
+        }}</Tab>
       </template>
       <Tab value="room" data-testid="tab-room">{{ t('admin.tabs.room') }}</Tab>
     </TabList>
@@ -68,7 +76,7 @@ onMounted(() => {
           <AdminSettingsPanel />
           <PaceSettingsPanel />
         </TabPanel>
-        <TabPanel value="locks"><LockAssignmentPanel /></TabPanel>
+        <TabPanel v-if="hasSlotLock" value="locks"><LockAssignmentPanel /></TabPanel>
         <TabPanel value="admins">
           <AdminListPanel />
           <InvitationPanel />
@@ -77,7 +85,7 @@ onMounted(() => {
           <SeedPanel />
           <SphereCheckerSettingsPanel />
         </TabPanel>
-        <TabPanel value="unlockTimes"><UnlockTimesPanel /></TabPanel>
+        <TabPanel v-if="hasSlotLock" value="unlockTimes"><UnlockTimesPanel /></TabPanel>
       </template>
       <TabPanel value="room"><RoomOwnershipPanel /></TabPanel>
     </TabPanels>

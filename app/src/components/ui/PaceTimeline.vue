@@ -6,7 +6,12 @@ import type { SlotTimeline } from '@/api/types';
 import { formatDuration } from '@/domain/duration';
 import { paceTimelineLayout, SEGMENT_KINDS, type TimelinePeriod } from '@/domain/pace-timeline';
 
-const props = defineProps<{ timeline: SlotTimeline; highlight: TimelinePeriod | null; slotName: string }>();
+const props = defineProps<{
+  timeline: SlotTimeline;
+  highlight: TimelinePeriod | null;
+  slotName: string;
+  showLocked: boolean;
+}>();
 const { t, d } = useI18n();
 
 const WIDTH = 760;
@@ -24,6 +29,9 @@ const AXIS_Y = 132;
 const HEIGHT = AXIS_Y + 22;
 const STATUS_LABEL_WIDTH = 60;
 const MARK_KEYS = ['item', 'status', 'player', 'unreadable', 'highlight'] as const;
+const legendKinds = computed(() =>
+  props.showLocked ? SEGMENT_KINDS : SEGMENT_KINDS.filter((kind) => kind !== 'locked'),
+);
 
 const layout = computed(() =>
   paceTimelineLayout(props.timeline, {
@@ -224,7 +232,7 @@ const playerLabel = (name: string | null, width: number): string => {
       </svg>
     </div>
     <ul class="legend" data-testid="pace-timeline-legend">
-      <li v-for="kind in SEGMENT_KINDS" :key="kind">
+      <li v-for="kind in legendKinds" :key="kind">
         <span class="chart-legend" :class="`pace-${kind}`" />{{ t(`pace.timeline.kinds.${kind}`) }}
       </li>
       <li v-for="mark in MARK_KEYS" :key="mark">
