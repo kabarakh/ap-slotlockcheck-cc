@@ -36,7 +36,7 @@ The terms of the glossary in `PLAN slotlock.md` and `PLAN sphere checker.md` als
 6. Time before the start and after the end does not count.
 7. An unlock time with the source "estimated" gives an estimated start. The table marks this.
 8. The time from the start to the first check of the slot is a quiet period with the usual rules.
-9. If the checks history of Cheese ends before the current time, the last quiet period ends at the last point of the history.
+9. Cheese writes a point of the checks history on a 10-minute grid only when the checks of a slot in the room change. A missing grid point means: no change in the room. The calculation fills the missing grid points with the values of the point before, also from the last point up to the current time. So a step is always 10 minutes, and the last quiet period reaches the current time.
 
 ## 3. BK periods
 
@@ -153,11 +153,12 @@ The developer decided these points on 2026-10-28.
 | Quiet period up to now | BK only with the status signal of Cheese |
 | Bulk step in a quiet period | Does not end the quiet period |
 | Pace of a game | Weighted (sum of checks / sum of active time) and the median of the slots |
-| Length of the steps | The logic accepts steps of each length. Phase P1 measures the real length. |
+| Length of the steps | 10 minutes, measured with a real room. Missing grid points are filled. |
 | Slots that are not locked / partially unlocked | Start as a start slot / no values |
 | Time before the first check | A quiet period with the usual rules |
 | Quiet period across the first synchronization | Uses the signals |
-| Checks history ends before now | The last quiet period ends at the last point |
+| Checks history ends before now | Filled up to the current time (decision of 2026-10-28 after the measurement with a real room; replaces "ends at the last point") |
+| Missing points of the checks history | Filled on the 10-minute grid with the values of the point before |
 | Weighted pace of a game | All rows with a time range. The minimum applies to the sum. |
 | Snapshots of a failed synchronization | Used |
 | Snapshot that cannot be read | Not used, warning in the log |

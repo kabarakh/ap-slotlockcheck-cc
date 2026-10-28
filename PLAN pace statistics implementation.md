@@ -105,7 +105,7 @@ interface Segment {
 }
 ```
 
-1. Make the steps from the history points. New checks of a step = checks at the end minus checks at the start. A negative value counts as 0. The length of a step comes from the times of its two points. The logic does not expect 10 minutes or steps of equal length.
+1. Fill the history first (F 2.9): insert each missing point of the 10-minute grid (`CHECKS_HISTORY_STEP_MINUTES = 10`) between two points with the values of the point before, and after the last point up to the last grid point not after the current time. Then make the steps from the points. New checks of a step = checks at the end minus checks at the start. A negative value counts as 0.
 2. Steps before the start are `locked`. Steps after the end are `after_goal`. Cut the step at the start and at the end.
 3. A step with more new checks than `bulkLimitChecks` is `bulk` (F 5).
 4. A step with new checks is `active`.
@@ -118,7 +118,7 @@ interface Segment {
 9. Quiet periods that end before or at `signalsFrom` use only rule 8. A quiet period that ends after `signalsFrom` uses the signals (F 3.5).
 10. Join neighbor segments of the same kind.
 11. The steps between the start and the first active step are a quiet period with these rules (F 2.8).
-12. No segments after the last history point. The last quiet period ends there (F 2.9).
+12. Because of the filled points, the last quiet period reaches the current time, up to the last grid point (F 2.9).
 
 ### 3.4 Values
 
@@ -152,6 +152,15 @@ interface Segment {
 1. Key: room ID, `Room.lastSuccessfulSyncAt`, `paceBreakLimitMinutes` and `paceBulkLimitChecks`. A new synchronization or a change of the limits makes the old result not valid.
 3. `RoomUpdatesService.publish` runs after each change of a room by an admin (unlock times, lock assignments, settings and more). Each publish removes the cached result of the room (F 9.4). Only the result, not the checks history.
 2. Keep the result of the last key for each room in memory. The timeline uses the same cached segments.
+
+### 3.8 Saved signals
+
+1. New model `PaceSignalState` (one row for each room): `roomId` (key), `state` (JSON of the reader state), `lastSnapshotIds` (JSON: the last read snapshot ID of `cheese` and `ap_tracker`), `unreadableSnapshots` (JSON), `updatedAt`. Migration name: `pace_signal_state`.
+2. `pace-signals.ts` gets functions to write the reader state to JSON and to make a reader from this JSON. The result of `finish(now)` does not change.
+3. After the synchronization saved its snapshots, the server reads only the new snapshots of the room into the saved state and saves it again. An error here does not stop the synchronization; the server writes a warning into the log.
+4. The calculation (3.6) reads the saved state and the snapshots that are newer than `lastSnapshotIds`, and does not read the old payloads again.
+5. A room without saved state builds it at the first request from all snapshots (one time slow), then saves it (decision of the developer).
+6. The validity of the last snapshot of each source ends at `now` (2.1). The state keeps it open, so a new snapshot closes it correctly.
 
 ### 3.7 Room settings
 
@@ -261,7 +270,11 @@ The developer answered these questions on 2026-10-28. The answers are in F 2, F 
 
 7. Phase P2.4: SlotLock slots are not in the pace statistics. Each publish of a room clears the cached result.
 
-Open: the real length of the steps of the checks history (phase P1.1) and the time to read the snapshots of the Big Chill room (phase P2.2).
+9. Phase P1.1, measured on 2026-10-28 with the checks history of a real room (61 slots, 1,347 points, 25 days): all points are on a 10-minute grid. 1,107 steps are 10 minutes, 239 steps are 20 to 1,410 minutes. Each step ends with a change in the room, and no 10-minute step is without a change. So Cheese leaves out a grid point when no slot of the room changes. The largest increase of one slot in one step is 686 checks (release or collect). Result: the history is filled on the grid (3.3.1).
+
+10. Phase P2.2, measured on 2026-10-28 with the real payloads of an active room (178 slots, Cheese 347 KB, Archipelago tracker 1.2 MB): the reader needs 15.6 ms for one pair of snapshots (CPU only). Estimate: about 288 pairs each day in an active room, so about 36 seconds for 8 days and about 2 minutes for 25 days. The developer decided: the signals are saved during the synchronization (3.8). Existing rooms build them at the first request.
+
+Open: none.
 
 8. Phase P4: the timeline endpoint gives 404 for a SlotLock slot (3.5.7). The timeline shows the full slot. Rows without time range cannot be clicked (F 8.1).
 
@@ -273,3 +286,7 @@ Open: the real length of the steps of the checks history (phase P1.1) and the ti
 4. **German terms:** break = "Break", short pause = "Pause", break limit = "Break-Grenze".
 5. **Timeline (4.3):** `PaceTimeline.vue` is in `components/ui/` (same reason as 9.1). The slot name in the table is a link that opens the side panel (slot pattern of the README). The pure layout is in `domain/pace-timeline.ts`.
 6. **E2E file:** `app/e2e/statistics-pace.spec.ts`, so that it runs after `rooms.spec.ts`, which makes the room through the UI.
+7. **Saved signals (3.8):** `PaceSignalsService` in its own `PaceSignalsModule`; `SyncModule` and `PaceModule` import it. The saved state keeps all games and players, not only the current slots, so that it stays correct when the roster changes. `finish` filters by the slots.
+8. **Time of the update in the synchronization (3.8.3):** in `finally` after the publish of the synchronization, also after a failed synchronization. The roster update does not wait for a slow first build, but the answer of a manual synchronization waits for it.
+9. **Additions of the implementation (not in the plan, can be changed):** if the saved state cannot be read, or a new snapshot is older than the last read snapshot of its source, the server writes a warning and builds the state again from all snapshots. A snapshot without a synchronization run gets one warning and is then not used.
+10. **Lock (3.8):** one lock for each room in memory. This needs one server process, as the pm2 configuration has it.

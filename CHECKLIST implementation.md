@@ -154,13 +154,15 @@ Reference: `PLAN pace statistics implementation.md` (section numbers in brackets
 
 ### Phase P1 – Logic
 
-- [-] Real step length of the checks history of Cheese measured with a real room (6, P1.1): needs the Cheese tracker ID of a real room
+- [x] Real step length of the checks history of Cheese measured with a real room (6, P1.1): 10-minute grid, missing points mean no change (plan section 8.9)
+- [x] Fill the missing grid points of the checks history (3.3.1)
 - [x] `pace.logic.ts` with range, classification, rows for each player and values (3.3, 3.4) and unit tests (5.1)
 
 ### Phase P2 – Signals and endpoints
 
 - [x] `pace-signals.ts` with player periods and unit tests (3.2, 5.2)
-- [-] Time to read the signals of the Big Chill room measured, decision of the developer written into section 8: needs the snapshots of the Big Chill room
+- [x] Time to read the signals measured with the payloads of a real active room, decision of the developer written into section 8
+- [x] Saved signals with migration `pace_signal_state`, update after each synchronization, build at the first request (3.8)
 - [x] Room settings `paceBreakLimitMinutes` and `paceBulkLimitChecks` with migration `pace_limits` (3.7)
 - [x] Module `pace`, cache with new calculation after each publish, endpoint `GET /pace` for admins and helpers, DTOs, OpenAPI export, generated types (3.5, 3.6) with integration tests (5.3). Timeline endpoint: phase P4.
 
@@ -199,3 +201,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-28 | Pace P2.4 | ok | ok | 246 unit, 67 integration, 81 unit app, 23 e2e ok | SlotLock slots left out, cache cleared on each publish |
 | 2026-10-28 | Pace P3 | ok | ok | 246 unit, 67 integration, 91 unit app, 23 e2e ok | Visual check in the browser at 1024 px |
 | 2026-10-28 | Pace P4 | ok | ok | 249 unit, 69 integration, 104 unit app, 26 e2e ok | Visual check of the timeline in light and dark mode |
+| 2026-10-28 | Pace grid and saved signals | ok | ok | 259 unit, 73 integration, 104 unit app, 26 e2e ok | Measured with the payloads of a real active room: 20 ms for one new snapshot pair |
