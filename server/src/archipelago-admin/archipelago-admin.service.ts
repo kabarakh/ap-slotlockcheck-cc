@@ -211,9 +211,19 @@ export class ArchipelagoAdminService {
       where: { roomId: room.id, isSelectedSlotLock: true },
       orderBy: { position: 'asc' },
     });
-    const slot = slotId === undefined && lockers.length === 1 ? lockers[0] : lockers.find((l) => l.id === slotId);
+    const candidates =
+      lockers.length > 0
+        ? lockers
+        : await this.prisma.slot.findMany({
+            where: { roomId: room.id, isSlotLock: false },
+            orderBy: { position: 'asc' },
+          });
+    const slot =
+      slotId === undefined && candidates.length === 1
+        ? candidates[0]
+        : candidates.find((candidate) => candidate.id === slotId);
     if (!slot) {
-      throw new BadRequestException('SLOTLOCK_SLOT_REQUIRED');
+      throw new BadRequestException('CONNECTION_SLOT_REQUIRED');
     }
     return slot;
   }

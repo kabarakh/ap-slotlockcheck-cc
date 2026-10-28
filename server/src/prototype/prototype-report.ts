@@ -41,6 +41,7 @@ export function buildPrototypeReport(source: RoomSource, slotLockPositions?: num
     new Set(
       detectStartSlots(
         slots.map((slot) => ({ ...slotIdentity(slot), isSlotLock: slot.isSlotLock })),
+        lockers,
         lockedSlotNamesByLocker,
         detection.assignments,
       ),

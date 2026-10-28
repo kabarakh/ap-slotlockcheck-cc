@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMinSize, IsArray, IsInt, IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import { ArrayUnique, IsArray, IsInt, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 import { CHEESE_TRACKER_ID_PATTERN } from '../../sources/cheese/cheese.schemas.js';
 
@@ -48,7 +48,7 @@ export class CreateRoomDto {
   title: string;
 
   @IsArray()
-  @ArrayMinSize(1)
+  @ArrayUnique()
   @IsInt({ each: true })
   slotLockPositions: number[];
 }

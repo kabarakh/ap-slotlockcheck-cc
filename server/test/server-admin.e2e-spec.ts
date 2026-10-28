@@ -114,7 +114,7 @@ describe('server connection (integration)', () => {
       .set('Cookie', ownerCookie)
       .send({ serverPassword: 'admin-secret' })
       .expect(400);
-    expect(response.body).toMatchObject({ code: 'SLOTLOCK_SLOT_REQUIRED' });
+    expect(response.body).toMatchObject({ code: 'CONNECTION_SLOT_REQUIRED' });
   });
 
   it('rejects a wrong password and keeps nothing', async () => {

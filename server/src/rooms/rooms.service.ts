@@ -114,6 +114,7 @@ export class RoomsService {
       unlockedPercentage: counts.percentage,
       checksDone: roster.reduce((sum, slot) => sum + slot.checksDone, 0),
       checksTotal: roster.reduce((sum, slot) => sum + slot.checksTotal, 0),
+      hasSlotLock: roster.some((slot) => slot.isSelectedSlotLock),
       syncStatus: this.toSyncStatus(room),
     };
   }

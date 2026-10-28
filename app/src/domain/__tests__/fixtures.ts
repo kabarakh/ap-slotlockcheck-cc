@@ -44,6 +44,7 @@ export function roomDetail(overrides: Partial<RoomDetail> = {}): RoomDetail {
     unlockedPercentage: 0,
     checksDone: 0,
     checksTotal: 0,
+    hasSlotLock: true,
     syncStatus: { lastSyncAt: null, lastSuccessfulSyncAt: null, lastSyncError: null, running: false },
     cheeseTrackerId: 'AbCdEfGhIjKlMnOpQrStUv',
     cheeseTrackerUrl: 'https://cheese.test/tracker/AbCdEfGhIjKlMnOpQrStUv',

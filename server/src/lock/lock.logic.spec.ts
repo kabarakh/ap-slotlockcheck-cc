@@ -149,11 +149,15 @@ describe('detectStartSlots', () => {
       { lockerPosition: 1, lockedPosition: 2, source: 'detected' as const },
       { lockerPosition: 1, lockedPosition: 3, source: 'detected' as const },
     ];
-    expect(detectStartSlots(slotsWithType, new Map([[1, ['Alice', 'Bob']]]), assignments)).toEqual([4]);
+    expect(detectStartSlots(slotsWithType, [1], new Map([[1, ['Alice', 'Bob']]]), assignments)).toEqual([4]);
   });
 
   it('gives no start slots without slot data', () => {
-    expect(detectStartSlots(slotsWithType, new Map(), [])).toEqual([]);
+    expect(detectStartSlots(slotsWithType, [1], new Map(), [])).toEqual([]);
+  });
+
+  it('gives all playable slots without a selected SlotLock slot', () => {
+    expect(detectStartSlots(slotsWithType, [], new Map(), [])).toEqual([2, 3, 4]);
   });
 });
 

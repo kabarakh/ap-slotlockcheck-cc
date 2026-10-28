@@ -116,9 +116,13 @@ function latestUnlock(unlocks: StoredUnlock[]): Pick<SlotLockState, 'unlockTime'
 
 export function detectStartSlots(
   slots: (SlotIdentity & { isSlotLock: boolean })[],
+  slotLockPositions: number[],
   lockedSlotNamesByLocker: Map<number, string[]>,
   assignments: LockAssignmentResult[],
 ): number[] {
+  if (slotLockPositions.length === 0) {
+    return slots.filter((slot) => !slot.isSlotLock).map((slot) => slot.position);
+  }
   if (lockedSlotNamesByLocker.size === 0) {
     return [];
   }

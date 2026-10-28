@@ -2052,6 +2052,9 @@
           "checksTotal": {
             "type": "number"
           },
+          "hasSlotLock": {
+            "type": "boolean"
+          },
           "syncStatus": {
             "$ref": "#/components/schemas/SyncStatusDto"
           }
@@ -2067,6 +2070,7 @@
           "unlockedPercentage",
           "checksDone",
           "checksTotal",
+          "hasSlotLock",
           "syncStatus"
         ]
       },
@@ -2145,6 +2149,9 @@
           "checksTotal": {
             "type": "number"
           },
+          "hasSlotLock": {
+            "type": "boolean"
+          },
           "syncStatus": {
             "$ref": "#/components/schemas/SyncStatusDto"
           }
@@ -2173,6 +2180,7 @@
           "unlockedPercentage",
           "checksDone",
           "checksTotal",
+          "hasSlotLock",
           "syncStatus"
         ]
       },
@@ -2893,7 +2901,7 @@
             "maxLength": 100
           },
           "slotLockPositions": {
-            "minItems": 1,
+            "uniqueItems": true,
             "type": "array",
             "items": {
               "type": "number"

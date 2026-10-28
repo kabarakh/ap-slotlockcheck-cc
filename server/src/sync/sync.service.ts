@@ -167,6 +167,7 @@ export class SyncService {
       });
       const startPositions = detectStartSlots(
         records.map((record) => ({ ...slotIdentity(record), isSlotLock: record.isSlotLock })),
+        selectedPositions,
         lockedSlotNamesByLocker,
         detection.assignments,
       );

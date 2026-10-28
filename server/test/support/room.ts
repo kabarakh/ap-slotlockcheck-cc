@@ -14,10 +14,10 @@ export async function login(server: App, user: TestUser): Promise<string[]> {
   return response.get('Set-Cookie') ?? [];
 }
 
-export async function createRoom(server: App, ownerCookie: string[]): Promise<void> {
+export async function createRoom(server: App, ownerCookie: string[], slotLockPositions = [1, 6]): Promise<void> {
   await request(server)
     .post('/api/room-setup')
     .set('Cookie', ownerCookie)
-    .send({ cheeseTrackerId: TRACKER_ID, slug: 'big-chill', title: 'Big Chill', slotLockPositions: [1, 6] })
+    .send({ cheeseTrackerId: TRACKER_ID, slug: 'big-chill', title: 'Big Chill', slotLockPositions })
     .expect(201);
 }
