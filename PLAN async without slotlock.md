@@ -53,6 +53,7 @@ An admin can use SlotLockCheck for an asynchronous room that has no SlotLock slo
 | Setup, tab "Settings" | No selection of SlotLock slots. |
 | Setup, tabs "Locks" and "Unlock times" | Not shown. The tab parameter falls back to the first available tab. |
 | Game control, server | Slot selection from all slots that are not SlotLock slots (decision 3.5). |
+| Game control, pace | Values for all slots that are not SlotLock slots, from the first point of the checks history. The timeline legend has no kind "Locked". |
 
 ## 5. Server
 
@@ -126,7 +127,7 @@ private async connectionSlot(room: Room, slotId: number | undefined): Promise<Sl
 }
 ```
 
-- The new error code `CONNECTION_SLOT_REQUIRED` replaces `SLOTLOCK_SLOT_REQUIRED`. The old code is used only in this method and in `errors.SLOTLOCK_SLOT_REQUIRED` of the two locale files (6.7).
+- The new error code `CONNECTION_SLOT_REQUIRED` replaces `SLOTLOCK_SLOT_REQUIRED`. The old code is used only in this method and in `errors.SLOTLOCK_SLOT_REQUIRED` of the two locale files (6.8).
 - The connection uses the slot name (`slotCommandName` in `server-target.logic.ts`) and the tags `TextOnly` (`admin-connection.ts`). This works for each slot, so no other change is necessary.
 
 ## 6. App
@@ -179,7 +180,23 @@ In `RosterPanel.vue` and `MySlotsPanel.vue`, also hide with `v-if="hasSlotLock"`
 
 `app/src/components/admin/ServerConnectionPanel.vue`: the options come from `selectedLockers` when `hasSlotLock`, else from `playableSlots`. The label is `server.connectionSlot` ("Slot for the connection") in the second case. The select is shown when there is more than one option, as now.
 
-### 6.7 Texts
+### 6.7 Pace statistics
+
+The pace statistics (pace 3, commits up to `c9da1f5`) need no change on the server:
+
+- `PaceService` gives `isStartSlot` to `evaluateSlotLockStates`. With decision 3.2, each slot has the lock status `start_slot`.
+- `slotRange` (`pace.logic.ts`) gives a `start_slot` the time range from the first point of the checks history up to the goal time or the current time, with `startKind: 'history_start'`. A test exists (`pace.logic.spec.ts`, "start_slot").
+- `pacedSlots` removes only the SlotLock slots. All other slots get pace values.
+- The timeline has no `locked` segments, because the time range starts at the first point of the checks history.
+- `SlotPaceTable` shows a note only for `estimated` and `unknown`, so it shows no note in a room without SlotLock.
+- The pace signals (`PaceSignalsService`, called at the end of each synchronization) use only Cheese and Archipelago snapshots. They do not use the lock data.
+
+One change in the app:
+
+- `app/src/components/ui/PaceTimeline.vue` is a presentational component. New prop `showLocked: boolean`. With `false`, the legend does not show the kind `locked` (filter `SEGMENT_KINDS`).
+- `app/src/components/pace/PaceTimelineDrawer.vue` gives `:show-locked="hasSlotLock"`.
+
+### 6.8 Texts
 
 New or changed keys in `app/src/locale/de.json5` and `app/src/locale/en.json5`:
 
@@ -201,6 +218,7 @@ New or changed keys in `app/src/locale/de.json5` and `app/src/locale/en.json5`:
 | `room-setup` (new spec or e2e) | Creation with `slotLockPositions: []` is accepted. |
 | `archipelago-admin` | `connectionSlot` without selected SlotLock slot: accepts a playable slot, rejects a SlotLock slot, rejects an unknown slot. |
 | `rooms` | `hasSlotLock` is `false` without selected SlotLock slot, `true` with one. |
+| `test/pace.e2e-spec.ts` | Pace of a room without selected SlotLock slot: each slot that is not a SlotLock slot has a row with `hasRange: true` and `startKind: 'history_start'`. |
 
 ### 7.2 App
 
@@ -217,11 +235,11 @@ New or changed keys in `app/src/locale/de.json5` and `app/src/locale/en.json5`:
 
 ## 8. Order and parallel work
 
-Other agents work on the pace statistics at the same time. These files of this plan were also changed by the pace work (commit `d99ced2` and later): `app/src/router/index.ts`, `app/src/views/AdminView.vue`, `app/src/stores/current-room.ts`, `app/src/stores/admin.ts`, `app/src/locale/*.json5`, `server/openapi.json`, `app/src/api/schema.d.ts`.
+Other agents work on the pace statistics at the same time. This plan was checked against the pace work up to commit `c9da1f5`. These files of this plan were also changed by the pace work: `app/src/router/index.ts`, `app/src/views/AdminView.vue`, `app/src/stores/current-room.ts`, `app/src/stores/admin.ts`, `app/src/locale/*.json5`, `server/openapi.json`, `app/src/api/schema.d.ts`, `server/src/sync/sync.service.ts`, `app/src/components/ui/PaceTimeline.vue`, `app/src/components/pace/PaceTimelineDrawer.vue`. If the pace work changes `slotRange`, `pacedSlots` or the use of `isStartSlot` after `c9da1f5`, check 6.7 again.
 
 1. Start the implementation only when the pace work is committed and no agent works in this checkout, or in a separate Git worktree based on the latest `main`.
 2. Do the server part first (5.1 to 5.5), with the API types (5.3) in one commit. The generated files `openapi.json` and `schema.d.ts` must not be generated at the same time by two agents.
-3. Then the app part (6.1 to 6.7), then the end-to-end test.
+3. Then the app part (6.1 to 6.8), then the end-to-end test.
 4. Suggested commits (Conventional Commits, as in the history):
    - `feat(server): rooms without SlotLock`
    - `feat(app): rooms without SlotLock`
@@ -239,7 +257,8 @@ Other agents work on the pace statistics at the same time. These files of this p
 - [ ] 6.4 Player summary and statistics
 - [ ] 6.5 Setup tabs, settings panel, settings save
 - [ ] 6.6 Server connection panel
-- [ ] 6.7 Texts in German and English
+- [ ] 6.7 Pace timeline legend without `locked`
+- [ ] 6.8 Texts in German and English
 - [ ] 7 Tests (server, app, end-to-end)
 - [ ] README and `CHECKLIST implementation.md`
 - [ ] Definition of done (main 21): `npm run lint:check`, `npm run typecheck`, `npm test`, `npm run api:check`, `npm run test:e2e`
