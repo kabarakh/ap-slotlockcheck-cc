@@ -372,6 +372,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RoomArchive_archiveRoom"];
+        delete: operations["RoomArchive_reopenRoom"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/rooms/{slug}/warnings": {
         parameters: {
             query?: never;
@@ -675,6 +691,8 @@ export interface components {
             user: components["schemas"]["AuthUserDto"] | null;
         };
         /** @enum {string} */
+        ArchiveReason: "manual" | "auto";
+        /** @enum {string} */
         RoomRole: "visitor" | "player" | "helper" | "admin";
         RoomMembershipDto: {
             role: components["schemas"]["RoomRole"];
@@ -689,6 +707,9 @@ export interface components {
             running: boolean;
         };
         RoomListEntryDto: {
+            /** Format: date-time */
+            archivedAt: string | null;
+            archiveReason: components["schemas"]["ArchiveReason"] | null;
             membership: components["schemas"]["RoomMembershipDto"];
             id: number;
             slug: string;
@@ -703,6 +724,9 @@ export interface components {
             syncStatus: components["schemas"]["SyncStatusDto"];
         };
         RoomDetailDto: {
+            /** Format: date-time */
+            archivedAt: string | null;
+            archiveReason: components["schemas"]["ArchiveReason"] | null;
             cheeseTrackerId: string;
             cheeseTrackerUrl: string;
             archipelagoTrackerUrl: string;
@@ -717,6 +741,7 @@ export interface components {
             playersMarkFiller: boolean;
             paceBreakLimitMinutes: number;
             paceBulkLimitChecks: number;
+            autoArchive: boolean;
             id: number;
             slug: string;
             title: string;
@@ -919,6 +944,7 @@ export interface components {
             playersMarkFiller?: boolean;
             paceBreakLimitMinutes?: number;
             paceBulkLimitChecks?: number;
+            autoArchive?: boolean;
         };
         /** @enum {string} */
         LockSource: "detected" | "admin";
@@ -1786,6 +1812,48 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    RoomArchive_archiveRoom: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomDetailDto"];
+                };
+            };
+        };
+    };
+    RoomArchive_reopenRoom: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomDetailDto"];
+                };
             };
         };
     };

@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+import { ARCHIVE_REASONS, type ArchiveReason } from '../archive.logic.js';
+
 export class SyncStatusDto {
   @ApiProperty({ type: String, format: 'date-time', nullable: true })
   lastSyncAt: string | null;
@@ -25,6 +27,12 @@ export class RoomSummaryDto {
   checksTotal: number;
   hasSlotLock: boolean;
   syncStatus: SyncStatusDto;
+
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
+  archivedAt: string | null;
+
+  @ApiProperty({ enum: ARCHIVE_REASONS, enumName: 'ArchiveReason', nullable: true })
+  archiveReason: ArchiveReason | null;
 }
 
 export class RoomDetailDto extends RoomSummaryDto {
@@ -42,6 +50,7 @@ export class RoomDetailDto extends RoomSummaryDto {
   playersMarkFiller: boolean;
   paceBreakLimitMinutes: number;
   paceBulkLimitChecks: number;
+  autoArchive: boolean;
 }
 
 export const ROOM_ROLES = ['visitor', 'player', 'helper', 'admin'] as const;

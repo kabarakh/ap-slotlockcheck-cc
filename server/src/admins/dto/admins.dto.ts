@@ -91,6 +91,10 @@ export class UpdateRoomSettingsDto {
   @Min(1)
   @Max(10000)
   paceBulkLimitChecks?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  autoArchive?: boolean;
 }
 
 export const LOCK_SOURCES = ['detected', 'admin'] as const;

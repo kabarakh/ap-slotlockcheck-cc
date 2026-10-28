@@ -4,6 +4,7 @@ import type { AuthUser } from '../auth/auth.types.js';
 import { AppConfigService } from '../config/app-config.service.js';
 import type { Room } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import type { ArchiveReason } from './archive.logic.js';
 import type {
   RoomDetailDto,
   RoomListEntryDto,
@@ -116,6 +117,8 @@ export class RoomsService {
       checksTotal: roster.reduce((sum, slot) => sum + slot.checksTotal, 0),
       hasSlotLock: roster.some((slot) => slot.isSelectedSlotLock),
       syncStatus: this.toSyncStatus(room),
+      archivedAt: room.archivedAt?.toISOString() ?? null,
+      archiveReason: room.archiveReason as ArchiveReason | null,
     };
   }
 
@@ -136,6 +139,7 @@ export class RoomsService {
       playersMarkFiller: room.playersMarkFiller,
       paceBreakLimitMinutes: room.paceBreakLimitMinutes,
       paceBulkLimitChecks: room.paceBulkLimitChecks,
+      autoArchive: room.autoArchive,
     };
   }
 }

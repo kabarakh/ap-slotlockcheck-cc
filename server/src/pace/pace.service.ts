@@ -6,6 +6,7 @@ import { evaluateSlotLockStates } from '../lock/lock.logic.js';
 import type { UnlockTimeSource } from '../lock/lock.types.js';
 import type { ChecksHistoryPoint } from '../lock/unlock-time.logic.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { roomNow } from '../rooms/archive.logic.js';
 import { RoomUpdatesService } from '../rooms/room-updates.service.js';
 import { RoomsService } from '../rooms/rooms.service.js';
 import { CheeseService } from '../sources/cheese/cheese.service.js';
@@ -117,12 +118,13 @@ export class PaceService implements OnModuleInit {
       room.lastSuccessfulSyncAt?.toISOString() ?? '',
       room.paceBreakLimitMinutes,
       room.paceBulkLimitChecks,
+      room.archivedAt?.toISOString() ?? '',
     ].join(':');
   }
 
   private async calculate(room: Room, key: string): Promise<PaceCalculation> {
     const history = await this.checksHistory(room);
-    const now = new Date();
+    const now = roomNow(room, new Date());
     const [slots, locks, unlocks] = await Promise.all([
       this.prisma.slot.findMany({ where: { roomId: room.id }, orderBy: { position: 'asc' } }),
       this.prisma.lockAssignment.findMany({ where: { roomId: room.id, notLocked: false } }),

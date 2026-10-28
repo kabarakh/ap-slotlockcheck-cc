@@ -30,7 +30,10 @@ export class SyncScheduler {
     this.running = true;
     try {
       const now = new Date();
-      const rooms = await this.prisma.room.findMany({ select: { id: true, slug: true, lastSyncAt: true } });
+      const rooms = await this.prisma.room.findMany({
+        where: { archivedAt: null },
+        select: { id: true, slug: true, lastSyncAt: true },
+      });
       for (const room of rooms) {
         if (isSyncDue(room.lastSyncAt, now, this.config.get('SYNC_INTERVAL_MINUTES'))) {
           await this.sync.syncRoom(room.id, 'schedule');

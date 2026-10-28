@@ -1123,6 +1123,64 @@
         ]
       }
     },
+    "/api/rooms/{slug}/archive": {
+      "post": {
+        "operationId": "RoomArchive_archiveRoom",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "RoomArchive"
+        ]
+      },
+      "delete": {
+        "operationId": "RoomArchive_reopenRoom",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "RoomArchive"
+        ]
+      }
+    },
     "/api/rooms/{slug}/warnings": {
       "get": {
         "operationId": "Warnings_list",
@@ -1963,6 +2021,13 @@
           "user"
         ]
       },
+      "ArchiveReason": {
+        "type": "string",
+        "enum": [
+          "manual",
+          "auto"
+        ]
+      },
       "RoomRole": {
         "type": "string",
         "enum": [
@@ -2022,6 +2087,19 @@
       "RoomListEntryDto": {
         "type": "object",
         "properties": {
+          "archivedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "archiveReason": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ArchiveReason"
+              }
+            ]
+          },
           "membership": {
             "$ref": "#/components/schemas/RoomMembershipDto"
           },
@@ -2060,6 +2138,8 @@
           }
         },
         "required": [
+          "archivedAt",
+          "archiveReason",
           "membership",
           "id",
           "slug",
@@ -2077,6 +2157,19 @@
       "RoomDetailDto": {
         "type": "object",
         "properties": {
+          "archivedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "archiveReason": {
+            "nullable": true,
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ArchiveReason"
+              }
+            ]
+          },
           "cheeseTrackerId": {
             "type": "string"
           },
@@ -2122,6 +2215,9 @@
           "paceBulkLimitChecks": {
             "type": "number"
           },
+          "autoArchive": {
+            "type": "boolean"
+          },
           "id": {
             "type": "number"
           },
@@ -2157,6 +2253,8 @@
           }
         },
         "required": [
+          "archivedAt",
+          "archiveReason",
           "cheeseTrackerId",
           "cheeseTrackerUrl",
           "archipelagoTrackerUrl",
@@ -2171,6 +2269,7 @@
           "playersMarkFiller",
           "paceBreakLimitMinutes",
           "paceBulkLimitChecks",
+          "autoArchive",
           "id",
           "slug",
           "title",
@@ -3020,6 +3119,9 @@
             "type": "number",
             "minimum": 1,
             "maximum": 10000
+          },
+          "autoArchive": {
+            "type": "boolean"
           }
         }
       },

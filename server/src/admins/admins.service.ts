@@ -92,6 +92,7 @@ export class AdminsService {
           playersMarkFiller: settings.playersMarkFiller ?? room.playersMarkFiller,
           paceBreakLimitMinutes: settings.paceBreakLimitMinutes ?? room.paceBreakLimitMinutes,
           paceBulkLimitChecks: settings.paceBulkLimitChecks ?? room.paceBulkLimitChecks,
+          autoArchive: settings.autoArchive ?? room.autoArchive,
         },
       });
       if (settings.slotLockPositions) {

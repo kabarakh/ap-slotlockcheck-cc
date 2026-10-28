@@ -11,6 +11,7 @@ import { estimateUnlockTime } from '../lock/unlock-time.logic.js';
 import { PaceSignalsService } from '../pace/pace-signals.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { trackerOwnerIdentity } from '../room-setup/owner-check.js';
+import { shouldAutoArchive } from '../rooms/archive.logic.js';
 import { RoomsService } from '../rooms/rooms.service.js';
 import type { CheeseTracker } from '../sources/cheese/cheese.schemas.js';
 import { CheeseService } from '../sources/cheese/cheese.service.js';
@@ -48,9 +49,12 @@ export class SyncService {
     if (this.rooms.isSyncRunning(roomId)) {
       return 'skipped';
     }
+    const room = await this.prisma.room.findUniqueOrThrow({ where: { id: roomId } });
+    if (room.archivedAt !== null) {
+      return 'skipped';
+    }
     this.rooms.markSyncRunning(roomId, true);
     const startedAt = new Date();
-    const room = await this.prisma.room.findUniqueOrThrow({ where: { id: roomId } });
     const run = await this.prisma.syncRun.create({ data: { roomId, trigger, startedAt, result: 'running' } });
     try {
       const before = await this.rooms.getRosterForRoom(roomId);
@@ -197,6 +201,7 @@ export class SyncService {
           lastSyncAt: now,
           lastSuccessfulSyncAt: now,
           lastSyncError: null,
+          ...(shouldAutoArchive(room, slots) ? { archivedAt: now, archiveReason: 'auto' } : {}),
         },
       });
       return this.locationStatus.applyChecks(tx, room.id, source.tracker.player_checks_done, now);

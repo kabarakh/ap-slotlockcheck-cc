@@ -45,6 +45,9 @@ model Room {
   playersMarkFiller     Boolean           @default(false)
   paceBreakLimitMinutes Int               @default(30)
   paceBulkLimitChecks   Int               @default(40)
+  archivedAt            DateTime?
+  archiveReason         String?
+  autoArchive           Boolean           @default(true)
   slots                 Slot[]
   admins                RoomAdmin[]
   lockAssignments       LockAssignment[]

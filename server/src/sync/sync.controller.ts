@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
+import { ConflictException, Controller, HttpCode, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
 
 import { RequireRoomRole } from '../auth/auth.decorators.js';
 import { AppConfigService } from '../config/app-config.service.js';
@@ -27,6 +27,9 @@ export class SyncController {
   @RequireRoomRole('admin')
   async synchronizeNow(@Param('slug') slug: string): Promise<SyncStatusDto> {
     const room = await this.rooms.findRoomBySlug(slug);
+    if (room.archivedAt !== null) {
+      throw new ConflictException('ROOM_ARCHIVED');
+    }
     const waitSeconds = manualSyncWaitSeconds(
       room.lastSyncAt,
       new Date(),

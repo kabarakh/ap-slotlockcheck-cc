@@ -60,6 +60,9 @@ export function roomDetail(overrides: Partial<RoomDetail> = {}): RoomDetail {
     playersMarkFiller: false,
     paceBreakLimitMinutes: 30,
     paceBulkLimitChecks: 40,
+    archivedAt: null,
+    archiveReason: null,
+    autoArchive: true,
     ...overrides,
   };
 }
