@@ -81,6 +81,18 @@ The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sp
 - The Archipelago server answers successful admin commands only with a message to all players. It answers errors directly. So the server sends the lines with a short pause and collects the error answers.
 - The chat function of `archipelago.js` waits for its own message to come back. The server hides the password in this echo, so the application sends the chat packet directly.
 
+### Pace statistics
+
+The functions are in `PLAN pace statistics.md`. The technical plan is in `PLAN pace statistics implementation.md`.
+
+- The tab "Pace" of the game control shows for each slot how fast the player does checks while the player can play: active time, checks, checks per hour, BK time, BK periods and breaks. A second table shows the values of each game. Only admins and admin helpers see the tab.
+- The server calculates the values from the checks history of Cheese. One step of the history is 10 minutes. A step with new checks is active. A step with more new checks than the bulk limit (for example a release) does not count. A quiet period is a BK period, a break (longer than the break limit) or a short pause. A short pause counts as play time.
+- A quiet period is a BK period if the slot receives a progression item in it or in the first active step after it (Archipelago tracker), or if Cheese shows `bk` or `soft_bk` in it. The first new check ends a BK period. The signals come from the snapshots of the synchronizations, so there are no signals before the first synchronization of the room.
+- A slot gets one row for each Discord user that played it. The SlotLock slots are not in the statistics.
+- A click on a slot opens the timeline of the full slot in a side panel. It shows the parts, the progression items, the changes of the Cheese status and of the player, and the snapshots that the server could not read. `d3-scale` calculates the time axis (`pace-timeline.ts`); Vue draws the SVG with the colors `--app-pace-*`.
+- Limits: BK periods and pauses that are shorter than one step are not visible. A useful item that ends a BK gives a break, not a BK period. Checks of different games need different effort, so compare the pace only in the same game.
+- The server keeps the result of each room in memory. A new synchronization, a change of the limits or a change of the room by an admin calculates the values again.
+
 ### Vue components
 
 - **Functional components** get all data from Pinia stores and call store actions. They have no props, no emits, no provide and no inject.

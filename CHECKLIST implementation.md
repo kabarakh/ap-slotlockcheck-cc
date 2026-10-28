@@ -172,9 +172,9 @@ Reference: `PLAN pace statistics implementation.md` (section numbers in brackets
 
 ### Phase P4 – Timeline
 
-- [ ] Timeline endpoint, `PaceTimeline`, side panel (3.5, 4.3)
-- [ ] E2E tests (5.4)
-- [ ] README: section "Pace statistics" under "Concepts"
+- [x] Timeline endpoint with 404 `SLOT_NOT_FOUND` and each Cheese status, `PaceTimeline`, side panel (3.5, 4.3)
+- [x] E2E tests (5.4)
+- [x] README: section "Pace statistics" under "Concepts"
 
 ## Open decisions for the developer
 
@@ -198,3 +198,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-28 | Pace P1, P2.1, settings | ok | ok | 239 unit, 61 integration, 81 unit app, 23 e2e ok | P1.1 and P2.2 need real room data |
 | 2026-10-28 | Pace P2.4 | ok | ok | 246 unit, 67 integration, 81 unit app, 23 e2e ok | SlotLock slots left out, cache cleared on each publish |
 | 2026-10-28 | Pace P3 | ok | ok | 246 unit, 67 integration, 91 unit app, 23 e2e ok | Visual check in the browser at 1024 px |
+| 2026-10-28 | Pace P4 | ok | ok | 249 unit, 69 integration, 104 unit app, 26 e2e ok | Visual check of the timeline in light and dark mode |

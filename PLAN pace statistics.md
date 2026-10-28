@@ -118,9 +118,9 @@ The SlotLock slots are not in the pace statistics: no rows, and they do not coun
 
 ## 8. Timeline of a slot
 
-1. A click on a slot opens a side panel with a timeline of the slot.
+1. A click on a row opens a side panel with the timeline of the full slot. The changes of the player are marks on the timeline. The clicked row is highlighted. Rows without time range cannot be clicked.
 2. The timeline shows the time range with a color for each part: active step, short pause, BK period, break, bulk step, locked, after goal.
-3. Marks on the timeline: received progression items, changes of the Cheese status, changes of the player, the time of snapshots that the server could not read (F 3.7).
+3. Marks on the timeline: received progression items, each change of the Cheese status (`unknown`, `unblocked`, `bk`, `soft_bk`, `go` separately; the first snapshot gives the first status; a status that is still active has no end mark), changes of the player, the time of snapshots that the server could not read (F 3.7).
 4. The admin uses the timeline to check the classification of the quiet periods.
 
 ## 9. Settings
@@ -182,3 +182,6 @@ The developer decided these points on 2026-10-28.
 | SlotLock slots | Not in the pace statistics |
 | Game without a row with a time range | Not shown, the switch shows it |
 | New calculation | After each synchronization and after each change of the room by an admin |
+| Timeline of a slot with more rows | The full slot, the clicked row highlighted |
+| Rows without time range | Cannot be clicked |
+| Status marks on the timeline | Each Cheese status separately, no end mark for the current status |

@@ -60,6 +60,7 @@ interface SlotSignals {
   progressionItemTimes: Date[];
   bkPeriods: { from: Date; to: Date }[];
   playerPeriods: { from: Date; to: Date; discordUserId: string | null; discordName: string | null }[];
+  statusChanges: { time: Date; status: ProgressionStatus }[];
   signalsFrom: Date | null;
 }
 ```
@@ -70,6 +71,7 @@ interface SlotSignals {
 4. Read the snapshots one row at a time and parse only the necessary fields with Zod. Do not keep all payloads in memory.
 5. `playerPeriods`: join the snapshot ranges of each slot (key `Slot.cheeseGameId`) with the same `effective_discord_user_id` into periods. `null` is a period without player (F 6.4). A change of only the name is not a change of the player. The period shows the last name.
 6. The first player period starts at the start of the time range of the slot, not at `signalsFrom` (F 6.3). The last player period ends at the current time.
+7. `statusChanges`: the `progression_status` of each slot in the first Cheese snapshot, then each change to another value, with the start time of the snapshot (F 8.3). The timeline uses these marks; `bkPeriods` stays for the classification.
 
 ### 3.3 Classification
 
@@ -143,6 +145,7 @@ interface Segment {
 4. `GamePaceDto`: `game`, `slotCount`, `activeMinutes`, `checks`, `checksPerHour`, `medianChecksPerHour`.
 5. `SlotTimelineDto`: `slotId`, `from`, `to`, `segments: SegmentDto[]`, `progressionItemTimes`, `statusChanges: { time, status }[]`, `playerPeriods`, `unreadableSnapshots: { from, to }[]` (the validity time of each snapshot that could not be read, F 8.3).
 6. If the checks history of Cheese is not available: HTTP 503 with the code `CHECKS_HISTORY_NOT_AVAILABLE`.
+7. Timeline of a SlotLock slot, of a slot of another room or of an unknown slot ID: HTTP 404.
 
 ### 3.6 Cache
 
@@ -260,7 +263,7 @@ The developer answered these questions on 2026-10-28. The answers are in F 2, F 
 
 Open: the real length of the steps of the checks history (phase P1.1) and the time to read the snapshots of the Big Chill room (phase P2.2).
 
-Open for phase P4: the answer of the timeline endpoint for a SlotLock slot (it has no calculation).
+8. Phase P4: the timeline endpoint gives 404 for a SlotLock slot (3.5.7). The timeline shows the full slot. Rows without time range cannot be clicked (F 8.1).
 
 ## 9. Deviations during the implementation
 
@@ -268,3 +271,5 @@ Open for phase P4: the answer of the timeline endpoint for a SlotLock slot (it h
 2. **Route guard (4.1.3):** the parent route `control` already needs the role helper. Players and visitors go to the roster, as for the other tabs of the game control.
 3. **Width (4.3):** the slot table fits a screen of 1024 px without horizontal scrolling, as the roster (main 24.23). For this, the table has 9 columns with two-line cells: slot / game, active time / checks, pace / time per check, BK time / share, BK periods / longest, time of the player from / to. Each combined column sorts with the two-field cycle of the slot table.
 4. **German terms:** break = "Break", short pause = "Pause", break limit = "Break-Grenze".
+5. **Timeline (4.3):** `PaceTimeline.vue` is in `components/ui/` (same reason as 9.1). The slot name in the table is a link that opens the side panel (slot pattern of the README). The pure layout is in `domain/pace-timeline.ts`.
+6. **E2E file:** `app/e2e/statistics-pace.spec.ts`, so that it runs after `rooms.spec.ts`, which makes the room through the UI.
