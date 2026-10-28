@@ -3,10 +3,19 @@ import type { App } from 'supertest/types.js';
 
 import { LiveGateway } from '../src/live/live.gateway.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
+import { SERVER_SEED_READER } from '../src/seed/server-seed.reader.js';
 import { SyncService } from '../src/sync/sync.service.js';
 import { generationOutputFixturePath, loadFixture, multidataFixturePath } from './fixtures/fixtures.js';
-import { createRoom, login, OWNER, PLAYER } from './support/room.js';
+import { CAROL, createRoom, login, OWNER, PLAYER } from './support/room.js';
 import { createTestApp, type TestApp } from './support/test-app.js';
+
+const serverSeedAddresses: string[] = [];
+let serverSeedName = '12345678901234567890';
+
+const readServerSeed = (address: string): Promise<string> => {
+  serverSeedAddresses.push(address);
+  return Promise.resolve(serverSeedName);
+};
 
 describe('seed upload (integration)', () => {
   let testApp: TestApp;
@@ -18,7 +27,7 @@ describe('seed upload (integration)', () => {
     request(server).post('/api/rooms/big-chill/seed').set('Cookie', cookie).attach('file', path);
 
   beforeAll(async () => {
-    testApp = await createTestApp();
+    testApp = await createTestApp([[SERVER_SEED_READER, readServerSeed]]);
     server = testApp.app.getHttpServer() as App;
     ownerCookie = await login(server, OWNER);
     playerCookie = await login(server, PLAYER);
@@ -110,6 +119,29 @@ describe('seed upload (integration)', () => {
     expect(seed.body).toMatchObject({ seedName: '12345678901234567890' });
     const room = await request(server).get('/api/rooms/big-chill').expect(200);
     expect(room.body).toMatchObject({ hasSeed: true });
+  });
+
+  it('compares the uploaded seed with the seed of the Archipelago server for helpers and admins', async () => {
+    const comparison = () => request(server).get('/api/rooms/big-chill/seed/comparison');
+    await comparison().set('Cookie', playerCookie).expect(403);
+    const matching = await comparison().set('Cookie', ownerCookie).expect(200);
+    expect(matching.body).toEqual({
+      uploadedSeedName: '12345678901234567890',
+      serverSeedName: '12345678901234567890',
+      serverError: null,
+      matches: true,
+    });
+    expect(serverSeedAddresses.at(-1)).toBe('wss://archipelago.gg:38281');
+    serverSeedName = '99999999999999999999';
+    await request(server)
+      .post('/api/rooms/big-chill/admins')
+      .set('Cookie', ownerCookie)
+      .send({ discordId: CAROL.discordId, role: 'helper' })
+      .expect(201);
+    const helperCookie = await login(server, CAROL);
+    const different = await comparison().set('Cookie', helperCookie).expect(200);
+    expect(different.body).toMatchObject({ serverSeedName: '99999999999999999999', matches: false });
+    serverSeedName = '12345678901234567890';
   });
 
   it('accepts only one upload for each room', async () => {

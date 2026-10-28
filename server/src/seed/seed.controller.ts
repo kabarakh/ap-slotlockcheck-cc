@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 
 import { CurrentUser, RequireRoomRole } from '../auth/auth.decorators.js';
 import type { AuthUser } from '../auth/auth.types.js';
-import { SeedDataDto, SeedUploadDto } from './dto/seed.dto.js';
+import { SeedComparisonDto, SeedDataDto, SeedUploadDto } from './dto/seed.dto.js';
 import { SeedService } from './seed.service.js';
 
 export const MAXIMUM_SEED_UPLOAD_BYTES = 500 * 1024 * 1024;
@@ -18,6 +18,12 @@ export class SeedController {
   @RequireRoomRole('helper')
   get(@Param('slug') slug: string): Promise<SeedDataDto> {
     return this.seed.get(slug);
+  }
+
+  @Get('comparison')
+  @RequireRoomRole('helper')
+  compare(@Param('slug') slug: string): Promise<SeedComparisonDto> {
+    return this.seed.compare(slug);
   }
 
   @Post()

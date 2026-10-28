@@ -5,6 +5,7 @@ import {
   type AdminJob,
   type AdminTiming,
 } from '../src/archipelago-admin/admin-jobs.service.js';
+import { readServerSeedName } from '../src/seed/server-seed.reader.js';
 import { startFakeArchipelagoServer, type FakeArchipelagoServer } from './support/fake-archipelago-server.js';
 
 const TIMING: AdminTiming = { ...DEFAULT_ADMIN_TIMING, pauseMilliseconds: 20, replyWaitMilliseconds: 100 };
@@ -61,5 +62,10 @@ describe('Archipelago connection with archipelago.js (integration)', () => {
       '!admin /release Bob',
       '!admin logout',
     ]);
+  });
+
+  it('reads the seed name from the room information without logging in', async () => {
+    await expect(readServerSeedName(`ws://127.0.0.1:${fakeServer.port}`)).resolves.toBe('12345678901234567890');
+    expect(fakeServer.connects).toEqual([]);
   });
 });

@@ -1437,6 +1437,36 @@
         ]
       }
     },
+    "/api/rooms/{slug}/seed/comparison": {
+      "get": {
+        "operationId": "Seed_compare",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SeedComparisonDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Seed"
+        ]
+      }
+    },
     "/api/rooms/{slug}/server-admin": {
       "get": {
         "operationId": "ArchipelagoAdmin_status",
@@ -3402,6 +3432,33 @@
           "sphereCount",
           "unreachableLocationCount",
           "uploadedByName"
+        ]
+      },
+      "SeedComparisonDto": {
+        "type": "object",
+        "properties": {
+          "uploadedSeedName": {
+            "type": "string",
+            "nullable": true
+          },
+          "serverSeedName": {
+            "type": "string",
+            "nullable": true
+          },
+          "serverError": {
+            "type": "string",
+            "nullable": true
+          },
+          "matches": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "required": [
+          "uploadedSeedName",
+          "serverSeedName",
+          "serverError",
+          "matches"
         ]
       },
       "SeedUploadDto": {

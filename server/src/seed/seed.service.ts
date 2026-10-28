@@ -1,17 +1,20 @@
-import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { rm } from 'node:fs/promises';
 
+import { websocketAddress } from '../archipelago-admin/server-target.logic.js';
 import type { AuthUser } from '../auth/auth.types.js';
 import type { Prisma } from '../generated/prisma/client.js';
 import { LocationStatusService } from '../locations/location-status.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { RoomUpdatesService } from '../rooms/room-updates.service.js';
 import { RoomsService } from '../rooms/rooms.service.js';
+import { ArchipelagoService } from '../sources/archipelago/archipelago.service.js';
 import { SyncService } from '../sync/sync.service.js';
-import type { SeedDataDto } from './dto/seed.dto.js';
+import type { SeedComparisonDto, SeedDataDto } from './dto/seed.dto.js';
 import { MultidataFormatError, readMultidata, type MultidataContent } from './multidata.reader.js';
 import { readSeedFile } from './seed-file.reader.js';
 import { seedDifferences } from './seed-match.logic.js';
+import { SERVER_SEED_READER, type ServerSeedReader } from './server-seed.reader.js';
 
 const INSERT_BLOCK_SIZE = 1000;
 const UPLOAD_TRANSACTION_TIMEOUT_MILLISECONDS = 5 * 60 * 1000;
@@ -26,6 +29,8 @@ export class SeedService {
     private readonly updates: RoomUpdatesService,
     private readonly sync: SyncService,
     private readonly locationStatus: LocationStatusService,
+    private readonly archipelago: ArchipelagoService,
+    @Inject(SERVER_SEED_READER) private readonly readServerSeed: ServerSeedReader,
   ) {}
 
   async get(slug: string): Promise<SeedDataDto> {
@@ -43,6 +48,28 @@ export class SeedService {
       uploadedAt: seed.uploadedAt.toISOString(),
       uploadedByName: seed.uploadedBy.name,
     };
+  }
+
+  async compare(slug: string): Promise<SeedComparisonDto> {
+    const room = await this.rooms.findRoomBySlug(slug);
+    const seed = await this.prisma.seedData.findUnique({ where: { roomId: room.id } });
+    const uploadedSeedName = seed?.seedName ?? null;
+    let serverSeedName: string | null = null;
+    let serverError: string | null = null;
+    if (room.archipelagoRoomId) {
+      try {
+        await this.archipelago.wakeRoom(room.archipelagoOrigin, room.archipelagoRoomId);
+        const status = await this.archipelago.getRoomStatus(room.archipelagoOrigin, room.archipelagoRoomId);
+        serverSeedName = await this.readServerSeed(websocketAddress(room.archipelagoOrigin, status.last_port));
+      } catch (error) {
+        this.logger.warn(`Seed of the Archipelago server for room ${slug} not readable: ${String(error)}`);
+        serverError = 'SERVER_SEED_UNAVAILABLE';
+      }
+    } else {
+      serverError = 'ROOM_LINK_MISSING';
+    }
+    const matches = uploadedSeedName !== null && serverSeedName !== null ? uploadedSeedName === serverSeedName : null;
+    return { uploadedSeedName, serverSeedName, serverError, matches };
   }
 
   async upload(slug: string, admin: AuthUser, path: string | undefined): Promise<SeedDataDto> {
