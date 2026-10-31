@@ -194,7 +194,7 @@
       server: 'Server',
     },
     sphereLocations: {
-      hint: 'Click a sphere to see its open locations. There you can remove filler marks.',
+      hint: 'Click a sphere to see its open locations.',
       title: 'Sphere {sphere}: {count} open locations',
       cleanup: 'Make clean-up text',
       showAll: 'Show in the locations',

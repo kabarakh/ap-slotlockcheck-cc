@@ -70,19 +70,5 @@ export const useSphereLocationsStore = defineStore('sphereLocations', () => {
     await fetchPage();
   };
 
-  const unmarkFiller = async (id: number): Promise<void> => {
-    const slug = useCurrentRoomStore().slug;
-    if (!slug) {
-      return;
-    }
-    try {
-      await unwrap(api.DELETE('/api/rooms/{slug}/locations/{id}/filler-mark', { params: { path: { slug, id } } }));
-      useUiStore().notify('success', 'locations.unmarked');
-      await Promise.all([fetchPage(), useSphereOverviewStore().fetch()]);
-    } catch (error) {
-      useUiStore().notifyError(error);
-    }
-  };
-
-  return { sphere, rows, total, offset, loading, open, close, setPage, fetchPage, unmarkFiller };
+  return { sphere, rows, total, offset, loading, open, close, setPage, fetchPage };
 });

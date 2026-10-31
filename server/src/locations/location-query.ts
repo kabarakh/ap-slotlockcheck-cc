@@ -17,7 +17,7 @@ export interface LocationFilter {
 }
 
 const STATE_FILTERS: Record<LocationState, Prisma.SeedLocationWhereInput> = {
-  open: { checked: false },
+  open: { checked: false, fillerMarkedAt: null },
   found: { checked: true },
   filler: { fillerMarkedAt: { not: null } },
 };

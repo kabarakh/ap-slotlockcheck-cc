@@ -200,7 +200,7 @@
       server: 'Server',
     },
     sphereLocations: {
-      hint: 'Klicke auf eine Sphere, um ihre offenen Locations zu sehen. Dort kannst du Filler-Markierungen entfernen.',
+      hint: 'Klicke auf eine Sphere, um ihre offenen Locations zu sehen.',
       title: 'Sphere {sphere}: {count} offene Locations',
       cleanup: 'Clean-up-Text machen',
       showAll: 'In den Locations zeigen',

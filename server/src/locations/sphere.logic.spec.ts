@@ -45,7 +45,7 @@ describe('summarizeSpheres', () => {
     group({ sphere: 1, checked: true, fillerMarked: true, count: 7 }),
   ];
 
-  it('counts open, found, total and filler-marked open locations and the open item types for each sphere', () => {
+  it('counts open, found, total and filler-marked locations and the open item types for each sphere', () => {
     expect(summarizeSpheres(groups, false)).toEqual([
       {
         sphere: 0,
@@ -57,11 +57,11 @@ describe('summarizeSpheres', () => {
       },
       {
         sphere: 1,
-        open: 5,
+        open: 2,
         found: 7,
         total: 12,
         fillerMarked: 3,
-        openByType: { progression: 0, useful: 0, normal: 3, trap: 2 },
+        openByType: { progression: 0, useful: 0, normal: 0, trap: 2 },
       },
       {
         sphere: 2,
@@ -86,11 +86,11 @@ describe('summarizeSpheres', () => {
       },
       {
         sphere: 1,
-        open: 5,
+        open: 2,
         found: 7,
         total: 12,
         fillerMarked: 3,
-        openByType: { progression: 0, useful: 0, normal: 3, trap: 2 },
+        openByType: { progression: 0, useful: 0, normal: 0, trap: 2 },
       },
     ]);
   });
@@ -138,7 +138,7 @@ describe('locationWhere', () => {
   };
 
   it('filters by room and state', () => {
-    expect(locationWhere(filter)).toEqual({ AND: [{ roomId: 7 }, { checked: false }] });
+    expect(locationWhere(filter)).toEqual({ AND: [{ roomId: 7 }, { checked: false, fillerMarkedAt: null }] });
     expect(locationWhere({ ...filter, state: 'found' })).toEqual({ AND: [{ roomId: 7 }, { checked: true }] });
     expect(locationWhere({ ...filter, state: 'filler' })).toEqual({
       AND: [{ roomId: 7 }, { fillerMarkedAt: { not: null } }],
@@ -158,7 +158,7 @@ describe('locationWhere', () => {
       }).AND,
     ).toEqual([
       { roomId: 7 },
-      { checked: false },
+      { checked: false, fillerMarkedAt: null },
       { finderSlot: { discordUserId: '42' } },
       { itemType: { in: ['trap'] } },
       { sphere: { gte: 2 } },

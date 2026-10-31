@@ -92,7 +92,8 @@ The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sp
 - The sphere limit for players is the lowest sphere with open locations plus a number that the admin sets. Slots with reached goal and locations marked as filler do not hold the limit back.
 - The socket messages of a room are public. So the live message about changed locations contains no items. The browser loads the data again through the API, which checks the role of the user.
 - Admin helpers see the admin view of the locations and make the Discord text, but they cannot change the room.
-- A sphere is done when all its open locations are marked as filler; a sphere without open locations is also done. The sphere overview hides done spheres unless the switch "show done spheres" is on. The server counts the marked open locations of each sphere with a second grouping, because the mark is a date and not a group key. In the game control, a click on a sphere shows its open locations, and admin helpers remove filler marks there.
+- A location marked as filler is not open: the open locations, the sphere overview and the sphere limit leave it out, and only the view "marked as filler" shows it. There, admin helpers remove the mark. The server counts the marked locations of each sphere with a second grouping, because the mark is a date and not a group key.
+- A sphere without open locations is done. The sphere overview hides done spheres unless the switch "show done spheres" is on.
 
 ### Connection to the Archipelago server
 

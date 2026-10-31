@@ -47,11 +47,10 @@ export function summarizeSpheres(groups: SphereGroup[], excludeGoaled: boolean):
     summary.total += group.count;
     if (group.checked) {
       summary.found += group.count;
+    } else if (group.fillerMarked) {
+      summary.fillerMarked += group.count;
     } else {
       summary.open += group.count;
-      if (group.fillerMarked) {
-        summary.fillerMarked += group.count;
-      }
       summary.openByType[effectiveItemType(group.itemType, group.receiverGoaled, excludeGoaled)] += group.count;
     }
     summaries.set(group.sphere, summary);
