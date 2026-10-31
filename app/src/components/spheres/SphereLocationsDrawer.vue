@@ -109,6 +109,20 @@ const openLocations = async () => {
       <Column :header="t('locations.columns.type')">
         <template #body="{ data }"><ItemTypeTag :item-type="(data as LocationAdminRow).itemType" /></template>
       </Column>
+      <Column :header="t('locations.columns.filler')">
+        <template #body="{ data }">
+          <Button
+            v-if="(data as LocationAdminRow).fillerMarked"
+            :label="t('locations.unmarkFiller')"
+            icon="pi pi-flag-fill"
+            size="small"
+            severity="secondary"
+            text
+            data-testid="sphere-unmark-filler"
+            @click="sphereLocations.unmarkFiller((data as LocationAdminRow).id)"
+          />
+        </template>
+      </Column>
     </DataTable>
   </Drawer>
 </template>

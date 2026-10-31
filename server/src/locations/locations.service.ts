@@ -60,15 +60,20 @@ export class LocationsService {
     const isHelper = RoomRoleService.satisfies(access.membership.role, 'helper');
     const slots = await this.prisma.slot.findMany({ where: { roomId: access.room.id } });
     const goaled = new Map(slots.map((slot) => [slot.id, isGoaled(slot)]));
-    const groups = await this.prisma.seedLocation.groupBy({
-      by: ['sphere', 'checked', 'itemType', 'finderSlotId', 'receiverSlotId'],
-      where: { roomId: access.room.id },
-      _count: { _all: true },
-    });
+    const groupsOf = (fillerMarked: boolean) =>
+      this.prisma.seedLocation
+        .groupBy({
+          by: ['sphere', 'checked', 'itemType', 'finderSlotId', 'receiverSlotId'],
+          where: { roomId: access.room.id, fillerMarkedAt: fillerMarked ? { not: null } : null },
+          _count: { _all: true },
+        })
+        .then((groups) => groups.map((group) => ({ ...group, fillerMarked })));
+    const groups = (await Promise.all([groupsOf(false), groupsOf(true)])).flat();
     const summaries = summarizeSpheres(
       groups.map((group) => ({
         sphere: group.sphere,
         checked: group.checked,
+        fillerMarked: group.fillerMarked,
         itemType: group.itemType as ItemType,
         finderGoaled: goaled.get(group.finderSlotId) ?? false,
         receiverGoaled: group.receiverSlotId === null ? false : (goaled.get(group.receiverSlotId) ?? false),
@@ -80,7 +85,13 @@ export class LocationsService {
       lowestOpenSphere: access.lowestOpenSphere,
       visibleMaxSphere: isHelper ? access.sphereCount : access.visibleMaxSphere,
       sphereCount: access.sphereCount,
-      spheres: summaries.map(({ sphere, open, found, total }) => ({ sphere, open, found, total })),
+      spheres: summaries.map(({ sphere, open, found, total, fillerMarked }) => ({
+        sphere,
+        open,
+        found,
+        total,
+        fillerMarked,
+      })),
       itemTypes: isHelper ? summaries.map((summary) => ({ sphere: summary.sphere, ...summary.openByType })) : null,
     };
   }

@@ -3,6 +3,7 @@ import { ITEM_TYPES, type ItemType } from '../seed/item-type.js';
 export interface SphereGroup {
   sphere: number;
   checked: boolean;
+  fillerMarked: boolean;
   itemType: ItemType;
   finderGoaled: boolean;
   receiverGoaled: boolean;
@@ -14,6 +15,7 @@ export interface SphereSummary {
   open: number;
   found: number;
   total: number;
+  fillerMarked: number;
   openByType: Record<ItemType, number>;
 }
 
@@ -39,6 +41,7 @@ export function summarizeSpheres(groups: SphereGroup[], excludeGoaled: boolean):
       open: 0,
       found: 0,
       total: 0,
+      fillerMarked: 0,
       openByType: emptyCounts(),
     };
     summary.total += group.count;
@@ -46,6 +49,9 @@ export function summarizeSpheres(groups: SphereGroup[], excludeGoaled: boolean):
       summary.found += group.count;
     } else {
       summary.open += group.count;
+      if (group.fillerMarked) {
+        summary.fillerMarked += group.count;
+      }
       summary.openByType[effectiveItemType(group.itemType, group.receiverGoaled, excludeGoaled)] += group.count;
     }
     summaries.set(group.sphere, summary);

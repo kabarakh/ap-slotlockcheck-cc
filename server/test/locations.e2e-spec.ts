@@ -52,7 +52,7 @@ describe('spheres and locations (integration)', () => {
       lowestOpenSphere: 0,
       visibleMaxSphere: 0,
       sphereCount: 4,
-      spheres: [{ sphere: 0, open: 2, found: 3, total: 5 }],
+      spheres: [{ sphere: 0, open: 2, found: 3, total: 5, fillerMarked: 0 }],
       itemTypes: null,
     });
   });
@@ -66,7 +66,7 @@ describe('spheres and locations (integration)', () => {
 
   it('excludes slots with reached goal on request', async () => {
     const overview = (await get('/spheres?excludeGoaled=true', ownerCookie).expect(200)).body as SphereOverviewDto;
-    expect(overview.spheres[2]).toEqual({ sphere: 2, open: 2, found: 0, total: 2 });
+    expect(overview.spheres[2]).toEqual({ sphere: 2, open: 2, found: 0, total: 2, fillerMarked: 0 });
     expect(overview.itemTypes?.[2]).toEqual({ sphere: 2, progression: 2, useful: 0, normal: 0, trap: 0 });
   });
 
@@ -209,6 +209,8 @@ describe('spheres and locations (integration)', () => {
       .body as LocationAdminPageDto;
     expect(adminPage.rows[0]).toMatchObject({ fillerMarkedByName: 'Carol' });
     expect(adminPage.rows[0]?.fillerMarkedAt).toEqual(expect.any(String));
+    const overview = (await get('/spheres', ownerCookie).expect(200)).body as SphereOverviewDto;
+    expect(overview.spheres[2]).toMatchObject({ sphere: 2, fillerMarked: 1 });
   });
 
   it('has the default pace limits and lets the admin change them in the allowed range', async () => {

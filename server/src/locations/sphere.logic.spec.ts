@@ -5,6 +5,7 @@ import { effectiveItemType, summarizeSpheres, visibleMaxSphere, type SphereGroup
 const group = (overrides: Partial<SphereGroup>): SphereGroup => ({
   sphere: 0,
   checked: false,
+  fillerMarked: false,
   itemType: 'progression',
   finderGoaled: false,
   receiverGoaled: false,
@@ -40,20 +41,57 @@ describe('summarizeSpheres', () => {
     group({ sphere: 0, itemType: 'useful', receiverGoaled: true, count: 1 }),
     group({ sphere: 0, receiverGoaled: true, count: 5 }),
     group({ sphere: 2, finderGoaled: true, count: 6 }),
+    group({ sphere: 1, fillerMarked: true, itemType: 'normal', count: 3 }),
+    group({ sphere: 1, checked: true, fillerMarked: true, count: 7 }),
   ];
 
-  it('counts open, found and total locations and the open item types for each sphere', () => {
+  it('counts open, found, total and filler-marked open locations and the open item types for each sphere', () => {
     expect(summarizeSpheres(groups, false)).toEqual([
-      { sphere: 0, open: 9, found: 4, total: 13, openByType: { progression: 8, useful: 1, normal: 0, trap: 0 } },
-      { sphere: 1, open: 2, found: 0, total: 2, openByType: { progression: 0, useful: 0, normal: 0, trap: 2 } },
-      { sphere: 2, open: 6, found: 0, total: 6, openByType: { progression: 6, useful: 0, normal: 0, trap: 0 } },
+      {
+        sphere: 0,
+        open: 9,
+        found: 4,
+        total: 13,
+        fillerMarked: 0,
+        openByType: { progression: 8, useful: 1, normal: 0, trap: 0 },
+      },
+      {
+        sphere: 1,
+        open: 5,
+        found: 7,
+        total: 12,
+        fillerMarked: 3,
+        openByType: { progression: 0, useful: 0, normal: 3, trap: 2 },
+      },
+      {
+        sphere: 2,
+        open: 6,
+        found: 0,
+        total: 6,
+        fillerMarked: 0,
+        openByType: { progression: 6, useful: 0, normal: 0, trap: 0 },
+      },
     ]);
   });
 
   it('ignores finders with reached goal and counts items for them as filler with the switch', () => {
     expect(summarizeSpheres(groups, true)).toEqual([
-      { sphere: 0, open: 9, found: 4, total: 13, openByType: { progression: 3, useful: 1, normal: 5, trap: 0 } },
-      { sphere: 1, open: 2, found: 0, total: 2, openByType: { progression: 0, useful: 0, normal: 0, trap: 2 } },
+      {
+        sphere: 0,
+        open: 9,
+        found: 4,
+        total: 13,
+        fillerMarked: 0,
+        openByType: { progression: 3, useful: 1, normal: 5, trap: 0 },
+      },
+      {
+        sphere: 1,
+        open: 5,
+        found: 7,
+        total: 12,
+        fillerMarked: 3,
+        openByType: { progression: 0, useful: 0, normal: 3, trap: 2 },
+      },
     ]);
   });
 });

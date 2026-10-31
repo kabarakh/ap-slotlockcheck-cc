@@ -2598,13 +2598,17 @@
           },
           "total": {
             "type": "number"
+          },
+          "fillerMarked": {
+            "type": "number"
           }
         },
         "required": [
           "sphere",
           "open",
           "found",
-          "total"
+          "total",
+          "fillerMarked"
         ]
       },
       "SphereItemTypesDto": {

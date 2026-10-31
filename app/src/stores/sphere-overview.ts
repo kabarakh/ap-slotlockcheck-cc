@@ -11,6 +11,7 @@ export const useSphereOverviewStore = defineStore(
   () => {
     const overview = ref<SphereOverview | null>(null);
     const excludeGoaled = ref(false);
+    const showDone = ref(false);
     const loading = ref(false);
 
     const fetch = async (): Promise<void> => {
@@ -42,7 +43,7 @@ export const useSphereOverviewStore = defineStore(
       overview.value = null;
     };
 
-    return { overview, excludeGoaled, loading, fetch, setExcludeGoaled, clear };
+    return { overview, excludeGoaled, showDone, loading, fetch, setExcludeGoaled, clear };
   },
-  { persist: { pick: ['excludeGoaled'] } },
+  { persist: { pick: ['excludeGoaled', 'showDone'] } },
 );

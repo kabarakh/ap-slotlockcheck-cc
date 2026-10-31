@@ -10,12 +10,13 @@ import ProgressSpinner from 'primevue/progressspinner';
 
 import SphereOverviewTable from '@/components/ui/SphereOverviewTable.vue';
 
+import { isSphereDone } from '@/domain/sphere-status';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useSphereLocationsStore } from '@/stores/sphere-locations';
 import { useSphereOverviewStore } from '@/stores/sphere-overview';
 
 const sphereStore = useSphereOverviewStore();
-const { overview, excludeGoaled, loading } = storeToRefs(sphereStore);
+const { overview, excludeGoaled, showDone, loading } = storeToRefs(sphereStore);
 const { isHelper } = storeToRefs(useCurrentRoomStore());
 const sphereLocations = useSphereLocationsStore();
 const route = useRoute();
@@ -27,6 +28,8 @@ const excludeGoaledModel = computed({
   get: () => excludeGoaled.value,
   set: (value: boolean) => void sphereStore.setExcludeGoaled(value),
 });
+
+const doneCount = computed(() => overview.value?.spheres.filter(isSphereDone).length ?? 0);
 
 onMounted(() => sphereStore.fetch());
 </script>
@@ -40,6 +43,10 @@ onMounted(() => sphereStore.fetch());
         <Checkbox v-model="excludeGoaledModel" binary data-testid="exclude-goaled" />
         {{ t('spheres.excludeGoaled') }}
       </label>
+      <label class="app-toolbar">
+        <Checkbox v-model="showDone" binary data-testid="show-done" />
+        {{ t('spheres.showDone', { count: doneCount }) }}
+      </label>
     </div>
     <ProgressSpinner v-if="loading && !overview" />
     <template v-else-if="overview">
@@ -52,7 +59,7 @@ onMounted(() => sphereStore.fetch());
         <template v-if="!isHelper">{{ t('spheres.visibleUpTo', { sphere: overview.visibleMaxSphere }) }}</template>
       </p>
       <p v-if="showsSphereLocations" class="app-muted">{{ t('control.sphereLocations.hint') }}</p>
-      <SphereOverviewTable :spheres="overview.spheres" :item-types="overview.itemTypes">
+      <SphereOverviewTable :spheres="overview.spheres" :item-types="overview.itemTypes" :show-done="showDone">
         <template v-if="showsSphereLocations" #sphere="{ sphere }">
           <Button
             :label="String(sphere)"

@@ -194,7 +194,7 @@
       server: 'Server',
     },
     sphereLocations: {
-      hint: 'Click a sphere to see its open locations.',
+      hint: 'Click a sphere to see its open locations. There you can remove filler marks.',
       title: 'Sphere {sphere}: {count} open locations',
       cleanup: 'Make clean-up text',
       showAll: 'Show in the locations',
@@ -279,11 +279,12 @@
   spheres: {
     title: 'Spheres',
     excludeGoaled: 'Exclude slots with reached goal',
+    showDone: 'Show done spheres ({count})',
     allFound: 'All locations are found.',
     lowestOpen: 'The lowest sphere with open locations is {sphere}.',
     visibleUpTo: 'You can see the spheres up to {sphere}.',
     empty: 'There are no spheres.',
-    columns: { sphere: 'Sphere', open: 'Open', found: 'Found', total: 'Total', filler: 'Filler' },
+    columns: { sphere: 'Sphere', open: 'Open', found: 'Found', total: 'Total', fillerMarked: 'Marked as filler', filler: 'Filler' },
     fillerParts: '{useful} useful, {normal} normal, {trap} traps',
     totals: 'Total: {open} open, {found} found, {total} locations.',
     totalTypes: ' Open: {progression} progression, {filler} filler.',

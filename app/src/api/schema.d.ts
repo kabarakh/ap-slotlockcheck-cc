@@ -833,6 +833,7 @@ export interface components {
             open: number;
             found: number;
             total: number;
+            fillerMarked: number;
         };
         SphereItemTypesDto: {
             sphere: number;

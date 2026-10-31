@@ -6,8 +6,9 @@ import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 
 import type { SphereItemTypes, SphereRow } from '@/api/types';
+import { isSphereDone } from '@/domain/sphere-status';
 
-const props = defineProps<{ spheres: SphereRow[]; itemTypes: SphereItemTypes[] | null }>();
+const props = defineProps<{ spheres: SphereRow[]; itemTypes: SphereItemTypes[] | null; showDone: boolean }>();
 const { t } = useI18n();
 
 const rows = computed(() => {
@@ -25,22 +26,34 @@ const rows = computed(() => {
   });
 });
 
+const visibleRows = computed(() => (props.showDone ? rows.value : rows.value.filter((row) => !isSphereDone(row))));
+
+const rowClass = (row: SphereRow) => (isSphereDone(row) ? 'sphere-done' : undefined);
+
 const totals = computed(() =>
   rows.value.reduce(
     (sum, row) => ({
       open: sum.open + row.open,
       found: sum.found + row.found,
       total: sum.total + row.total,
+      fillerMarked: sum.fillerMarked + row.fillerMarked,
       progression: sum.progression + row.progression,
       filler: sum.filler + row.filler,
     }),
-    { open: 0, found: 0, total: 0, progression: 0, filler: 0 },
+    { open: 0, found: 0, total: 0, fillerMarked: 0, progression: 0, filler: 0 },
   ),
 );
 </script>
 
 <template>
-  <DataTable :value="rows" data-key="sphere" size="small" striped-rows data-testid="sphere-table">
+  <DataTable
+    :value="visibleRows"
+    data-key="sphere"
+    size="small"
+    striped-rows
+    :row-class="rowClass"
+    data-testid="sphere-table"
+  >
     <template #empty>{{ t('spheres.empty') }}</template>
     <Column field="sphere" :header="t('spheres.columns.sphere')">
       <template #body="{ data }">
@@ -50,6 +63,7 @@ const totals = computed(() =>
     <Column field="open" :header="t('spheres.columns.open')" />
     <Column field="found" :header="t('spheres.columns.found')" />
     <Column field="total" :header="t('spheres.columns.total')" />
+    <Column field="fillerMarked" :header="t('spheres.columns.fillerMarked')" />
     <template v-if="props.itemTypes">
       <Column field="progression" :header="t('itemTypes.progression')" />
       <Column field="filler" :header="t('spheres.columns.filler')">
@@ -75,3 +89,9 @@ const totals = computed(() =>
     </template>
   </DataTable>
 </template>
+
+<style scoped>
+:deep(.sphere-done) {
+  opacity: 0.6;
+}
+</style>

@@ -107,6 +107,7 @@ export class SphereRowDto {
   open: number;
   found: number;
   total: number;
+  fillerMarked: number;
 }
 
 export class SphereItemTypesDto {
