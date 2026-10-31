@@ -89,7 +89,7 @@ The functions are in `PLAN sphere checker.md`. The technical plan is in `PLAN sp
 - The server keeps only the locations and the item names. It ignores the server options of the file, because they contain the passwords of the room.
 - Archipelago does not put locations that are not reachable into a sphere. The server puts them after the last sphere.
 - An item for an item link group has the group as receiver. The group is not a slot of the room.
-- The sphere limit for players is the lowest sphere with open locations plus a number that the admin sets. Slots with reached goal do not hold the limit back.
+- The sphere limit for players is the lowest sphere with open locations plus a number that the admin sets. Slots with reached goal and locations marked as filler do not hold the limit back.
 - The socket messages of a room are public. So the live message about changed locations contains no items. The browser loads the data again through the API, which checks the role of the user.
 - Admin helpers see the admin view of the locations and make the Discord text, but they cannot change the room.
 - A sphere is done when all its open locations are marked as filler; a sphere without open locations is also done. The sphere overview hides done spheres unless the switch "show done spheres" is on. The server counts the marked open locations of each sphere with a second grouping, because the mark is a date and not a group key. In the game control, a click on a sphere shows its open locations, and admin helpers remove filler marks there.

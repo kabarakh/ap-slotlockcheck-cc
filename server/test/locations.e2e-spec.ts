@@ -256,6 +256,23 @@ describe('spheres and locations (integration)', () => {
     expect(page.total).toBe(0);
   });
 
+  it('does not hold the sphere limit back with locations marked as filler', async () => {
+    const open = (await get('/locations/admin?state=open&toSphere=0', ownerCookie).expect(200))
+      .body as LocationAdminPageDto;
+    for (const row of open.rows) {
+      await mark(row.id, ownerCookie).expect(204);
+    }
+    const overview = (await get('/spheres', playerCookie).expect(200)).body as SphereOverviewDto;
+    expect(overview.lowestOpenSphere).toBe(1);
+    for (const row of open.rows) {
+      await request(server)
+        .delete(`/api/rooms/big-chill/locations/${row.id}/filler-mark`)
+        .set('Cookie', ownerCookie)
+        .expect(204);
+    }
+    expect(((await get('/spheres', playerCookie).expect(200)).body as SphereOverviewDto).lowestOpenSphere).toBe(0);
+  });
+
   it('does not change the role of an existing admin or helper', async () => {
     for (const discordId of [OWNER.discordId, PLAYER.discordId]) {
       const response = await request(server)

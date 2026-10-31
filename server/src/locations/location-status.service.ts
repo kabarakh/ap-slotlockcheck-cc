@@ -39,7 +39,7 @@ export class LocationStatusService {
 
   async lowestOpenSphere(roomId: number): Promise<number | null> {
     const result = await this.prisma.seedLocation.aggregate({
-      where: { roomId, checked: false, finderSlot: notGoaledSlotFilter },
+      where: { roomId, checked: false, fillerMarkedAt: null, finderSlot: notGoaledSlotFilter },
       _min: { sphere: true },
     });
     return result._min.sphere;
