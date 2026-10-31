@@ -257,12 +257,14 @@
     empty: 'There are no unlocked slots yet.',
     stillLocked: '{count} slots are still locked and are not in the tree.',
     goaled: 'Goal reached',
+    highlightMySlots: 'Highlight my slots',
     legend: {
       slotlock: 'SlotLock slot',
       start: 'Open from start',
       unlocked: 'Unlocked',
       partial: 'Partially unlocked',
       goaled: 'Goal reached',
+      mine: 'My slot',
     },
   },
   invitations: {

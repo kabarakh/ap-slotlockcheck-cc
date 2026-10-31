@@ -263,12 +263,14 @@
     empty: 'Es gibt noch keine entsperrten Slots.',
     stillLocked: '{count} Slots sind noch gesperrt und stehen nicht im Baum.',
     goaled: 'Ziel erreicht',
+    highlightMySlots: 'Meine Slots hervorheben',
     legend: {
       slotlock: 'SlotLock-Slot',
       start: 'Frei ab Start',
       unlocked: 'Entsperrt',
       partial: 'Teilweise entsperrt',
       goaled: 'Ziel erreicht',
+      mine: 'Mein Slot',
     },
   },
   invitations: {

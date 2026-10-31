@@ -10,7 +10,9 @@ interface ChartNode {
   children: ChartNode[];
 }
 
-const props = defineProps<{ roots: UnlockTreeNode[] }>();
+const props = withDefaults(defineProps<{ roots: UnlockTreeNode[]; highlightedIds?: ReadonlySet<number> }>(), {
+  highlightedIds: () => new Set<number>(),
+});
 const { t, d } = useI18n();
 
 const ROW_HEIGHT = 26;
@@ -93,10 +95,18 @@ const tooltip = (node: UnlockTreeNode): string =>
         :key="point.data.id"
         :transform="`translate(${point.x},${point.y})`"
         class="unlock-tree-node"
-        :class="[`unlock-tree-node-${point.data.kind}`, { 'unlock-tree-node-goaled': point.data.goaled }]"
+        :class="[
+          `unlock-tree-node-${point.data.kind}`,
+          {
+            'unlock-tree-node-goaled': point.data.goaled,
+            'unlock-tree-node-highlighted': highlightedIds.has(point.data.id),
+          },
+        ]"
+        :data-highlighted="highlightedIds.has(point.data.id) || undefined"
         :data-slot-name="point.data.name"
       >
         <title>{{ tooltip(point.data) }}</title>
+        <circle v-if="highlightedIds.has(point.data.id)" :r="NODE_RADIUS + 4" class="unlock-tree-node-halo" />
         <circle :r="NODE_RADIUS" />
         <text :x="LABEL_OFFSET" dy="0.35em">{{ point.data.name }}</text>
       </g>
@@ -163,5 +173,15 @@ const tooltip = (node: UnlockTreeNode): string =>
 .unlock-tree-node-goaled text {
   fill: var(--p-green-600);
   font-weight: 600;
+}
+.unlock-tree-node-highlighted circle.unlock-tree-node-halo {
+  fill: none;
+  stroke: var(--p-yellow-500);
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+
+.unlock-tree-node-highlighted text {
+  font-weight: 700;
 }
 </style>

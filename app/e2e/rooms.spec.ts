@@ -101,6 +101,17 @@ test('the unlock tree shows who unlocked which slot', async ({ page }) => {
   await expect(page.getByText('slots are still locked')).toBeVisible();
 });
 
+test('a player highlights the own slots in the unlock tree', async ({ page }) => {
+  await ensureRoom(page);
+  await loginAs(page, PLAYER);
+  await page.goto('/room/big-chill/unlock-tree');
+  const tree = page.getByTestId('unlock-tree');
+  await expect(tree.locator('[data-highlighted]')).toHaveCount(0);
+  await page.getByTestId('highlight-my-slots').click();
+  await expect(tree.locator('[data-slot-name="Carol"]')).toHaveAttribute('data-highlighted', 'true');
+  await expect(tree.locator('[data-slot-name="Alice"]')).not.toHaveAttribute('data-highlighted');
+});
+
 test('a player sees the own slots', async ({ page }) => {
   await ensureRoom(page);
   await loginAs(page, PLAYER);
