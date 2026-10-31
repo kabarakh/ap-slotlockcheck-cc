@@ -324,4 +324,21 @@ describe('spheres and locations (integration)', () => {
     expect(progression.entries.map((entry) => entry.slotName)).toEqual(['Locker', 'Bob', 'Alice', 'Davey (Dave)']);
     await get('/sphere-cleanup?fromSphere=0', playerCookie).expect(400);
   });
+
+  it('leaves the locations marked as filler out of the sphere clean-up', async () => {
+    const carolCount = async () => {
+      const cleanup = (await get('/sphere-cleanup?fromSphere=0&toSphere=3', ownerCookie).expect(200))
+        .body as SphereCleanupDto;
+      const carol = cleanup.entries.find((entry) => entry.slotName === 'Carol');
+      return carol ? carol.progression + carol.useful + carol.normal + carol.trap : 0;
+    };
+    const id = await locationId('Old Site: Strawberry 2');
+    const before = await carolCount();
+    await mark(id, ownerCookie).expect(204);
+    expect(await carolCount()).toBe(before - 1);
+    await request(server)
+      .delete(`/api/rooms/big-chill/locations/${id}/filler-mark`)
+      .set('Cookie', ownerCookie)
+      .expect(204);
+  });
 });

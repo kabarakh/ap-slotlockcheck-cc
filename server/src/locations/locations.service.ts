@@ -135,7 +135,7 @@ export class LocationsService {
     const goaled = new Map(slots.map((slot) => [slot.id, isGoaled(slot)]));
     const groups = await this.prisma.seedLocation.groupBy({
       by: ['sphere', 'finderSlotId', 'itemType', 'receiverSlotId'],
-      where: { roomId: room.id, checked: false, sphere: { gte: fromSphere, lte: toSphere } },
+      where: { roomId: room.id, checked: false, fillerMarkedAt: null, sphere: { gte: fromSphere, lte: toSphere } },
       _count: { _all: true },
     });
     const entries = cleanupEntries(
