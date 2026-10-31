@@ -72,7 +72,7 @@ Admins and admin helpers make an English text for Discord with the slots in the 
 
 ### Unlock tree
 
-The unlock tree shows which slot sent the unlock item of which slot. The SlotLock slot is the root. A slot that needed more than one unlock item is below the sender of the last item. Start slots are below the SlotLock slot. The browser builds the tree from the roster; `d3-hierarchy` calculates the layout.
+The unlock tree shows which slot sent the unlock item of which slot. The SlotLock slot is the root. A slot that needed more than one unlock item is below the sender of the last item. Start slots are below the SlotLock slot. The browser builds the tree from the roster; `d3-hierarchy` calculates the layout. A user with own slots can highlight them in the tree; the browser remembers this choice.
 
 ### Room owner
 
