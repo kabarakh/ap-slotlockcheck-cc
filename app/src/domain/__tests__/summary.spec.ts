@@ -5,6 +5,7 @@ import {
   isGoaled,
   OTHER_PLAYERS_KEY,
   summarizePlayers,
+  unlocksSentBalance,
   unlocksSentShares,
   type PlayerSummary,
 } from '../summary';
@@ -109,6 +110,7 @@ describe('unlocks sent by a player', () => {
       name: `p${index}`,
       discordUserId: null,
       slotCount: 1,
+      locationCount: 10,
       unlockedCount: 0,
       goaledCount: 0,
       lockedCount: 0,
@@ -123,6 +125,56 @@ describe('unlocks sent by a player', () => {
     expect(shares).toHaveLength(8);
     expect(shares[7]).toMatchObject({ key: OTHER_PLAYERS_KEY, label: 'Others', value: 6, color: 'rest' });
     expect(shares.reduce((sum, share) => sum + share.value, 0)).toBe(55);
+  });
+});
+
+describe('unlocksSentBalance', () => {
+  const player = (name: string, slotCount: number, locationCount: number, unlocksSentCount: number): PlayerSummary => ({
+    key: name,
+    name,
+    discordUserId: null,
+    slotCount,
+    locationCount,
+    unlockedCount: 0,
+    goaledCount: 0,
+    lockedCount: 0,
+    unlocksSentCount,
+    warningCount: 0,
+    unlockedNames: [],
+    goaledNames: [],
+    lockedNames: [],
+    unlocksSentNames: [],
+  });
+
+  it('compares the unlocks of each player with the share of slots and of locations', () => {
+    const balance = unlocksSentBalance([player('a', 2, 100, 2), player('b', 1, 300, 6), player('c', 1, 100, 0)]);
+    expect(balance).toEqual([
+      {
+        key: 'b',
+        name: 'b',
+        unlocksSentCount: 6,
+        bySlots: { share: 25, expected: 2, deviation: 4 },
+        byLocations: { share: 60, expected: 4.8, deviation: 1.2 },
+      },
+      {
+        key: 'a',
+        name: 'a',
+        unlocksSentCount: 2,
+        bySlots: { share: 50, expected: 4, deviation: -2 },
+        byLocations: { share: 20, expected: 1.6, deviation: 0.4 },
+      },
+      {
+        key: 'c',
+        name: 'c',
+        unlocksSentCount: 0,
+        bySlots: { share: 25, expected: 2, deviation: -2 },
+        byLocations: { share: 20, expected: 1.6, deviation: -1.6 },
+      },
+    ]);
+  });
+
+  it('expects nothing without locations', () => {
+    expect(unlocksSentBalance([player('a', 1, 0, 0)])[0]?.byLocations).toEqual({ share: 0, expected: 0, deviation: 0 });
   });
 });
 

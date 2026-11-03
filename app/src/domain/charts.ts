@@ -67,3 +67,56 @@ export function barRects(bars: ChartBar[], width: number, height: number): BarRe
     height: height - y(bar.value),
   }));
 }
+
+export interface DivergingBarRow {
+  key: string;
+  label: string;
+  values: { key: string; value: number; color: ChartColor }[];
+}
+
+export interface DivergingBarRect {
+  key: string;
+  rowKey: string;
+  value: number;
+  color: ChartColor;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface DivergingBarLayout {
+  rects: DivergingBarRect[];
+  rowCenters: { key: string; label: string; y: number }[];
+  zeroX: number;
+  limit: number;
+}
+
+export function divergingBars(rows: DivergingBarRow[], width: number, rowHeight: number): DivergingBarLayout {
+  const limit = Math.max(1, ...rows.flatMap((row) => row.values.map((entry) => Math.abs(entry.value))));
+  const x = scaleLinear().domain([-limit, limit]).range([0, width]);
+  const rowPadding = rowHeight * 0.1;
+  const rowTop = (index: number) => index * rowHeight + rowPadding;
+  const rects = rows.flatMap((row, index) => {
+    const series = scaleBand<string>()
+      .domain(row.values.map((entry) => entry.key))
+      .range([0, rowHeight - 2 * rowPadding])
+      .padding(0.1);
+    return row.values.map((entry) => ({
+      key: entry.key,
+      rowKey: row.key,
+      value: entry.value,
+      color: entry.color,
+      x: Math.min(x(0), x(entry.value)),
+      y: rowTop(index) + (series(entry.key) ?? 0),
+      width: Math.abs(x(entry.value) - x(0)),
+      height: series.bandwidth(),
+    }));
+  });
+  return {
+    rects,
+    rowCenters: rows.map((row, index) => ({ key: row.key, label: row.label, y: index * rowHeight + rowHeight / 2 })),
+    zeroX: x(0),
+    limit,
+  };
+}

@@ -6,6 +6,7 @@ export interface PlayerSummary {
   name: string;
   discordUserId: string | null;
   slotCount: number;
+  locationCount: number;
   unlockedCount: number;
   goaledCount: number;
   lockedCount: number;
@@ -112,6 +113,7 @@ export function summarizePlayers(
       name: slot.discordName ?? '',
       discordUserId: slot.discordUserId,
       slotCount: 0,
+      locationCount: 0,
       unlockedCount: 0,
       goaledCount: 0,
       lockedCount: 0,
@@ -123,6 +125,7 @@ export function summarizePlayers(
       unlocksSentNames: [],
     };
     current.slotCount += 1;
+    current.locationCount += slot.checksTotal;
     current.warningCount += warningCountBySlotId.get(slot.id) ?? 0;
     if (slot.lockStatus === 'unlocked') {
       current.unlockedCount += 1;
@@ -203,4 +206,46 @@ export function unlocksSentShares(players: PlayerSummary[], otherLabel: string):
     shares.push(share(OTHER_PLAYERS_KEY, otherLabel, otherValue, 'rest'));
   }
   return shares;
+}
+
+export interface UnlocksSentExpectation {
+  share: number;
+  expected: number;
+  deviation: number;
+}
+
+export interface UnlocksSentBalance {
+  key: string;
+  name: string;
+  unlocksSentCount: number;
+  bySlots: UnlocksSentExpectation;
+  byLocations: UnlocksSentExpectation;
+}
+
+function roundToTenth(value: number): number {
+  return Math.round(value * 10) / 10;
+}
+
+function expectation(part: number, total: number, unlocksTotal: number, actual: number): UnlocksSentExpectation {
+  const expected = total === 0 ? 0 : (part / total) * unlocksTotal;
+  return {
+    share: percentage(part, total),
+    expected: roundToTenth(expected),
+    deviation: roundToTenth(actual - expected),
+  };
+}
+
+export function unlocksSentBalance(players: PlayerSummary[]): UnlocksSentBalance[] {
+  const unlocksTotal = players.reduce((sum, player) => sum + player.unlocksSentCount, 0);
+  const slotTotal = players.reduce((sum, player) => sum + player.slotCount, 0);
+  const locationTotal = players.reduce((sum, player) => sum + player.locationCount, 0);
+  return players
+    .map((player) => ({
+      key: player.key,
+      name: player.name,
+      unlocksSentCount: player.unlocksSentCount,
+      bySlots: expectation(player.slotCount, slotTotal, unlocksTotal, player.unlocksSentCount),
+      byLocations: expectation(player.locationCount, locationTotal, unlocksTotal, player.unlocksSentCount),
+    }))
+    .sort((a, b) => b.byLocations.deviation - a.byLocations.deviation || a.name.localeCompare(b.name));
 }

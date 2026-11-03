@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test';
 
-import { barRects, donutSegments } from '../charts';
+import { barRects, divergingBars, donutSegments } from '../charts';
 
 describe('donutSegments', () => {
   it('makes one path for each part with a value', () => {
@@ -39,5 +39,34 @@ describe('barRects', () => {
 
   it('keeps bars with zero at zero height', () => {
     expect(barRects([{ label: '0', value: 0 }], 100, 100)[0]?.height).toBe(0);
+  });
+});
+
+describe('divergingBars', () => {
+  const rows = [
+    {
+      key: 'a',
+      label: 'A',
+      values: [
+        { key: 'x', value: 2, color: 'unlocks' as const },
+        { key: 'y', value: -4, color: 'series-2' as const },
+      ],
+    },
+    { key: 'b', label: 'B', values: [{ key: 'x', value: 0, color: 'unlocks' as const }] },
+  ];
+
+  it('puts zero in the middle and scales the largest deviation to the edge', () => {
+    const layout = divergingBars(rows, 200, 30);
+    expect(layout.zeroX).toBe(100);
+    expect(layout.limit).toBe(4);
+    const [positive, negative, zero] = layout.rects;
+    expect(positive).toMatchObject({ x: 100, width: 50 });
+    expect(negative).toMatchObject({ x: 0, width: 100 });
+    expect(zero?.width).toBe(0);
+  });
+
+  it('gives each row its own band', () => {
+    const layout = divergingBars(rows, 200, 30);
+    expect(layout.rowCenters.map((row) => row.y)).toEqual([15, 45]);
   });
 });

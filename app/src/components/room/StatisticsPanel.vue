@@ -7,11 +7,17 @@ import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 
 import BarChart from '@/components/ui/BarChart.vue';
+import DivergingBarChart from '@/components/ui/DivergingBarChart.vue';
 import DonutChart from '@/components/ui/DonutChart.vue';
 import SlotNameList from '@/components/ui/SlotNameList.vue';
 
-import type { ChartPart } from '@/domain/charts';
-import { unlocksSentShares, type PlayerSummary } from '@/domain/summary';
+import type { ChartPart, DivergingBarRow } from '@/domain/charts';
+import {
+  unlocksSentBalance,
+  unlocksSentShares,
+  type PlayerSummary,
+  type UnlocksSentExpectation,
+} from '@/domain/summary';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useStatisticsStore } from '@/stores/statistics';
 
@@ -139,6 +145,27 @@ const unlockedBars = computed(() =>
     value: entry.playerCount,
   })),
 );
+const balance = computed(() => unlocksSentBalance(playerSummaries.value));
+const balanceSeriesLabels = computed(() => ({
+  bySlots: t('statistics.balance.bySlots'),
+  byLocations: t('statistics.balance.byLocations'),
+}));
+const balanceRows = computed<DivergingBarRow[]>(() =>
+  balance.value.map((player) => ({
+    key: player.key,
+    label: player.name,
+    values: [
+      { key: 'bySlots', value: player.bySlots.deviation, color: 'unlocks' },
+      { key: 'byLocations', value: player.byLocations.deviation, color: 'series-2' },
+    ],
+  })),
+);
+const expectationText = (expectation: UnlocksSentExpectation) =>
+  t('statistics.balance.expectation', {
+    expected: expectation.expected,
+    deviation: expectation.deviation > 0 ? `+${expectation.deviation}` : String(expectation.deviation),
+  });
+
 const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value, t('statistics.otherPlayers')));
 </script>
 
@@ -223,6 +250,42 @@ const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value,
         </DataTable>
       </div>
     </div>
+    <div v-if="hasSlotLock" class="balance">
+      <h2>{{ t('statistics.balance.title') }}</h2>
+      <p class="app-muted balance-hint">{{ t('statistics.balance.hint') }}</p>
+      <ul class="statistic-legend balance-legend">
+        <li><span class="chart-legend chart-unlocks" />{{ t('statistics.balance.bySlots') }}</li>
+        <li><span class="chart-legend chart-series-2" />{{ t('statistics.balance.byLocations') }}</li>
+      </ul>
+      <DivergingBarChart
+        :rows="balanceRows"
+        :series-labels="balanceSeriesLabels"
+        :x-label="t('statistics.balance.deviation')"
+      />
+      <DataTable
+        :value="balance"
+        data-key="key"
+        size="small"
+        striped-rows
+        removable-sort
+        data-testid="unlocks-sent-balance"
+      >
+        <Column field="name" :header="t('players.columns.name')" sortable />
+        <Column field="unlocksSentCount" :header="t('statistics.unlocksSentCount')" sortable />
+        <Column field="bySlots.share" :header="t('statistics.balance.slotShare')" sortable>
+          <template #body="{ data }">{{ percentage(data.bySlots.share) }}</template>
+        </Column>
+        <Column field="bySlots.deviation" :header="t('statistics.balance.bySlots')" sortable>
+          <template #body="{ data }">{{ expectationText(data.bySlots) }}</template>
+        </Column>
+        <Column field="byLocations.share" :header="t('statistics.balance.locationShare')" sortable>
+          <template #body="{ data }">{{ percentage(data.byLocations.share) }}</template>
+        </Column>
+        <Column field="byLocations.deviation" :header="t('statistics.balance.byLocations')" sortable>
+          <template #body="{ data }">{{ expectationText(data.byLocations) }}</template>
+        </Column>
+      </DataTable>
+    </div>
   </section>
 </template>
 
@@ -247,6 +310,20 @@ const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value,
 
 .share-chart {
   margin-bottom: var(--app-gap);
+}
+
+.balance {
+  margin-top: var(--app-gap);
+}
+
+.balance-hint {
+  margin: 0 0 0.5rem;
+}
+
+.balance-legend {
+  display: flex;
+  gap: var(--app-gap);
+  margin-bottom: 0.5rem;
 }
 
 .distributions {

@@ -79,6 +79,8 @@ test('players and statistics show the summaries', async ({ page }) => {
   await expect(page.getByTestId('statistics-checks').getByTestId('donut-chart')).toBeVisible();
   await expect(page.getByTestId('bar-chart')).toHaveCount(2);
   await expect(page.getByTestId('unlocks-sent-shares')).toContainText('bob: 50 %');
+  await expect(page.getByTestId('diverging-bar-chart')).toBeVisible();
+  await expect(page.getByTestId('unlocks-sent-balance').getByRole('row', { name: /bob/ })).toBeVisible();
   await expect(page.getByTestId('unlocks-sent-by-player').getByRole('row', { name: /bob/ })).toContainText('Alice');
 });
 
