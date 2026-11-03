@@ -8,8 +8,10 @@ import DataTable from 'primevue/datatable';
 
 import BarChart from '@/components/ui/BarChart.vue';
 import DonutChart from '@/components/ui/DonutChart.vue';
+import SlotNameList from '@/components/ui/SlotNameList.vue';
 
 import type { ChartPart } from '@/domain/charts';
+import { unlocksSentShares, type PlayerSummary } from '@/domain/summary';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useStatisticsStore } from '@/stores/statistics';
 
@@ -22,7 +24,7 @@ interface StatisticCard {
   legend: boolean;
 }
 
-const { globalStatistics } = storeToRefs(useStatisticsStore());
+const { globalStatistics, playerSummaries } = storeToRefs(useStatisticsStore());
 const { hasSlotLock } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 
@@ -137,6 +139,7 @@ const unlockedBars = computed(() =>
     value: entry.playerCount,
   })),
 );
+const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value, t('statistics.otherPlayers')));
 </script>
 
 <template>
@@ -187,6 +190,38 @@ const unlockedBars = computed(() =>
           <Column field="playerCount" :header="t('statistics.playerCount')" />
         </DataTable>
       </div>
+      <div>
+        <h2>{{ t('statistics.unlocksSentByPlayer') }}</h2>
+        <div class="statistic share-chart" data-testid="unlocks-sent-shares">
+          <DonutChart :parts="unlocksSentParts" :size="160" />
+          <ul class="statistic-legend">
+            <li v-for="part in unlocksSentParts" :key="part.key">
+              <span class="chart-legend" :class="`chart-${part.color}`" />{{ part.label }}:
+              {{ percentage(part.percentage) }}
+            </li>
+          </ul>
+        </div>
+        <DataTable
+          :value="playerSummaries"
+          data-key="key"
+          sort-field="unlocksSentCount"
+          :sort-order="-1"
+          removable-sort
+          size="small"
+          striped-rows
+          data-testid="unlocks-sent-by-player"
+        >
+          <Column field="name" :header="t('players.columns.name')" sortable />
+          <Column field="unlocksSentCount" :header="t('statistics.unlocksSentCount')" sortable>
+            <template #body="{ data }">
+              <SlotNameList
+                :count="(data as PlayerSummary).unlocksSentCount"
+                :names="(data as PlayerSummary).unlocksSentNames"
+              />
+            </template>
+          </Column>
+        </DataTable>
+      </div>
     </div>
   </section>
 </template>
@@ -208,6 +243,10 @@ const unlockedBars = computed(() =>
   padding: 0;
   list-style: none;
   font-size: 0.875rem;
+}
+
+.share-chart {
+  margin-bottom: var(--app-gap);
 }
 
 .distributions {

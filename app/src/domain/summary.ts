@@ -1,3 +1,4 @@
+import { CHART_SERIES_COLORS, type ChartPart, type ChartSeriesColor } from './charts';
 import type { SlotRow } from '@/api/types';
 
 export interface PlayerSummary {
@@ -8,10 +9,12 @@ export interface PlayerSummary {
   unlockedCount: number;
   goaledCount: number;
   lockedCount: number;
+  unlocksSentCount: number;
   warningCount: number;
   unlockedNames: string[];
   goaledNames: string[];
   lockedNames: string[];
+  unlocksSentNames: string[];
 }
 
 export interface PlayerDistributionEntry {
@@ -77,6 +80,26 @@ export function playerKey(slot: SlotRow): string {
   return slot.discordUserId ?? `name:${slot.discordName ?? ''}`;
 }
 
+function addUnlocksSent(slots: SlotRow[], players: Map<string, PlayerSummary>): void {
+  const senderSlotsById = new Map(slots.filter((slot) => !slot.isSlotLock).map((slot) => [slot.id, slot]));
+  for (const slot of slots) {
+    const senderKeys = new Set(
+      slot.locks
+        .filter((lock) => lock.unlocked && lock.senderSlotId !== null)
+        .map((lock) => senderSlotsById.get(lock.senderSlotId as number))
+        .filter((sender): sender is SlotRow => sender !== undefined)
+        .map(playerKey),
+    );
+    for (const senderKey of senderKeys) {
+      const sender = players.get(senderKey);
+      if (sender) {
+        sender.unlocksSentCount += 1;
+        sender.unlocksSentNames.push(slot.name);
+      }
+    }
+  }
+}
+
 export function summarizePlayers(
   slots: SlotRow[],
   warningCountBySlotId: ReadonlyMap<number, number> = new Map(),
@@ -92,10 +115,12 @@ export function summarizePlayers(
       unlockedCount: 0,
       goaledCount: 0,
       lockedCount: 0,
+      unlocksSentCount: 0,
       warningCount: 0,
       unlockedNames: [],
       goaledNames: [],
       lockedNames: [],
+      unlocksSentNames: [],
     };
     current.slotCount += 1;
     current.warningCount += warningCountBySlotId.get(slot.id) ?? 0;
@@ -113,6 +138,7 @@ export function summarizePlayers(
     }
     players.set(key, current);
   }
+  addUnlocksSent(slots, players);
   return [...players.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
@@ -145,4 +171,36 @@ export function calculateStatistics(slots: SlotRow[]): GlobalStatistics {
     })),
     playersByUnlockedCount: distribution(players.map((player) => player.unlockedCount)),
   };
+}
+
+export interface UnlocksSentShare extends ChartPart {
+  percentage: number;
+}
+
+export const OTHER_PLAYERS_KEY = 'other-players';
+
+export function unlocksSentShares(players: PlayerSummary[], otherLabel: string): UnlocksSentShare[] {
+  const senders = players
+    .filter((player) => player.unlocksSentCount > 0)
+    .sort((a, b) => b.unlocksSentCount - a.unlocksSentCount || a.name.localeCompare(b.name));
+  const total = senders.reduce((sum, player) => sum + player.unlocksSentCount, 0);
+  const needsOtherPart = senders.length > CHART_SERIES_COLORS.length;
+  const namedCount = needsOtherPart ? CHART_SERIES_COLORS.length - 1 : senders.length;
+  const share = (key: string, label: string, value: number, color: ChartSeriesColor | 'rest'): UnlocksSentShare => ({
+    key,
+    label,
+    value,
+    color,
+    percentage: percentage(value, total),
+  });
+  const shares = senders
+    .slice(0, namedCount)
+    .map((player, index) =>
+      share(player.key, player.name, player.unlocksSentCount, CHART_SERIES_COLORS[index] as ChartSeriesColor),
+    );
+  if (needsOtherPart) {
+    const otherValue = senders.slice(namedCount).reduce((sum, player) => sum + player.unlocksSentCount, 0);
+    shares.push(share(OTHER_PLAYERS_KEY, otherLabel, otherValue, 'rest'));
+  }
+  return shares;
 }

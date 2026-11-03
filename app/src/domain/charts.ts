@@ -1,7 +1,20 @@
 import { scaleBand, scaleLinear } from 'd3-scale';
 import { arc, pie, type PieArcDatum } from 'd3-shape';
 
-export type ChartColor = 'unlocks' | 'checks' | 'goal' | 'locked' | 'rest';
+export const CHART_SERIES_COLORS = [
+  'series-1',
+  'series-2',
+  'series-3',
+  'series-4',
+  'series-5',
+  'series-6',
+  'series-7',
+  'series-8',
+] as const;
+
+export type ChartSeriesColor = (typeof CHART_SERIES_COLORS)[number];
+
+export type ChartColor = 'unlocks' | 'checks' | 'goal' | 'locked' | 'rest' | ChartSeriesColor;
 
 export interface ChartPart {
   key: string;
