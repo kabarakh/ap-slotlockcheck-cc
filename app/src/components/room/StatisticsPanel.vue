@@ -146,18 +146,29 @@ const unlockedBars = computed(() =>
   })),
 );
 const balance = computed(() => unlocksSentBalance(playerSummaries.value));
+const hasLaterItems = computed(() => balance.value.some((player) => player.laterUnlockItemCount > 0));
 type ExpectationKey = 'bySlots' | 'bySlotsWithLater' | 'byLocations' | 'byLocationsWithLater';
-const balanceSeries = computed<{ key: ExpectationKey; label: string; color: ChartColor; muted: boolean }[]>(() => [
-  { key: 'bySlots', label: t('statistics.balance.bySlots'), color: 'unlocks', muted: false },
-  { key: 'bySlotsWithLater', label: t('statistics.balance.bySlotsWithLater'), color: 'unlocks', muted: true },
-  { key: 'byLocations', label: t('statistics.balance.byLocations'), color: 'series-2', muted: false },
-  {
-    key: 'byLocationsWithLater',
-    label: t('statistics.balance.byLocationsWithLater'),
-    color: 'series-2',
-    muted: true,
-  },
-]);
+interface BalanceSeries {
+  key: ExpectationKey;
+  label: string;
+  color: ChartColor;
+  muted: boolean;
+}
+const balanceSeries = computed(() =>
+  (
+    [
+      { key: 'bySlots', label: t('statistics.balance.bySlots'), color: 'unlocks', muted: false },
+      { key: 'bySlotsWithLater', label: t('statistics.balance.bySlotsWithLater'), color: 'unlocks', muted: true },
+      { key: 'byLocations', label: t('statistics.balance.byLocations'), color: 'series-2', muted: false },
+      {
+        key: 'byLocationsWithLater',
+        label: t('statistics.balance.byLocationsWithLater'),
+        color: 'series-2',
+        muted: true,
+      },
+    ] satisfies BalanceSeries[]
+  ).filter((series) => hasLaterItems.value || !series.muted),
+);
 const balanceSeriesLabels = computed(() =>
   Object.fromEntries(balanceSeries.value.map((series) => [series.key, series.label])),
 );
@@ -266,7 +277,7 @@ const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value,
     <div v-if="hasSlotLock" class="balance">
       <h2>{{ t('statistics.balance.title') }}</h2>
       <p class="app-muted balance-hint">{{ t('statistics.balance.hint') }}</p>
-      <p class="app-muted balance-hint">{{ t('statistics.balance.laterItemsHint') }}</p>
+      <p v-if="hasLaterItems" class="app-muted balance-hint">{{ t('statistics.balance.laterItemsHint') }}</p>
       <ul class="statistic-legend balance-legend">
         <li v-for="series in balanceSeries" :key="series.key">
           <span class="chart-legend" :class="[`chart-${series.color}`, { 'chart-muted': series.muted }]" />
@@ -288,19 +299,24 @@ const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value,
       >
         <Column field="name" :header="t('players.columns.name')" sortable />
         <Column field="unlocksSentCount" :header="t('statistics.unlocksSentCount')" sortable />
-        <Column field="laterUnlockItemCount" :header="t('statistics.balance.laterItems')" sortable>
+        <Column v-if="hasLaterItems" field="laterUnlockItemCount" :header="t('statistics.balance.laterItems')" sortable>
           <template #body="{ data }">
             <SlotNameList :count="data.laterUnlockItemCount" :names="data.laterUnlockNames" />
           </template>
         </Column>
-        <Column field="foundUnlockItemCount" :header="t('statistics.balance.foundItems')" sortable />
+        <Column
+          v-if="hasLaterItems"
+          field="foundUnlockItemCount"
+          :header="t('statistics.balance.foundItems')"
+          sortable
+        />
         <Column field="bySlots.share" :header="t('statistics.balance.slotShare')" sortable>
           <template #body="{ data }">{{ percentage(data.bySlots.share) }}</template>
         </Column>
         <Column field="bySlots.deviation" :header="t('statistics.balance.bySlots')" sortable>
           <template #body="{ data }">
             <div>{{ expectationText(data.bySlots) }}</div>
-            <div class="app-muted">{{ expectationText(data.bySlotsWithLater) }}</div>
+            <div v-if="hasLaterItems" class="app-muted">{{ expectationText(data.bySlotsWithLater) }}</div>
           </template>
         </Column>
         <Column field="byLocations.share" :header="t('statistics.balance.locationShare')" sortable>
@@ -309,7 +325,7 @@ const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value,
         <Column field="byLocations.deviation" :header="t('statistics.balance.byLocations')" sortable>
           <template #body="{ data }">
             <div>{{ expectationText(data.byLocations) }}</div>
-            <div class="app-muted">{{ expectationText(data.byLocationsWithLater) }}</div>
+            <div v-if="hasLaterItems" class="app-muted">{{ expectationText(data.byLocationsWithLater) }}</div>
           </template>
         </Column>
       </DataTable>
