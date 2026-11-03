@@ -237,3 +237,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-11-03 | Unlocks compared with the expectation | ok | ok | 266 unit, 87 integration, 122 unit app, 32 e2e ok | Expectation by slots and by locations. Visual check in light and dark mode and at 375 px |
 | 2026-11-03 | Later unlock items in the expectation | ok | ok | 266 unit, 87 integration, 124 unit app, 32 e2e ok | Migration `later_unlock_items`. Option in the expectation statistic. Visual check in light and dark mode |
 | 2026-11-03 | First and all unlock items side by side in the expectation | ok | ok | 266 unit, 87 integration, 124 unit app, 32 e2e ok | Checkbox replaced by pale bars. Visual check with the real Big Chill room |
+| 2026-11-03 | Pale bars only with later unlock items | ok | ok | 266 unit, 87 integration, 124 unit app, 32 e2e ok | Checked with the real rooms Zelda (no later items) and Big Chill |
