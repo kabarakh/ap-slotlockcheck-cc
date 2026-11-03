@@ -234,3 +234,4 @@ See `PLAN slotlock.md`, section 23: production domain, responsibility on the pro
 | 2026-10-28 | Rooms without SlotLock | ok | ok | 260 unit, 78 integration, 108 unit app, 29 e2e ok | No test with a real tracker without SlotLock |
 | 2026-10-28 | Room archive | ok | ok | 266 unit, 85 integration, 114 unit app, 31 e2e ok | No test with a real finished room |
 | 2026-11-03 | Unlocked slots per player | ok | ok | 266 unit, 87 integration, 118 unit app, 32 e2e ok | Donut chart with percentages and table in the statistics, only in rooms with SlotLock. Visual check in light and dark mode |
+| 2026-11-03 | Unlocks compared with the expectation | ok | ok | 266 unit, 87 integration, 122 unit app, 32 e2e ok | Expectation by slots and by locations. Visual check in light and dark mode and at 375 px |
