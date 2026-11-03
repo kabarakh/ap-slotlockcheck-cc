@@ -52,6 +52,7 @@ model Room {
   admins                RoomAdmin[]
   lockAssignments       LockAssignment[]
   unlockItems           UnlockItem[]
+  laterUnlockItems      LaterUnlockItem[]
   warnings              Warning[]
   syncRuns              SyncRun[]
   snapshots             SyncSnapshot[]
@@ -104,6 +105,9 @@ model Slot {
   unlocksAsLocker     UnlockItem[]     @relation("UnlockLocker")
   unlocksAsLocked     UnlockItem[]     @relation("UnlockLocked")
   unlocksAsSender     UnlockItem[]     @relation("UnlockSender")
+  laterUnlocksAsLocker LaterUnlockItem[] @relation("LaterUnlockLocker")
+  laterUnlocksAsLocked LaterUnlockItem[] @relation("LaterUnlockLocked")
+  laterUnlocksAsSender LaterUnlockItem[] @relation("LaterUnlockSender")
   warnings            Warning[]
   foundLocations      SeedLocation[]   @relation("LocationFinder")
   receivedLocations   SeedLocation[]   @relation("LocationReceiver")
@@ -140,6 +144,21 @@ model UnlockItem {
   senderSlot   Slot?     @relation("UnlockSender", fields: [senderSlotId], references: [id], onDelete: SetNull)
 
   @@unique([lockerSlotId, lockedSlotId])
+}
+
+model LaterUnlockItem {
+  id           Int   @id @default(autoincrement())
+  roomId       Int
+  lockerSlotId Int
+  lockedSlotId Int
+  senderSlotId Int?
+  sequence     Int
+  room         Room  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  lockerSlot   Slot  @relation("LaterUnlockLocker", fields: [lockerSlotId], references: [id], onDelete: Cascade)
+  lockedSlot   Slot  @relation("LaterUnlockLocked", fields: [lockedSlotId], references: [id], onDelete: Cascade)
+  senderSlot   Slot? @relation("LaterUnlockSender", fields: [senderSlotId], references: [id], onDelete: SetNull)
+
+  @@unique([roomId, sequence])
 }
 
 model Warning {

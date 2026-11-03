@@ -182,6 +182,7 @@ export class SyncService {
       });
       await this.storeDetectedLocks(tx, room.id, detection, slotIdByPosition);
       await this.storeNewUnlocks(tx, room.id, detection, slotIdByPosition, now, isFirstSync);
+      await this.storeLaterUnlocks(tx, room.id, detection, slotIdByPosition);
       await this.applyOwnerChange(tx, room, source.cheese);
       await tx.room.update({
         where: { id: room.id },
@@ -312,6 +313,27 @@ export class SyncService {
           timeSource: isFirstSync ? 'unknown' : 'sync',
         },
       });
+    }
+  }
+
+  private async storeLaterUnlocks(
+    tx: Prisma.TransactionClient,
+    roomId: number,
+    detection: LockDetectionResult,
+    slotIdByPosition: SlotIdByPosition,
+  ): Promise<void> {
+    await tx.laterUnlockItem.deleteMany({ where: { roomId } });
+    const rows = detection.laterUnlockItems.flatMap((item, sequence) => {
+      const lockerSlotId = slotIdByPosition.get(item.lockerPosition);
+      const lockedSlotId = slotIdByPosition.get(item.lockedPosition);
+      if (lockerSlotId === undefined || lockedSlotId === undefined) {
+        return [];
+      }
+      const senderSlotId = slotIdByPosition.get(item.senderPosition) ?? null;
+      return [{ roomId, lockerSlotId, lockedSlotId, senderSlotId, sequence }];
+    });
+    if (rows.length > 0) {
+      await tx.laterUnlockItem.createMany({ data: rows });
     }
   }
 

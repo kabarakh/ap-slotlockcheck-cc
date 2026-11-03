@@ -98,6 +98,7 @@ describe('room source mapping', () => {
       { lockerPosition: 1, lockedPosition: 2, senderPosition: 3 },
       { lockerPosition: 6, lockedPosition: 4, senderPosition: 2 },
     ]);
+    expect(result.laterUnlockItems).toEqual([{ lockerPosition: 1, lockedPosition: 2, senderPosition: 5 }]);
     expect(result.unknownSlotNames).toEqual([]);
   });
 

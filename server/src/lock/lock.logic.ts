@@ -1,5 +1,5 @@
 import type {
-  FirstUnlockItem,
+  FoundUnlockItem,
   LockAssignmentResult,
   LockDetectionInput,
   LockDetectionResult,
@@ -45,7 +45,8 @@ export function detectLocks(input: LockDetectionInput): LockDetectionResult {
   const findSlot = createSlotFinder(input.slots);
   const unknownSlotNames = new Set<string>();
   const detected = new Map<string, LockAssignmentResult>();
-  const firstUnlockItems = new Map<string, FirstUnlockItem>();
+  const firstUnlockItems = new Map<string, FoundUnlockItem>();
+  const laterUnlockItems: FoundUnlockItem[] = [];
 
   const addDetected = (lockerPosition: number, lockedPosition: number) => {
     detected.set(pairKey(lockerPosition, lockedPosition), { lockerPosition, lockedPosition, source: 'detected' });
@@ -73,12 +74,11 @@ export function detectLocks(input: LockDetectionInput): LockDetectionResult {
       }
       addDetected(lockerPosition, lockedSlot.position);
       const key = pairKey(lockerPosition, lockedSlot.position);
-      if (!firstUnlockItems.has(key)) {
-        firstUnlockItems.set(key, {
-          lockerPosition,
-          lockedPosition: lockedSlot.position,
-          senderPosition: item.senderPosition,
-        });
+      const found = { lockerPosition, lockedPosition: lockedSlot.position, senderPosition: item.senderPosition };
+      if (firstUnlockItems.has(key)) {
+        laterUnlockItems.push(found);
+      } else {
+        firstUnlockItems.set(key, found);
       }
     }
   }
@@ -100,6 +100,7 @@ export function detectLocks(input: LockDetectionInput): LockDetectionResult {
   return {
     assignments: [...assignments.values()],
     firstUnlockItems: [...firstUnlockItems.values()],
+    laterUnlockItems,
     unknownSlotNames: [...unknownSlotNames],
   };
 }

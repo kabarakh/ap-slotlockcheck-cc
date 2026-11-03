@@ -50,7 +50,7 @@ describe('detectLocks', () => {
     expect(result.firstUnlockItems).toEqual([{ lockerPosition: 1, lockedPosition: 4, senderPosition: 2 }]);
   });
 
-  it('uses only the first unlock item of duplicates', () => {
+  it('uses only the first unlock item of duplicates and keeps the later items apart', () => {
     const result = detectLocks(
       input({
         receivedItemsByLocker: new Map([
@@ -65,6 +65,7 @@ describe('detectLocks', () => {
       }),
     );
     expect(result.firstUnlockItems).toEqual([{ lockerPosition: 1, lockedPosition: 2, senderPosition: 3 }]);
+    expect(result.laterUnlockItems).toEqual([{ lockerPosition: 1, lockedPosition: 2, senderPosition: 4 }]);
   });
 
   it('ignores bonus slot and Nothing items', () => {

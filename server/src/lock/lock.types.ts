@@ -33,7 +33,7 @@ export interface LockAssignmentResult {
   source: LockSource;
 }
 
-export interface FirstUnlockItem {
+export interface FoundUnlockItem {
   lockerPosition: number;
   lockedPosition: number;
   senderPosition: number;
@@ -41,7 +41,8 @@ export interface FirstUnlockItem {
 
 export interface LockDetectionResult {
   assignments: LockAssignmentResult[];
-  firstUnlockItems: FirstUnlockItem[];
+  firstUnlockItems: FoundUnlockItem[];
+  laterUnlockItems: FoundUnlockItem[];
   unknownSlotNames: string[];
 }
 
@@ -56,6 +57,13 @@ export interface StoredUnlock {
   senderSlotId: number | null;
   unlockTime: Date | null;
   timeSource: UnlockTimeSource;
+}
+
+export interface StoredLaterUnlock {
+  lockerSlotId: number;
+  lockedSlotId: number;
+  senderSlotId: number | null;
+  sequence: number;
 }
 
 export interface SlotLockState {

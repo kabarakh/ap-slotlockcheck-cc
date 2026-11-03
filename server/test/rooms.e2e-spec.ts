@@ -87,7 +87,11 @@ describe('rooms (integration)', () => {
       unlockTime: '2026-10-21T14:30:00.000Z',
       unlockTimeSource: 'estimated',
     });
-    expect(rows['Alice']?.locks[0]).toMatchObject({ lockerName: 'Locker', senderName: 'Bob' });
+    expect(rows['Alice']?.locks[0]).toMatchObject({
+      lockerName: 'Locker',
+      senderName: 'Bob',
+      laterSenderSlotIds: [rows['Davey (Dave)']?.id],
+    });
     expect(rows['Bob']?.lockStatus).toBe('locked');
     expect(rows['Carol']?.lockStatus).toBe('partially_unlocked');
     expect(rows['Davey (Dave)']?.lockStatus).toBe('locked');

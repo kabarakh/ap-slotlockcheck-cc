@@ -2411,6 +2411,12 @@
           },
           "unlocked": {
             "type": "boolean"
+          },
+          "laterSenderSlotIds": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
           }
         },
         "required": [
@@ -2420,7 +2426,8 @@
           "timeSource",
           "lockerSlotId",
           "lockerName",
-          "unlocked"
+          "unlocked",
+          "laterSenderSlotIds"
         ]
       },
       "SlotRowDto": {

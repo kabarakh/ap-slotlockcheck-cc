@@ -33,6 +33,8 @@ export class SlotLockDto {
 
   @ApiProperty({ enum: UNLOCK_TIME_SOURCES, enumName: 'UnlockTimeSource', nullable: true })
   timeSource: UnlockTimeSource | null;
+
+  laterSenderSlotIds: number[];
 }
 
 export class SlotRowDto {
