@@ -49,7 +49,7 @@ describe('divergingBars', () => {
       label: 'A',
       values: [
         { key: 'x', value: 2, color: 'unlocks' as const },
-        { key: 'y', value: -4, color: 'series-2' as const },
+        { key: 'y', value: -4, color: 'series-2' as const, muted: true },
       ],
     },
     { key: 'b', label: 'B', values: [{ key: 'x', value: 0, color: 'unlocks' as const }] },
@@ -63,6 +63,7 @@ describe('divergingBars', () => {
     expect(positive).toMatchObject({ x: 100, width: 50 });
     expect(negative).toMatchObject({ x: 0, width: 100 });
     expect(zero?.width).toBe(0);
+    expect(layout.rects.map((rect) => rect.muted)).toEqual([false, true, false]);
   });
 
   it('gives each row its own band', () => {

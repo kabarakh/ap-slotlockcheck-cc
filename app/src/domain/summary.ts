@@ -256,6 +256,8 @@ export interface UnlocksSentBalance {
   laterUnlockNames: string[];
   bySlots: UnlocksSentExpectation;
   byLocations: UnlocksSentExpectation;
+  bySlotsWithLater: UnlocksSentExpectation;
+  byLocationsWithLater: UnlocksSentExpectation;
 }
 
 function roundToTenth(value: number): number {
@@ -275,11 +277,12 @@ export function foundUnlockItemCount(player: PlayerSummary): number {
   return player.firstUnlockItemCount + player.laterUnlockItemCount;
 }
 
-export function unlocksSentBalance(players: PlayerSummary[], withLaterItems = false): UnlocksSentBalance[] {
-  const actual = (player: PlayerSummary) => (withLaterItems ? foundUnlockItemCount(player) : player.unlocksSentCount);
-  const unlocksTotal = players.reduce((sum, player) => sum + actual(player), 0);
-  const slotTotal = players.reduce((sum, player) => sum + player.slotCount, 0);
-  const locationTotal = players.reduce((sum, player) => sum + player.locationCount, 0);
+export function unlocksSentBalance(players: PlayerSummary[]): UnlocksSentBalance[] {
+  const sum = (value: (player: PlayerSummary) => number) => players.reduce((total, player) => total + value(player), 0);
+  const unlocksTotal = sum((player) => player.unlocksSentCount);
+  const foundTotal = sum(foundUnlockItemCount);
+  const slotTotal = sum((player) => player.slotCount);
+  const locationTotal = sum((player) => player.locationCount);
   return players
     .map((player) => ({
       key: player.key,
@@ -288,8 +291,10 @@ export function unlocksSentBalance(players: PlayerSummary[], withLaterItems = fa
       foundUnlockItemCount: foundUnlockItemCount(player),
       laterUnlockItemCount: player.laterUnlockItemCount,
       laterUnlockNames: player.laterUnlockNames,
-      bySlots: expectation(player.slotCount, slotTotal, unlocksTotal, actual(player)),
-      byLocations: expectation(player.locationCount, locationTotal, unlocksTotal, actual(player)),
+      bySlots: expectation(player.slotCount, slotTotal, unlocksTotal, player.unlocksSentCount),
+      byLocations: expectation(player.locationCount, locationTotal, unlocksTotal, player.unlocksSentCount),
+      bySlotsWithLater: expectation(player.slotCount, slotTotal, foundTotal, foundUnlockItemCount(player)),
+      byLocationsWithLater: expectation(player.locationCount, locationTotal, foundTotal, foundUnlockItemCount(player)),
     }))
     .sort((a, b) => b.byLocations.deviation - a.byLocations.deviation || a.name.localeCompare(b.name));
 }

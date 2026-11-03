@@ -6,13 +6,14 @@ import { divergingBars, type ChartRow } from '@/domain/charts';
 const props = defineProps<{ rows: ChartRow[]; seriesLabels: Record<string, string>; xLabel: string }>();
 
 const WIDTH = 480;
-const ROW_HEIGHT = 32;
+const BAR_HEIGHT = 10;
 const LABEL_WIDTH = 120;
 const MARGIN = { top: 8, right: 16, bottom: 36, left: 8 };
 
 const chartWidth = WIDTH - MARGIN.left - MARGIN.right - LABEL_WIDTH;
-const layout = computed(() => divergingBars(props.rows, chartWidth, ROW_HEIGHT));
-const chartHeight = computed(() => props.rows.length * ROW_HEIGHT);
+const rowHeight = computed(() => Math.max(2, ...props.rows.map((row) => row.values.length)) * BAR_HEIGHT * 1.25);
+const layout = computed(() => divergingBars(props.rows, chartWidth, rowHeight.value));
+const chartHeight = computed(() => props.rows.length * rowHeight.value);
 const height = computed(() => chartHeight.value + MARGIN.top + MARGIN.bottom);
 const signed = (value: number) => (value > 0 ? `+${value}` : String(value));
 const description = computed(
@@ -55,7 +56,7 @@ const description = computed(
           :width="rect.width"
           :height="rect.height"
           rx="2"
-          :class="`chart-${rect.color}`"
+          :class="[`chart-${rect.color}`, { 'chart-muted': rect.muted }]"
         >
           <title>{{ props.seriesLabels[rect.key] }}: {{ signed(rect.value) }}</title>
         </rect>

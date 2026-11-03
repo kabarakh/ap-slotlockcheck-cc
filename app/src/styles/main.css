@@ -232,6 +232,10 @@ html.app-dark {
   fill: var(--app-chart-series-8);
 }
 
+.chart-muted {
+  opacity: 0.45;
+}
+
 .chart-legend {
   display: inline-block;
   width: 0.625rem;

@@ -215,17 +215,16 @@ describe('unlocksSentBalance', () => {
     ]);
   });
 
-  it('counts also the later unlock items with the option', () => {
-    const balance = unlocksSentBalance(
-      [
-        { ...player('a', 1, 100, 1), firstUnlockItemCount: 1, laterUnlockItemCount: 0 },
-        { ...player('b', 1, 100, 0), firstUnlockItemCount: 0, laterUnlockItemCount: 3 },
-      ],
-      true,
-    );
-    expect(balance.map((entry) => [entry.name, entry.foundUnlockItemCount, entry.byLocations])).toEqual([
-      ['b', 3, { share: 50, expected: 2, deviation: 1 }],
-      ['a', 1, { share: 50, expected: 2, deviation: -1 }],
+  it('compares also all found unlock items with the expectation', () => {
+    const balance = unlocksSentBalance([
+      { ...player('a', 1, 100, 1), firstUnlockItemCount: 1, laterUnlockItemCount: 0 },
+      { ...player('b', 1, 100, 0), firstUnlockItemCount: 0, laterUnlockItemCount: 3 },
+    ]);
+    expect(
+      balance.map((entry) => [entry.name, entry.foundUnlockItemCount, entry.byLocations, entry.byLocationsWithLater]),
+    ).toEqual([
+      ['a', 1, { share: 50, expected: 0.5, deviation: 0.5 }, { share: 50, expected: 2, deviation: -1 }],
+      ['b', 3, { share: 50, expected: 0.5, deviation: -0.5 }, { share: 50, expected: 2, deviation: 1 }],
     ]);
   });
 

@@ -71,7 +71,7 @@ export function barRects(bars: ChartBar[], width: number, height: number): BarRe
 export interface ChartRow {
   key: string;
   label: string;
-  values: { key: string; value: number; color: ChartColor }[];
+  values: { key: string; value: number; color: ChartColor; muted?: boolean }[];
 }
 
 export interface ChartRowRect {
@@ -79,6 +79,7 @@ export interface ChartRowRect {
   rowKey: string;
   value: number;
   color: ChartColor;
+  muted: boolean;
   x: number;
   y: number;
   width: number;
@@ -107,6 +108,7 @@ export function divergingBars(rows: ChartRow[], width: number, rowHeight: number
       rowKey: row.key,
       value: entry.value,
       color: entry.color,
+      muted: entry.muted ?? false,
       x: Math.min(x(0), x(entry.value)),
       y: rowTop(index) + (series(entry.key) ?? 0),
       width: Math.abs(x(entry.value) - x(0)),
