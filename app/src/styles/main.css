@@ -5,6 +5,14 @@
   --app-chart-goal: var(--p-green-600);
   --app-chart-locked: var(--p-surface-500);
   --app-chart-rest: var(--p-surface-300);
+  --app-chart-series-1: var(--p-sky-600);
+  --app-chart-series-2: var(--p-amber-500);
+  --app-chart-series-3: var(--p-emerald-600);
+  --app-chart-series-4: var(--p-violet-600);
+  --app-chart-series-5: var(--p-rose-500);
+  --app-chart-series-6: var(--p-teal-500);
+  --app-chart-series-7: var(--p-orange-600);
+  --app-chart-series-8: var(--p-indigo-400);
   --app-pace-locked: var(--p-surface-500);
   --app-pace-active: var(--p-emerald-800);
   --app-pace-pause: var(--p-emerald-600);
@@ -148,6 +156,14 @@ html.app-dark {
   --app-chart-goal: var(--p-green-400);
   --app-chart-locked: var(--p-surface-400);
   --app-chart-rest: var(--p-surface-700);
+  --app-chart-series-1: var(--p-sky-400);
+  --app-chart-series-2: var(--p-amber-400);
+  --app-chart-series-3: var(--p-emerald-400);
+  --app-chart-series-4: var(--p-violet-400);
+  --app-chart-series-5: var(--p-rose-400);
+  --app-chart-series-6: var(--p-teal-300);
+  --app-chart-series-7: var(--p-orange-400);
+  --app-chart-series-8: var(--p-indigo-300);
   --app-pace-locked: var(--p-surface-400);
   --app-pace-active: var(--p-emerald-500);
   --app-pace-pause: var(--p-emerald-700);
@@ -184,6 +200,38 @@ html.app-dark {
   fill: var(--app-chart-rest);
 }
 
+.chart-series-1 {
+  fill: var(--app-chart-series-1);
+}
+
+.chart-series-2 {
+  fill: var(--app-chart-series-2);
+}
+
+.chart-series-3 {
+  fill: var(--app-chart-series-3);
+}
+
+.chart-series-4 {
+  fill: var(--app-chart-series-4);
+}
+
+.chart-series-5 {
+  fill: var(--app-chart-series-5);
+}
+
+.chart-series-6 {
+  fill: var(--app-chart-series-6);
+}
+
+.chart-series-7 {
+  fill: var(--app-chart-series-7);
+}
+
+.chart-series-8 {
+  fill: var(--app-chart-series-8);
+}
+
 .chart-legend {
   display: inline-block;
   width: 0.625rem;
@@ -210,6 +258,38 @@ html.app-dark {
 
 .chart-legend.chart-rest {
   background: var(--app-chart-rest);
+}
+
+.chart-legend.chart-series-1 {
+  background: var(--app-chart-series-1);
+}
+
+.chart-legend.chart-series-2 {
+  background: var(--app-chart-series-2);
+}
+
+.chart-legend.chart-series-3 {
+  background: var(--app-chart-series-3);
+}
+
+.chart-legend.chart-series-4 {
+  background: var(--app-chart-series-4);
+}
+
+.chart-legend.chart-series-5 {
+  background: var(--app-chart-series-5);
+}
+
+.chart-legend.chart-series-6 {
+  background: var(--app-chart-series-6);
+}
+
+.chart-legend.chart-series-7 {
+  background: var(--app-chart-series-7);
+}
+
+.chart-legend.chart-series-8 {
+  background: var(--app-chart-series-8);
 }
 
 .pace-locked {
