@@ -793,6 +793,7 @@ export interface components {
             lockerSlotId: number;
             lockerName: string;
             unlocked: boolean;
+            laterSenderSlotIds: number[];
         };
         SlotRowDto: {
             archipelagoName: string | null;

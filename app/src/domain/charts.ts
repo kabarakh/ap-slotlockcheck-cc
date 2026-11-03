@@ -68,13 +68,13 @@ export function barRects(bars: ChartBar[], width: number, height: number): BarRe
   }));
 }
 
-export interface DivergingBarRow {
+export interface ChartRow {
   key: string;
   label: string;
   values: { key: string; value: number; color: ChartColor }[];
 }
 
-export interface DivergingBarRect {
+export interface ChartRowRect {
   key: string;
   rowKey: string;
   value: number;
@@ -86,13 +86,13 @@ export interface DivergingBarRect {
 }
 
 export interface DivergingBarLayout {
-  rects: DivergingBarRect[];
+  rects: ChartRowRect[];
   rowCenters: { key: string; label: string; y: number }[];
   zeroX: number;
   limit: number;
 }
 
-export function divergingBars(rows: DivergingBarRow[], width: number, rowHeight: number): DivergingBarLayout {
+export function divergingBars(rows: ChartRow[], width: number, rowHeight: number): DivergingBarLayout {
   const limit = Math.max(1, ...rows.flatMap((row) => row.values.map((entry) => Math.abs(entry.value))));
   const x = scaleLinear().domain([-limit, limit]).range([0, width]);
   const rowPadding = rowHeight * 0.1;

@@ -11,11 +11,14 @@ export interface PlayerSummary {
   goaledCount: number;
   lockedCount: number;
   unlocksSentCount: number;
+  firstUnlockItemCount: number;
+  laterUnlockItemCount: number;
   warningCount: number;
   unlockedNames: string[];
   goaledNames: string[];
   lockedNames: string[];
   unlocksSentNames: string[];
+  laterUnlockNames: string[];
 }
 
 export interface PlayerDistributionEntry {
@@ -101,6 +104,32 @@ function addUnlocksSent(slots: SlotRow[], players: Map<string, PlayerSummary>): 
   }
 }
 
+function addFoundUnlockItems(slots: SlotRow[], players: Map<string, PlayerSummary>): void {
+  const senderSlotsById = new Map(slots.filter((slot) => !slot.isSlotLock).map((slot) => [slot.id, slot]));
+  const senderOf = (senderSlotId: number | null) => {
+    const sender = senderSlotId === null ? undefined : senderSlotsById.get(senderSlotId);
+    return sender ? players.get(playerKey(sender)) : undefined;
+  };
+  for (const slot of slots) {
+    for (const lock of slot.locks) {
+      const firstSender = lock.unlocked ? senderOf(lock.senderSlotId) : undefined;
+      if (firstSender) {
+        firstSender.firstUnlockItemCount += 1;
+      }
+      for (const laterSenderSlotId of lock.laterSenderSlotIds) {
+        const laterSender = senderOf(laterSenderSlotId);
+        if (!laterSender) {
+          continue;
+        }
+        laterSender.laterUnlockItemCount += 1;
+        if (!laterSender.laterUnlockNames.includes(slot.name)) {
+          laterSender.laterUnlockNames.push(slot.name);
+        }
+      }
+    }
+  }
+}
+
 export function summarizePlayers(
   slots: SlotRow[],
   warningCountBySlotId: ReadonlyMap<number, number> = new Map(),
@@ -118,11 +147,14 @@ export function summarizePlayers(
       goaledCount: 0,
       lockedCount: 0,
       unlocksSentCount: 0,
+      firstUnlockItemCount: 0,
+      laterUnlockItemCount: 0,
       warningCount: 0,
       unlockedNames: [],
       goaledNames: [],
       lockedNames: [],
       unlocksSentNames: [],
+      laterUnlockNames: [],
     };
     current.slotCount += 1;
     current.locationCount += slot.checksTotal;
@@ -142,6 +174,7 @@ export function summarizePlayers(
     players.set(key, current);
   }
   addUnlocksSent(slots, players);
+  addFoundUnlockItems(slots, players);
   return [...players.values()].sort((a, b) => a.name.localeCompare(b.name));
 }
 
@@ -218,6 +251,9 @@ export interface UnlocksSentBalance {
   key: string;
   name: string;
   unlocksSentCount: number;
+  foundUnlockItemCount: number;
+  laterUnlockItemCount: number;
+  laterUnlockNames: string[];
   bySlots: UnlocksSentExpectation;
   byLocations: UnlocksSentExpectation;
 }
@@ -235,8 +271,13 @@ function expectation(part: number, total: number, unlocksTotal: number, actual: 
   };
 }
 
-export function unlocksSentBalance(players: PlayerSummary[]): UnlocksSentBalance[] {
-  const unlocksTotal = players.reduce((sum, player) => sum + player.unlocksSentCount, 0);
+export function foundUnlockItemCount(player: PlayerSummary): number {
+  return player.firstUnlockItemCount + player.laterUnlockItemCount;
+}
+
+export function unlocksSentBalance(players: PlayerSummary[], withLaterItems = false): UnlocksSentBalance[] {
+  const actual = (player: PlayerSummary) => (withLaterItems ? foundUnlockItemCount(player) : player.unlocksSentCount);
+  const unlocksTotal = players.reduce((sum, player) => sum + actual(player), 0);
   const slotTotal = players.reduce((sum, player) => sum + player.slotCount, 0);
   const locationTotal = players.reduce((sum, player) => sum + player.locationCount, 0);
   return players
@@ -244,8 +285,11 @@ export function unlocksSentBalance(players: PlayerSummary[]): UnlocksSentBalance
       key: player.key,
       name: player.name,
       unlocksSentCount: player.unlocksSentCount,
-      bySlots: expectation(player.slotCount, slotTotal, unlocksTotal, player.unlocksSentCount),
-      byLocations: expectation(player.locationCount, locationTotal, unlocksTotal, player.unlocksSentCount),
+      foundUnlockItemCount: foundUnlockItemCount(player),
+      laterUnlockItemCount: player.laterUnlockItemCount,
+      laterUnlockNames: player.laterUnlockNames,
+      bySlots: expectation(player.slotCount, slotTotal, unlocksTotal, actual(player)),
+      byLocations: expectation(player.locationCount, locationTotal, unlocksTotal, actual(player)),
     }))
     .sort((a, b) => b.byLocations.deviation - a.byLocations.deviation || a.name.localeCompare(b.name));
 }

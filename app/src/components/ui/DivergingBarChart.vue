@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { divergingBars, type DivergingBarRow } from '@/domain/charts';
+import { divergingBars, type ChartRow } from '@/domain/charts';
 
-const props = defineProps<{ rows: DivergingBarRow[]; seriesLabels: Record<string, string>; xLabel: string }>();
+const props = defineProps<{ rows: ChartRow[]; seriesLabels: Record<string, string>; xLabel: string }>();
 
 const WIDTH = 480;
 const ROW_HEIGHT = 32;

@@ -58,7 +58,12 @@ describe('summarizePlayers', () => {
 });
 
 describe('unlocks sent by a player', () => {
-  const lock = (lockerSlotId: number, senderSlotId: number | null, unlocked = true) => ({
+  const lock = (
+    lockerSlotId: number,
+    senderSlotId: number | null,
+    unlocked = true,
+    laterSenderSlotIds: number[] = [],
+  ) => ({
     lockerSlotId,
     lockerName: 'Locker',
     unlocked,
@@ -66,11 +71,19 @@ describe('unlocks sent by a player', () => {
     senderName: null,
     unlockTime: null,
     timeSource: null,
+    laterSenderSlotIds,
   });
   const unlockSlots = [
     slotRow({ id: 1, name: 'Locker', isSlotLock: true, discordUserId: '1', discordName: 'alice' }),
     slotRow({ id: 2, name: 'A', discordUserId: '1', discordName: 'alice', lockStatus: 'start_slot' }),
-    slotRow({ id: 3, name: 'B', discordUserId: '2', discordName: 'bob', locks: [lock(1, 2)], lockStatus: 'unlocked' }),
+    slotRow({
+      id: 3,
+      name: 'B',
+      discordUserId: '2',
+      discordName: 'bob',
+      locks: [lock(1, 2, true, [3, 6, 1, 6])],
+      lockStatus: 'unlocked',
+    }),
     slotRow({
       id: 4,
       name: 'C',
@@ -97,6 +110,29 @@ describe('unlocks sent by a player', () => {
     ]);
   });
 
+  it('counts the first and the later unlock items that each player found', () => {
+    expect(summarizePlayers(unlockSlots)).toEqual([
+      expect.objectContaining({
+        name: 'alice',
+        firstUnlockItemCount: 2,
+        laterUnlockItemCount: 0,
+        laterUnlockNames: [],
+      }),
+      expect.objectContaining({
+        name: 'bob',
+        firstUnlockItemCount: 1,
+        laterUnlockItemCount: 1,
+        laterUnlockNames: ['B'],
+      }),
+      expect.objectContaining({
+        name: 'carol',
+        firstUnlockItemCount: 0,
+        laterUnlockItemCount: 2,
+        laterUnlockNames: ['B'],
+      }),
+    ]);
+  });
+
   it('gives the share of each player that sent unlock items', () => {
     expect(unlocksSentShares(summarizePlayers(unlockSlots), 'Others')).toEqual([
       expect.objectContaining({ label: 'alice', value: 2, percentage: 66.7, color: 'series-1' }),
@@ -115,11 +151,14 @@ describe('unlocks sent by a player', () => {
       goaledCount: 0,
       lockedCount: 0,
       unlocksSentCount: 10 - index,
+      firstUnlockItemCount: 0,
+      laterUnlockItemCount: 0,
       warningCount: 0,
       unlockedNames: [],
       goaledNames: [],
       lockedNames: [],
       unlocksSentNames: [],
+      laterUnlockNames: [],
     }));
     const shares = unlocksSentShares(players, 'Others');
     expect(shares).toHaveLength(8);
@@ -139,37 +178,54 @@ describe('unlocksSentBalance', () => {
     goaledCount: 0,
     lockedCount: 0,
     unlocksSentCount,
+    firstUnlockItemCount: 0,
+    laterUnlockItemCount: 0,
     warningCount: 0,
     unlockedNames: [],
     goaledNames: [],
     lockedNames: [],
     unlocksSentNames: [],
+    laterUnlockNames: [],
   });
 
   it('compares the unlocks of each player with the share of slots and of locations', () => {
     const balance = unlocksSentBalance([player('a', 2, 100, 2), player('b', 1, 300, 6), player('c', 1, 100, 0)]);
     expect(balance).toEqual([
-      {
+      expect.objectContaining({
         key: 'b',
         name: 'b',
         unlocksSentCount: 6,
         bySlots: { share: 25, expected: 2, deviation: 4 },
         byLocations: { share: 60, expected: 4.8, deviation: 1.2 },
-      },
-      {
+      }),
+      expect.objectContaining({
         key: 'a',
         name: 'a',
         unlocksSentCount: 2,
         bySlots: { share: 50, expected: 4, deviation: -2 },
         byLocations: { share: 20, expected: 1.6, deviation: 0.4 },
-      },
-      {
+      }),
+      expect.objectContaining({
         key: 'c',
         name: 'c',
         unlocksSentCount: 0,
         bySlots: { share: 25, expected: 2, deviation: -2 },
         byLocations: { share: 20, expected: 1.6, deviation: -1.6 },
-      },
+      }),
+    ]);
+  });
+
+  it('counts also the later unlock items with the option', () => {
+    const balance = unlocksSentBalance(
+      [
+        { ...player('a', 1, 100, 1), firstUnlockItemCount: 1, laterUnlockItemCount: 0 },
+        { ...player('b', 1, 100, 0), firstUnlockItemCount: 0, laterUnlockItemCount: 3 },
+      ],
+      true,
+    );
+    expect(balance.map((entry) => [entry.name, entry.foundUnlockItemCount, entry.byLocations])).toEqual([
+      ['b', 3, { share: 50, expected: 2, deviation: 1 }],
+      ['a', 1, { share: 50, expected: 2, deviation: -1 }],
     ]);
   });
 

@@ -3,6 +3,7 @@ import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import Checkbox from 'primevue/checkbox';
 import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 
@@ -11,7 +12,7 @@ import DivergingBarChart from '@/components/ui/DivergingBarChart.vue';
 import DonutChart from '@/components/ui/DonutChart.vue';
 import SlotNameList from '@/components/ui/SlotNameList.vue';
 
-import type { ChartPart, DivergingBarRow } from '@/domain/charts';
+import type { ChartPart, ChartRow } from '@/domain/charts';
 import {
   unlocksSentBalance,
   unlocksSentShares,
@@ -20,6 +21,7 @@ import {
 } from '@/domain/summary';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useStatisticsStore } from '@/stores/statistics';
+import { useTableFiltersStore } from '@/stores/table-filters';
 
 interface StatisticCard {
   key: string;
@@ -32,6 +34,7 @@ interface StatisticCard {
 
 const { globalStatistics, playerSummaries } = storeToRefs(useStatisticsStore());
 const { hasSlotLock } = storeToRefs(useCurrentRoomStore());
+const { expectationWithLaterItems } = storeToRefs(useTableFiltersStore());
 const { t } = useI18n();
 
 const percentage = (value: number) => t('statistics.percentage', { value });
@@ -145,12 +148,12 @@ const unlockedBars = computed(() =>
     value: entry.playerCount,
   })),
 );
-const balance = computed(() => unlocksSentBalance(playerSummaries.value));
+const balance = computed(() => unlocksSentBalance(playerSummaries.value, expectationWithLaterItems.value));
 const balanceSeriesLabels = computed(() => ({
   bySlots: t('statistics.balance.bySlots'),
   byLocations: t('statistics.balance.byLocations'),
 }));
-const balanceRows = computed<DivergingBarRow[]>(() =>
+const balanceRows = computed<ChartRow[]>(() =>
   balance.value.map((player) => ({
     key: player.key,
     label: player.name,
@@ -253,6 +256,13 @@ const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value,
     <div v-if="hasSlotLock" class="balance">
       <h2>{{ t('statistics.balance.title') }}</h2>
       <p class="app-muted balance-hint">{{ t('statistics.balance.hint') }}</p>
+      <label class="app-toolbar">
+        <Checkbox v-model="expectationWithLaterItems" binary data-testid="expectation-with-later-items" />
+        {{ t('statistics.balance.withLaterItems') }}
+      </label>
+      <p v-if="expectationWithLaterItems" class="app-muted balance-hint">
+        {{ t('statistics.balance.laterItemsHint') }}
+      </p>
       <ul class="statistic-legend balance-legend">
         <li><span class="chart-legend chart-unlocks" />{{ t('statistics.balance.bySlots') }}</li>
         <li><span class="chart-legend chart-series-2" />{{ t('statistics.balance.byLocations') }}</li>
@@ -272,6 +282,12 @@ const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value,
       >
         <Column field="name" :header="t('players.columns.name')" sortable />
         <Column field="unlocksSentCount" :header="t('statistics.unlocksSentCount')" sortable />
+        <Column field="laterUnlockItemCount" :header="t('statistics.balance.laterItems')" sortable>
+          <template #body="{ data }">
+            <SlotNameList :count="data.laterUnlockItemCount" :names="data.laterUnlockNames" />
+          </template>
+        </Column>
+        <Column field="foundUnlockItemCount" :header="t('statistics.balance.foundItems')" sortable />
         <Column field="bySlots.share" :header="t('statistics.balance.slotShare')" sortable>
           <template #body="{ data }">{{ percentage(data.bySlots.share) }}</template>
         </Column>
