@@ -17,6 +17,14 @@ export const PROGRESSION_STATUSES: ProgressionStatus[] = ['unknown', 'unblocked'
 export const COMPLETION_STATUSES: CompletionStatus[] = ['incomplete', 'all_checks', 'goal', 'done', 'released'];
 export const AVAILABILITY_STATUSES: AvailabilityStatus[] = ['unknown', 'open', 'claimed', 'public'];
 
+export class LaterUnlockDto {
+  @ApiProperty({ type: Number, nullable: true })
+  senderSlotId: number | null;
+
+  @ApiProperty({ type: String, format: 'date-time', nullable: true })
+  firstSeenAt: string | null;
+}
+
 export class SlotLockDto {
   lockerSlotId: number;
   lockerName: string;
@@ -34,7 +42,8 @@ export class SlotLockDto {
   @ApiProperty({ enum: UNLOCK_TIME_SOURCES, enumName: 'UnlockTimeSource', nullable: true })
   timeSource: UnlockTimeSource | null;
 
-  laterSenderSlotIds: number[];
+  @ApiProperty({ type: [LaterUnlockDto] })
+  laterUnlocks: LaterUnlockDto[];
 }
 
 export class SlotRowDto {

@@ -182,7 +182,7 @@ export class SyncService {
       });
       await this.storeDetectedLocks(tx, room.id, detection, slotIdByPosition);
       await this.storeNewUnlocks(tx, room.id, detection, slotIdByPosition, now, isFirstSync);
-      await this.storeLaterUnlocks(tx, room.id, detection, slotIdByPosition);
+      await this.storeLaterUnlocks(tx, room.id, detection, slotIdByPosition, now, isFirstSync);
       await this.applyOwnerChange(tx, room, source.cheese);
       await tx.room.update({
         where: { id: room.id },
@@ -321,16 +321,26 @@ export class SyncService {
     roomId: number,
     detection: LockDetectionResult,
     slotIdByPosition: SlotIdByPosition,
+    now: Date,
+    isFirstSync: boolean,
   ): Promise<void> {
+    const existing = await tx.laterUnlockItem.findMany({ where: { roomId }, orderBy: { sequence: 'asc' } });
+    const knownTimes = laterUnlockTimes(existing);
     await tx.laterUnlockItem.deleteMany({ where: { roomId } });
+    const occurrences = new Map<string, number>();
     const rows = detection.laterUnlockItems.flatMap((item, sequence) => {
       const lockerSlotId = slotIdByPosition.get(item.lockerPosition);
       const lockedSlotId = slotIdByPosition.get(item.lockedPosition);
       if (lockerSlotId === undefined || lockedSlotId === undefined) {
         return [];
       }
+      const pair = `${lockerSlotId}:${lockedSlotId}`;
+      const occurrence = occurrences.get(pair) ?? 0;
+      occurrences.set(pair, occurrence + 1);
+      const key = `${pair}:${occurrence}`;
+      const firstSeenAt = knownTimes.has(key) ? (knownTimes.get(key) ?? null) : isFirstSync ? null : now;
       const senderSlotId = slotIdByPosition.get(item.senderPosition) ?? null;
-      return [{ roomId, lockerSlotId, lockedSlotId, senderSlotId, sequence }];
+      return [{ roomId, lockerSlotId, lockedSlotId, senderSlotId, sequence, firstSeenAt }];
     });
     if (rows.length > 0) {
       await tx.laterUnlockItem.createMany({ data: rows });
@@ -362,4 +372,18 @@ export class SyncService {
       }
     }
   }
+}
+
+function laterUnlockTimes(
+  rows: { lockerSlotId: number; lockedSlotId: number; firstSeenAt: Date | null }[],
+): Map<string, Date | null> {
+  const occurrences = new Map<string, number>();
+  const times = new Map<string, Date | null>();
+  for (const row of rows) {
+    const pair = `${row.lockerSlotId}:${row.lockedSlotId}`;
+    const occurrence = occurrences.get(pair) ?? 0;
+    occurrences.set(pair, occurrence + 1);
+    times.set(`${pair}:${occurrence}`, row.firstSeenAt);
+  }
+  return times;
 }

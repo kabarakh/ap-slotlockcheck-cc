@@ -64,6 +64,7 @@ export interface StoredLaterUnlock {
   lockedSlotId: number;
   senderSlotId: number | null;
   sequence: number;
+  firstSeenAt: Date | null;
 }
 
 export interface SlotLockState {

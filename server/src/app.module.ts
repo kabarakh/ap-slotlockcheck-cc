@@ -19,6 +19,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { RoomSetupModule } from './room-setup/room-setup.module.js';
 import { RoomsModule } from './rooms/rooms.module.js';
 import { SeedModule } from './seed/seed.module.js';
+import { StatisticsModule } from './statistics/statistics.module.js';
 import { SyncModule } from './sync/sync.module.js';
 import { UnlockTimesModule } from './unlock-times/unlock-times.module.js';
 import { WarningsModule } from './warnings/warnings.module.js';
@@ -48,6 +49,7 @@ function staticAppModules(): DynamicModule[] {
     LocationsModule,
     ArchipelagoAdminModule,
     PaceModule,
+    StatisticsModule,
   ],
   providers: [{ provide: APP_FILTER, useClass: ApiErrorFilter }],
 })

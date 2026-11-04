@@ -89,7 +89,7 @@ export interface GamePaceValues {
   medianChecksPerHour: number | null;
 }
 
-interface Step {
+export interface Step {
   from: Date;
   to: Date;
   checks: number;
@@ -197,7 +197,7 @@ function classify({ history, signals, limits, now }: SlotPaceInput, range: SlotR
   const before: Segment[] = [];
   const inside: Step[] = [];
   const after: Segment[] = [];
-  for (const step of steps(history, now)) {
+  for (const step of historySteps(history, now)) {
     if (step.to <= range.start) {
       before.push({ kind: 'locked', ...step });
     } else if (step.from >= range.end) {
@@ -301,7 +301,7 @@ function rowValues(segments: Segment[], bkPeriods: BkPeriod[]): Omit<SlotPaceVal
   };
 }
 
-function steps(history: PaceHistoryPoint[], now: Date): Step[] {
+export function historySteps(history: PaceHistoryPoint[], now: Date): Step[] {
   const points = filledHistory(
     [...history].sort((a, b) => a.time.getTime() - b.time.getTime()),
     now,

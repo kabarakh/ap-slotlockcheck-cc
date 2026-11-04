@@ -1,21 +1,17 @@
-import { Injectable, Logger, NotFoundException, OnModuleInit, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 
 import type { Room } from '../generated/prisma/client.js';
 import { isGoaled } from '../locations/goal.logic.js';
 import { evaluateSlotLockStates } from '../lock/lock.logic.js';
 import type { UnlockTimeSource } from '../lock/lock.types.js';
-import type { ChecksHistoryPoint } from '../lock/unlock-time.logic.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { roomNow } from '../rooms/archive.logic.js';
 import { RoomUpdatesService } from '../rooms/room-updates.service.js';
 import { RoomsService } from '../rooms/rooms.service.js';
-import { CheeseService } from '../sources/cheese/cheese.service.js';
-import { SourceFormatError, SourceRequestError } from '../sources/http/source-errors.js';
-import { checksHistoryPoints } from '../sync/room-source.mapper.js';
+import { ChecksHistoryService } from './checks-history.service.js';
 import type { RoomPaceDto, SlotTimelineDto } from './dto/pace.dto.js';
 import { finishSignals, type SignalPeriod, type SlotSignals } from './pace-signals.js';
 import { PaceSignalsService, unreadablePeriods } from './pace-signals.service.js';
-import { CHECKS_HISTORY_CACHE_MINUTES } from './pace.constants.js';
 import { classifySlot, slotPaceRows, slotRange, type PaceLimits, type Segment, type SlotRange } from './pace.logic.js';
 import {
   firstHistoryTime,
@@ -40,11 +36,6 @@ export interface PaceCalculation {
   unreadableSnapshots: SignalPeriod[];
 }
 
-interface CachedChecksHistory {
-  fetchedAt: number;
-  points: ChecksHistoryPoint[];
-}
-
 const NO_SIGNALS: SlotSignals = {
   progressionItemTimes: [],
   bkPeriods: [],
@@ -52,20 +43,16 @@ const NO_SIGNALS: SlotSignals = {
   statusChanges: [],
   signalsFrom: null,
 };
-const MS_PER_MINUTE = 60_000;
-
 @Injectable()
 export class PaceService implements OnModuleInit {
-  private readonly logger = new Logger(PaceService.name);
   private readonly calculations = new Map<number, PaceCalculation>();
   private readonly revisions = new Map<number, number>();
-  private readonly checksHistories = new Map<number, CachedChecksHistory>();
 
   constructor(
     private readonly prisma: PrismaService,
     private readonly rooms: RoomsService,
     private readonly updates: RoomUpdatesService,
-    private readonly cheese: CheeseService,
+    private readonly checksHistory: ChecksHistoryService,
     private readonly paceSignals: PaceSignalsService,
   ) {}
 
@@ -123,7 +110,7 @@ export class PaceService implements OnModuleInit {
   }
 
   private async calculate(room: Room, key: string): Promise<PaceCalculation> {
-    const history = await this.checksHistory(room);
+    const history = await this.checksHistory.get(room);
     const now = roomNow(room, new Date());
     const [slots, locks, unlocks] = await Promise.all([
       this.prisma.slot.findMany({ where: { roomId: room.id }, orderBy: { position: 'asc' } }),
@@ -178,24 +165,5 @@ export class PaceService implements OnModuleInit {
       slots: slotCalculations,
       unreadableSnapshots,
     };
-  }
-
-  private async checksHistory(room: Room): Promise<ChecksHistoryPoint[]> {
-    const cached = this.checksHistories.get(room.id);
-    if (cached !== undefined && Date.now() - cached.fetchedAt < CHECKS_HISTORY_CACHE_MINUTES * MS_PER_MINUTE) {
-      return cached.points;
-    }
-    let points: ChecksHistoryPoint[];
-    try {
-      points = checksHistoryPoints(await this.cheese.getChecksHistory(room.cheeseTrackerId));
-    } catch (error) {
-      if (error instanceof SourceRequestError || error instanceof SourceFormatError) {
-        this.logger.warn(`Checks history of room ${room.slug} not available: ${error.message}`);
-        throw new ServiceUnavailableException('CHECKS_HISTORY_NOT_AVAILABLE');
-      }
-      throw error;
-    }
-    this.checksHistories.set(room.id, { fetchedAt: Date.now(), points });
-    return points;
   }
 }

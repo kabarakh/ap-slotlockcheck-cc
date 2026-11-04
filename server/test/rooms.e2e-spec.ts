@@ -90,7 +90,7 @@ describe('rooms (integration)', () => {
     expect(rows['Alice']?.locks[0]).toMatchObject({
       lockerName: 'Locker',
       senderName: 'Bob',
-      laterSenderSlotIds: [rows['Davey (Dave)']?.id],
+      laterUnlocks: [{ senderSlotId: rows['Davey (Dave)']?.id, firstSeenAt: null }],
     });
     expect(rows['Bob']?.lockStatus).toBe('locked');
     expect(rows['Carol']?.lockStatus).toBe('partially_unlocked');
@@ -135,13 +135,17 @@ describe('rooms (integration)', () => {
     const tracker = (await import('./fixtures/fixtures.js')).loadFixture('ap-tracker') as {
       player_items_received: { player: number; items: number[][] }[];
     };
-    tracker.player_items_received[0]?.items.push([1004, 20005, 2, 1]);
+    tracker.player_items_received[0]?.items.push([1004, 20005, 2, 1], [1003, 20006, 4, 1]);
     testApp.fixtureOverrides.set('ap-tracker', tracker);
     const { SyncService } = await import('../src/sync/sync.service.js');
     const room = (await request(server).get('/api/rooms/big-chill').expect(200)).body as { id: number };
     await expect(testApp.app.get(SyncService).syncRoom(room.id, 'schedule')).resolves.toBe('success');
     const rows = await roster();
     expect(rows['Bob']).toMatchObject({ lockStatus: 'unlocked', unlockTimeSource: 'sync' });
+    const laterUnlocks = rows['Alice']?.locks[0]?.laterUnlocks ?? [];
+    expect(laterUnlocks).toHaveLength(2);
+    expect(laterUnlocks[0]?.firstSeenAt).toBeNull();
+    expect(laterUnlocks[1]?.firstSeenAt).toEqual(expect.any(String));
     testApp.fixtureOverrides.delete('ap-tracker');
   });
 

@@ -153,6 +153,7 @@ model LaterUnlockItem {
   lockedSlotId Int
   senderSlotId Int?
   sequence     Int
+  firstSeenAt  DateTime?
   room         Room  @relation(fields: [roomId], references: [id], onDelete: Cascade)
   lockerSlot   Slot  @relation("LaterUnlockLocker", fields: [lockerSlotId], references: [id], onDelete: Cascade)
   lockedSlot   Slot  @relation("LaterUnlockLocked", fields: [lockedSlotId], references: [id], onDelete: Cascade)

@@ -46,11 +46,11 @@ const toIso = (date: Date | null): string | null => date?.toISOString() ?? null;
 
 export function buildRoster(input: RosterInput): SlotRowDto[] {
   const slotsById = new Map(input.slots.map((slot) => [slot.id, slot]));
-  const laterSenderSlotIds = (lockerSlotId: number, lockedSlotId: number): number[] =>
+  const laterUnlocks = (lockerSlotId: number, lockedSlotId: number) =>
     input.laterUnlocks
       .filter((unlock) => unlock.lockerSlotId === lockerSlotId && unlock.lockedSlotId === lockedSlotId)
       .sort((a, b) => a.sequence - b.sequence)
-      .flatMap((unlock) => (unlock.senderSlotId === null ? [] : [unlock.senderSlotId]));
+      .map((unlock) => ({ senderSlotId: unlock.senderSlotId, firstSeenAt: toIso(unlock.firstSeenAt) }));
   const unlocks = input.unlocks.map((unlock) => ({ ...unlock, timeSource: unlock.timeSource as UnlockTimeSource }));
   const states = evaluateSlotLockStates(
     input.slots.map((slot) => slot.id),
@@ -95,7 +95,7 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
           senderName: lock.senderSlotId === null ? null : (slotsById.get(lock.senderSlotId)?.name ?? null),
           unlockTime: toIso(lock.unlockTime),
           timeSource: lock.timeSource,
-          laterSenderSlotIds: laterSenderSlotIds(lock.lockerSlotId, slot.id),
+          laterUnlocks: laterUnlocks(lock.lockerSlotId, slot.id),
         })),
         unlockTime: toIso(state?.unlockTime ?? null),
         unlockTimeSource: state?.unlockTimeSource ?? null,

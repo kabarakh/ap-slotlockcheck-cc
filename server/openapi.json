@@ -1994,6 +1994,66 @@
           "Pace"
         ]
       }
+    },
+    "/api/rooms/{slug}/statistics/history": {
+      "get": {
+        "operationId": "Statistics_getHistory",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomHistoryDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Statistics"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/statistics/dependencies": {
+      "get": {
+        "operationId": "Statistics_getDependencies",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoomDependenciesDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Statistics"
+        ]
+      }
     }
   },
   "info": {
@@ -2379,6 +2439,24 @@
           "unknown"
         ]
       },
+      "LaterUnlockDto": {
+        "type": "object",
+        "properties": {
+          "senderSlotId": {
+            "type": "number",
+            "nullable": true
+          },
+          "firstSeenAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "senderSlotId",
+          "firstSeenAt"
+        ]
+      },
       "SlotLockDto": {
         "type": "object",
         "properties": {
@@ -2403,6 +2481,12 @@
               }
             ]
           },
+          "laterUnlocks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LaterUnlockDto"
+            }
+          },
           "lockerSlotId": {
             "type": "number"
           },
@@ -2411,12 +2495,6 @@
           },
           "unlocked": {
             "type": "boolean"
-          },
-          "laterSenderSlotIds": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
           }
         },
         "required": [
@@ -2424,10 +2502,10 @@
           "senderName",
           "unlockTime",
           "timeSource",
+          "laterUnlocks",
           "lockerSlotId",
           "lockerName",
-          "unlocked",
-          "laterSenderSlotIds"
+          "unlocked"
         ]
       },
       "SlotRowDto": {
@@ -4056,6 +4134,210 @@
           "playerPeriods",
           "unreadableSnapshots",
           "slotId"
+        ]
+      },
+      "HistoryBucketDto": {
+        "type": "object",
+        "properties": {
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "checks": {
+            "type": "number"
+          },
+          "newChecks": {
+            "type": "number"
+          },
+          "activeSlots": {
+            "type": "number"
+          },
+          "activePlayers": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "time",
+          "checks",
+          "newChecks",
+          "activeSlots",
+          "activePlayers"
+        ]
+      },
+      "SlotHistoryDto": {
+        "type": "object",
+        "properties": {
+          "firstCheckTime": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "slotId": {
+            "type": "number"
+          },
+          "recentChecks": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "firstCheckTime",
+          "slotId",
+          "recentChecks"
+        ]
+      },
+      "RoomHistoryDto": {
+        "type": "object",
+        "properties": {
+          "calculatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "historyFrom": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "startedAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "buckets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoryBucketDto"
+            }
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SlotHistoryDto"
+            }
+          },
+          "bucketMinutes": {
+            "type": "number"
+          },
+          "rateWindowHours": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "calculatedAt",
+          "historyFrom",
+          "startedAt",
+          "buckets",
+          "slots",
+          "bucketMinutes",
+          "rateWindowHours"
+        ]
+      },
+      "BlockerDto": {
+        "type": "object",
+        "properties": {
+          "lockedSlotId": {
+            "type": "number"
+          },
+          "lockerSlotId": {
+            "type": "number"
+          },
+          "finderSlotId": {
+            "type": "number"
+          },
+          "locationName": {
+            "type": "string"
+          },
+          "sphere": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lockedSlotId",
+          "lockerSlotId",
+          "finderSlotId",
+          "locationName",
+          "sphere"
+        ]
+      },
+      "ProgressionFlowDto": {
+        "type": "object",
+        "properties": {
+          "finderSlotId": {
+            "type": "number"
+          },
+          "receiverSlotId": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "open": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "finderSlotId",
+          "receiverSlotId",
+          "total",
+          "open"
+        ]
+      },
+      "SphereProgressDto": {
+        "type": "object",
+        "properties": {
+          "doneAt": {
+            "type": "string",
+            "nullable": true,
+            "format": "date-time"
+          },
+          "sphere": {
+            "type": "number"
+          },
+          "locationCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "doneAt",
+          "sphere",
+          "locationCount"
+        ]
+      },
+      "RoomDependenciesDto": {
+        "type": "object",
+        "properties": {
+          "calculatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "seedUploadedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlockerDto"
+            }
+          },
+          "progressionFlow": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProgressionFlowDto"
+            }
+          },
+          "spheres": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SphereProgressDto"
+            }
+          }
+        },
+        "required": [
+          "calculatedAt",
+          "seedUploadedAt",
+          "blockers",
+          "progressionFlow",
+          "spheres"
         ]
       },
       "ApiErrorDto": {

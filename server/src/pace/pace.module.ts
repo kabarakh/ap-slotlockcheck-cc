@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
 import { RoomsModule } from '../rooms/rooms.module.js';
-import { CheeseModule } from '../sources/cheese/cheese.module.js';
+import { ChecksHistoryModule } from './checks-history.module.js';
 import { PaceSignalsModule } from './pace-signals.module.js';
 import { PaceController } from './pace.controller.js';
 import { PaceService } from './pace.service.js';
 
 @Module({
-  imports: [RoomsModule, CheeseModule, PaceSignalsModule],
+  imports: [RoomsModule, ChecksHistoryModule, PaceSignalsModule],
   controllers: [PaceController],
   providers: [PaceService],
 })
