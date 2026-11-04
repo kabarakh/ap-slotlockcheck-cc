@@ -1,4 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
+import { ArrayMaxSize, IsArray, IsInt, IsOptional } from 'class-validator';
+
+const toArray = ({ value }: { value: unknown }): unknown =>
+  value === undefined ? undefined : Array.isArray(value) ? value : [value];
+
+export class HistoryQueryDto {
+  @IsOptional()
+  @Transform(toArray)
+  @IsArray()
+  @ArrayMaxSize(1000)
+  @Type(() => Number)
+  @IsInt({ each: true })
+  slotIds?: number[];
+}
 
 export class HistoryBucketDto {
   @ApiProperty({ type: String, format: 'date-time' })

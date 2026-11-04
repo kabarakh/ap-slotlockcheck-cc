@@ -2006,6 +2006,18 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "slotIds",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxItems": 1000,
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
           }
         ],
         "responses": {

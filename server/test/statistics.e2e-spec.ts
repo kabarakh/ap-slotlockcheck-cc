@@ -44,7 +44,11 @@ describe('statistics (integration)', () => {
       activePlayers: 0,
     });
     expect(body.buckets.at(-1)?.checks).toBeGreaterThan(0);
-    expect(body.slots.length).toBeGreaterThan(0);
+    expect(body.slots.length).toBeGreaterThan(1);
+    const [first] = body.slots;
+    const filtered = (await get(`/history?slotIds=${first?.slotId}`).expect(200)).body as RoomHistoryDto;
+    expect(filtered.slots.map((slot) => slot.slotId)).toEqual([first?.slotId]);
+    await get('/history?slotIds=abc').expect(400);
   });
 
   it('gives the dependencies only to helpers and admins', async () => {

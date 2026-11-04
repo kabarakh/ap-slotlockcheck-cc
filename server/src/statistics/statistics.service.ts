@@ -20,10 +20,13 @@ export class StatisticsService {
     private readonly checksHistory: ChecksHistoryService,
   ) {}
 
-  async getHistory(slug: string): Promise<RoomHistoryDto> {
+  async getHistory(slug: string, slotIds?: number[]): Promise<RoomHistoryDto> {
     const room = await this.rooms.findRoomBySlug(slug);
     const history = await this.checksHistory.get(room);
-    const slots = await this.prisma.slot.findMany({ where: { roomId: room.id }, orderBy: { position: 'asc' } });
+    const slots = await this.prisma.slot.findMany({
+      where: { roomId: room.id, ...(slotIds === undefined || slotIds.length === 0 ? {} : { id: { in: slotIds } }) },
+      orderBy: { position: 'asc' },
+    });
     const now = roomNow(room, new Date());
     const result = roomHistory({
       history,
