@@ -10,6 +10,7 @@ import { useRoomHistoryStore } from './room-history';
 import { useSeedStore } from './seed';
 import { useServerAdminStore } from './server-admin';
 import { useSphereOverviewStore } from './sphere-overview';
+import { useStatisticsFilterStore } from './statistics-filter';
 import { useUiStore } from './ui';
 import { useWarningsStore } from './warnings';
 import { api, ApiRequestError, unwrap } from '@/api/client';
@@ -73,6 +74,9 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
       return true;
     }
     slug.value = roomSlug;
+    useStatisticsFilterStore().clear();
+    useRoomHistoryStore().clear();
+    useDependenciesStore().clear();
     loading.value = true;
     notFound.value = false;
     try {
@@ -124,6 +128,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     usePaceStore().clear();
     useRoomHistoryStore().clear();
     useDependenciesStore().clear();
+    useStatisticsFilterStore().clear();
   };
 
   const applySynced = (payload: RoomSyncedPayload) => {

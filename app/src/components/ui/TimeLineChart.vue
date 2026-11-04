@@ -1,21 +1,23 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+import { useElementWidth } from './use-element-width';
 import { lineChartLayout, timeTickFormat, type LineSeries } from '@/domain/statistics-charts';
 
 const props = withDefaults(
   defineProps<{ series: LineSeries[]; yLabel: string; description: string; height?: number; integer?: boolean }>(),
-  { height: 200, integer: true },
+  { height: 220, integer: true },
 );
 const { d } = useI18n();
 
-const WIDTH = 640;
-const MARGIN = { top: 24, right: 16, bottom: 28, left: 48 };
+const MARGIN = { top: 24, right: 16, bottom: 28, left: 44 };
 
-const plotWidth = WIDTH - MARGIN.left - MARGIN.right;
+const container = useTemplateRef<HTMLElement>('container');
+const width = useElementWidth(container, 640);
+const plotWidth = computed(() => width.value - MARGIN.left - MARGIN.right);
 const plotHeight = computed(() => props.height - MARGIN.top - MARGIN.bottom);
-const layout = computed(() => lineChartLayout(props.series, plotWidth, plotHeight.value));
+const layout = computed(() => lineChartLayout(props.series, plotWidth.value, plotHeight.value));
 const yTicks = computed(() =>
   props.integer ? layout.value.yTicks.filter((tick) => Number.isInteger(tick.value)) : layout.value.yTicks,
 );
@@ -27,9 +29,11 @@ const tickLabel = (time: number): string => {
 </script>
 
 <template>
-  <div class="time-line-chart">
+  <div ref="container" class="time-line-chart">
     <svg
-      :viewBox="`0 0 ${WIDTH} ${props.height}`"
+      :width="width"
+      :height="props.height"
+      :viewBox="`0 0 ${width} ${props.height}`"
       role="img"
       :aria-label="props.description"
       data-testid="time-line-chart"
@@ -37,61 +41,83 @@ const tickLabel = (time: number): string => {
       <g :transform="`translate(${MARGIN.left} ${MARGIN.top})`">
         <g v-for="tick in yTicks" :key="`y-${tick.value}`">
           <line :x1="0" :x2="plotWidth" :y1="tick.position" :y2="tick.position" class="grid" />
-          <text :x="-6" :y="tick.position" text-anchor="end" dominant-baseline="central" class="tick">
+          <text :x="-8" :y="tick.position" text-anchor="end" dominant-baseline="central" class="tick">
             {{ tick.value }}
           </text>
         </g>
-        <g v-for="tick in layout.xTicks" :key="`x-${tick.value}`">
-          <line :x1="tick.position" :x2="tick.position" :y1="plotHeight" :y2="plotHeight + 4" class="axis" />
-          <text :x="tick.position" :y="plotHeight + 16" text-anchor="middle" class="tick">
-            {{ tickLabel(tick.value) }}
-          </text>
-        </g>
-        <line :x1="0" :x2="plotWidth" :y1="plotHeight" :y2="plotHeight" class="axis" />
-        <text :x="-MARGIN.left + 4" :y="-12" class="axis-label">{{ props.yLabel }}</text>
-        <path
-          v-for="path in layout.paths"
-          :key="path.key"
-          :d="path.path"
-          class="series"
-          :class="{ dashed: path.dashed }"
-          :style="{ stroke: `var(--app-chart-${path.color})` }"
-          :data-series="path.key"
+        <text
+          v-for="tick in layout.xTicks"
+          :key="`x-${tick.value}`"
+          :x="tick.position"
+          :y="plotHeight + 18"
+          text-anchor="middle"
+          class="tick"
         >
-          <title>{{ path.label }}</title>
-        </path>
+          {{ tickLabel(tick.value) }}
+        </text>
+        <line :x1="0" :x2="plotWidth" :y1="plotHeight" :y2="plotHeight" class="axis" />
+        <text :x="-MARGIN.left" :y="-12" class="axis-label">{{ props.yLabel }}</text>
+        <template v-for="path in layout.paths" :key="path.key">
+          <path v-if="path.area" :d="path.area" class="area" :style="{ fill: `var(--app-chart-${path.color})` }" />
+          <path
+            :d="path.path"
+            class="series"
+            :class="{ dashed: path.dashed }"
+            :style="{ stroke: `var(--app-chart-${path.color})` }"
+            :data-series="path.key"
+          >
+            <title>{{ path.label }}</title>
+          </path>
+        </template>
       </g>
     </svg>
   </div>
 </template>
 
 <style scoped>
-.time-line-chart svg {
+.time-line-chart {
   width: 100%;
-  height: auto;
+  min-width: 0;
+}
+
+.time-line-chart svg {
+  display: block;
 }
 
 .grid {
   stroke: var(--p-content-border-color);
-  stroke-dasharray: 2 3;
+  stroke-width: 1;
+  opacity: 0.6;
 }
 
 .axis {
   stroke: var(--p-content-border-color);
 }
 
-.tick,
+.tick {
+  fill: var(--p-text-muted-color);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
 .axis-label {
   fill: var(--p-text-muted-color);
-  font-size: 0.6875rem;
+  font-size: 12px;
 }
 
 .series {
   fill: none;
-  stroke-width: 2;
+  stroke-width: 1.75;
+  stroke-linejoin: round;
+  stroke-linecap: round;
 }
 
 .series.dashed {
-  stroke-dasharray: 6 4;
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+.area {
+  opacity: 0.12;
 }
 </style>

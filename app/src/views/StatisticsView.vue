@@ -4,6 +4,8 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink, RouterView, useRoute } from 'vue-router';
 
+import StatisticsFilterBar from '@/components/statistics/StatisticsFilterBar.vue';
+
 import { useCurrentRoomStore } from '@/stores/current-room';
 
 const { room, hasSlotLock } = storeToRefs(useCurrentRoomStore());
@@ -34,6 +36,7 @@ const tabs = computed(() =>
         {{ tab.label }}
       </RouterLink>
     </nav>
+    <StatisticsFilterBar />
     <RouterView />
   </section>
 </template>

@@ -51,7 +51,12 @@ describe('chart layouts', () => {
   });
 
   it('scales the heatmap opacity to the maximum', () => {
-    expect(heatmapCells([[0, 2, 4]]).map((cell) => cell.opacity)).toEqual([0, 0.575, 1]);
+    expect(heatmapCells([[0, 2, 4]]).map((cell) => [cell.opacity, cell.strong])).toEqual([
+      [0, false],
+      [0.575, true],
+      [1, true],
+    ]);
+    expect(heatmapCells([[1, 10]])[0]?.strong).toBe(false);
   });
 
   it('places the gantt segments on one time scale', () => {

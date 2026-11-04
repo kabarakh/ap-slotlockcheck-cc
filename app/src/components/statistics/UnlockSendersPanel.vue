@@ -22,11 +22,11 @@ import {
   type UnlocksSentExpectation,
 } from '@/domain/summary';
 import { gameBalance, treeMetrics, unlockMatrix } from '@/domain/unlock-statistics';
-import { useCurrentRoomStore } from '@/stores/current-room';
 import { useStatisticsStore } from '@/stores/statistics';
+import { useStatisticsFilterStore } from '@/stores/statistics-filter';
 
-const { playerSummaries, unlockForest } = storeToRefs(useStatisticsStore());
-const { slots } = storeToRefs(useCurrentRoomStore());
+const { filteredSummaries: playerSummaries, filteredSlots: slots, unlockForest } = storeToRefs(useStatisticsStore());
+const { includedSlotIds } = storeToRefs(useStatisticsFilterStore());
 const { t } = useI18n();
 
 const percentage = (value: number) => t('statistics.percentage', { value });
@@ -75,10 +75,11 @@ const balanceRows = computed<ChartRow[]>(() =>
 );
 const expectationText = (expectation: UnlocksSentExpectation) =>
   t('statistics.balance.expectation', { expected: expectation.expected, deviation: signed(expectation.deviation) });
-const balanceHints = computed(() => [
-  t('statistics.balance.hint'),
-  ...(hasLaterItems.value ? [t('statistics.balance.laterItemsHint')] : []),
-]);
+const balanceHints = computed(() =>
+  hasLaterItems.value
+    ? `${t('statistics.balance.hint')} ${t('statistics.balance.laterItemsHint')}`
+    : t('statistics.balance.hint'),
+);
 
 const games = computed(() => gameBalance(slots.value));
 const gameRows = computed<ChartRow[]>(() =>
@@ -95,7 +96,7 @@ const matrixFacts = computed(() => [
   { key: 'mutual-pairs', label: t('statistics.matrix.mutualPairs'), value: String(matrix.value.mutualPairs.length) },
 ]);
 
-const tree = computed(() => treeMetrics(unlockForest.value));
+const tree = computed(() => treeMetrics(unlockForest.value, includedSlotIds.value));
 const treeFacts = computed(() => [
   { key: 'max-depth', label: t('statistics.tree.maxDepth'), value: String(tree.value.maxDepth) },
   {
@@ -116,7 +117,7 @@ const depthBars = computed(() =>
     <div class="app-statistic-columns">
       <StatisticSection
         :title="t('statistics.unlocksSentByPlayer')"
-        :hints="[t('statistics.unlocksSentHint')]"
+        :info="t('statistics.unlocksSentHint')"
         test-id="section-unlocks-sent"
       >
         <div class="share-chart" data-testid="unlocks-sent-shares">
@@ -155,7 +156,7 @@ const depthBars = computed(() =>
 
       <StatisticSection
         :title="t('statistics.matrix.title')"
-        :hints="[t('statistics.matrix.hint')]"
+        :info="t('statistics.matrix.hint')"
         test-id="section-matrix"
       >
         <StatisticFacts :facts="matrixFacts" />
@@ -176,7 +177,7 @@ const depthBars = computed(() =>
       </StatisticSection>
     </div>
 
-    <StatisticSection :title="t('statistics.balance.title')" :hints="balanceHints" test-id="section-balance">
+    <StatisticSection :title="t('statistics.balance.title')" :info="balanceHints" test-id="section-balance">
       <ul class="app-statistic-legend">
         <li v-for="series in balanceSeries" :key="series.key">
           <span class="chart-legend" :class="[`chart-${series.color}`, { 'chart-muted': series.muted }]" />
@@ -236,7 +237,7 @@ const depthBars = computed(() =>
     <div class="app-statistic-columns">
       <StatisticSection
         :title="t('statistics.games.title')"
-        :hints="[t('statistics.games.hint')]"
+        :info="t('statistics.games.hint')"
         test-id="section-game-balance"
       >
         <DivergingBarChart
@@ -267,7 +268,7 @@ const depthBars = computed(() =>
         </DataTable>
       </StatisticSection>
 
-      <StatisticSection :title="t('statistics.tree.title')" :hints="[t('statistics.tree.hint')]" test-id="section-tree">
+      <StatisticSection :title="t('statistics.tree.title')" :info="t('statistics.tree.hint')" test-id="section-tree">
         <StatisticFacts :facts="treeFacts" />
         <div v-if="tree.longestChain.length > 0">
           <div class="app-muted">{{ t('statistics.tree.longestChain') }}</div>

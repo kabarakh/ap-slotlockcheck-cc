@@ -155,6 +155,15 @@
     },
   },
   statistics: {
+    filter: {
+      players: 'All players',
+      slots: 'All slots',
+      selectedPlayers: '{count} players',
+      selectedSlots: '{count} slots',
+      mine: 'My slots',
+      clear: 'Reset filter',
+      summary: '{count} slot selected | {count} slots selected',
+    },
     tabs: {
       overview: 'Overview',
       unlockTimes: 'Unlock times',

@@ -13,6 +13,19 @@
   --app-chart-series-6: var(--p-teal-500);
   --app-chart-series-7: var(--p-orange-600);
   --app-chart-series-8: var(--p-indigo-400);
+  --app-chart-on-unlocks: #fff;
+  --app-chart-on-checks: #fff;
+  --app-chart-on-goal: #fff;
+  --app-chart-on-locked: #fff;
+  --app-chart-on-rest: var(--p-surface-900);
+  --app-chart-on-series-1: #fff;
+  --app-chart-on-series-2: var(--p-surface-950);
+  --app-chart-on-series-3: #fff;
+  --app-chart-on-series-4: #fff;
+  --app-chart-on-series-5: #fff;
+  --app-chart-on-series-6: var(--p-surface-950);
+  --app-chart-on-series-7: #fff;
+  --app-chart-on-series-8: var(--p-surface-950);
   --app-pace-locked: var(--p-surface-500);
   --app-pace-active: var(--p-emerald-800);
   --app-pace-pause: var(--p-emerald-600);
@@ -164,6 +177,19 @@ html.app-dark {
   --app-chart-series-6: var(--p-teal-300);
   --app-chart-series-7: var(--p-orange-400);
   --app-chart-series-8: var(--p-indigo-300);
+  --app-chart-on-unlocks: var(--p-surface-950);
+  --app-chart-on-checks: var(--p-surface-950);
+  --app-chart-on-goal: var(--p-surface-950);
+  --app-chart-on-locked: var(--p-surface-950);
+  --app-chart-on-rest: var(--p-surface-0);
+  --app-chart-on-series-1: var(--p-surface-950);
+  --app-chart-on-series-2: var(--p-surface-950);
+  --app-chart-on-series-3: var(--p-surface-950);
+  --app-chart-on-series-4: var(--p-surface-950);
+  --app-chart-on-series-5: var(--p-surface-950);
+  --app-chart-on-series-6: var(--p-surface-950);
+  --app-chart-on-series-7: var(--p-surface-950);
+  --app-chart-on-series-8: var(--p-surface-950);
   --app-pace-locked: var(--p-surface-400);
   --app-pace-active: var(--p-emerald-500);
   --app-pace-pause: var(--p-emerald-700);
@@ -373,4 +399,56 @@ html.app-dark {
   padding: 0;
   list-style: none;
   font-size: 0.875rem;
+}
+
+.chart-on-unlocks {
+  fill: var(--app-chart-on-unlocks);
+}
+
+.chart-on-checks {
+  fill: var(--app-chart-on-checks);
+}
+
+.chart-on-goal {
+  fill: var(--app-chart-on-goal);
+}
+
+.chart-on-locked {
+  fill: var(--app-chart-on-locked);
+}
+
+.chart-on-rest {
+  fill: var(--app-chart-on-rest);
+}
+
+.chart-on-series-1 {
+  fill: var(--app-chart-on-series-1);
+}
+
+.chart-on-series-2 {
+  fill: var(--app-chart-on-series-2);
+}
+
+.chart-on-series-3 {
+  fill: var(--app-chart-on-series-3);
+}
+
+.chart-on-series-4 {
+  fill: var(--app-chart-on-series-4);
+}
+
+.chart-on-series-5 {
+  fill: var(--app-chart-on-series-5);
+}
+
+.chart-on-series-6 {
+  fill: var(--app-chart-on-series-6);
+}
+
+.chart-on-series-7 {
+  fill: var(--app-chart-on-series-7);
+}
+
+.chart-on-series-8 {
+  fill: var(--app-chart-on-series-8);
 }

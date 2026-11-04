@@ -22,7 +22,7 @@ interface StatisticCard {
   legend: boolean;
 }
 
-const { globalStatistics } = storeToRefs(useStatisticsStore());
+const { filteredStatistics: globalStatistics } = storeToRefs(useStatisticsStore());
 const { hasSlotLock } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 

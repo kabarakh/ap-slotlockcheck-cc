@@ -161,6 +161,15 @@
     },
   },
   statistics: {
+    filter: {
+      players: 'Alle Spieler',
+      slots: 'Alle Slots',
+      selectedPlayers: '{count} Spieler',
+      selectedSlots: '{count} Slots',
+      mine: 'Meine Slots',
+      clear: 'Filter zurücksetzen',
+      summary: '{count} Slot ausgewählt | {count} Slots ausgewählt',
+    },
     tabs: {
       overview: 'Übersicht',
       unlockTimes: 'Unlock-Zeiten',

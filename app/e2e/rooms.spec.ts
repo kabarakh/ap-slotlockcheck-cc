@@ -83,7 +83,10 @@ test('players and statistics show the summaries', async ({ page }) => {
   await expect(page.getByTestId('unlocks-sent-shares')).toContainText('bob: 50 %');
   await expect(page.getByTestId('section-balance').getByTestId('diverging-bar-chart')).toBeVisible();
   await expect(page.getByTestId('unlocks-sent-balance')).toContainText('Alice');
-  await expect(page.getByText('The pale bars count also the later items')).toBeVisible();
+  await expect(page.getByTestId('section-balance').getByTestId('statistic-info')).toHaveAttribute(
+    'aria-label',
+    /The pale bars count also the later items/,
+  );
   await expect(page.getByTestId('unlocks-sent-balance').getByRole('row', { name: /bob/ })).toBeVisible();
   await expect(page.getByTestId('unlocks-sent-by-player').getByRole('row', { name: /bob/ })).toContainText('Alice');
   await expect(page.getByTestId('section-matrix').getByTestId('heatmap-chart')).toBeVisible();
@@ -103,6 +106,22 @@ test('the statistics show the unlock times and the progress', async ({ page }) =
   await expect(page.getByTestId('slot-forecasts')).toContainText('Alice');
   await expect(page.getByTestId('section-activity').getByTestId('heatmap-chart')).toBeVisible();
   await expect(page.getByTestId('section-goals').getByTestId('gantt-chart')).toBeVisible();
+});
+
+test('the statistics filter by players and slots', async ({ page }) => {
+  await ensureRoom(page);
+  await page.goto('/room/big-chill/statistics');
+  await expect(page.getByTestId('statistics-checks')).toContainText('201 / 752');
+  await page.getByTestId('statistics-filter-slots').click();
+  await page.getByRole('option', { name: 'Alice (alice_owner)' }).click();
+  await page.keyboard.press('Escape');
+  await expect(page.getByTestId('statistics-filter-summary')).toContainText('1 slot selected');
+  await expect(page.getByTestId('statistics-checks')).not.toContainText('201 / 752');
+  await page.getByTestId('statistics-tab-statistics-progress').click();
+  await expect(page.getByTestId('slot-forecasts')).toContainText('Alice');
+  await expect(page.getByTestId('slot-forecasts')).not.toContainText('Bob');
+  await page.getByTestId('statistics-filter-clear').click();
+  await expect(page.getByTestId('statistics-filter-summary')).toHaveCount(0);
 });
 
 test('an admin sees the slots without Discord user and the extra statistics', async ({ page }) => {

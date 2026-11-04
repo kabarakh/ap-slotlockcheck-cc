@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 import { useCurrentRoomStore } from './current-room';
 import { CHECKS_HISTORY_NOT_AVAILABLE } from './pace';
+import { useStatisticsFilterStore } from './statistics-filter';
 import { useUiStore } from './ui';
 import { api, ApiRequestError, unwrap } from '@/api/client';
 import type { RoomHistory } from '@/api/types';
@@ -21,7 +22,13 @@ export const useRoomHistoryStore = defineStore('room-history', () => {
     }
     loading.value = true;
     try {
-      history.value = await unwrap(api.GET('/api/rooms/{slug}/statistics/history', { params: { path: { slug } } }));
+      const slotIds = useStatisticsFilterStore().historySlotIds;
+      const result = await unwrap(
+        api.GET('/api/rooms/{slug}/statistics/history', { params: { path: { slug }, query: { slotIds } } }),
+      );
+      if (JSON.stringify(slotIds) === JSON.stringify(useStatisticsFilterStore().historySlotIds)) {
+        history.value = result;
+      }
       unavailable.value = false;
     } catch (error) {
       if (error instanceof ApiRequestError && error.code === CHECKS_HISTORY_NOT_AVAILABLE) {

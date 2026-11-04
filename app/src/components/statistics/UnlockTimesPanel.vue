@@ -26,10 +26,12 @@ import {
 } from '@/domain/unlock-statistics';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useRoomHistoryStore } from '@/stores/room-history';
+import { useStatisticsStore } from '@/stores/statistics';
 
 const historyStore = useRoomHistoryStore();
 const { history, unavailable } = storeToRefs(historyStore);
-const { slots } = storeToRefs(useCurrentRoomStore());
+const { slots: allSlots } = storeToRefs(useCurrentRoomStore());
+const { filteredSlots: slots } = storeToRefs(useStatisticsStore());
 const { t } = useI18n();
 
 onMounted(() => historyStore.open());
@@ -59,16 +61,15 @@ const curveSeries = computed<LineSeries[]>(() => {
       label: t('statistics.unlockCurve.series'),
       color: 'unlocks',
       points: [...first, ...points, ...end],
-      step: true,
+      filled: true,
     },
   ];
 });
-const curveHints = computed(() => [
-  t('statistics.unlockCurve.hint', { count: curve.value.lockableCount }),
-  ...(curve.value.withoutTimeCount > 0
-    ? [t('statistics.unlockCurve.withoutTime', { count: curve.value.withoutTimeCount })]
-    : []),
-]);
+const curveHints = computed(() =>
+  curve.value.withoutTimeCount > 0
+    ? t('statistics.unlockCurve.withoutTime', { count: curve.value.withoutTimeCount })
+    : undefined,
+);
 
 const waits = computed(() => (start.value === null ? null : waitTimes(slots.value, start.value, now.value)));
 interface WaitRow extends SlotDuration {
@@ -112,7 +113,7 @@ const reactionFacts = computed(() => [
   { key: 'reaction-idle', label: t('statistics.reactions.withoutChecks'), value: String(idle.value.length) },
 ]);
 
-const leads = computed(() => leadTimes(slots.value));
+const leads = computed(() => leadTimes(slots.value, allSlots.value));
 const leadBars = computed(() => durationHistogram(leads.value.rows.map((row) => row.minutes)));
 const leadFacts = computed(() => [
   {
@@ -133,7 +134,7 @@ const leadFacts = computed(() => [
       {{ t('statistics.historyUnavailable') }}
     </Message>
 
-    <StatisticSection :title="t('statistics.unlockCurve.title')" :hints="curveHints" test-id="section-unlock-curve">
+    <StatisticSection :title="t('statistics.unlockCurve.title')" :info="curveHints" test-id="section-unlock-curve">
       <TimeLineChart
         v-if="curveSeries.length > 0"
         :series="curveSeries"
@@ -146,7 +147,7 @@ const leadFacts = computed(() => [
     <div class="app-statistic-columns">
       <StatisticSection
         :title="t('statistics.waits.title')"
-        :hints="[t('statistics.waits.hint')]"
+        :info="t('statistics.waits.hint')"
         test-id="section-wait-times"
       >
         <template v-if="waits">
@@ -185,7 +186,7 @@ const leadFacts = computed(() => [
 
       <StatisticSection
         :title="t('statistics.reactions.title')"
-        :hints="[t('statistics.reactions.hint')]"
+        :info="t('statistics.reactions.hint')"
         test-id="section-reactions"
       >
         <StatisticFacts :facts="reactionFacts" />
@@ -221,7 +222,7 @@ const leadFacts = computed(() => [
     <StatisticSection
       v-if="leads.pairsWithLaterItems > 0"
       :title="t('statistics.leads.title')"
-      :hints="[t('statistics.leads.hint')]"
+      :info="t('statistics.leads.hint')"
       test-id="section-leads"
     >
       <StatisticFacts :facts="leadFacts" />

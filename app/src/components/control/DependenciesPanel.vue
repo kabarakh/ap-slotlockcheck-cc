@@ -8,6 +8,7 @@ import DataTable from 'primevue/datatable';
 import Message from 'primevue/message';
 import ProgressSpinner from 'primevue/progressspinner';
 
+import StatisticsFilterBar from '@/components/statistics/StatisticsFilterBar.vue';
 import DateTimeText from '@/components/ui/DateTimeText.vue';
 import HeatmapChart from '@/components/ui/HeatmapChart.vue';
 import SlotNameList from '@/components/ui/SlotNameList.vue';
@@ -19,17 +20,26 @@ import { blockerStatistics, progressionStatistics, sphereProgressCurve } from '@
 import type { LineSeries } from '@/domain/statistics-charts';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useDependenciesStore } from '@/stores/dependencies';
+import { useStatisticsFilterStore } from '@/stores/statistics-filter';
 
 const store = useDependenciesStore();
 const { dependencies, loading } = storeToRefs(store);
 const { slots, hasSlotLock } = storeToRefs(useCurrentRoomStore());
+const filter = useStatisticsFilterStore();
 const { t } = useI18n();
 
 onMounted(() => store.open());
 onUnmounted(() => store.close());
 
 const blockers = computed(() =>
-  dependencies.value ? blockerStatistics(dependencies.value.blockers, slots.value) : null,
+  dependencies.value
+    ? blockerStatistics(
+        dependencies.value.blockers.filter(
+          (blocker) => filter.includes(blocker.lockedSlotId) || filter.includes(blocker.finderSlotId),
+        ),
+        slots.value,
+      )
+    : null,
 );
 const blockerFacts = computed(() =>
   blockers.value === null
@@ -54,7 +64,14 @@ const blockerFacts = computed(() =>
 );
 
 const progression = computed(() =>
-  dependencies.value ? progressionStatistics(dependencies.value.progressionFlow, slots.value) : null,
+  dependencies.value
+    ? progressionStatistics(
+        dependencies.value.progressionFlow.filter(
+          (row) => filter.includes(row.finderSlotId) || filter.includes(row.receiverSlotId),
+        ),
+        slots.value,
+      )
+    : null,
 );
 
 const sphereCurve = computed(() => (dependencies.value ? sphereProgressCurve(dependencies.value) : null));
@@ -67,7 +84,7 @@ const sphereSeries = computed<LineSeries[]>(() =>
           label: t('dependencies.spheres.series'),
           color: 'series-1',
           points: sphereCurve.value.points,
-          step: true,
+          filled: true,
         },
       ],
 );
@@ -85,12 +102,13 @@ const sphereFacts = computed(() => [
 
 <template>
   <div class="app-statistic-page">
+    <StatisticsFilterBar />
     <ProgressSpinner v-if="loading && !dependencies" />
     <template v-if="dependencies">
       <StatisticSection
         v-if="hasSlotLock && blockers"
         :title="t('dependencies.blockers.title')"
-        :hints="[t('dependencies.blockers.hint')]"
+        :info="t('dependencies.blockers.hint')"
         test-id="section-blockers"
       >
         <Message v-if="blockers.details.length === 0" severity="success" :closable="false">
@@ -173,7 +191,7 @@ const sphereFacts = computed(() => [
       <StatisticSection
         v-if="progression"
         :title="t('dependencies.progression.title')"
-        :hints="[t('dependencies.progression.hint')]"
+        :info="t('dependencies.progression.hint')"
         test-id="section-progression"
       >
         <div class="app-statistic-columns">
@@ -210,7 +228,7 @@ const sphereFacts = computed(() => [
       <StatisticSection
         v-if="sphereCurve"
         :title="t('dependencies.spheres.title')"
-        :hints="[t('dependencies.spheres.hint')]"
+        :info="t('dependencies.spheres.hint')"
         test-id="section-sphere-progress"
       >
         <StatisticFacts :facts="sphereFacts" />

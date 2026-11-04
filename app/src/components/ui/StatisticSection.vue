@@ -1,11 +1,23 @@
 <script setup lang="ts">
-const props = defineProps<{ title: string; hints?: string[]; testId: string }>();
+const props = defineProps<{ title: string; info?: string; testId: string }>();
 </script>
 
 <template>
   <section class="statistic-section" :data-testid="props.testId">
-    <h2>{{ props.title }}</h2>
-    <p v-for="hint in props.hints ?? []" :key="hint" class="app-muted statistic-hint">{{ hint }}</p>
+    <header class="statistic-header">
+      <h2>{{ props.title }}</h2>
+      <span
+        v-if="props.info"
+        v-tooltip.top="props.info"
+        class="pi pi-info-circle statistic-info"
+        role="img"
+        :aria-label="props.info"
+        tabindex="0"
+        data-testid="statistic-info"
+      />
+      <span class="app-spacer" />
+      <slot name="actions" />
+    </header>
     <slot />
   </section>
 </template>
@@ -14,21 +26,29 @@ const props = defineProps<{ title: string; hints?: string[]; testId: string }>()
 .statistic-section {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding: var(--app-gap);
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
   border: 1px solid var(--p-content-border-color);
   border-radius: var(--p-content-border-radius);
   background: var(--p-content-background);
   min-width: 0;
 }
 
-.statistic-section h2 {
-  margin: 0;
-  font-size: 1.125rem;
+.statistic-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.statistic-hint {
+.statistic-header h2 {
   margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.statistic-info {
+  color: var(--p-text-muted-color);
   font-size: 0.875rem;
+  cursor: help;
 }
 </style>

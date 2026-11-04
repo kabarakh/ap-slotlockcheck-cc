@@ -1,5 +1,5 @@
 import { scaleLinear, scaleTime } from 'd3-scale';
-import { curveLinear, curveStepAfter, line } from 'd3-shape';
+import { area, curveMonotoneX, curveStepAfter, line } from 'd3-shape';
 
 import type { ChartColor } from './charts';
 import type { TimePoint } from './statistics-time';
@@ -11,6 +11,7 @@ export interface LineSeries {
   points: TimePoint[];
   dashed?: boolean;
   step?: boolean;
+  filled?: boolean;
 }
 
 export interface LinePath {
@@ -19,6 +20,15 @@ export interface LinePath {
   color: ChartColor;
   dashed: boolean;
   path: string;
+  area: string | null;
+}
+
+function distinctTimes(points: TimePoint[]): TimePoint[] {
+  const byTime = new Map<number, TimePoint>();
+  for (const point of points) {
+    byTime.set(point.time, point);
+  }
+  return [...byTime.values()].sort((a, b) => a.time - b.time);
 }
 
 export interface AxisTick {
@@ -71,19 +81,27 @@ export function lineChartLayout(series: LineSeries[], width: number, height: num
     paths: series
       .filter((entry) => entry.points.length > 0)
       .map((entry) => {
+        const points = entry.step ? entry.points : distinctTimes(entry.points);
+        const curve = entry.step ? curveStepAfter : curveMonotoneX;
         const shape = line<TimePoint>()
           .x((point) => x(new Date(point.time)))
           .y((point) => y(point.value))
-          .curve(entry.step ? curveStepAfter : curveLinear);
+          .curve(curve);
+        const fill = area<TimePoint>()
+          .x((point) => x(new Date(point.time)))
+          .y0(height)
+          .y1((point) => y(point.value))
+          .curve(curve);
         return {
           key: entry.key,
           label: entry.label,
           color: entry.color,
           dashed: entry.dashed ?? false,
-          path: shape(entry.points) ?? '',
+          path: shape(points) ?? '',
+          area: entry.filled ? (fill(points) ?? null) : null,
         };
       }),
-    xTicks: x.ticks(6).map((tick) => ({ position: x(tick), value: tick.getTime() })),
+    xTicks: x.ticks(Math.max(2, Math.floor(width / 110))).map((tick) => ({ position: x(tick), value: tick.getTime() })),
     yTicks: y.ticks(4).map((tick) => ({ position: y(tick), value: tick })),
   };
 }
@@ -93,16 +111,17 @@ export interface HeatmapCell {
   column: number;
   value: number;
   opacity: number;
+  strong: boolean;
 }
+
+const STRONG_OPACITY = 0.55;
 
 export function heatmapCells(values: number[][], max = Math.max(0, ...values.flat())): HeatmapCell[] {
   return values.flatMap((row, rowIndex) =>
-    row.map((value, column) => ({
-      row: rowIndex,
-      column,
-      value,
-      opacity: max === 0 || value === 0 ? 0 : 0.15 + 0.85 * (value / max),
-    })),
+    row.map((value, column) => {
+      const opacity = max === 0 || value === 0 ? 0 : 0.15 + 0.85 * (value / max);
+      return { row: rowIndex, column, value, opacity, strong: opacity >= STRONG_OPACITY };
+    }),
   );
 }
 
@@ -153,6 +172,6 @@ export function ganttLayout(rows: GanttRow[], width: number): GanttLayout {
       })),
     ),
     goals: rows.flatMap((row) => (row.goalAt === null ? [] : [{ rowKey: row.key, x: x(new Date(row.goalAt)) }])),
-    ticks: x.ticks(6).map((tick) => ({ position: x(tick), value: tick.getTime() })),
+    ticks: x.ticks(Math.max(2, Math.floor(width / 110))).map((tick) => ({ position: x(tick), value: tick.getTime() })),
   };
 }

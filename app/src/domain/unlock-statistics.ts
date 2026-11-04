@@ -146,8 +146,8 @@ export function unlockedWithoutChecks(slots: SlotRow[], now: number): SlotDurati
     .sort(byMinutesDescending);
 }
 
-export function leadTimes(slots: SlotRow[]): LeadTimes {
-  const slotsById = new Map(slots.map((slot) => [slot.id, slot]));
+export function leadTimes(slots: SlotRow[], nameSlots: SlotRow[] = slots): LeadTimes {
+  const slotsById = new Map(nameSlots.map((slot) => [slot.id, slot]));
   const nameOf = (slotId: number | null) => (slotId === null ? null : (slotsById.get(slotId)?.name ?? null));
   const rows: LeadTime[] = [];
   let unlockedPairCount = 0;
@@ -254,21 +254,22 @@ export function gameBalance(slots: SlotRow[]): GameBalance[] {
 
 const LARGEST_SUBTREE_COUNT = 10;
 
-export function treeMetrics(forest: UnlockForest): TreeMetrics {
+export function treeMetrics(forest: UnlockForest, included: ReadonlySet<number> | null = null): TreeMetrics {
+  const isIncluded = (id: number) => included === null || included.has(id);
   const depthCounts = new Map<number, number>();
   const subtrees: TreeSubtree[] = [];
   let longestChain: string[] = [];
 
   const visit = (node: UnlockTreeNode, depth: number, chain: string[]): number => {
     const path = node.kind === 'slotlock' ? chain : [...chain, node.name];
-    if (node.kind !== 'slotlock') {
+    if (node.kind !== 'slotlock' && isIncluded(node.id)) {
       depthCounts.set(depth, (depthCounts.get(depth) ?? 0) + 1);
       if (path.length > longestChain.length) {
         longestChain = path;
       }
     }
     const descendants = node.children.reduce((sum, child) => sum + 1 + visit(child, depth + 1, path), 0);
-    if (node.kind !== 'slotlock') {
+    if (node.kind !== 'slotlock' && isIncluded(node.id)) {
       subtrees.push({ id: node.id, name: node.name, discordName: node.discordName, descendants });
     }
     return descendants;

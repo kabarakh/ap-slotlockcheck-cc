@@ -26,10 +26,12 @@ import {
 import type { GanttRow, LineSeries } from '@/domain/statistics-charts';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useRoomHistoryStore } from '@/stores/room-history';
+import { useStatisticsStore } from '@/stores/statistics';
 
 const historyStore = useRoomHistoryStore();
 const { history, loading, unavailable } = storeToRefs(historyStore);
-const { slots, hasSlotLock } = storeToRefs(useCurrentRoomStore());
+const { hasSlotLock } = storeToRefs(useCurrentRoomStore());
+const { filteredSlots: slots } = storeToRefs(useStatisticsStore());
 const { t, d, locale } = useI18n();
 
 onMounted(() => historyStore.open());
@@ -44,7 +46,7 @@ const forecastSeries = computed<LineSeries[]>(() =>
   forecast.value === null
     ? []
     : [
-        { key: 'checks', label: t('statistics.checks'), color: 'checks', points: forecast.value.points },
+        { key: 'checks', label: t('statistics.checks'), color: 'checks', points: forecast.value.points, filled: true },
         {
           key: 'forecast',
           label: t('statistics.forecast.series'),
@@ -89,7 +91,7 @@ const concurrentSeries = computed<LineSeries[]>(() =>
           label: t('statistics.concurrent.series'),
           color: 'series-4',
           points: concurrent.value.points,
-          step: true,
+          filled: true,
         },
       ],
 );
@@ -142,7 +144,7 @@ const goalRows = computed(() =>
     <template v-if="history && forecast">
       <StatisticSection
         :title="t('statistics.forecast.title')"
-        :hints="[t('statistics.forecast.hint', { hours: history.rateWindowHours })]"
+        :info="t('statistics.forecast.hint', { hours: history.rateWindowHours })"
         test-id="section-forecast"
       >
         <StatisticFacts :facts="forecastFacts" />
@@ -162,6 +164,7 @@ const goalRows = computed(() =>
           :always-show-paginator="false"
           data-testid="slot-forecasts"
         >
+          <template #empty>{{ t('slot.empty') }}</template>
           <Column field="name" :header="t('slot.columns.name')" sortable />
           <Column field="discordName" :header="t('slot.columns.discord')" sortable />
           <Column field="game" :header="t('slot.columns.game')" sortable />
@@ -182,7 +185,7 @@ const goalRows = computed(() =>
 
       <StatisticSection
         :title="t('statistics.activity.title')"
-        :hints="[t('statistics.activity.hint')]"
+        :info="t('statistics.activity.hint')"
         test-id="section-activity"
       >
         <HeatmapChart
@@ -201,7 +204,7 @@ const goalRows = computed(() =>
 
       <StatisticSection
         :title="t('statistics.concurrent.title')"
-        :hints="[t('statistics.concurrent.hint')]"
+        :info="t('statistics.concurrent.hint')"
         test-id="section-concurrent"
       >
         <StatisticFacts :facts="concurrentFacts" />
@@ -216,7 +219,7 @@ const goalRows = computed(() =>
 
     <StatisticSection
       :title="t('statistics.goals.title')"
-      :hints="[hasSlotLock ? t('statistics.goals.hint') : t('statistics.goals.hintWithoutLocks')]"
+      :info="hasSlotLock ? t('statistics.goals.hint') : t('statistics.goals.hintWithoutLocks')"
       test-id="section-goals"
     >
       <ul class="app-statistic-legend">

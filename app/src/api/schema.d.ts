@@ -2483,7 +2483,9 @@ export interface operations {
     };
     Statistics_getHistory: {
         parameters: {
-            query?: never;
+            query?: {
+                slotIds?: number[];
+            };
             header?: never;
             path: {
                 slug: string;
