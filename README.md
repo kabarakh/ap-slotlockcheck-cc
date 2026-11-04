@@ -24,7 +24,7 @@ The DTO classes of the server are the only source of the API types. The server w
 ### Lock detection
 
 - Each selected SlotLock slot tells in its slot data which slots it locks (`locked_slots`). Archipelago gives this data through the slot data tracker. So the lock assignment is known before the first unlock.
-- A slot is unlocked when each SlotLock slot that locks it has received an item "Unlock &lt;slot name&gt;". Only the first item of each pair counts. Items "Nothing" and "Unlock Bonus Slot n" are ignored. The server also keeps the later items of a pair with their sender (`LaterUnlockItem`). Each synchronization writes them again from the full list of received items, so an archived room gets them only after it is reopened.
+- A slot is unlocked when each SlotLock slot that locks it has received an item "Unlock &lt;slot name&gt;". Only the first item of each pair counts. Items "Nothing" and "Unlock Bonus Slot n" are ignored. The server also keeps the later items of a pair with their sender (`LaterUnlockItem`). Each synchronization writes them again from the full list of received items, so an archived room gets them only after it is reopened. A later item keeps the time when a synchronization found it first (`firstSeenAt`). The key is the pair and the position of the item in the pair. Later items of the first synchronization and of the time before this field have no time.
 - Slot names are compared without case. Unknown names are shown to the admins.
 - An admin can add or remove a lock assignment. This replaces the detected value until the admin resets it.
 
@@ -57,11 +57,29 @@ The functions are in `PLAN room archive.md`.
 
 The browser calculates inactivity, player summaries and statistics from the roster. The statistics show a donut chart for each part of a total and a bar chart for each distribution. `d3-shape` and `d3-scale` calculate the geometry (`charts.ts`); Vue draws the SVG, as for the unlock tree. The colors are CSS variables (`--app-chart-*`), so the charts follow the light and the dark mode. The statistic "Unlocked slots per player" counts for each player the slots that received an unlock item from a slot of this player. A slot with more than one unlock item counts one time for each player that sent one of them. Unlock items from SlotLock slots count for no player. The donut chart shows the percentage of each player in the sum of these counts; the first players by count get a color of the series `--app-chart-series-*`, all other players are one part. The table shows the absolute numbers. The statistic "Unlocks compared with the expectation" gives each player an expected number of unlocks: the sum of all counts multiplied by the share of the player in the slots, and also in the locations (`checksTotal`). A bar shows the difference between the count and the expected number, so zero means "as expected". Small rooms give large random differences. A pale bar next to each bar counts also the later unlock items that the slots of each player sent. The later items show who would have unlocked a slot with a faster find. When no slot of the room has received a later unlock item, the pale bars and the columns of the later items are hidden. The inactivity counts from the latest of these times: last activity in Cheese, last "Still BK" click in Cheese, activity timer of Archipelago, unlock time. Slots with reached goal have no inactivity. It uses the current time, so the colors change without a new synchronization.
 
+### Extended statistics
+
+The statistics have four tabs. The tabs "Unlock times" and "Who unlocks" are only in rooms with SlotLock.
+
+- **Overview:** the donut charts and the players by locked and unlocked slots.
+- **Unlock times:** the unlocked slots over time, the time from the start of the room until each unlock, the time from the unlock until the first check, the unlocked slots without checks and the lead of the first unlock item before the second item.
+- **Who unlocks:** the unlocked slots per player, the unlocks compared with the expectation per player and per game, a heatmap of the sender and receiver players and the depth of the unlock tree.
+- **Progress:** the checks over time with a forecast, the activity by weekday and hour, the active players at the same time and a goal timeline.
+
+The game control has the tab "Dependencies" for admins and admin helpers in rooms with a seed: the open unlock items of locked slots (who blocks whom), the open progression items for other players and the lowest open sphere over time.
+
+- The server gives the time values with `GET /rooms/:slug/statistics/history` to all users. It uses the checks history of Cheese on the 10-minute grid of the pace statistics and sums it in buckets of one hour: the checks, the new checks, the active slots and the active players. A step with more new checks than the bulk limit is not activity. For each slot, the server gives the first check (only when the history starts with 0 checks) and the checks of the last 24 hours.
+- The start of the room is the first check in the checks history. The forecast continues the checks of the last 24 hours until all open checks of the slots without goal are done.
+- The time until the first check uses only unlock times that a synchronization, an admin or a CSV gave. An estimated unlock time is the first check, so it gives no value.
+- The heatmap of the activity uses the time zone of the browser.
+- The server gives the dependencies with `GET /rooms/:slug/statistics/dependencies` only to admins and admin helpers, because they show items. A blocker is an open location with the item "Unlock &lt;slot name&gt;" for a SlotLock slot, when this pair is not unlocked. A sphere is done at the latest time of its locations: the check, the filler mark or the goal of the slot.
+- The browser calculates all other values from the roster and from these two answers (`unlock-statistics.ts`, `progress-statistics.ts`, `dependency-statistics.ts`). `d3-scale` and `d3-shape` calculate the line charts, the heatmaps and the goal timeline (`statistics-charts.ts`).
+
 ### Game control and setup
 
 Admins and admin helpers have two areas:
 
-- **Game control** (`/control`) contains the work during the game: spheres, the admin view of the locations, messages (inactivity reminder and sphere clean-up), warnings and the Archipelago server. A click on a sphere shows its open locations in a side panel. From there, the admin opens the clean-up text for this sphere or the location list with this sphere as filter. The tabs show counters: the lowest open sphere, the red and yellow slots, the warnings.
+- **Game control** (`/control`) contains the work during the game: spheres, the admin view of the locations, messages (inactivity reminder and sphere clean-up), pace, dependencies, warnings and the Archipelago server. A click on a sphere shows its open locations in a side panel. From there, the admin opens the clean-up text for this sphere or the location list with this sphere as filter. The tabs show counters: the lowest open sphere, the red and yellow slots, the warnings.
 - **Setup** (`/admin`) contains the work for the setup of a room: settings, lock assignment, admins, seed, unlock times and room. Admin helpers see only the tabs seed and room.
 
 The URL contains the active tab, so the back button and bookmarks work. Old links with `?view=admin` go to the game control. The browser keeps the selections of the clean-up and of the reminder. In the roster, admins and admin helpers click the inactivity of a slot to copy its reminder or to give a warning.
