@@ -10,16 +10,25 @@ export interface LoginIdentity {
   avatar: string | null;
 }
 
+const RETURN_PATH_ORIGIN = 'https://return-path.invalid';
+
 export function safeReturnPath(returnTo: unknown): string {
   if (
     typeof returnTo !== 'string' ||
     !returnTo.startsWith('/') ||
     returnTo.startsWith('//') ||
-    returnTo.includes('\\')
+    returnTo.includes('\\') ||
+    Array.from({ length: returnTo.length }, (_, index) => returnTo.charCodeAt(index)).some(
+      (code) => code < 0x20 || code === 0x7f,
+    )
   ) {
     return '/';
   }
-  return returnTo;
+  const target = new URL(returnTo, RETURN_PATH_ORIGIN);
+  if (target.origin !== RETURN_PATH_ORIGIN) {
+    return '/';
+  }
+  return target.pathname + target.search + target.hash;
 }
 
 @Injectable()
