@@ -351,3 +351,26 @@ html.app-dark {
 .chart-legend.pace-after_goal {
   background: var(--app-pace-after-goal);
 }
+
+.app-statistic-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--app-gap);
+}
+
+.app-statistic-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: var(--app-gap);
+  align-items: start;
+}
+
+.app-statistic-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem var(--app-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}

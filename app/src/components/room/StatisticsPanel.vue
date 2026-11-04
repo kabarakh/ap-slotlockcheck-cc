@@ -7,17 +7,9 @@ import Column from 'primevue/column';
 import DataTable from 'primevue/datatable';
 
 import BarChart from '@/components/ui/BarChart.vue';
-import DivergingBarChart from '@/components/ui/DivergingBarChart.vue';
 import DonutChart from '@/components/ui/DonutChart.vue';
-import SlotNameList from '@/components/ui/SlotNameList.vue';
 
-import type { ChartColor, ChartPart, ChartRow } from '@/domain/charts';
-import {
-  unlocksSentBalance,
-  unlocksSentShares,
-  type PlayerSummary,
-  type UnlocksSentExpectation,
-} from '@/domain/summary';
+import type { ChartPart } from '@/domain/charts';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useStatisticsStore } from '@/stores/statistics';
 
@@ -30,7 +22,7 @@ interface StatisticCard {
   legend: boolean;
 }
 
-const { globalStatistics, playerSummaries } = storeToRefs(useStatisticsStore());
+const { globalStatistics } = storeToRefs(useStatisticsStore());
 const { hasSlotLock } = storeToRefs(useCurrentRoomStore());
 const { t } = useI18n();
 
@@ -145,52 +137,6 @@ const unlockedBars = computed(() =>
     value: entry.playerCount,
   })),
 );
-const balance = computed(() => unlocksSentBalance(playerSummaries.value));
-const hasLaterItems = computed(() => balance.value.some((player) => player.laterUnlockItemCount > 0));
-type ExpectationKey = 'bySlots' | 'bySlotsWithLater' | 'byLocations' | 'byLocationsWithLater';
-interface BalanceSeries {
-  key: ExpectationKey;
-  label: string;
-  color: ChartColor;
-  muted: boolean;
-}
-const balanceSeries = computed(() =>
-  (
-    [
-      { key: 'bySlots', label: t('statistics.balance.bySlots'), color: 'unlocks', muted: false },
-      { key: 'bySlotsWithLater', label: t('statistics.balance.bySlotsWithLater'), color: 'unlocks', muted: true },
-      { key: 'byLocations', label: t('statistics.balance.byLocations'), color: 'series-2', muted: false },
-      {
-        key: 'byLocationsWithLater',
-        label: t('statistics.balance.byLocationsWithLater'),
-        color: 'series-2',
-        muted: true,
-      },
-    ] satisfies BalanceSeries[]
-  ).filter((series) => hasLaterItems.value || !series.muted),
-);
-const balanceSeriesLabels = computed(() =>
-  Object.fromEntries(balanceSeries.value.map((series) => [series.key, series.label])),
-);
-const balanceRows = computed<ChartRow[]>(() =>
-  balance.value.map((player) => ({
-    key: player.key,
-    label: player.name,
-    values: balanceSeries.value.map((series) => ({
-      key: series.key,
-      value: player[series.key].deviation,
-      color: series.color,
-      muted: series.muted,
-    })),
-  })),
-);
-const expectationText = (expectation: UnlocksSentExpectation) =>
-  t('statistics.balance.expectation', {
-    expected: expectation.expected,
-    deviation: expectation.deviation > 0 ? `+${expectation.deviation}` : String(expectation.deviation),
-  });
-
-const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value, t('statistics.otherPlayers')));
 </script>
 
 <template>
@@ -241,94 +187,6 @@ const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value,
           <Column field="playerCount" :header="t('statistics.playerCount')" />
         </DataTable>
       </div>
-      <div>
-        <h2>{{ t('statistics.unlocksSentByPlayer') }}</h2>
-        <div class="statistic share-chart" data-testid="unlocks-sent-shares">
-          <DonutChart :parts="unlocksSentParts" :size="160" />
-          <ul class="statistic-legend">
-            <li v-for="part in unlocksSentParts" :key="part.key">
-              <span class="chart-legend" :class="`chart-${part.color}`" />{{ part.label }}:
-              {{ percentage(part.percentage) }}
-            </li>
-          </ul>
-        </div>
-        <DataTable
-          :value="playerSummaries"
-          data-key="key"
-          sort-field="unlocksSentCount"
-          :sort-order="-1"
-          removable-sort
-          size="small"
-          striped-rows
-          data-testid="unlocks-sent-by-player"
-        >
-          <Column field="name" :header="t('players.columns.name')" sortable />
-          <Column field="unlocksSentCount" :header="t('statistics.unlocksSentCount')" sortable>
-            <template #body="{ data }">
-              <SlotNameList
-                :count="(data as PlayerSummary).unlocksSentCount"
-                :names="(data as PlayerSummary).unlocksSentNames"
-              />
-            </template>
-          </Column>
-        </DataTable>
-      </div>
-    </div>
-    <div v-if="hasSlotLock" class="balance">
-      <h2>{{ t('statistics.balance.title') }}</h2>
-      <p class="app-muted balance-hint">{{ t('statistics.balance.hint') }}</p>
-      <p v-if="hasLaterItems" class="app-muted balance-hint">{{ t('statistics.balance.laterItemsHint') }}</p>
-      <ul class="statistic-legend balance-legend">
-        <li v-for="series in balanceSeries" :key="series.key">
-          <span class="chart-legend" :class="[`chart-${series.color}`, { 'chart-muted': series.muted }]" />
-          {{ series.label }}
-        </li>
-      </ul>
-      <DivergingBarChart
-        :rows="balanceRows"
-        :series-labels="balanceSeriesLabels"
-        :x-label="t('statistics.balance.deviation')"
-      />
-      <DataTable
-        :value="balance"
-        data-key="key"
-        size="small"
-        striped-rows
-        removable-sort
-        data-testid="unlocks-sent-balance"
-      >
-        <Column field="name" :header="t('players.columns.name')" sortable />
-        <Column field="unlocksSentCount" :header="t('statistics.unlocksSentCount')" sortable />
-        <Column v-if="hasLaterItems" field="laterUnlockItemCount" :header="t('statistics.balance.laterItems')" sortable>
-          <template #body="{ data }">
-            <SlotNameList :count="data.laterUnlockItemCount" :names="data.laterUnlockNames" />
-          </template>
-        </Column>
-        <Column
-          v-if="hasLaterItems"
-          field="foundUnlockItemCount"
-          :header="t('statistics.balance.foundItems')"
-          sortable
-        />
-        <Column field="bySlots.share" :header="t('statistics.balance.slotShare')" sortable>
-          <template #body="{ data }">{{ percentage(data.bySlots.share) }}</template>
-        </Column>
-        <Column field="bySlots.deviation" :header="t('statistics.balance.bySlots')" sortable>
-          <template #body="{ data }">
-            <div>{{ expectationText(data.bySlots) }}</div>
-            <div v-if="hasLaterItems" class="app-muted">{{ expectationText(data.bySlotsWithLater) }}</div>
-          </template>
-        </Column>
-        <Column field="byLocations.share" :header="t('statistics.balance.locationShare')" sortable>
-          <template #body="{ data }">{{ percentage(data.byLocations.share) }}</template>
-        </Column>
-        <Column field="byLocations.deviation" :header="t('statistics.balance.byLocations')" sortable>
-          <template #body="{ data }">
-            <div>{{ expectationText(data.byLocations) }}</div>
-            <div v-if="hasLaterItems" class="app-muted">{{ expectationText(data.byLocationsWithLater) }}</div>
-          </template>
-        </Column>
-      </DataTable>
     </div>
   </section>
 </template>
@@ -350,25 +208,6 @@ const unlocksSentParts = computed(() => unlocksSentShares(playerSummaries.value,
   padding: 0;
   list-style: none;
   font-size: 0.875rem;
-}
-
-.share-chart {
-  margin-bottom: var(--app-gap);
-}
-
-.balance {
-  margin-top: var(--app-gap);
-}
-
-.balance-hint {
-  margin: 0 0 0.5rem;
-}
-
-.balance-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem var(--app-gap);
-  margin-bottom: 0.5rem;
 }
 
 .distributions {

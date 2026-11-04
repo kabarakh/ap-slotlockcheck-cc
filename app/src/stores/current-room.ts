@@ -2,9 +2,11 @@ import { defineStore } from 'pinia';
 import { computed, ref } from 'vue';
 
 import { useAuthStore } from './auth';
+import { useDependenciesStore } from './dependencies';
 import { useLiveStore } from './live';
 import { useLocationsStore } from './locations';
 import { usePaceStore } from './pace';
+import { useRoomHistoryStore } from './room-history';
 import { useSeedStore } from './seed';
 import { useServerAdminStore } from './server-admin';
 import { useSphereOverviewStore } from './sphere-overview';
@@ -120,6 +122,8 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     useLocationsStore().leave();
     useServerAdminStore().clear();
     usePaceStore().clear();
+    useRoomHistoryStore().clear();
+    useDependenciesStore().clear();
   };
 
   const applySynced = (payload: RoomSyncedPayload) => {
@@ -133,6 +137,8 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     const added = payload.changedSlots.filter((slot) => !slots.value.some((existing) => existing.id === slot.id));
     slots.value = [...kept, ...added];
     void usePaceStore().refresh();
+    void useRoomHistoryStore().refresh();
+    void useDependenciesStore().refresh();
   };
 
   const applySyncFailed = (payload: RoomSyncFailedPayload) => {
@@ -147,6 +153,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
       slots.value = payload.slots;
       void refreshWarnings();
       void usePaceStore().refresh();
+      void useDependenciesStore().refresh();
     }
   };
 
@@ -158,6 +165,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
       await useSphereOverviewStore().fetch();
     }
     await useLocationsStore().refresh();
+    await useDependenciesStore().refresh();
   };
 
   const requestSync = async (): Promise<void> => {

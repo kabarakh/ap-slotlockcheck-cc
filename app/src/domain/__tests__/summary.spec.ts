@@ -71,7 +71,7 @@ describe('unlocks sent by a player', () => {
     senderName: null,
     unlockTime: null,
     timeSource: null,
-    laterSenderSlotIds,
+    laterUnlocks: laterSenderSlotIds.map((senderSlotId) => ({ senderSlotId, firstSeenAt: null })),
   });
   const unlockSlots = [
     slotRow({ id: 1, name: 'Locker', isSlotLock: true, discordUserId: '1', discordName: 'alice' }),

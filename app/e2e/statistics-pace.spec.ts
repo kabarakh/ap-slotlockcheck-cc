@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { ensureRoom, loginAs, OWNER, PLAYER } from './support';
+import { ensureRoom, ensureSeed, loginAs, OWNER, PLAYER } from './support';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -49,4 +49,22 @@ test('a player does not see the pace statistics', async ({ page }) => {
   await expect(page).not.toHaveURL(/control/);
   await expect(page.getByTestId('control-tab-pace')).toHaveCount(0);
   await expect(page.getByTestId('slot-pace-table')).toHaveCount(0);
+});
+
+test('an admin sees the dependencies of the room', async ({ page }) => {
+  await ensureSeed(page);
+  await loginAs(page, OWNER);
+  await page.goto('/room/big-chill/control');
+  await page.getByTestId('control-tab-dependencies').click();
+  await expect(page).toHaveURL(/control\/dependencies$/);
+  await expect(page.getByTestId('section-blockers')).toBeVisible();
+  await expect(page.getByTestId('progression-players')).toContainText('alice_owner');
+  await expect(page.getByTestId('sphere-progress')).toContainText('0');
+});
+
+test('a player does not see the dependencies', async ({ page }) => {
+  await ensureSeed(page);
+  await loginAs(page, PLAYER);
+  await page.goto('/room/big-chill/control/dependencies');
+  await expect(page).not.toHaveURL(/control/);
 });

@@ -692,6 +692,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/statistics/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Statistics_getHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rooms/{slug}/statistics/dependencies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Statistics_getDependencies"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -784,16 +816,21 @@ export interface components {
         LockStatus: "not_locked" | "start_slot" | "locked" | "partially_unlocked" | "unlocked";
         /** @enum {string} */
         UnlockTimeSource: "sync" | "estimated" | "manual" | "csv" | "unknown";
+        LaterUnlockDto: {
+            senderSlotId: number | null;
+            /** Format: date-time */
+            firstSeenAt: string | null;
+        };
         SlotLockDto: {
             senderSlotId: number | null;
             senderName: string | null;
             /** Format: date-time */
             unlockTime: string | null;
             timeSource: components["schemas"]["UnlockTimeSource"] | null;
+            laterUnlocks: components["schemas"]["LaterUnlockDto"][];
             lockerSlotId: number;
             lockerName: string;
             unlocked: boolean;
-            laterSenderSlotIds: number[];
         };
         SlotRowDto: {
             archipelagoName: string | null;
@@ -1179,6 +1216,60 @@ export interface components {
             playerPeriods: components["schemas"]["TimelinePlayerPeriodDto"][];
             unreadableSnapshots: components["schemas"]["TimePeriodDto"][];
             slotId: number;
+        };
+        HistoryBucketDto: {
+            /** Format: date-time */
+            time: string;
+            checks: number;
+            newChecks: number;
+            activeSlots: number;
+            activePlayers: number;
+        };
+        SlotHistoryDto: {
+            /** Format: date-time */
+            firstCheckTime: string | null;
+            slotId: number;
+            recentChecks: number;
+        };
+        RoomHistoryDto: {
+            /** Format: date-time */
+            calculatedAt: string;
+            /** Format: date-time */
+            historyFrom: string | null;
+            /** Format: date-time */
+            startedAt: string | null;
+            buckets: components["schemas"]["HistoryBucketDto"][];
+            slots: components["schemas"]["SlotHistoryDto"][];
+            bucketMinutes: number;
+            rateWindowHours: number;
+        };
+        BlockerDto: {
+            lockedSlotId: number;
+            lockerSlotId: number;
+            finderSlotId: number;
+            locationName: string;
+            sphere: number;
+        };
+        ProgressionFlowDto: {
+            finderSlotId: number;
+            receiverSlotId: number;
+            total: number;
+            open: number;
+        };
+        SphereProgressDto: {
+            /** Format: date-time */
+            doneAt: string | null;
+            sphere: number;
+            locationCount: number;
+        };
+        RoomDependenciesDto: {
+            /** Format: date-time */
+            calculatedAt: string;
+            /** Format: date-time */
+            seedUploadedAt: string;
+            blockers: components["schemas"]["BlockerDto"][];
+            progressionFlow: components["schemas"]["ProgressionFlowDto"][];
+            spheres: components["schemas"]["SphereProgressDto"][];
         };
         ApiErrorDto: {
             details?: {
@@ -2386,6 +2477,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SlotTimelineDto"];
+                };
+            };
+        };
+    };
+    Statistics_getHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomHistoryDto"];
+                };
+            };
+        };
+    };
+    Statistics_getDependencies: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RoomDependenciesDto"];
                 };
             };
         };

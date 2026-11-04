@@ -62,6 +62,10 @@ test('a room without SlotLock hides the lock functions', async ({ page }) => {
   await page.goto('/room/async/statistics');
   await expect(page.getByTestId('statistics-unlocked')).toHaveCount(0);
   await expect(page.getByTestId('bar-chart')).toHaveCount(0);
+  await expect(page.getByTestId('statistics-tab-statistics-unlock-times')).toHaveCount(0);
+  await expect(page.getByTestId('statistics-tab-statistics-progress')).toBeVisible();
+  await page.goto('/room/async/statistics/unlock-senders');
+  await expect(page).toHaveURL(/\/room\/async$/);
 });
 
 test('the setup of a room without SlotLock has no lock tabs and saves the settings', async ({ page }) => {

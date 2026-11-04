@@ -12,7 +12,7 @@ const lock = (lockerSlotId: number, senderSlotId: number | null, unlockTime: str
   senderName: null,
   unlockTime,
   timeSource: unlockTime ? 'sync' : 'unknown',
-  laterSenderSlotIds: [],
+  laterUnlocks: [],
 });
 
 const names = (nodes: UnlockTreeNode[]): unknown[] =>

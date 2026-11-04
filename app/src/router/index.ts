@@ -40,7 +40,34 @@ const router = createRouter({
       children: [
         { path: '', name: 'roster', component: () => import('@/views/RosterView.vue') },
         { path: 'players', name: 'players', component: () => import('@/views/PlayerSummaryView.vue') },
-        { path: 'statistics', name: 'statistics', component: () => import('@/views/StatisticsView.vue') },
+        {
+          path: 'statistics',
+          component: () => import('@/views/StatisticsView.vue'),
+          children: [
+            {
+              path: '',
+              name: 'statistics',
+              component: () => import('@/components/room/StatisticsPanel.vue'),
+            },
+            {
+              path: 'unlock-times',
+              name: 'statistics-unlock-times',
+              component: () => import('@/components/statistics/UnlockTimesPanel.vue'),
+              meta: { requiresSlotLock: true },
+            },
+            {
+              path: 'unlock-senders',
+              name: 'statistics-unlock-senders',
+              component: () => import('@/components/statistics/UnlockSendersPanel.vue'),
+              meta: { requiresSlotLock: true },
+            },
+            {
+              path: 'progress',
+              name: 'statistics-progress',
+              component: () => import('@/components/statistics/ProgressPanel.vue'),
+            },
+          ],
+        },
         {
           path: 'unlock-tree',
           name: 'unlock-tree',
@@ -93,6 +120,12 @@ const router = createRouter({
               name: 'control-pace',
               component: () => import('@/views/ControlPaceView.vue'),
               meta: { requiresRole: 'helper' },
+            },
+            {
+              path: 'dependencies',
+              name: 'control-dependencies',
+              component: () => import('@/components/control/DependenciesPanel.vue'),
+              meta: { requiresLocations: true },
             },
             {
               path: 'warnings',

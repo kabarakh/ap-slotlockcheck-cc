@@ -11,7 +11,7 @@ const lock = (senderName: string | null, unlocked = true, unlockTime: string | n
   senderName,
   unlockTime,
   timeSource: null,
-  laterSenderSlotIds: [],
+  laterUnlocks: [],
 });
 
 describe('unlockSenderKey', () => {

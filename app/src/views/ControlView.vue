@@ -67,6 +67,13 @@ const tabs = computed<ControlTab[]>(() => [
     badges: [],
   },
   {
+    name: 'control-dependencies',
+    label: t('control.tabs.dependencies'),
+    section: 'dependencies',
+    visible: canSeeLocations.value,
+    badges: [],
+  },
+  {
     name: 'control-warnings',
     label: t('control.tabs.warnings'),
     section: 'warnings',

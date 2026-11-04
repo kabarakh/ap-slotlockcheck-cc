@@ -116,8 +116,8 @@ function addFoundUnlockItems(slots: SlotRow[], players: Map<string, PlayerSummar
       if (firstSender) {
         firstSender.firstUnlockItemCount += 1;
       }
-      for (const laterSenderSlotId of lock.laterSenderSlotIds) {
-        const laterSender = senderOf(laterSenderSlotId);
+      for (const laterUnlock of lock.laterUnlocks) {
+        const laterSender = senderOf(laterUnlock.senderSlotId);
         if (!laterSender) {
           continue;
         }
@@ -264,7 +264,7 @@ function roundToTenth(value: number): number {
   return Math.round(value * 10) / 10;
 }
 
-function expectation(part: number, total: number, unlocksTotal: number, actual: number): UnlocksSentExpectation {
+export function expectation(part: number, total: number, unlocksTotal: number, actual: number): UnlocksSentExpectation {
   const expected = total === 0 ? 0 : (part / total) * unlocksTotal;
   return {
     share: percentage(part, total),
