@@ -145,7 +145,7 @@ The functions are in `PLAN pace statistics.md`. The technical plan is in `PLAN p
 - Active room: the server removes the snapshots that are older than `SNAPSHOT_RETENTION_DAYS` (default 14) and that the pace signals already read. It keeps the newest snapshot of each source and the synchronization runs of the kept snapshots.
 - Archived room: the server first updates the pace signals, then removes all snapshots and synchronization runs. Slots, seed data, unlock times and pace signals stay, so the archived room shows the same data. After a reopen, the synchronization saves new snapshots.
 - `Room.snapshotsPrunedAt` marks a room with removed snapshots. If new snapshots of such a room are older than the saved pace signals, the server ignores them and does not read everything again, because the old snapshots are missing.
-- SQLite gives free space back to the file system only with `auto_vacuum = INCREMENTAL`. The server then runs `PRAGMA incremental_vacuum` after each cleanup. See `deploy/README.md` for the one-time switch.
+- SQLite gives free space back to the file system only with `auto_vacuum = INCREMENTAL`. The server then runs `PRAGMA incremental_vacuum` after each cleanup. A new database gets this mode at the first deployment; see `deploy/README.md` for the one-time switch of an older database.
 
 ### Vue components
 

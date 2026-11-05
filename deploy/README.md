@@ -64,7 +64,7 @@ This guide is for the person who prepares the proServer. This can be the develop
 1. Start the workflow "Deploy" manually, or push a tag `v*`.
 2. The workflow runs all CI checks first.
 3. The workflow builds the application and copies the release with rsync.
-4. `deploy/post-deploy.sh` installs the production packages, makes a copy of the database, runs the migrations, changes the link `current` and reloads pm2.
+4. `deploy/post-deploy.sh` installs the production packages, makes a copy of the database (or creates a new database), runs the migrations, changes the link `current` and reloads pm2.
 5. If the health check `GET /api/health` fails, the script sets `current` back to the last release.
 6. The script keeps the last 5 releases.
 
@@ -74,7 +74,7 @@ This guide is for the person who prepares the proServer. This can be the develop
 - Status: `pm2 status`.
 - Database backups: `~/slotlock/shared/backups`. Delete old backups from time to time.
 - Migrations that change a big table copy the table. Keep free disk space of at least two times the database size.
-- One time, switch the database to `auto_vacuum = INCREMENTAL`, so the server can give free space back. Stop the application for this, because `VACUUM` writes the full database again:
+- The server gives free space back only with `auto_vacuum = INCREMENTAL`. `deploy/post-deploy.sh` creates a new database with this mode. A database from an older release needs the switch one time. Stop the application for this, because `VACUUM` writes the full database again:
 
   ```bash
   pm2 stop slotlock

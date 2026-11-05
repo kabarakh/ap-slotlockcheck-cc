@@ -25,6 +25,13 @@ ln -sfn "$shared_dir/.env.production" "$release_dir/server/.env.production"
 database_file="$shared_dir/data/slotlock.db"
 if [ -f "$database_file" ]; then
   cp "$database_file" "$shared_dir/backups/slotlock-$(date +%Y%m%d-%H%M%S).db"
+else
+  (cd "$release_dir/server" && node -e '
+    const Database = require("better-sqlite3");
+    const database = new Database(process.argv[1]);
+    database.exec("PRAGMA auto_vacuum = INCREMENTAL; VACUUM;");
+    database.close();
+  ' "$database_file")
 fi
 
 (cd "$release_dir/server" && npx prisma migrate deploy)
