@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import type { Room } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { snapshotPayloadText } from '../sync/snapshot-payload.js';
 import {
   emptySignalsState,
   parseSignalsState,
@@ -89,10 +90,17 @@ export class PaceSignalsService {
     let entries = await this.newEntries(room.id, stored.lastSnapshotIds);
     let { snapshots, withoutRun } = await this.order(room.id, entries);
     if (!isAfterLastRead(stored, snapshots)) {
-      this.logger.warn(`New snapshots of room ${room.slug} are older than the saved pace signals, read all again`);
-      stored = emptyStoredSignals();
-      entries = await this.newEntries(room.id, stored.lastSnapshotIds);
-      ({ snapshots, withoutRun } = await this.order(room.id, entries));
+      if (await this.isPruned(room.id)) {
+        this.logger.warn(
+          `New snapshots of room ${room.slug} are older than the saved pace signals and are not used, because old snapshots were removed`,
+        );
+        snapshots = snapshots.filter((snapshot) => isAfterLastRead(stored, [snapshot]));
+      } else {
+        this.logger.warn(`New snapshots of room ${room.slug} are older than the saved pace signals, read all again`);
+        stored = emptyStoredSignals();
+        entries = await this.newEntries(room.id, stored.lastSnapshotIds);
+        ({ snapshots, withoutRun } = await this.order(room.id, entries));
+      }
     }
     if (saved !== null && entries.length === 0) {
       return stored;
@@ -137,6 +145,14 @@ export class PaceSignalsService {
     }
   }
 
+  private async isPruned(roomId: number): Promise<boolean> {
+    const room = await this.prisma.room.findUniqueOrThrow({
+      where: { id: roomId },
+      select: { snapshotsPrunedAt: true },
+    });
+    return room.snapshotsPrunedAt !== null;
+  }
+
   private async newEntries(roomId: number, lastSnapshotIds: LastSnapshotIds): Promise<SnapshotEntry[]> {
     const entries = await this.prisma.syncSnapshot.findMany({
       where: {
@@ -159,13 +175,12 @@ export class PaceSignalsService {
   private async read(room: SignalsRoom, stored: StoredSignals, snapshots: OrderedSnapshot[]): Promise<void> {
     for (let start = 0; start < snapshots.length; start += SNAPSHOT_BATCH_SIZE) {
       const batch = snapshots.slice(start, start + SNAPSHOT_BATCH_SIZE);
+      const rows = await this.prisma.syncSnapshot.findMany({
+        where: { id: { in: batch.map((snapshot) => snapshot.id) } },
+        select: { id: true, payload: true, compressedPayload: true },
+      });
       const payloads = new Map(
-        (
-          await this.prisma.syncSnapshot.findMany({
-            where: { id: { in: batch.map((snapshot) => snapshot.id) } },
-            select: { id: true, payload: true },
-          })
-        ).map((row) => [row.id, row.payload]),
+        await Promise.all(rows.map(async (row) => [row.id, await snapshotPayloadText(row)] as const)),
       );
       for (const snapshot of batch) {
         for (const open of stored.unreadableSnapshots) {

@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { createHash } from 'node:crypto';
 
 import type { Prisma, Room } from '../generated/prisma/client.js';
 import { LiveGateway } from '../live/live.gateway.js';
@@ -25,6 +24,7 @@ import {
 } from './room-source.mapper.js';
 import { RoomSourceService, type RoomSource } from './room-source.service.js';
 import { diffRoster } from './roster.diff.js';
+import { compressSnapshotPayload, snapshotHash } from './snapshot-payload.js';
 
 export type SyncTrigger = 'schedule' | 'manual' | 'create' | 'seed';
 export type SyncOutcome = 'success' | 'failed' | 'skipped';
@@ -114,8 +114,7 @@ export class SyncService {
       ap_slot_data: source.slotData,
     };
     for (const [sourceName, payload] of Object.entries(payloads)) {
-      const json = JSON.stringify(payload);
-      const hash = createHash('sha256').update(json).digest('hex');
+      const hash = snapshotHash(sourceName, payload);
       const last = await this.prisma.syncSnapshot.findFirst({
         where: { roomId, source: sourceName },
         orderBy: { id: 'desc' },
@@ -128,7 +127,7 @@ export class SyncService {
             roomId,
             source: sourceName,
             hash,
-            payload: json,
+            compressedPayload: await compressSnapshotPayload(JSON.stringify(payload)),
             firstSyncRunId: syncRunId,
             lastSyncRunId: syncRunId,
           },

@@ -50,6 +50,11 @@ export class Environment {
 
   @Transform(toInteger)
   @IsInt()
+  @Min(1)
+  SNAPSHOT_RETENTION_DAYS = 14;
+
+  @Transform(toInteger)
+  @IsInt()
   @Min(60)
   MANUAL_SYNC_COOLDOWN_SECONDS = 60;
 

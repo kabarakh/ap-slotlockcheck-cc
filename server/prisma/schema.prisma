@@ -48,6 +48,7 @@ model Room {
   archivedAt            DateTime?
   archiveReason         String?
   autoArchive           Boolean           @default(true)
+  snapshotsPrunedAt     DateTime?
   slots                 Slot[]
   admins                RoomAdmin[]
   lockAssignments       LockAssignment[]
@@ -74,43 +75,43 @@ model RoomAdmin {
 }
 
 model Slot {
-  id                  Int              @id @default(autoincrement())
-  roomId              Int
-  cheeseGameId        Int
-  position            Int
-  name                String
-  archipelagoName     String?
-  archipelagoGoal     Boolean          @default(false)
-  archipelagoActivity DateTime?
-  game                String
-  discordUserId       String?
-  discordName         String?
-  checksDone          Int
-  checksTotal         Int
-  lastActivity        DateTime?
-  lastChecked         DateTime?
-  goalTime            DateTime?
-  goalTimeSource      String?
-  trackerStatus       String
-  progressionStatus   String
-  completionStatus    String
-  availabilityStatus  String
-  notes               String
-  isSlotLock          Boolean          @default(false)
-  isSelectedSlotLock  Boolean          @default(false)
-  isStartSlot         Boolean          @default(false)
-  room                Room             @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  locksAsLocker       LockAssignment[] @relation("LockerSlot")
-  locksAsLocked       LockAssignment[] @relation("LockedSlot")
-  unlocksAsLocker     UnlockItem[]     @relation("UnlockLocker")
-  unlocksAsLocked     UnlockItem[]     @relation("UnlockLocked")
-  unlocksAsSender     UnlockItem[]     @relation("UnlockSender")
+  id                   Int               @id @default(autoincrement())
+  roomId               Int
+  cheeseGameId         Int
+  position             Int
+  name                 String
+  archipelagoName      String?
+  archipelagoGoal      Boolean           @default(false)
+  archipelagoActivity  DateTime?
+  game                 String
+  discordUserId        String?
+  discordName          String?
+  checksDone           Int
+  checksTotal          Int
+  lastActivity         DateTime?
+  lastChecked          DateTime?
+  goalTime             DateTime?
+  goalTimeSource       String?
+  trackerStatus        String
+  progressionStatus    String
+  completionStatus     String
+  availabilityStatus   String
+  notes                String
+  isSlotLock           Boolean           @default(false)
+  isSelectedSlotLock   Boolean           @default(false)
+  isStartSlot          Boolean           @default(false)
+  room                 Room              @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  locksAsLocker        LockAssignment[]  @relation("LockerSlot")
+  locksAsLocked        LockAssignment[]  @relation("LockedSlot")
+  unlocksAsLocker      UnlockItem[]      @relation("UnlockLocker")
+  unlocksAsLocked      UnlockItem[]      @relation("UnlockLocked")
+  unlocksAsSender      UnlockItem[]      @relation("UnlockSender")
   laterUnlocksAsLocker LaterUnlockItem[] @relation("LaterUnlockLocker")
   laterUnlocksAsLocked LaterUnlockItem[] @relation("LaterUnlockLocked")
   laterUnlocksAsSender LaterUnlockItem[] @relation("LaterUnlockSender")
-  warnings            Warning[]
-  foundLocations      SeedLocation[]   @relation("LocationFinder")
-  receivedLocations   SeedLocation[]   @relation("LocationReceiver")
+  warnings             Warning[]
+  foundLocations       SeedLocation[]    @relation("LocationFinder")
+  receivedLocations    SeedLocation[]    @relation("LocationReceiver")
 
   @@unique([roomId, position])
 }
@@ -147,17 +148,17 @@ model UnlockItem {
 }
 
 model LaterUnlockItem {
-  id           Int   @id @default(autoincrement())
+  id           Int       @id @default(autoincrement())
   roomId       Int
   lockerSlotId Int
   lockedSlotId Int
   senderSlotId Int?
   sequence     Int
   firstSeenAt  DateTime?
-  room         Room  @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  lockerSlot   Slot  @relation("LaterUnlockLocker", fields: [lockerSlotId], references: [id], onDelete: Cascade)
-  lockedSlot   Slot  @relation("LaterUnlockLocked", fields: [lockedSlotId], references: [id], onDelete: Cascade)
-  senderSlot   Slot? @relation("LaterUnlockSender", fields: [senderSlotId], references: [id], onDelete: SetNull)
+  room         Room      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  lockerSlot   Slot      @relation("LaterUnlockLocker", fields: [lockerSlotId], references: [id], onDelete: Cascade)
+  lockedSlot   Slot      @relation("LaterUnlockLocked", fields: [lockedSlotId], references: [id], onDelete: Cascade)
+  senderSlot   Slot?     @relation("LaterUnlockSender", fields: [senderSlotId], references: [id], onDelete: SetNull)
 
   @@unique([roomId, sequence])
 }
@@ -187,15 +188,16 @@ model SyncRun {
 }
 
 model SyncSnapshot {
-  id             Int      @id @default(autoincrement())
-  roomId         Int
-  source         String
-  hash           String
-  payload        String
-  firstSyncRunId Int
-  lastSyncRunId  Int
-  createdAt      DateTime @default(now())
-  room           Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  id                Int      @id @default(autoincrement())
+  roomId            Int
+  source            String
+  hash              String
+  compressedPayload Bytes?
+  payload           String?
+  firstSyncRunId    Int
+  lastSyncRunId     Int
+  createdAt         DateTime @default(now())
+  room              Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@index([roomId, source])
 }
