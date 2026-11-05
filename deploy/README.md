@@ -73,3 +73,11 @@ This guide is for the person who prepares the proServer. This can be the develop
 - Logs: `pm2 logs slotlock`.
 - Status: `pm2 status`.
 - Database backups: `~/slotlock/shared/backups`. Delete old backups from time to time.
+- Migrations that change a big table copy the table. Keep free disk space of at least two times the database size.
+- One time, switch the database to `auto_vacuum = INCREMENTAL`, so the server can give free space back. Stop the application for this, because `VACUUM` writes the full database again:
+
+  ```bash
+  pm2 stop slotlock
+  sqlite3 ~/slotlock/shared/data/slotlock.db "PRAGMA auto_vacuum = INCREMENTAL; VACUUM;"
+  pm2 start slotlock
+  ```

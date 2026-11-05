@@ -137,6 +137,16 @@ The functions are in `PLAN pace statistics.md`. The technical plan is in `PLAN p
 - Limits: BK periods and pauses that are shorter than one step are not visible. A useful item that ends a BK gives a break, not a BK period. Checks of different games need different effort, so compare the pace only in the same game.
 - The server keeps the result of each room in memory. A new synchronization, a change of the limits or a change of the room by an admin calculates the values again.
 
+### Snapshot storage
+
+- Each synchronization saves the data of Cheese and of the Archipelago tracker as a snapshot. The server saves a new snapshot only when the data changed. For Cheese, a new `updated_at` alone is no change.
+- The snapshots are compressed with Brotli (`compressedPayload`). The column `payload` holds only snapshots of older versions. At the start and every 6 hours, the server compresses them.
+- The pace signals (`PaceSignalState`) keep the result of all read snapshots. So the server needs the old snapshots only to read everything again.
+- Active room: the server removes the snapshots that are older than `SNAPSHOT_RETENTION_DAYS` (default 14) and that the pace signals already read. It keeps the newest snapshot of each source and the synchronization runs of the kept snapshots.
+- Archived room: the server first updates the pace signals, then removes all snapshots and synchronization runs. Slots, seed data, unlock times and pace signals stay, so the archived room shows the same data. After a reopen, the synchronization saves new snapshots.
+- `Room.snapshotsPrunedAt` marks a room with removed snapshots. If new snapshots of such a room are older than the saved pace signals, the server ignores them and does not read everything again, because the old snapshots are missing.
+- SQLite gives free space back to the file system only with `auto_vacuum = INCREMENTAL`. The server then runs `PRAGMA incremental_vacuum` after each cleanup. See `deploy/README.md` for the one-time switch.
+
 ### Vue components
 
 - **Functional components** get all data from Pinia stores and call store actions. They have no props, no emits, no provide and no inject.
