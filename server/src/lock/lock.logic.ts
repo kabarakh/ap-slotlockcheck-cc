@@ -140,8 +140,15 @@ export function evaluateSlotLockStates(
   const unlocksByPair = new Map(unlocks.map((unlock) => [`${unlock.lockerSlotId}:${unlock.lockedSlotId}`, unlock]));
   const states = new Map<number, SlotLockState>();
 
+  const isServerUnlock = (lock: StoredLock): boolean => {
+    const unlock = unlocksByPair.get(`${lock.lockerSlotId}:${lock.lockedSlotId}`);
+    return unlock !== undefined && unlock.senderSlotId === null;
+  };
+
   for (const slotId of slotIds) {
-    const slotLocks = locks.filter((lock) => lock.lockedSlotId === slotId);
+    const assignedLocks = locks.filter((lock) => lock.lockedSlotId === slotId);
+    const slotLocks = assignedLocks.filter((lock) => !isServerUnlock(lock));
+    const startSlot = startSlotIds.has(slotId) || (assignedLocks.length > 0 && slotLocks.length === 0);
     const lockStates = slotLocks.map((lock) => {
       const unlock = unlocksByPair.get(`${lock.lockerSlotId}:${slotId}`);
       return {
@@ -155,7 +162,7 @@ export function evaluateSlotLockStates(
     const unlockedCount = lockStates.filter((lock) => lock.unlocked).length;
     const status =
       slotLocks.length === 0
-        ? startSlotIds.has(slotId)
+        ? startSlot
           ? 'start_slot'
           : 'not_locked'
         : unlockedCount === slotLocks.length

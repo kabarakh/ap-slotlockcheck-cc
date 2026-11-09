@@ -427,7 +427,7 @@
   },
   unlockTree: {
     title: 'Unlock-Baum',
-    intro: 'Jeder Slot steht unter dem Slot, der sein Unlock-Item gesendet hat. Der SlotLock-Slot ist die Wurzel. Waren mehrere Unlock-Items nötig, zählt der Absender des letzten.',
+    intro: 'Jeder Slot steht unter dem Slot, der sein Unlock-Item gesendet hat. Der SlotLock-Slot ist die Wurzel. Waren mehrere Unlock-Items nötig, zählt der Absender des letzten. Eine gepunktete Linie zeigt die Absender der früheren Items.',
     empty: 'Es gibt noch keine entsperrten Slots.',
     stillLocked: '{count} Slots sind noch gesperrt und stehen nicht im Baum.',
     goaled: 'Ziel erreicht',

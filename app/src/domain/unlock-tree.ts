@@ -12,6 +12,7 @@ export interface UnlockTreeNode {
   lockStatus: LockStatus;
   goaled: boolean;
   unlockTime: string | null;
+  otherSenderIds: number[];
   children: UnlockTreeNode[];
 }
 
@@ -54,11 +55,35 @@ function sortTree(nodes: UnlockTreeNode[]): UnlockTreeNode[] {
     .map((node) => ({ ...node, children: sortTree(node.children) }));
 }
 
+function startSlotRoot(slots: SlotRow[], defaultRootId: number | undefined): (slot: SlotRow) => number | undefined {
+  const countsByUser = new Map<string, Map<number, number>>();
+  for (const slot of slots) {
+    if (slot.discordUserId === null) {
+      continue;
+    }
+    const counts = countsByUser.get(slot.discordUserId) ?? new Map<number, number>();
+    for (const lock of slot.locks) {
+      counts.set(lock.lockerSlotId, (counts.get(lock.lockerSlotId) ?? 0) + 1);
+    }
+    countsByUser.set(slot.discordUserId, counts);
+  }
+  return (slot) => {
+    const counts = slot.discordUserId === null ? undefined : countsByUser.get(slot.discordUserId);
+    const best = [...(counts ?? [])].reduce<[number, number] | undefined>(
+      (current, entry) => (current === undefined || entry[1] > current[1] ? entry : current),
+      undefined,
+    );
+    return best?.[0] ?? defaultRootId;
+  };
+}
+
 export function buildUnlockForest(slots: SlotRow[]): UnlockForest {
   const lockers = slots.filter((slot) => slot.isSelectedSlotLock).sort((a, b) => a.position - b.position);
   const defaultRootId = lockers[0]?.id;
+  const rootOfStartSlot = startSlotRoot(slots, defaultRootId);
   const nodes = new Map<number, UnlockTreeNode>();
   const parentIds = new Map<number, number>();
+  const otherSenders = new Map<number, number[]>();
 
   for (const slot of slots) {
     const kind = nodeKind(slot);
@@ -74,10 +99,12 @@ export function buildUnlockForest(slots: SlotRow[]): UnlockForest {
       lockStatus: slot.lockStatus,
       goaled: isGoaled(slot),
       unlockTime: slot.unlockTime,
+      otherSenderIds: [],
       children: [],
     });
-    if (kind === 'start' && defaultRootId !== undefined) {
-      parentIds.set(slot.id, defaultRootId);
+    const startRootId = kind === 'start' ? rootOfStartSlot(slot) : undefined;
+    if (startRootId !== undefined) {
+      parentIds.set(slot.id, startRootId);
     }
     if (kind === 'unlocked' || kind === 'partial') {
       const lock = completingLock(slot.locks);
@@ -85,6 +112,12 @@ export function buildUnlockForest(slots: SlotRow[]): UnlockForest {
       if (parentId !== undefined) {
         parentIds.set(slot.id, parentId);
       }
+      otherSenders.set(
+        slot.id,
+        slot.locks
+          .filter((other) => other.unlocked && other !== lock)
+          .map((other) => other.senderSlotId ?? other.lockerSlotId),
+      );
     }
   }
 
@@ -100,6 +133,13 @@ export function buildUnlockForest(slots: SlotRow[]): UnlockForest {
     }
     return false;
   };
+
+  for (const node of nodes.values()) {
+    const parentId = parentIds.get(node.id);
+    node.otherSenderIds = [...new Set(otherSenders.get(node.id) ?? [])].filter(
+      (senderId) => senderId !== parentId && senderId !== node.id && nodes.has(senderId),
+    );
+  }
 
   const roots: UnlockTreeNode[] = [];
   for (const node of nodes.values()) {

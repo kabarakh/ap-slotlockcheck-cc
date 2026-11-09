@@ -421,7 +421,7 @@
   },
   unlockTree: {
     title: 'Unlock tree',
-    intro: 'Each slot is below the slot that sent its unlock item. The SlotLock slot is the root. If more than one unlock item was necessary, the sender of the last one counts.',
+    intro: 'Each slot is below the slot that sent its unlock item. The SlotLock slot is the root. If more than one unlock item was necessary, the sender of the last one counts. A dotted line shows the senders of the earlier items.',
     empty: 'There are no unlocked slots yet.',
     stillLocked: '{count} slots are still locked and are not in the tree.',
     goaled: 'Goal reached',

@@ -38,6 +38,15 @@ const layout = computed(() => {
   const maxDepth = Math.max(1, ...nodes.map((point) => point.depth));
   const toX = (point: HierarchyPointNode<ChartNode>) => MARGIN + (point.depth - 1) * COLUMN_WIDTH;
   const toY = (point: HierarchyPointNode<ChartNode>) => MARGIN + point.x - minX;
+  const byId = new Map(nodes.map((point) => [(point.data.node as UnlockTreeNode).id, point]));
+  const linkPath = (source: HierarchyPointNode<ChartNode>, target: HierarchyPointNode<ChartNode>): string => {
+    const sourceX = toX(source) + labelWidth(source.data.node?.name ?? '');
+    const sourceY = toY(source);
+    const targetX = toX(target);
+    const targetY = toY(target);
+    const middleX = (sourceX + targetX) / 2;
+    return `M${sourceX},${sourceY} C${middleX},${sourceY} ${middleX},${targetY} ${targetX},${targetY}`;
+  };
   return {
     width: MARGIN * 2 + maxDepth * COLUMN_WIDTH,
     height: MARGIN * 2 + maxX - minX,
@@ -45,18 +54,17 @@ const layout = computed(() => {
     links: positioned
       .links()
       .filter((link) => link.source.data.node !== null)
-      .map((link) => {
-        const sourceX = toX(link.source) + labelWidth(link.source.data.node?.name ?? '');
-        const sourceY = toY(link.source);
-        const targetX = toX(link.target);
-        const targetY = toY(link.target);
-        const middleX = (sourceX + targetX) / 2;
-        return {
-          key: `${link.source.data.node?.id}-${link.target.data.node?.id}`,
-          path: `M${sourceX},${sourceY} C${middleX},${sourceY} ${middleX},${targetY} ${targetX},${targetY}`,
-          partial: link.target.data.node?.kind === 'partial',
-        };
+      .map((link) => ({
+        key: `${link.source.data.node?.id}-${link.target.data.node?.id}`,
+        path: linkPath(link.source, link.target),
+        partial: link.target.data.node?.kind === 'partial',
+      })),
+    otherLinks: nodes.flatMap((target) =>
+      (target.data.node?.otherSenderIds ?? []).flatMap((senderId) => {
+        const source = byId.get(senderId);
+        return source ? [{ key: `${senderId}-${target.data.node?.id}-other`, path: linkPath(source, target) }] : [];
       }),
+    ),
   };
 });
 
@@ -90,6 +98,7 @@ const tooltip = (node: UnlockTreeNode): string =>
         class="unlock-tree-link"
         :class="{ 'unlock-tree-link-partial': link.partial }"
       />
+      <path v-for="link in layout.otherLinks" :key="link.key" :d="link.path" class="unlock-tree-link-other" />
       <g
         v-for="point in layout.nodes"
         :key="point.data.id"
@@ -130,6 +139,15 @@ const tooltip = (node: UnlockTreeNode): string =>
 
 .unlock-tree-link-partial {
   stroke-dasharray: 4 3;
+}
+
+.unlock-tree-link-other {
+  fill: none;
+  stroke: var(--p-surface-400);
+  stroke-width: 1;
+  stroke-dasharray: 1 3;
+  stroke-linecap: round;
+  opacity: 0.8;
 }
 
 .unlock-tree-node circle {

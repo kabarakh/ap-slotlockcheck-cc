@@ -25,6 +25,7 @@ The DTO classes of the server are the only source of the API types. The server w
 
 - Each selected SlotLock slot tells in its slot data which slots it locks (`locked_slots`). Archipelago gives this data through the slot data tracker. So the lock assignment is known before the first unlock.
 - A slot is unlocked when each SlotLock slot that locks it has received an item "Unlock &lt;slot name&gt;". Only the first item of each pair counts. Items "Nothing" and "Unlock Bonus Slot n" are ignored. The server also keeps the later items of a pair with their sender (`LaterUnlockItem`). Each synchronization writes them again from the full list of received items, so an archived room gets them only after it is reopened. A later item keeps the time when a synchronization found it first (`firstSeenAt`). The key is the pair and the position of the item in the pair. Later items of the first synchronization and of the time before this field have no time.
+- An unlock item from the server (no sender slot) is a start item: the SlotLock slot does not lock this slot. A slot with only start items is a start slot. In a room with more SlotLock slots, each SlotLock slot sends start items for all slots that it does not lock, so the start items do not count as partial unlocks. In the unlock tree, a start slot is below the SlotLock slot that locks most of the other slots of the same player.
 - Slot names are compared without case. Unknown names are shown to the admins.
 - An admin can add or remove a lock assignment. This replaces the detected value until the admin resets it.
 
@@ -94,7 +95,7 @@ Admins and admin helpers make an English text for Discord with the slots in the 
 
 ### Unlock tree
 
-The unlock tree shows which slot sent the unlock item of which slot. The SlotLock slot is the root. A slot that needed more than one unlock item is below the sender of the last item. Start slots are below the SlotLock slot. The browser builds the tree from the roster; `d3-hierarchy` calculates the layout. A user with own slots can highlight them in the tree; the browser remembers this choice.
+The unlock tree shows which slot sent the unlock item of which slot. The SlotLock slot is the root. A slot that needed more than one unlock item is below the sender of the last item. A dotted line connects it with the senders of the other unlock items. Start slots are below the SlotLock slot. The browser builds the tree from the roster; `d3-hierarchy` calculates the layout. A user with own slots can highlight them in the tree; the browser remembers this choice.
 
 ### Room owner
 

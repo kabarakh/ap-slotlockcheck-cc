@@ -52,6 +52,30 @@ describe('buildUnlockForest', () => {
       }),
     ]);
     expect(names(forest.roots)).toEqual([['Locker', [['Start', [['B', ['F']]]]]]]);
+    const f = forest.roots[0]?.children[0]?.children[0]?.children[0];
+    expect(f).toMatchObject({ name: 'F', otherSenderIds: [2] });
+  });
+
+  it('puts a start slot below the SlotLock slot that locks the other slots of its player', () => {
+    const forest = buildUnlockForest([
+      slotRow({ id: 1, name: 'Locker A', isSlotLock: true, isSelectedSlotLock: true }),
+      slotRow({ id: 2, name: 'Locker B', isSlotLock: true, isSelectedSlotLock: true }),
+      slotRow({ id: 3, name: 'A1', discordUserId: 'a', lockStatus: 'start_slot' }),
+      slotRow({ id: 4, name: 'A2', discordUserId: 'a', lockStatus: 'unlocked', locks: [lock(1, 5, null)] }),
+      slotRow({ id: 5, name: 'B1', discordUserId: 'b', lockStatus: 'start_slot' }),
+      slotRow({
+        id: 6,
+        name: 'B2',
+        discordUserId: 'b',
+        lockStatus: 'locked',
+        locks: [{ ...lock(2, null, null), unlocked: false }],
+      }),
+      slotRow({ id: 7, name: 'C1', discordUserId: null, lockStatus: 'start_slot' }),
+    ]);
+    expect(names(forest.roots)).toEqual([
+      ['Locker A', ['A1', 'C1']],
+      ['Locker B', [['B1', ['A2']]]],
+    ]);
   });
 
   it('breaks cycles and keeps all unlocked slots in the tree', () => {

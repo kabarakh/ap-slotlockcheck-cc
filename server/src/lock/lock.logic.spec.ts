@@ -226,6 +226,31 @@ describe('evaluateSlotLockStates', () => {
     expect(states.get(30)).toMatchObject({ unlockTime: null, unlockTimeSource: 'unknown' });
   });
 
+  it('treats an unlock item from the server as no lock', () => {
+    const fromServer = (lockerSlotId: number, lockedSlotId: number): StoredUnlock => ({
+      ...unlock(lockerSlotId, lockedSlotId, t1),
+      senderSlotId: null,
+    });
+    const locks = [10, 20, 30].flatMap((lockedSlotId) => [
+      { lockerSlotId: 1, lockedSlotId },
+      { lockerSlotId: 5, lockedSlotId },
+    ]);
+    const states = evaluateSlotLockStates([10, 20, 30], locks, [
+      fromServer(1, 10),
+      fromServer(5, 10),
+      fromServer(5, 20),
+      fromServer(5, 30),
+      unlock(1, 30, t2),
+    ]);
+    expect(states.get(10)).toMatchObject({ status: 'start_slot', locks: [], unlockTime: null });
+    expect(states.get(20)).toMatchObject({ status: 'locked', locks: [{ lockerSlotId: 1, unlocked: false }] });
+    expect(states.get(30)).toMatchObject({
+      status: 'unlocked',
+      locks: [{ lockerSlotId: 1, unlocked: true, senderSlotId: 3 }],
+      unlockTime: t2,
+    });
+  });
+
   it('ignores unlock items of removed lock assignments', () => {
     const states = evaluateSlotLockStates([30], [], [unlock(1, 30, t1)]);
     expect(states.get(30)?.status).toBe('not_locked');
