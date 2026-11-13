@@ -4,12 +4,23 @@ import type { AuthUser } from '../auth/auth.types.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { RoomDetailDto } from '../rooms/dto/room.dto.js';
 import { RoomsService } from '../rooms/rooms.service.js';
-import { parseArchipelagoLink } from '../sources/archipelago/archipelago-link.js';
+import { isAllowedArchipelagoOrigin, parseArchipelagoLink } from '../sources/archipelago/archipelago-link.js';
+import type { CheeseTracker } from '../sources/cheese/cheese.schemas.js';
 import { CheeseService } from '../sources/cheese/cheese.service.js';
 import { slotRecordsFromCheese } from '../sync/room-source.mapper.js';
 import { SyncService } from '../sync/sync.service.js';
 import type { CreateRoomDto, RoomPreviewDto } from './dto/room-setup.dto.js';
 import { checkTrackerOwner, slugFromTitle } from './owner-check.js';
+
+function assertAllowedHosts(tracker: CheeseTracker): void {
+  const origins = [
+    parseArchipelagoLink(tracker.upstream_url, 'tracker')?.origin,
+    parseArchipelagoLink(tracker.room_link, 'room')?.origin,
+  ];
+  if (origins.some((origin) => origin !== undefined && !isAllowedArchipelagoOrigin(origin))) {
+    throw new BadRequestException('ARCHIPELAGO_HOST_NOT_ALLOWED');
+  }
+}
 
 @Injectable()
 export class RoomSetupService {
@@ -22,6 +33,7 @@ export class RoomSetupService {
 
   async preview(user: AuthUser, cheeseTrackerId: string): Promise<RoomPreviewDto> {
     const tracker = await this.cheese.getTracker(cheeseTrackerId);
+    assertAllowedHosts(tracker);
     const existing = await this.prisma.room.findUnique({ where: { cheeseTrackerId } });
     return {
       cheeseTrackerId,
@@ -42,6 +54,7 @@ export class RoomSetupService {
       throw new ForbiddenException('OWNER_CHECK_FAILED');
     }
     await this.assertUnique(request);
+    assertAllowedHosts(tracker);
     const trackerLink = parseArchipelagoLink(tracker.upstream_url, 'tracker');
     if (!trackerLink) {
       throw new BadRequestException('NO_ARCHIPELAGO_TRACKER');

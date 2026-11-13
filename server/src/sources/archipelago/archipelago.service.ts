@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { SourceHttpService } from '../http/source-http.service.js';
+import { isAllowedArchipelagoOrigin } from './archipelago-link.js';
 import {
   datapackageSchema,
   roomStatusSchema,
@@ -13,6 +14,13 @@ import {
   type StaticTracker,
   type TrackerData,
 } from './archipelago.schemas.js';
+
+function allowedOrigin(origin: string): string {
+  if (!isAllowedArchipelagoOrigin(origin)) {
+    throw new BadRequestException('ARCHIPELAGO_HOST_NOT_ALLOWED');
+  }
+  return origin;
+}
 
 @Injectable()
 export class ArchipelagoService {
@@ -35,7 +43,7 @@ export class ArchipelagoService {
   }
 
   wakeRoom(origin: string, roomId: string): Promise<void> {
-    return this.http.visit(new URL(`/room/${encodeURIComponent(roomId)}`, origin).toString());
+    return this.http.visit(new URL(`/room/${encodeURIComponent(roomId)}`, allowedOrigin(origin)).toString());
   }
 
   getDatapackage(origin: string, checksum: string): Promise<Datapackage> {
@@ -43,6 +51,6 @@ export class ArchipelagoService {
   }
 
   private apiUrl(origin: string, endpoint: string, id: string): string {
-    return new URL(`/api/${endpoint}/${encodeURIComponent(id)}`, origin).toString();
+    return new URL(`/api/${endpoint}/${encodeURIComponent(id)}`, allowedOrigin(origin)).toString();
   }
 }

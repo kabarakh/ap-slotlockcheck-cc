@@ -12,6 +12,7 @@ The terms are defined in the glossary of `PLAN slotlock.md`. Important: a **room
 
 - One npm project with two workspaces: `server` (NestJS) and `app` (Vue).
 - The server gets data from the Cheese Tracker and the Archipelago web host by HTTP polling. It keeps the data in SQLite (Prisma).
+- The server connects only to Archipelago web hosts on a whitelist: `archipelago.gg`, `multiworld.gg`, `localhost` (also `127.0.0.1` and `[::1]`) and all subdomains of `ionium.us`, with HTTP or HTTPS. The links of the Cheese Tracker give the host, so without the whitelist a tracker owner could make the server send requests to any address. Room setup refuses a tracker with another host (`ARCHIPELAGO_HOST_NOT_ALLOWED`); the synchronization of an existing room with another host fails, and the Archipelago service refuses all requests to such a host. The list is in `archipelago-link.ts`.
 - The browser gets the first data by HTTP and all later changes by Socket.IO.
 - In production, one Node process serves the API, Socket.IO and the built frontend. pm2 monitors the process. nginx is the reverse proxy.
 

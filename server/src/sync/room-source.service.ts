@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../prisma/prisma.service.js';
-import { parseArchipelagoLink } from '../sources/archipelago/archipelago-link.js';
+import { isAllowedArchipelagoOrigin, parseArchipelagoLink } from '../sources/archipelago/archipelago-link.js';
 import type {
   RoomStatus,
   SlotDataTracker,
@@ -47,6 +47,12 @@ export class RoomSourceService {
       throw new RoomSourceError(`The Cheese tracker has no Archipelago tracker link: ${cheese.upstream_url}`);
     }
     const roomLink = parseArchipelagoLink(cheese.room_link, 'room');
+    const foreignOrigin = [trackerLink.origin, roomLink?.origin].find(
+      (origin) => origin !== undefined && !isAllowedArchipelagoOrigin(origin),
+    );
+    if (foreignOrigin) {
+      throw new RoomSourceError(`The Archipelago host is not allowed: ${foreignOrigin}`);
+    }
     const roomStatus = roomLink ? await this.archipelago.getRoomStatus(roomLink.origin, roomLink.id) : null;
     const staticTracker = await this.archipelago.getStaticTracker(trackerLink.origin, trackerLink.id);
     const tracker = await this.archipelago.getTracker(trackerLink.origin, trackerLink.id);

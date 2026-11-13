@@ -756,6 +756,7 @@
     SLUG_TAKEN: 'Dieser URL-Name ist schon vergeben.',
     TRACKER_ALREADY_USED: 'Für diesen Tracker gibt es schon einen Raum.',
     NO_ARCHIPELAGO_TRACKER: 'Der Cheese Tracker hat keinen Link zu einem Archipelago-Tracker.',
+    ARCHIPELAGO_HOST_NOT_ALLOWED: 'Der Archipelago-Raum liegt nicht auf einem erlaubten Host. Erlaubt: archipelago.gg, multiworld.gg, localhost, *.ionium.us.',
     INVALID_SLOTLOCK_SELECTION: 'Wähle mindestens einen SlotLock-Slot des Trackers.',
     SYNC_TOO_EARLY: 'Die letzte Synchronisierung ist zu kurz her. Warte einen Moment.',
     ALREADY_ADMIN: 'Dieser Benutzer ist schon Admin oder Admin-Helfer. Um die Rolle zu ändern, entferne ihn zuerst.',

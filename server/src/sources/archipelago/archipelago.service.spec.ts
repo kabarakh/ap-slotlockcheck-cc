@@ -1,7 +1,7 @@
 import { loadFixture, type FixtureName } from '../../../test/fixtures/fixtures.js';
 import type { AppConfigService } from '../../config/app-config.service.js';
 import { SourceHttpService } from '../http/source-http.service.js';
-import { parseArchipelagoLink } from './archipelago-link.js';
+import { isAllowedArchipelagoOrigin, parseArchipelagoLink } from './archipelago-link.js';
 import { ArchipelagoService } from './archipelago.service.js';
 
 const config = {
@@ -33,6 +33,15 @@ describe('ArchipelagoService', () => {
     vi.stubGlobal('fetch', fetchMock);
     await new ArchipelagoService(new SourceHttpService(config)).wakeRoom(origin, 'RoomIdOfTheRoomXX0001');
     expect(fetchMock.mock.calls[0]?.[0]).toBe('https://archipelago.gg/room/RoomIdOfTheRoomXX0001');
+  });
+
+  it('refuses hosts outside the whitelist without a request', () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const service = new ArchipelagoService(new SourceHttpService(config));
+    expect(() => service.getRoomStatus('https://evil.example', 'x')).toThrow('ARCHIPELAGO_HOST_NOT_ALLOWED');
+    expect(() => service.wakeRoom('http://169.254.169.254', 'x')).toThrow('ARCHIPELAGO_HOST_NOT_ALLOWED');
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('reads the tracker with received items', async () => {
@@ -76,5 +85,32 @@ describe('parseArchipelagoLink', () => {
   it('returns undefined for links without the expected part', () => {
     expect(parseArchipelagoLink('https://archipelago.gg/room/abc', 'tracker')).toBeUndefined();
     expect(parseArchipelagoLink('not a url', 'room')).toBeUndefined();
+  });
+});
+
+describe('isAllowedArchipelagoOrigin', () => {
+  it.each([
+    'https://archipelago.gg',
+    'https://multiworld.gg',
+    'http://localhost:8080',
+    'http://127.0.0.1:38281',
+    'https://ap.ionium.us',
+    'https://a.b.ionium.us:8443',
+    'https://ARCHIPELAGO.GG',
+  ])('allows %s', (origin) => {
+    expect(isAllowedArchipelagoOrigin(origin)).toBe(true);
+  });
+
+  it.each([
+    'https://ionium.us',
+    'https://evilionium.us',
+    'https://ionium.us.evil.example',
+    'https://archipelago.gg.evil.example',
+    'https://www.archipelago.gg',
+    'https://example.org',
+    'ftp://archipelago.gg',
+    'not a url',
+  ])('refuses %s', (origin) => {
+    expect(isAllowedArchipelagoOrigin(origin)).toBe(false);
   });
 });

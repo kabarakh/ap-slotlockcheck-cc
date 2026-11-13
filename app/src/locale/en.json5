@@ -750,6 +750,7 @@
     SLUG_TAKEN: 'This URL name is used already.',
     TRACKER_ALREADY_USED: 'A room for this tracker exists already.',
     NO_ARCHIPELAGO_TRACKER: 'The Cheese Tracker has no Archipelago tracker link.',
+    ARCHIPELAGO_HOST_NOT_ALLOWED: 'The Archipelago room is not on an allowed host. Allowed: archipelago.gg, multiworld.gg, localhost, *.ionium.us.',
     INVALID_SLOTLOCK_SELECTION: 'Select at least one SlotLock slot of the tracker.',
     SYNC_TOO_EARLY: 'The last synchronization is too recent. Wait a moment.',
     NOT_A_PLAYER: 'Only players of this room can become admins.',
