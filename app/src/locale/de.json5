@@ -610,7 +610,12 @@
     intro: 'Mache einen englischen Text für Discord mit den Slots, die in den gewählten Spheres offene Locations haben. Die Zeilen stehen nach der niedrigsten offenen Sphere und dann nach der Slot-Nummer. Kopiere jede Nachricht und poste sie im Discord-Thread. Eine Nachricht hat höchstens 10 Pings.',
     from: 'Von Sphere',
     to: 'Bis Sphere',
-    slotModes: { all: 'Alle Slots mit offenen Locations', progression: 'Nur Slots mit offener Progression' },
+    slotModes: {
+      all: 'Alle Slots mit offenen Locations',
+      progression: 'Nur Slots mit offener Progression',
+      inLogic: 'Nur Progression, die sicher in Logic ist',
+    },
+    inLogicHint: 'In Logic: Für den Slot ist kein Progression-Item aus einer früheren Sphere mehr offen. Items für Item-Link-Gruppen zählen nicht.',
     pings: 'Discord-Benutzer pingen',
     create: 'Text machen',
     nothingOpen: 'Kein Slot hat offene Locations in diesen Spheres.',

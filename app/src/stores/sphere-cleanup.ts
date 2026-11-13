@@ -21,7 +21,7 @@ export const useSphereCleanupStore = defineStore(
   () => {
     const draft = ref<CleanupDraft>({ fromSphere: 0, toSphere: 0, slots: 'all', excludeGoaled: false, pings: true });
     const entries = ref<SphereCleanupEntry[]>([]);
-    const range = ref<{ fromSphere: number; toSphere: number } | null>(null);
+    const range = ref<{ fromSphere: number; toSphere: number; inLogic: boolean } | null>(null);
     const loading = ref(false);
     const presetSphereValue = ref<number | null>(null);
 
@@ -67,7 +67,7 @@ export const useSphereCleanupStore = defineStore(
           }),
         );
         entries.value = result.entries;
-        range.value = { fromSphere: result.fromSphere, toSphere: result.toSphere };
+        range.value = { fromSphere: result.fromSphere, toSphere: result.toSphere, inLogic: slots === 'inLogic' };
       } catch (error) {
         useUiStore().notifyError(error);
       } finally {

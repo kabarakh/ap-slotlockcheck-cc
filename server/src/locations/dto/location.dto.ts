@@ -175,7 +175,7 @@ export class LocationAdminPageDto {
   rows: LocationAdminRowDto[];
 }
 
-export const CLEANUP_SLOT_MODES = ['all', 'progression'] as const;
+export const CLEANUP_SLOT_MODES = ['all', 'progression', 'inLogic'] as const;
 
 export class SphereCleanupQueryDto extends SphereQueryDto {
   @Type(() => Number)

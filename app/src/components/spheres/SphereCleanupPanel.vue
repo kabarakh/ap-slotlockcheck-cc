@@ -18,7 +18,10 @@ const { draft, messages, range, loading } = storeToRefs(cleanup);
 const { t } = useI18n();
 
 const slotModeOptions = computed(() =>
-  (['all', 'progression'] as CleanupSlotMode[]).map((value) => ({ value, label: t(`cleanup.slotModes.${value}`) })),
+  (['all', 'progression', 'inLogic'] as CleanupSlotMode[]).map((value) => ({
+    value,
+    label: t(`cleanup.slotModes.${value}`),
+  })),
 );
 
 const section = useTemplateRef<HTMLElement>('section');
@@ -73,6 +76,9 @@ onMounted(async () => {
       </label>
       <Button type="submit" :label="t('cleanup.create')" size="small" :loading="loading" data-testid="cleanup-create" />
     </form>
+    <p v-if="draft.slots === 'inLogic'" class="app-muted" data-testid="cleanup-in-logic-hint">
+      {{ t('cleanup.inLogicHint') }}
+    </p>
     <Message v-if="range && messages.length === 0" severity="success">{{ t('cleanup.nothingOpen') }}</Message>
     <div v-for="(message, index) in messages" :key="index" class="cleanup-message" data-testid="cleanup-message">
       <div class="app-toolbar">

@@ -604,7 +604,12 @@
     intro: 'Make an English text for Discord with the slots that have open locations in the selected spheres. The lines are in the order of the lowest open sphere and then of the slot number. Copy each message and post it in the Discord thread. A message has at most 10 pings.',
     from: 'From sphere',
     to: 'To sphere',
-    slotModes: { all: 'All slots with open locations', progression: 'Only slots with open progression' },
+    slotModes: {
+      all: 'All slots with open locations',
+      progression: 'Only slots with open progression',
+      inLogic: 'Only progression that is surely in logic',
+    },
+    inLogicHint: 'In logic: no progression item for the slot from an earlier sphere is open. Items for item link groups do not count.',
     pings: 'Ping the Discord users',
     create: 'Make text',
     nothingOpen: 'No slot has open locations in these spheres.',

@@ -18,7 +18,19 @@ export interface CleanupSlot {
   discordName: string | null;
 }
 
-export type CleanupSlotMode = 'all' | 'progression';
+export type CleanupSlotMode = 'all' | 'progression' | 'inLogic';
+
+export interface LogicLimits {
+  unreachableSphere: number;
+  lowestOpenProgressionSphere: Map<number, number>;
+}
+
+export function isInLogic(sphere: number, finderSlotId: number, limits: LogicLimits): boolean {
+  return (
+    sphere < limits.unreachableSphere &&
+    sphere <= (limits.lowestOpenProgressionSphere.get(finderSlotId) ?? Number.POSITIVE_INFINITY)
+  );
+}
 
 export interface CleanupEntry extends Record<ItemType, number> {
   lowestSphere: number;
@@ -33,11 +45,15 @@ export function cleanupEntries(
   slots: CleanupSlot[],
   mode: CleanupSlotMode,
   excludeGoaled: boolean,
+  limits?: LogicLimits,
 ): CleanupEntry[] {
   const counts = new Map<number, Record<ItemType, number>>();
   const lowestSpheres = new Map<number, number>();
   for (const group of groups) {
     if (excludeGoaled && group.finderGoaled) {
+      continue;
+    }
+    if (mode === 'inLogic' && limits && !isInLogic(group.sphere, group.finderSlotId, limits)) {
       continue;
     }
     lowestSpheres.set(
@@ -54,7 +70,7 @@ export function cleanupEntries(
     .sort((a, b) => a.position - b.position)
     .flatMap((slot) => {
       const slotCounts = counts.get(slot.id);
-      if (!slotCounts || (mode === 'progression' && slotCounts.progression === 0)) {
+      if (!slotCounts || (mode !== 'all' && slotCounts.progression === 0)) {
         return [];
       }
       return [

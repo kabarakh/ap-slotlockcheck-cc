@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import type { RoomMembershipDto } from '../rooms/dto/room.dto.js';
 import { RoomsService } from '../rooms/rooms.service.js';
 import type { ItemType } from '../seed/item-type.js';
-import { cleanupEntries } from './cleanup.logic.js';
+import { cleanupEntries, type LogicLimits } from './cleanup.logic.js';
 import type {
   LocationAdminPageDto,
   LocationAdminRowDto,
@@ -138,6 +138,8 @@ export class LocationsService {
       where: { roomId: room.id, checked: false, fillerMarkedAt: null, sphere: { gte: fromSphere, lte: toSphere } },
       _count: { _all: true },
     });
+    const mode = query.slots ?? 'all';
+    const limits = mode === 'inLogic' ? await this.logicLimits(room.id) : undefined;
     const entries = cleanupEntries(
       groups.map((group) => ({
         sphere: group.sphere,
@@ -148,10 +150,28 @@ export class LocationsService {
         count: group._count._all,
       })),
       slots,
-      query.slots ?? 'all',
+      mode,
       query.excludeGoaled ?? false,
+      limits,
     );
     return { fromSphere, toSphere, entries };
+  }
+
+  private async logicLimits(roomId: number): Promise<LogicLimits> {
+    const seed = await this.prisma.seedData.findUnique({ where: { roomId } });
+    const needs = await this.prisma.seedLocation.groupBy({
+      by: ['receiverSlotId'],
+      where: { roomId, checked: false, itemType: 'progression', receiverSlotId: { not: null } },
+      _min: { sphere: true },
+    });
+    return {
+      unreachableSphere: seed?.sphereCount ?? 0,
+      lowestOpenProgressionSphere: new Map(
+        needs.flatMap((need) =>
+          need.receiverSlotId === null || need._min.sphere === null ? [] : [[need.receiverSlotId, need._min.sphere]],
+        ),
+      ),
+    };
   }
 
   async setFillerMark(slug: string, user: AuthUser | undefined, locationId: number, marked: boolean): Promise<void> {

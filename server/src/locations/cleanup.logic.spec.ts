@@ -1,4 +1,4 @@
-import { cleanupEntries, type CleanupGroup, type CleanupSlot } from './cleanup.logic.js';
+import { cleanupEntries, type CleanupGroup, type CleanupSlot, isInLogic, type LogicLimits } from './cleanup.logic.js';
 
 const slots: CleanupSlot[] = [
   { id: 20, position: 2, name: 'Bob', discordUserId: '2', discordName: 'bob' },
@@ -77,5 +77,48 @@ describe('cleanupEntries', () => {
     const entries = cleanupEntries(groups, slots, 'progression', true);
     expect(entries.map((entry) => entry.slotName)).toEqual(['Alice']);
     expect(cleanupEntries(groups, slots, 'all', true)[1]).toMatchObject({ slotName: 'Bob', progression: 0, normal: 1 });
+  });
+
+  it('gives only the open locations in logic with the mode in logic', () => {
+    const limits: LogicLimits = { unreachableSphere: 9, lowestOpenProgressionSphere: new Map([[10, 4]]) };
+    const entries = cleanupEntries(
+      [
+        group({ finderSlotId: 10, sphere: 4, count: 2 }),
+        group({ finderSlotId: 10, sphere: 4, itemType: 'useful' }),
+        group({ finderSlotId: 10, sphere: 5 }),
+        group({ finderSlotId: 20, sphere: 8 }),
+        group({ finderSlotId: 20, sphere: 9 }),
+        group({ finderSlotId: 30, sphere: 2, itemType: 'normal' }),
+      ],
+      slots,
+      'inLogic',
+      false,
+      limits,
+    );
+    expect(entries).toEqual([
+      {
+        lowestSphere: 4,
+        slotId: 10,
+        slotName: 'Alice',
+        discordUserId: '1',
+        discordName: 'alice',
+        ...counts(2, 1, 0, 0),
+      },
+      { lowestSphere: 8, slotId: 20, slotName: 'Bob', discordUserId: '2', discordName: 'bob', ...counts(1, 0, 0, 0) },
+    ]);
+  });
+});
+
+describe('isInLogic', () => {
+  const limits: LogicLimits = { unreachableSphere: 6, lowestOpenProgressionSphere: new Map([[10, 3]]) };
+
+  it('accepts the spheres up to the lowest sphere with open progression for the finder', () => {
+    expect(isInLogic(3, 10, limits)).toBe(true);
+    expect(isInLogic(4, 10, limits)).toBe(false);
+  });
+
+  it('accepts all reachable spheres of a finder without open progression', () => {
+    expect(isInLogic(5, 20, limits)).toBe(true);
+    expect(isInLogic(6, 20, limits)).toBe(false);
   });
 });

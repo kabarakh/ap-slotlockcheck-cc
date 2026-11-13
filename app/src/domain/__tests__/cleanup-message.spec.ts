@@ -40,6 +40,15 @@ describe('buildCleanupMessages', () => {
     ).toEqual(['# Sphere 36\n<@123>, HerbMC: 3 progression, 5 filler (2 useful, 3 normal, 0 traps)']);
   });
 
+  it('marks the title of a clean-up in logic', () => {
+    const [message] = buildCleanupMessages(
+      [entry({})],
+      { fromSphere: 2, toSphere: 5, pings: false, inLogic: true },
+      texts,
+    );
+    expect(message?.split('\n')[0]).toBe('# Spheres 2–5 – in logic');
+  });
+
   it('pings a user with more slots only one time and keeps the lines together', () => {
     const [message] = buildCleanupMessages(
       [

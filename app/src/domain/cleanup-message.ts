@@ -21,14 +21,15 @@ export interface CleanupCounts {
 }
 
 export interface CleanupTexts {
-  title: (fromSphere: number, toSphere: number) => string;
+  title: (fromSphere: number, toSphere: number, inLogic: boolean) => string;
   line: (user: string, slotName: string, counts: CleanupCounts) => string;
   lineWithoutUser: (slotName: string, counts: CleanupCounts) => string;
 }
 
 export const ENGLISH_CLEANUP_TEXTS: CleanupTexts = {
-  title: (fromSphere, toSphere) =>
-    fromSphere === toSphere ? `# Sphere ${fromSphere}` : `# Spheres ${fromSphere}–${toSphere}`,
+  title: (fromSphere, toSphere, inLogic) =>
+    (fromSphere === toSphere ? `# Sphere ${fromSphere}` : `# Spheres ${fromSphere}–${toSphere}`) +
+    (inLogic ? ' – in logic' : ''),
   line: (user, slotName, counts) => `${user}, ${ENGLISH_CLEANUP_TEXTS.lineWithoutUser(slotName, counts)}`,
   lineWithoutUser: (slotName, counts) =>
     `${slotName}: ${counts.progression} progression, ${counts.filler} filler ` +
@@ -39,6 +40,7 @@ export interface CleanupOptions {
   fromSphere: number;
   toSphere: number;
   pings: boolean;
+  inLogic?: boolean;
 }
 
 const countsOf = (entry: CleanupEntry): CleanupCounts => ({
@@ -50,8 +52,13 @@ const countsOf = (entry: CleanupEntry): CleanupCounts => ({
 });
 
 export function buildCleanupMessages(entries: CleanupEntry[], options: CleanupOptions, texts: CleanupTexts): string[] {
-  return buildPingMessages(entries, texts.title(options.fromSphere, options.toSphere), options.pings, {
-    line: (user, entry) => texts.line(user, entry.slotName, countsOf(entry)),
-    lineWithoutUser: (entry) => texts.lineWithoutUser(entry.slotName, countsOf(entry)),
-  });
+  return buildPingMessages(
+    entries,
+    texts.title(options.fromSphere, options.toSphere, options.inLogic ?? false),
+    options.pings,
+    {
+      line: (user, entry) => texts.line(user, entry.slotName, countsOf(entry)),
+      lineWithoutUser: (entry) => texts.lineWithoutUser(entry.slotName, countsOf(entry)),
+    },
+  );
 }

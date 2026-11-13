@@ -888,7 +888,7 @@ export interface components {
             sphereCount: number;
         };
         /** @enum {string} */
-        CleanupSlotMode: "all" | "progression";
+        CleanupSlotMode: "all" | "progression" | "inLogic";
         SphereCleanupEntryDto: {
             discordUserId: string | null;
             discordName: string | null;
