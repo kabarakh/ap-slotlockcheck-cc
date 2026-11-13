@@ -80,7 +80,11 @@ describe('cleanupEntries', () => {
   });
 
   it('gives only the open locations in logic with the mode in logic', () => {
-    const limits: LogicLimits = { unreachableSphere: 9, lowestOpenProgressionSphere: new Map([[10, 4]]) };
+    const limits: LogicLimits = {
+      unreachableSphere: 9,
+      lowestOpenProgressionSphere: new Map([[10, 4]]),
+      lockedSlotIds: new Set(),
+    };
     const entries = cleanupEntries(
       [
         group({ finderSlotId: 10, sphere: 4, count: 2 }),
@@ -110,7 +114,11 @@ describe('cleanupEntries', () => {
 });
 
 describe('isInLogic', () => {
-  const limits: LogicLimits = { unreachableSphere: 6, lowestOpenProgressionSphere: new Map([[10, 3]]) };
+  const limits: LogicLimits = {
+    unreachableSphere: 6,
+    lowestOpenProgressionSphere: new Map([[10, 3]]),
+    lockedSlotIds: new Set([30]),
+  };
 
   it('accepts the spheres up to the lowest sphere with open progression for the finder', () => {
     expect(isInLogic(3, 10, limits)).toBe(true);
@@ -120,5 +128,9 @@ describe('isInLogic', () => {
   it('accepts all reachable spheres of a finder without open progression', () => {
     expect(isInLogic(5, 20, limits)).toBe(true);
     expect(isInLogic(6, 20, limits)).toBe(false);
+  });
+
+  it('rejects all spheres of a finder that is not unlocked', () => {
+    expect(isInLogic(1, 30, limits)).toBe(false);
   });
 });

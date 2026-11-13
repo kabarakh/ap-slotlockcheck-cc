@@ -3,6 +3,8 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import type { AuthUser } from '../auth/auth.types.js';
 import { RoomRoleService } from '../auth/room-role.service.js';
 import type { Room } from '../generated/prisma/client.js';
+import { evaluateSlotLockStates } from '../lock/lock.logic.js';
+import type { UnlockTimeSource } from '../lock/lock.types.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { RoomMembershipDto } from '../rooms/dto/room.dto.js';
 import { RoomsService } from '../rooms/rooms.service.js';
@@ -139,7 +141,7 @@ export class LocationsService {
       _count: { _all: true },
     });
     const mode = query.slots ?? 'all';
-    const limits = mode === 'inLogic' ? await this.logicLimits(room.id) : undefined;
+    const limits = mode === 'inLogic' ? await this.logicLimits(room.id, slots) : undefined;
     const entries = cleanupEntries(
       groups.map((group) => ({
         sphere: group.sphere,
@@ -157,8 +159,18 @@ export class LocationsService {
     return { fromSphere, toSphere, entries };
   }
 
-  private async logicLimits(roomId: number): Promise<LogicLimits> {
-    const seed = await this.prisma.seedData.findUnique({ where: { roomId } });
+  private async logicLimits(roomId: number, slots: { id: number; isStartSlot: boolean }[]): Promise<LogicLimits> {
+    const [seed, locks, unlocks] = await Promise.all([
+      this.prisma.seedData.findUnique({ where: { roomId } }),
+      this.prisma.lockAssignment.findMany({ where: { roomId, notLocked: false } }),
+      this.prisma.unlockItem.findMany({ where: { roomId } }),
+    ]);
+    const lockStates = evaluateSlotLockStates(
+      slots.map((slot) => slot.id),
+      locks,
+      unlocks.map((unlock) => ({ ...unlock, timeSource: unlock.timeSource as UnlockTimeSource })),
+      new Set(slots.filter((slot) => slot.isStartSlot).map((slot) => slot.id)),
+    );
     const needs = await this.prisma.seedLocation.groupBy({
       by: ['receiverSlotId'],
       where: { roomId, checked: false, itemType: 'progression', receiverSlotId: { not: null } },
@@ -170,6 +182,11 @@ export class LocationsService {
         needs.flatMap((need) =>
           need.receiverSlotId === null || need._min.sphere === null ? [] : [[need.receiverSlotId, need._min.sphere]],
         ),
+      ),
+      lockedSlotIds: new Set(
+        [...lockStates.values()]
+          .filter((state) => state.status === 'locked' || state.status === 'partially_unlocked')
+          .map((state) => state.slotId),
       ),
     };
   }

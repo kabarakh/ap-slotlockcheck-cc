@@ -23,10 +23,12 @@ export type CleanupSlotMode = 'all' | 'progression' | 'inLogic';
 export interface LogicLimits {
   unreachableSphere: number;
   lowestOpenProgressionSphere: Map<number, number>;
+  lockedSlotIds: ReadonlySet<number>;
 }
 
 export function isInLogic(sphere: number, finderSlotId: number, limits: LogicLimits): boolean {
   return (
+    !limits.lockedSlotIds.has(finderSlotId) &&
     sphere < limits.unreachableSphere &&
     sphere <= (limits.lowestOpenProgressionSphere.get(finderSlotId) ?? Number.POSITIVE_INFINITY)
   );
