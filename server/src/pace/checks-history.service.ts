@@ -28,7 +28,7 @@ export class ChecksHistoryService {
     }
     let points: ChecksHistoryPoint[];
     try {
-      points = checksHistoryPoints(await this.cheese.getChecksHistory(room.cheeseTrackerId));
+      points = checksHistoryPoints(await this.cheese.getChecksHistory(room.cheeseTrackerId), new Date());
     } catch (error) {
       if (error instanceof SourceRequestError || error instanceof SourceFormatError) {
         this.logger.warn(`Checks history of room ${room.slug} not available: ${error.message}`);

@@ -2,3 +2,4 @@ export const MIN_ACTIVE_MINUTES_FOR_PACE = 30;
 export const CHECKS_HISTORY_CACHE_MINUTES = 10;
 export const CHECKS_HISTORY_STEP_MINUTES = 10;
 export const SNAPSHOT_BATCH_SIZE = 10;
+export const DATA_GAP_MINUTES = 30;

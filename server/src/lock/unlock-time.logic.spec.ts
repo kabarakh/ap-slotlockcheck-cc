@@ -12,12 +12,12 @@ describe('estimateUnlockTime', () => {
     point('2026-10-01T10:20:00Z', { '7': 2, '8': 4 }),
   ];
 
-  it('returns the time of the first increase', () => {
-    expect(estimateUnlockTime(history, '7')).toEqual(new Date('2026-10-01T10:20:00Z'));
+  it('returns the start of the step with the first increase', () => {
+    expect(estimateUnlockTime(history, '7')).toEqual(new Date('2026-10-01T10:10:00Z'));
   });
 
-  it('returns the first data point if the slot already has checks there', () => {
-    expect(estimateUnlockTime(history, '8')).toEqual(new Date('2026-10-01T10:00:00Z'));
+  it('returns the start of the step of the first data point if the slot already has checks there', () => {
+    expect(estimateUnlockTime(history, '8')).toEqual(new Date('2026-10-01T09:50:00Z'));
   });
 
   it('returns undefined if the checks never increase', () => {
@@ -26,7 +26,7 @@ describe('estimateUnlockTime', () => {
   });
 
   it('sorts the data points by time', () => {
-    expect(estimateUnlockTime([...history].reverse(), '7')).toEqual(new Date('2026-10-01T10:20:00Z'));
+    expect(estimateUnlockTime([...history].reverse(), '7')).toEqual(new Date('2026-10-01T10:10:00Z'));
   });
 });
 

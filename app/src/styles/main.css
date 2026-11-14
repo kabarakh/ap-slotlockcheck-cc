@@ -27,13 +27,14 @@
   --app-chart-on-series-7: #fff;
   --app-chart-on-series-8: var(--p-surface-950);
   --app-pace-locked: var(--p-surface-500);
+  --app-pace-not-started: var(--p-cyan-300);
+  --app-pace-no-data: var(--p-surface-300);
   --app-pace-active: var(--p-emerald-800);
   --app-pace-pause: var(--p-emerald-600);
   --app-pace-bk: var(--p-red-500);
   --app-pace-break: var(--p-amber-600);
   --app-pace-bulk: var(--p-violet-500);
   --app-pace-after-goal: var(--p-sky-600);
-  --app-pace-item: var(--p-sky-900);
   --app-pace-status: var(--p-surface-700);
   --app-pace-player: var(--p-surface-100);
   --app-pace-player-change: var(--p-surface-600);
@@ -191,13 +192,14 @@ html.app-dark {
   --app-chart-on-series-7: var(--p-surface-950);
   --app-chart-on-series-8: var(--p-surface-950);
   --app-pace-locked: var(--p-surface-400);
+  --app-pace-not-started: var(--p-cyan-800);
+  --app-pace-no-data: var(--p-surface-700);
   --app-pace-active: var(--p-emerald-500);
   --app-pace-pause: var(--p-emerald-700);
   --app-pace-bk: var(--p-red-400);
   --app-pace-break: var(--p-amber-500);
   --app-pace-bulk: var(--p-violet-400);
   --app-pace-after-goal: var(--p-sky-600);
-  --app-pace-item: var(--p-sky-300);
   --app-pace-status: var(--p-surface-200);
   --app-pace-player: var(--p-surface-800);
   --app-pace-player-change: var(--p-surface-300);
@@ -326,6 +328,10 @@ html.app-dark {
   fill: var(--app-pace-locked);
 }
 
+.pace-not_started {
+  fill: var(--app-pace-not-started);
+}
+
 .pace-active {
   fill: var(--app-pace-active);
 }
@@ -346,12 +352,20 @@ html.app-dark {
   fill: var(--app-pace-bulk);
 }
 
+.pace-no_data {
+  fill: var(--app-pace-no-data);
+}
+
 .pace-after_goal {
   fill: var(--app-pace-after-goal);
 }
 
 .chart-legend.pace-locked {
   background: var(--app-pace-locked);
+}
+
+.chart-legend.pace-not_started {
+  background: var(--app-pace-not-started);
 }
 
 .chart-legend.pace-active {
@@ -372,6 +386,10 @@ html.app-dark {
 
 .chart-legend.pace-bulk {
   background: var(--app-pace-bulk);
+}
+
+.chart-legend.pace-no_data {
+  background: var(--app-pace-no-data);
 }
 
 .chart-legend.pace-after_goal {

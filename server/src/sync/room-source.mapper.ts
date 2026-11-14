@@ -1,5 +1,6 @@
 import type { ReceivedItem, SlotIdentity } from '../lock/lock.types.js';
 import type { ChecksHistoryPoint } from '../lock/unlock-time.logic.js';
+import { CHECKS_HISTORY_STEP_MINUTES } from '../pace/pace.constants.js';
 import {
   slotLockSlotDataSchema,
   type RoomStatus,
@@ -13,6 +14,7 @@ const ITEM_ID_INDEX = 0;
 const SENDER_INDEX = 2;
 const FIRST_PLAYER_POSITION = 1;
 const ALIAS_DISPLAY_PATTERN = /^(.+) \((.+)\)$/;
+const MS_PER_MINUTE = 60_000;
 
 export interface ArchipelagoSlotInfo {
   name: string | null;
@@ -139,6 +141,9 @@ export function itemNamesById(itemNameToId: Record<string, number>): Map<number,
   return new Map(Object.entries(itemNameToId).map(([name, id]) => [id, name]));
 }
 
-export function checksHistoryPoints(history: CheeseChecksHistory): ChecksHistoryPoint[] {
-  return history.map((point) => ({ time: new Date(point.time), checksBySlotKey: point.slots }));
+export function checksHistoryPoints(history: CheeseChecksHistory, now: Date): ChecksHistoryPoint[] {
+  return history.map((point) => {
+    const windowEnd = new Date(point.time).getTime() + CHECKS_HISTORY_STEP_MINUTES * MS_PER_MINUTE;
+    return { time: new Date(Math.min(windowEnd, now.getTime())), checksBySlotKey: point.slots };
+  });
 }

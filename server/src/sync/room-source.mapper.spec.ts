@@ -9,6 +9,7 @@ import {
 import { cheeseTrackerSchema, type CheeseTracker } from '../sources/cheese/cheese.schemas.js';
 import {
   archipelagoSlotsByPosition,
+  checksHistoryPoints,
   itemNamesById,
   lockedSlotNamesByPosition,
   receivedItemsByPosition,
@@ -109,5 +110,18 @@ describe('room source mapping', () => {
     };
     expect(detect(aliasOnly).unknownSlotNames).toEqual([]);
     expect(detect(aliasOnly, new Map()).unknownSlotNames).toEqual(['Dave']);
+  });
+});
+
+describe('checksHistoryPoints', () => {
+  it('gives each point the end of its 10-minute window and not a time after now', () => {
+    const history = [
+      { time: '2026-11-14T01:10:00Z', slots: { '7': 90 } },
+      { time: '2026-11-14T11:00:00Z', slots: { '7': 94 } },
+    ];
+    expect(checksHistoryPoints(history, new Date('2026-11-14T11:04:00Z'))).toEqual([
+      { time: new Date('2026-11-14T01:20:00Z'), checksBySlotKey: { '7': 90 } },
+      { time: new Date('2026-11-14T11:04:00Z'), checksBySlotKey: { '7': 94 } },
+    ]);
   });
 });

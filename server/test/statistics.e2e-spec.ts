@@ -31,8 +31,8 @@ describe('statistics (integration)', () => {
   it('gives the history to all users', async () => {
     const body = (await get('/history').expect(200)).body as RoomHistoryDto;
     expect(body).toMatchObject({
-      historyFrom: '2026-10-20T10:00:00.000Z',
-      startedAt: '2026-10-21T14:30:00.000Z',
+      historyFrom: '2026-10-20T10:10:00.000Z',
+      startedAt: '2026-10-21T14:40:00.000Z',
       bucketMinutes: 60,
       rateWindowHours: 24,
     });

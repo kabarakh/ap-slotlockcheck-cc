@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const PACE_SOURCES: ReadonlySet<string> = new Set(['cheese', 'ap_tracker']);
+const PACE_SOURCES: ReadonlySet<string> = new Set(['cheese']);
 const MS_PER_DAY = 86_400_000;
 
 const processedIdsSchema = z.record(z.string(), z.number().int());

@@ -1177,7 +1177,7 @@ export interface components {
             games: components["schemas"]["GamePaceDto"][];
         };
         /** @enum {string} */
-        SegmentKind: "locked" | "active" | "pause" | "bk" | "break" | "bulk" | "after_goal";
+        SegmentKind: "locked" | "not_started" | "active" | "pause" | "bk" | "break" | "bulk" | "no_data" | "after_goal";
         SegmentDto: {
             /** Format: date-time */
             from: string;
@@ -1211,7 +1211,6 @@ export interface components {
             /** Format: date-time */
             to: string;
             segments: components["schemas"]["SegmentDto"][];
-            progressionItemTimes: string[];
             statusChanges: components["schemas"]["StatusChangeDto"][];
             playerPeriods: components["schemas"]["TimelinePlayerPeriodDto"][];
             unreadableSnapshots: components["schemas"]["TimePeriodDto"][];

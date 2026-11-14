@@ -100,7 +100,7 @@ export class SnapshotMaintenanceService implements OnApplicationBootstrap {
         await this.prisma.room.update({ where: { id: room.id }, data: { snapshotsPrunedAt: now } });
       }
       removedSnapshots += removedInRoom;
-      removedSyncRuns += await this.removeOldSyncRuns(room.id, cutoff);
+      removedSyncRuns += await this.removeOldSyncRunsAfterSignals(room, cutoff);
     }
     return { removedSnapshots, removedSyncRuns };
   }
@@ -123,6 +123,18 @@ export class SnapshotMaintenanceService implements OnApplicationBootstrap {
       await this.prisma.room.update({ where: { id: room.id }, data: { snapshotsPrunedAt: now } });
     }
     return { removedSnapshots: snapshots.count, removedSyncRuns: syncRuns.count };
+  }
+
+  private async removeOldSyncRunsAfterSignals(room: { id: number; slug: string }, cutoff: Date): Promise<number> {
+    try {
+      await this.paceSignals.updateSignals(room);
+    } catch (error) {
+      this.logger.warn(
+        `Synchronization runs of room ${room.slug} are kept, pace signals not updated: ${String(error)}`,
+      );
+      return 0;
+    }
+    return this.removeOldSyncRuns(room.id, cutoff);
   }
 
   private async removeOldSyncRuns(roomId: number, cutoff: Date): Promise<number> {

@@ -66,7 +66,6 @@ const slotTimeline: SlotTimeline = {
   from: '2026-10-28T10:00:00.000Z',
   to: '2026-10-28T12:00:00.000Z',
   segments: [{ kind: 'active', from: '2026-10-28T10:00:00.000Z', to: '2026-10-28T12:00:00.000Z', checks: 10 }],
-  progressionItemTimes: [],
   statusChanges: [],
   playerPeriods: [],
   unreadableSnapshots: [],

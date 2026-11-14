@@ -6,7 +6,11 @@ describe('removableBelowId', () => {
   });
 
   it('keeps the pace snapshots that are not read yet', () => {
-    expect(removableBelowId('ap_tracker', 40, { ap_tracker: 30 })).toBe(31);
+    expect(removableBelowId('cheese', 40, { cheese: 30 })).toBe(31);
+  });
+
+  it('treats the tracker snapshots like other sources that pace does not read', () => {
+    expect(removableBelowId('ap_tracker', 40, { ap_tracker: 30 })).toBe(40);
   });
 
   it('keeps the latest pace snapshot when all snapshots are read', () => {

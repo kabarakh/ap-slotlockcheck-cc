@@ -1,9 +1,12 @@
+import { CHECKS_HISTORY_STEP_MINUTES } from '../pace/pace.constants.js';
 import type { UnlockTimeSource } from './lock.types.js';
 
 export interface ChecksHistoryPoint {
   time: Date;
   checksBySlotKey: Record<string, number>;
 }
+
+const MS_PER_MINUTE = 60_000;
 
 const SOURCE_RANK: Record<UnlockTimeSource, number> = {
   unknown: 0,
@@ -22,7 +25,7 @@ export function estimateUnlockTime(history: ChecksHistoryPoint[], slotKey: strin
       continue;
     }
     if ((previous === undefined && checks > 0) || (previous !== undefined && checks > previous)) {
-      return point.time;
+      return new Date(point.time.getTime() - CHECKS_HISTORY_STEP_MINUTES * MS_PER_MINUTE);
     }
     previous = checks;
   }

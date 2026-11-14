@@ -32,7 +32,6 @@ const player = (from: number, to: number, discordUserId: string | null, discordN
 });
 
 const signals = (overrides: Partial<SlotSignals> = {}): SlotSignals => ({
-  progressionItemTimes: [],
   bkPeriods: [],
   playerPeriods: [player(-1000, 1000, '1', 'alice')],
   statusChanges: [],
@@ -49,6 +48,8 @@ const input = (overrides: Partial<SlotPaceInput> = {}): SlotPaceInput => ({
   history: [],
   range: range(0, 1000),
   signals: signals(),
+  noLogic: null,
+  dataGaps: [],
   limits,
   currentPlayer: { discordUserId: '1', discordName: 'alice' },
   now: lastTime(overrides.history),
@@ -116,7 +117,7 @@ describe('classifySlot and slotPaceRows', () => {
     const slot = input({
       history: history([0, 0], [10, 5], [20, 5], [30, 5], [40, 5], [50, 8], [60, 12]),
       range: range(0, 60),
-      signals: signals({ bkPeriods: [{ from: at(15), to: at(70) }], progressionItemTimes: [at(35)] }),
+      signals: signals({ bkPeriods: [{ from: at(15), to: at(70) }] }),
     });
     expect(classifySlot(slot)).toEqual([
       segment('active', 0, 10, 5),
@@ -134,45 +135,24 @@ describe('classifySlot and slotPaceRows', () => {
     });
   });
 
-  it('classifies a quiet period as BK if a progression item comes in the next active step', () => {
-    const quiet = history([0, 0], [10, 5], [20, 5], [30, 5], [40, 9]);
-    expect(
-      classifySlot(
-        input({ history: quiet, range: range(0, 40), signals: signals({ progressionItemTimes: [at(35)] }) }),
-      ),
-    ).toEqual([segment('active', 0, 10, 5), segment('bk', 10, 30), segment('active', 30, 40, 4)]);
-    expect(
-      classifySlot(
-        input({ history: quiet, range: range(0, 40), signals: signals({ progressionItemTimes: [at(45)] }) }),
-      ),
-    ).toEqual([segment('active', 0, 10, 5), segment('pause', 10, 30), segment('active', 30, 40, 4)]);
-  });
-
-  it('counts a progression item from the own locations in the quiet period', () => {
+  it('classifies each quiet step as BK that overlaps a BK status of Cheese', () => {
     expect(
       classifySlot(
         input({
           history: history([0, 0], [10, 5], [20, 5], [30, 5], [40, 9]),
           range: range(0, 40),
-          signals: signals({ progressionItemTimes: [at(25)] }),
+          signals: signals({ bkPeriods: [{ from: at(25), to: at(28) }] }),
         }),
       ),
-    ).toEqual([segment('active', 0, 10, 5), segment('bk', 10, 30), segment('active', 30, 40, 4)]);
+    ).toEqual([
+      segment('active', 0, 10, 5),
+      segment('pause', 10, 20),
+      segment('bk', 20, 30),
+      segment('active', 30, 40, 4),
+    ]);
   });
 
-  it('does not count a progression item at the start of the quiet period', () => {
-    expect(
-      classifySlot(
-        input({
-          history: history([0, 0], [10, 5], [20, 5], [30, 9]),
-          range: range(0, 30),
-          signals: signals({ progressionItemTimes: [at(10)] }),
-        }),
-      ),
-    ).toEqual([segment('active', 0, 10, 5), segment('pause', 10, 20), segment('active', 20, 30, 4)]);
-  });
-
-  it('classifies a quiet period without signals as pause or break', () => {
+  it('classifies a quiet period without signals between two active steps as pause or break', () => {
     expect(classifySlot(input({ history: history([0, 0], [10, 5], [30, 5], [40, 9]), range: range(0, 40) }))).toEqual([
       segment('active', 0, 10, 5),
       segment('pause', 10, 30),
@@ -187,7 +167,7 @@ describe('classifySlot and slotPaceRows', () => {
     expect(onlyRow(long)).toMatchObject({ activeMinutes: 20, breakMinutes: 120, bkCount: 0 });
   });
 
-  it('classifies a quiet period at the end as BK only with the status of Cheese', () => {
+  it('classifies a quiet period at the end as break and only the steps with a BK status as BK', () => {
     const quiet = history([0, 0], [10, 5], [20, 5], [30, 5], [40, 5], [50, 5], [60, 5]);
     expect(classifySlot(input({ history: quiet, range: range(0, 60) }))).toEqual([
       segment('active', 0, 10, 5),
@@ -195,14 +175,15 @@ describe('classifySlot and slotPaceRows', () => {
     ]);
     expect(
       classifySlot(
-        input({ history: quiet, range: range(0, 60), signals: signals({ progressionItemTimes: [at(30)] }) }),
-      ),
-    ).toEqual([segment('active', 0, 10, 5), segment('break', 10, 60)]);
-    expect(
-      classifySlot(
         input({ history: quiet, range: range(0, 60), signals: signals({ bkPeriods: [{ from: at(30), to: at(60) }] }) }),
       ),
-    ).toEqual([segment('active', 0, 10, 5), segment('bk', 10, 60)]);
+    ).toEqual([segment('active', 0, 10, 5), segment('pause', 10, 30), segment('bk', 30, 60)]);
+  });
+
+  it('classifies a short quiet period at the end as break while the slot has no goal', () => {
+    const slot = input({ history: history([0, 0], [10, 5], [20, 5], [30, 5]), range: range(0, 100), now: at(30) });
+    expect(classifySlot(slot)).toEqual([segment('active', 0, 10, 5), segment('break', 10, 30)]);
+    expect(onlyRow(slot)).toMatchObject({ to: at(100), activeMinutes: 10, breakMinutes: 20 });
   });
 
   it('does not count a bulk step after a release', () => {
@@ -223,7 +204,7 @@ describe('classifySlot and slotPaceRows', () => {
     ]);
     expect(onlyRow(slot)).toMatchObject({ activeMinutes: 20, checks: 10, breakMinutes: 20 });
 
-    const bk = input({ ...slot, signals: signals({ progressionItemTimes: [at(45)] }) });
+    const bk = input({ ...slot, signals: signals({ bkPeriods: [{ from: at(10), to: at(40) }] }) });
     expect(classifySlot(bk)).toEqual([
       segment('active', 0, 10, 5),
       segment('bk', 10, 20),
@@ -234,15 +215,11 @@ describe('classifySlot and slotPaceRows', () => {
     expect(onlyRow(bk)).toMatchObject({ bkMinutes: 20, bkCount: 1, longestBkMinutes: 20 });
   });
 
-  it('uses only pause and break for quiet periods before the start of the signals', () => {
+  it('uses only pause and break for quiet steps that end before the start of the signals', () => {
     const slot = input({
       history: history([0, 0], [10, 5], [20, 5], [30, 5], [40, 5], [50, 9], [60, 9], [70, 12]),
       range: range(0, 70),
-      signals: signals({
-        signalsFrom: at(55),
-        progressionItemTimes: [at(45), at(65)],
-        bkPeriods: [{ from: at(10), to: at(50) }],
-      }),
+      signals: signals({ signalsFrom: at(55), bkPeriods: [{ from: at(10), to: at(60) }] }),
     });
     expect(classifySlot(slot)).toEqual([
       segment('active', 0, 10, 5),
@@ -252,6 +229,20 @@ describe('classifySlot and slotPaceRows', () => {
       segment('active', 60, 70, 3),
     ]);
     expect(onlyRow(slot).partialSignals).toBe(true);
+    expect(
+      classifySlot(
+        input({
+          history: history([0, 0], [10, 5], [20, 5], [30, 5], [40, 9]),
+          range: range(0, 40),
+          signals: signals({ signalsFrom: at(25), bkPeriods: [{ from: at(25), to: at(35) }] }),
+        }),
+      ),
+    ).toEqual([
+      segment('active', 0, 10, 5),
+      segment('pause', 10, 20),
+      segment('bk', 20, 30),
+      segment('active', 30, 40, 4),
+    ]);
   });
 
   it('uses only pause and break without signal data', () => {
@@ -260,19 +251,76 @@ describe('classifySlot and slotPaceRows', () => {
         input({
           history: history([0, 0], [10, 5], [20, 5], [30, 9]),
           range: range(0, 30),
-          signals: signals({
-            signalsFrom: null,
-            progressionItemTimes: [at(15)],
-            bkPeriods: [{ from: at(10), to: at(20) }],
-          }),
+          signals: signals({ signalsFrom: null, bkPeriods: [{ from: at(10), to: at(20) }] }),
         }),
       ),
     ).toEqual([segment('active', 0, 10, 5), segment('pause', 10, 20), segment('active', 20, 30, 4)]);
   });
 
+  it('uses the periods without locations in logic instead of the BK status of Cheese from their start', () => {
+    const points = history([0, 0], [10, 5], [20, 5], [30, 5], [40, 9]);
+    expect(
+      classifySlot(
+        input({
+          history: points,
+          range: range(0, 40),
+          signals: signals({ bkPeriods: [{ from: at(10), to: at(40) }] }),
+          noLogic: { from: at(0), periods: [{ from: at(20), to: at(30) }] },
+        }),
+      ),
+    ).toEqual([
+      segment('active', 0, 10, 5),
+      segment('pause', 10, 20),
+      segment('bk', 20, 30),
+      segment('active', 30, 40, 4),
+    ]);
+    expect(
+      classifySlot(
+        input({
+          history: points,
+          range: range(0, 40),
+          signals: signals({ bkPeriods: [{ from: at(10), to: at(20) }] }),
+          noLogic: { from: at(20), periods: [] },
+        }),
+      ),
+    ).toEqual([
+      segment('active', 0, 10, 5),
+      segment('bk', 10, 20),
+      segment('pause', 20, 30),
+      segment('active', 30, 40, 4),
+    ]);
+  });
+
+  it('classifies the steps that touch a gap of the synchronization as no data and counts their checks', () => {
+    const slot = input({
+      history: history([0, 0], [10, 5], [20, 5], [30, 5], [40, 5], [50, 9], [60, 12]),
+      range: range(0, 60),
+      dataGaps: [{ from: at(20), to: at(40) }],
+    });
+    expect(classifySlot(slot)).toEqual([
+      segment('active', 0, 10, 5),
+      segment('break', 10, 20),
+      segment('no_data', 20, 50, 4),
+      segment('active', 50, 60, 3),
+    ]);
+    expect(onlyRow(slot)).toMatchObject({ activeMinutes: 20, checks: 12, breakMinutes: 10, checksPerHour: null });
+  });
+
+  it('classifies a quiet period after a gap of the synchronization as break', () => {
+    expect(
+      classifySlot(
+        input({
+          history: history([0, 0], [10, 5], [20, 5], [30, 5], [40, 9]),
+          range: range(0, 40),
+          dataGaps: [{ from: at(0), to: at(15) }],
+        }),
+      ),
+    ).toEqual([segment('no_data', 0, 20, 5), segment('break', 20, 30), segment('active', 30, 40, 4)]);
+  });
+
   it('counts a negative check difference as a step without new checks', () => {
     expect(classifySlot(input({ history: history([0, 10], [10, 8], [20, 12]), range: range(0, 20) }))).toEqual([
-      segment('pause', 0, 10),
+      segment('not_started', 0, 10),
       segment('active', 10, 20, 4),
     ]);
   });
@@ -303,12 +351,15 @@ describe('classifySlot and slotPaceRows', () => {
     ).toMatchObject({ activeMinutes: 40, checks: 20, checksPerHour: 30, minutesPerCheck: 2 });
   });
 
-  it('gives no pace without checks', () => {
-    expect(onlyRow(input({ history: history([0, 0], [10, 0], [20, 0], [30, 0]), range: range(0, 30) }))).toMatchObject({
-      activeMinutes: 30,
+  it('gives no active time and no pace without checks', () => {
+    const slot = input({ history: history([0, 0], [10, 0], [20, 0], [30, 0]), range: range(0, 30) });
+    expect(classifySlot(slot)).toEqual([segment('not_started', 0, 30)]);
+    expect(onlyRow(slot)).toMatchObject({
+      activeMinutes: 0,
       checks: 0,
       checksPerHour: null,
       minutesPerCheck: null,
+      breakMinutes: 0,
     });
   });
 
@@ -325,29 +376,21 @@ describe('classifySlot and slotPaceRows', () => {
     ).toEqual([segment('active', 0, 20, 10), segment('break', 20, 80), segment('active', 80, 90, 5)]);
   });
 
-  it('classifies the time from the start to the first check as a quiet period', () => {
+  it('classifies the time from the start to the first check as not started unless it is BK', () => {
     const points = history([0, 0], [10, 0], [20, 0], [30, 5], [40, 9]);
     expect(classifySlot(input({ history: points, range: range(0, 40) }))).toEqual([
-      segment('pause', 0, 20),
+      segment('not_started', 0, 20),
       segment('active', 20, 40, 9),
     ]);
     expect(
       classifySlot(
-        input({ history: points, range: range(0, 40), signals: signals({ progressionItemTimes: [at(25)] }) }),
-      ),
-    ).toEqual([segment('bk', 0, 20), segment('active', 20, 40, 9)]);
-  });
-
-  it('uses the signals for a quiet period that ends after the start of the signals', () => {
-    expect(
-      classifySlot(
         input({
-          history: history([0, 0], [10, 5], [20, 5], [30, 5], [40, 9]),
+          history: points,
           range: range(0, 40),
-          signals: signals({ signalsFrom: at(25), bkPeriods: [{ from: at(25), to: at(35) }] }),
+          noLogic: { from: at(-10), periods: [{ from: at(0), to: at(20) }] },
         }),
       ),
-    ).toEqual([segment('active', 0, 10, 5), segment('bk', 10, 30), segment('active', 30, 40, 4)]);
+    ).toEqual([segment('bk', 0, 20), segment('active', 20, 40, 9)]);
   });
 
   it('fills the missing grid points between two points with the values of the point before', () => {
@@ -389,12 +432,6 @@ describe('classifySlot and slotPaceRows', () => {
     ]);
   });
 
-  it('does not fill after a last point exactly at now', () => {
-    const slot = input({ history: history([0, 0], [10, 5], [20, 5], [30, 5]), range: range(0, 100), now: at(30) });
-    expect(classifySlot(slot)).toEqual([segment('active', 0, 10, 5), segment('pause', 10, 30)]);
-    expect(onlyRow(slot)).toMatchObject({ to: at(100), activeMinutes: 30, breakMinutes: 0 });
-  });
-
   it('has no segments and no rows without history', () => {
     const slot = input({ history: [], range: range(0, 100), now: at(100) });
     expect(classifySlot(slot)).toEqual([]);
@@ -403,7 +440,7 @@ describe('classifySlot and slotPaceRows', () => {
 
   it('fills the history after a single point up to now', () => {
     expect(classifySlot(input({ history: history([0, 0]), range: range(0, 100), now: at(45) }))).toEqual([
-      segment('break', 0, 40),
+      segment('not_started', 0, 40),
     ]);
   });
 
@@ -422,6 +459,16 @@ describe('classifySlot and slotPaceRows', () => {
     expect(
       onlyRow(input({ history: points, range: range(0, 10, 'unknown'), signals: signals({ signalsFrom: at(5) }) })),
     ).toMatchObject({ startKind: 'unknown', partialSignals: true });
+    expect(
+      onlyRow(
+        input({
+          history: points,
+          range: range(0, 10),
+          signals: signals({ signalsFrom: at(5) }),
+          noLogic: { from: at(0), periods: [] },
+        }),
+      ),
+    ).toMatchObject({ partialSignals: false });
   });
 });
 
@@ -697,7 +744,7 @@ describe('slotPaceRows', () => {
           history: history([0, 0], [10, 5], [20, 5], [30, 5], [40, 5], [50, 9]),
           range: range(0, 50),
           signals: signals({
-            progressionItemTimes: [at(45)],
+            bkPeriods: [{ from: at(10), to: at(40) }],
             playerPeriods: [player(-1000, 25, '1', 'alice'), player(25, 1000, '2', 'bob')],
           }),
         }),
@@ -784,27 +831,6 @@ describe('slotPaceRows', () => {
         }),
       ).map((row) => row.discordUserId),
     ).toEqual(['1']);
-  });
-
-  it('counts a BK period with only bulk steps with 0 minutes', () => {
-    const slot = input({
-      history: history([0, 0], [10, 5], [20, 105], [30, 110]),
-      range: range(0, 30),
-      signals: signals({ progressionItemTimes: [at(25)] }),
-    });
-    expect(classifySlot(slot)).toEqual([
-      segment('active', 0, 10, 5),
-      segment('bulk', 10, 20, 100),
-      segment('active', 20, 30, 5),
-    ]);
-    expect(onlyRow(slot)).toMatchObject({
-      activeMinutes: 20,
-      checks: 10,
-      bkMinutes: 0,
-      bkShare: 0,
-      bkCount: 1,
-      longestBkMinutes: 0,
-    });
   });
 
   it('gives one row with the current player of the slot if the signals have no player periods', () => {

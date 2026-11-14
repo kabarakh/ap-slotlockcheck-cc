@@ -8,12 +8,13 @@ import {
   emptySignalsState,
   parseSignalsState,
   readSignalSnapshot,
+  readSyncRuns,
   serializeSignalsState,
   type SignalPeriod,
   type SignalSource,
   type SignalsState,
 } from './pace-signals.js';
-import { SNAPSHOT_BATCH_SIZE } from './pace.constants.js';
+import { DATA_GAP_MINUTES, SNAPSHOT_BATCH_SIZE } from './pace.constants.js';
 import { orderSnapshots, type OrderedSnapshot, type SnapshotEntry } from './pace.mapper.js';
 
 export interface UnreadableSnapshot {
@@ -32,15 +33,18 @@ export interface StoredSignals {
 
 type SignalsRoom = Pick<Room, 'id' | 'slug'>;
 
-const SIGNAL_SOURCES: SignalSource[] = ['cheese', 'ap_tracker'];
-const sourceSchema = z.enum(['cheese', 'ap_tracker']);
+const SIGNAL_SOURCES: SignalSource[] = ['cheese'];
 const isoDate = z.iso.datetime().transform((value) => new Date(value));
-const lastSnapshotIdsSchema = z.object({ cheese: z.number().int(), ap_tracker: z.number().int() });
-const unreadableSnapshotsSchema = z.array(z.object({ source: sourceSchema, from: isoDate, to: isoDate.nullable() }));
+const lastSnapshotIdsSchema = z.object({ cheese: z.number().int() });
+const unreadableSnapshotsSchema = z
+  .array(z.object({ source: z.string(), from: isoDate, to: isoDate.nullable() }))
+  .transform((snapshots) =>
+    snapshots.filter((snapshot): snapshot is UnreadableSnapshot => snapshot.source === 'cheese'),
+  );
 
 const emptyStoredSignals = (): StoredSignals => ({
   state: emptySignalsState(),
-  lastSnapshotIds: { cheese: 0, ap_tracker: 0 },
+  lastSnapshotIds: { cheese: 0 },
   unreadableSnapshots: [],
 });
 
@@ -102,13 +106,15 @@ export class PaceSignalsService {
         ({ snapshots, withoutRun } = await this.order(room.id, entries));
       }
     }
-    if (saved !== null && entries.length === 0) {
+    const runStarts = await this.newSyncRunStarts(room.id, stored.state.lastSyncRunAt);
+    if (saved !== null && entries.length === 0 && runStarts.length === 0) {
       return stored;
     }
     for (const id of withoutRun) {
       this.logger.warn(`Snapshot ${id} of room ${room.slug} has no synchronization run and is not used`);
     }
     await this.read(room, stored, snapshots);
+    readSyncRuns(stored.state, runStarts, DATA_GAP_MINUTES);
     for (const entry of entries) {
       stored.lastSnapshotIds[entry.source] = Math.max(stored.lastSnapshotIds[entry.source], entry.id);
     }
@@ -151,6 +157,15 @@ export class PaceSignalsService {
       select: { snapshotsPrunedAt: true },
     });
     return room.snapshotsPrunedAt !== null;
+  }
+
+  private async newSyncRunStarts(roomId: number, after: Date | null): Promise<Date[]> {
+    const runs = await this.prisma.syncRun.findMany({
+      where: { roomId, result: 'success', ...(after === null ? {} : { startedAt: { gt: after } }) },
+      select: { startedAt: true },
+      orderBy: { startedAt: 'asc' },
+    });
+    return runs.map((run) => run.startedAt);
   }
 
   private async newEntries(roomId: number, lastSnapshotIds: LastSnapshotIds): Promise<SnapshotEntry[]> {

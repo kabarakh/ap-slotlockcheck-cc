@@ -21,14 +21,13 @@ const PLOT_WIDTH = WIDTH - LABEL_WIDTH - RIGHT;
 const LANES = {
   players: { y: 4, height: 20 },
   segments: { y: 30, height: 28 },
-  items: { y: 64, height: 12 },
-  statuses: { y: 82, height: 26 },
-  unreadable: { y: 114, height: 12 },
+  statuses: { y: 64, height: 26 },
+  unreadable: { y: 96, height: 12 },
 };
-const AXIS_Y = 132;
+const AXIS_Y = 114;
 const HEIGHT = AXIS_Y + 22;
 const STATUS_LABEL_WIDTH = 60;
-const MARK_KEYS = ['item', 'status', 'player', 'unreadable', 'highlight'] as const;
+const MARK_KEYS = ['status', 'player', 'unreadable', 'highlight'] as const;
 const legendKinds = computed(() =>
   props.showLocked ? SEGMENT_KINDS : SEGMENT_KINDS.filter((kind) => kind !== 'locked'),
 );
@@ -145,16 +144,6 @@ const playerLabel = (name: string | null, width: number): string => {
                 }}
               </title>
             </rect>
-          </g>
-          <g data-testid="pace-timeline-items">
-            <path
-              v-for="(item, index) in layout.items"
-              :key="index"
-              :d="`M ${item.x - 4} ${LANES.items.y} L ${item.x + 4} ${LANES.items.y} L ${item.x} ${LANES.items.y + LANES.items.height} Z`"
-              class="item"
-            >
-              <title>{{ t('pace.timeline.itemTitle', { time: time(item.time) }) }}</title>
-            </path>
           </g>
           <g data-testid="pace-timeline-statuses">
             <g v-for="(status, index) in layout.statuses" :key="index">
@@ -297,10 +286,6 @@ const playerLabel = (name: string | null, width: number): string => {
   stroke-width: 2;
 }
 
-.item {
-  fill: var(--app-pace-item);
-}
-
 .status {
   stroke: var(--app-pace-status);
   stroke-width: 2;
@@ -341,10 +326,6 @@ const playerLabel = (name: string | null, width: number): string => {
 .legend li {
   display: inline-flex;
   align-items: center;
-}
-
-.legend-item {
-  background: var(--app-pace-item);
 }
 
 .legend-status {

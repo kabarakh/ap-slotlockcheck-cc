@@ -20,7 +20,16 @@ export interface PaceLimits {
   bulkLimitChecks: number;
 }
 
-export type SegmentKind = 'locked' | 'active' | 'pause' | 'bk' | 'break' | 'bulk' | 'after_goal';
+export type SegmentKind =
+  | 'locked'
+  | 'not_started'
+  | 'active'
+  | 'pause'
+  | 'bk'
+  | 'break'
+  | 'bulk'
+  | 'no_data'
+  | 'after_goal';
 
 export interface Segment {
   kind: SegmentKind;
@@ -45,10 +54,17 @@ export interface SlotRangeInput {
 
 export type SlotPlayer = Pick<PlayerPeriod, 'discordUserId' | 'discordName'>;
 
+export interface NoLogicSignals {
+  from: Date;
+  periods: SignalPeriod[];
+}
+
 export interface SlotPaceInput {
   history: PaceHistoryPoint[];
   range: SlotRange | null;
   signals: SlotSignals;
+  noLogic: NoLogicSignals | null;
+  dataGaps: SignalPeriod[];
   limits: PaceLimits;
   currentPlayer: SlotPlayer;
   now: Date;
@@ -93,11 +109,6 @@ export interface Step {
   from: Date;
   to: Date;
   checks: number;
-}
-
-interface QuietPeriod {
-  steps: Step[];
-  nextActive: Step | undefined;
 }
 
 interface BkPeriod {
@@ -157,6 +168,7 @@ export function slotPaceRows(input: SlotPaceInput): SlotPaceRow[] {
     return [];
   }
   const { inside, bkPeriods } = classify(input, range);
+  const signalsFrom = bkSignalsFrom(signals, input.noLogic);
   return playerRows(range, signals.playerPeriods, input.currentPlayer)
     .flatMap((row): Omit<SlotPaceRow, 'startKind'>[] => {
       const segments = inside.flatMap((segment) => segmentInRow(segment, row));
@@ -170,11 +182,16 @@ export function slotPaceRows(input: SlotPaceInput): SlotPaceRow[] {
             segments,
             bkPeriods.filter((period) => period.start >= row.from && period.start < row.to),
           ),
-          partialSignals: signals.signalsFrom === null || signals.signalsFrom > row.from,
+          partialSignals: signalsFrom === null || signalsFrom > row.from,
         },
       ];
     })
     .map((row, index) => ({ ...row, startKind: index === 0 ? range.startKind : null }));
+}
+
+export function bkSignalsFrom(signals: SlotSignals, noLogic: NoLogicSignals | null): Date | null {
+  const starts = [signals.signalsFrom, noLogic?.from ?? null].filter((time): time is Date => time !== null);
+  return starts.length === 0 ? null : new Date(Math.min(...starts.map((time) => time.getTime())));
 }
 
 export function gamePaceValues(slots: GamePaceSlot[]): GamePaceValues {
@@ -193,7 +210,8 @@ export function gamePaceValues(slots: GamePaceSlot[]): GamePaceValues {
   };
 }
 
-function classify({ history, signals, limits, now }: SlotPaceInput, range: SlotRange): Classification {
+function classify(input: SlotPaceInput, range: SlotRange): Classification {
+  const { history, now } = input;
   const before: Segment[] = [];
   const inside: Step[] = [];
   const after: Segment[] = [];
@@ -217,37 +235,19 @@ function classify({ history, signals, limits, now }: SlotPaceInput, range: SlotR
     }
   }
 
-  const isActive = (step: Step) => step.checks > 0 && step.checks <= limits.bulkLimitChecks;
-  const isBulk = (step: Step) => step.checks > limits.bulkLimitChecks;
-  const classified: Segment[] = [];
+  const classified = classifySteps(inside, input, range);
   const bkPeriods: BkPeriod[] = [];
-  let index = 0;
-  while (index < inside.length) {
-    const step = inside[index];
-    if (isActive(step)) {
-      classified.push({ kind: 'active', ...step });
-      index += 1;
+  let previousKind: SegmentKind | undefined;
+  for (const segment of classified) {
+    if (segment.kind === 'bulk') {
       continue;
     }
-    const quietSteps: Step[] = [];
-    while (index < inside.length && !isActive(inside[index])) {
-      quietSteps.push(inside[index]);
-      index += 1;
+    if (segment.kind === 'bk' && previousKind === 'bk') {
+      bkPeriods[bkPeriods.length - 1].minutes += minutes(segment);
+    } else if (segment.kind === 'bk') {
+      bkPeriods.push({ start: segment.from, minutes: minutes(segment) });
     }
-    const kind = quietKind({ steps: quietSteps, nextActive: inside[index] }, signals, limits);
-    const quietSegments = quietSteps.map((quietStep): Segment => ({
-      kind: isBulk(quietStep) ? 'bulk' : kind,
-      ...quietStep,
-    }));
-    if (kind === 'bk') {
-      bkPeriods.push({
-        start: quietSteps[0].from,
-        minutes: quietSegments
-          .filter((segment) => segment.kind === 'bk')
-          .reduce((sum, segment) => sum + minutes(segment), 0),
-      });
-    }
-    classified.push(...quietSegments);
+    previousKind = segment.kind;
   }
 
   return { before, inside: classified, after, bkPeriods };
@@ -284,7 +284,7 @@ function rowValues(segments: Segment[], bkPeriods: BkPeriod[]): Omit<SlotPaceVal
     segments.filter((segment) => kinds.includes(segment.kind)).reduce((sum, segment) => sum + minutes(segment), 0);
   const activeMinutes = minutesOf('active', 'pause');
   const checks = segments
-    .filter((segment) => segment.kind === 'active')
+    .filter((segment) => segment.kind === 'active' || segment.kind === 'no_data')
     .reduce((sum, segment) => sum + segment.checks, 0);
   const bkMinutes = minutesOf('bk');
   const hasPace = activeMinutes >= MIN_ACTIVE_MINUTES_FOR_PACE && checks > 0;
@@ -333,19 +333,75 @@ function filledHistory(points: PaceHistoryPoint[], now: Date): PaceHistoryPoint[
   });
 }
 
-function quietKind(quiet: QuietPeriod, signals: SlotSignals, limits: PaceLimits): 'bk' | 'break' | 'pause' {
-  const from = quiet.steps[0].from;
-  const to = quiet.steps[quiet.steps.length - 1].to;
-  if (signals.signalsFrom !== null && to > signals.signalsFrom) {
-    const cheeseBk = signals.bkPeriods.some((period) => period.from < to && period.to > from);
-    const nextActive = quiet.nextActive;
-    const itemBk =
-      nextActive !== undefined && signals.progressionItemTimes.some((time) => time > from && time <= nextActive.to);
-    if (cheeseBk || itemBk) {
-      return 'bk';
-    }
+type StepKind = Exclude<SegmentKind, 'locked' | 'after_goal' | 'not_started' | 'pause' | 'break'> | 'quiet';
+
+const overlaps = (period: SignalPeriod, step: Step): boolean => period.from < step.to && period.to > step.from;
+
+function isBk(step: Step, { signals, noLogic }: SlotPaceInput): boolean {
+  if (noLogic !== null && step.from >= noLogic.from) {
+    return noLogic.periods.some((period) => overlaps(period, step));
   }
-  return minutes({ from, to }) > limits.breakLimitMinutes ? 'break' : 'pause';
+  return (
+    signals.signalsFrom !== null &&
+    step.to > signals.signalsFrom &&
+    signals.bkPeriods.some((period) => overlaps(period, step))
+  );
+}
+
+function stepKind(step: Step, input: SlotPaceInput): StepKind {
+  if (input.dataGaps.some((gap) => step.from <= gap.to && step.to > gap.from)) {
+    return 'no_data';
+  }
+  if (step.checks > input.limits.bulkLimitChecks) {
+    return 'bulk';
+  }
+  if (step.checks > 0) {
+    return 'active';
+  }
+  return isBk(step, input) ? 'bk' : 'quiet';
+}
+
+function classifySteps(steps: Step[], input: SlotPaceInput, range: SlotRange): Segment[] {
+  const kinds = steps.map((step) => stepKind(step, input));
+  const firstChecks = steps.findIndex((step) => step.checks > 0);
+  const started = firstChecks === -1 ? steps.length : firstChecks;
+  const closedAtEnd = range.end < input.now;
+  const segments: Segment[] = [];
+  let index = 0;
+  while (index < steps.length) {
+    const kind = kinds[index];
+    if (kind !== 'quiet') {
+      segments.push({ kind, ...steps[index] });
+      index += 1;
+      continue;
+    }
+    if (index < started) {
+      segments.push({ kind: 'not_started', ...steps[index] });
+      index += 1;
+      continue;
+    }
+    const runStart = index;
+    let runEnd = index;
+    while (index < steps.length && (kinds[index] === 'quiet' || kinds[index] === 'bulk')) {
+      if (kinds[index] === 'quiet') {
+        runEnd = index;
+      }
+      index += 1;
+    }
+    const next = kinds[index];
+    index = runEnd + 1;
+    const previous = kinds[runStart - 1];
+    const closed =
+      previous !== undefined && previous !== 'no_data' && (next === undefined ? closedAtEnd : next !== 'no_data');
+    const short = minutes({ from: steps[runStart].from, to: steps[runEnd].to }) <= input.limits.breakLimitMinutes;
+    const runKind = closed && short ? 'pause' : 'break';
+    segments.push(
+      ...steps
+        .slice(runStart, index)
+        .map((step, offset): Segment => ({ kind: kinds[runStart + offset] === 'bulk' ? 'bulk' : runKind, ...step })),
+    );
+  }
+  return segments;
 }
 
 function joinSegments(segments: Segment[]): Segment[] {

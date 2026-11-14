@@ -2,7 +2,17 @@ import { scaleTime } from 'd3-scale';
 
 import type { ProgressionStatus, SegmentKind, SlotTimeline } from '@/api/types';
 
-export const SEGMENT_KINDS: SegmentKind[] = ['locked', 'active', 'pause', 'bk', 'break', 'bulk', 'after_goal'];
+export const SEGMENT_KINDS: SegmentKind[] = [
+  'locked',
+  'not_started',
+  'active',
+  'pause',
+  'bk',
+  'break',
+  'bulk',
+  'no_data',
+  'after_goal',
+];
 
 export interface TimelinePeriod {
   from: string;
@@ -43,7 +53,6 @@ export interface TimelineLayout {
   segments: TimelineSegment[];
   players: TimelinePlayer[];
   playerChanges: TimelineMark[];
-  items: TimelineMark[];
   statuses: TimelineStatusMark[];
   unreadable: TimelineSpan[];
   highlight: TimelineSpan | null;
@@ -117,7 +126,6 @@ export function paceTimelineLayout(timeline: SlotTimeline, options: TimelineOpti
       .slice(1)
       .filter((period) => timeOf(period.from) > start && timeOf(period.from) < end)
       .map((period) => ({ x: xOf(period.from), time: period.from })),
-    items: timeline.progressionItemTimes.filter(inside).map((time) => ({ x: xOf(time), time })),
     statuses,
     unreadable: timeline.unreadableSnapshots.flatMap((period) => {
       const placed = span(period);

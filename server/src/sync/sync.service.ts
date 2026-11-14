@@ -356,7 +356,7 @@ export class SyncService {
     }
     let history;
     try {
-      history = checksHistoryPoints(await this.cheese.getChecksHistory(room.cheeseTrackerId));
+      history = checksHistoryPoints(await this.cheese.getChecksHistory(room.cheeseTrackerId), new Date());
     } catch (error) {
       this.logger.warn(`Checks history of room ${room.slug} not available: ${String(error)}`);
       return;

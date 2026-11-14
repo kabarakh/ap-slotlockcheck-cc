@@ -161,7 +161,6 @@ export function slotTimelineDto(input: TimelineInput): SlotTimelineDto {
       to: segment.to.toISOString(),
       checks: segment.checks,
     })),
-    progressionItemTimes: signals.progressionItemTimes.map((time) => time.toISOString()),
     statusChanges: signals.statusChanges.map(({ time, status }) => ({ time: time.toISOString(), status })),
     playerPeriods: signals.playerPeriods.map((period) => ({
       from: period.from.toISOString(),

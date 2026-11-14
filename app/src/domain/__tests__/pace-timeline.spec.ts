@@ -14,7 +14,6 @@ const timeline = (overrides: Partial<SlotTimeline> = {}): SlotTimeline => ({
     { kind: 'bk', from: at(20), to: at(60), checks: 0 },
     { kind: 'active', from: at(60), to: at(100), checks: 8 },
   ],
-  progressionItemTimes: [at(50), at(200)],
   statusChanges: [
     { time: at(-30), status: 'unblocked' },
     { time: at(-10), status: 'go' },
@@ -58,7 +57,6 @@ describe('paceTimelineLayout', () => {
 
   it('shows only the marks inside of the axis and the last status before it', () => {
     const layout = paceTimelineLayout(timeline(), options);
-    expect(layout.items.map((item) => item.x)).toEqual([500]);
     expect(layout.statuses.map(({ status, x }) => ({ status, x }))).toEqual([
       { status: 'go', x: 0 },
       { status: 'bk', x: 300 },

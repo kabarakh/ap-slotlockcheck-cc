@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
-import { networkItemSchema, type NetworkItem } from '../sources/archipelago/archipelago.schemas.js';
 import { progressionStatusSchema, type ProgressionStatus } from '../sources/cheese/cheese.schemas.js';
+import { DATA_GAP_MINUTES } from './pace.constants.js';
 
-export type SignalSource = 'cheese' | 'ap_tracker';
+export type SignalSource = 'cheese';
 
 export interface SignalSnapshot {
   source: SignalSource;
@@ -32,7 +32,6 @@ export interface StatusChange {
 }
 
 export interface SlotSignals {
-  progressionItemTimes: Date[];
   bkPeriods: SignalPeriod[];
   playerPeriods: PlayerPeriod[];
   statusChanges: StatusChange[];
@@ -56,8 +55,8 @@ interface OpenPlayerPeriod {
 export interface SignalsState {
   signalsFrom: Date | null;
   lastValidFrom: Map<SignalSource, Date>;
-  receivedCounts: Map<number, number>;
-  itemTimes: Map<number, Date[]>;
+  lastSyncRunAt: Date | null;
+  syncGaps: SignalPeriod[];
   closedBkPeriods: Map<number, SignalPeriod[]>;
   openBkStarts: Map<number, Date>;
   closedPlayerPeriods: Map<number, PlayerPeriod[]>;
@@ -67,7 +66,7 @@ export interface SignalsState {
 }
 
 const BK_STATUSES: ReadonlySet<string> = new Set(['bk', 'soft_bk']);
-const PROGRESSION_FLAG = 1;
+const MS_PER_MINUTE = 60_000;
 
 const cheeseStatusSchema = z.object({
   games: z.array(
@@ -81,23 +80,7 @@ const cheeseStatusSchema = z.object({
   ),
 });
 
-const receivedItemsSchema = z.object({
-  player_items_received: z.array(z.object({ player: z.number().int(), items: z.array(networkItemSchema) })),
-});
-
 type CheeseStatus = z.infer<typeof cheeseStatusSchema>;
-type ReceivedItems = z.infer<typeof receivedItemsSchema>;
-
-type ParsedSnapshot = { source: 'cheese'; status: CheeseStatus } | { source: 'ap_tracker'; received: ReceivedItems };
-
-function parseSnapshot(source: SignalSource, payload: string): ParsedSnapshot {
-  const json: unknown = JSON.parse(payload);
-  return source === 'cheese'
-    ? { source, status: cheeseStatusSchema.parse(json) }
-    : { source, received: receivedItemsSchema.parse(json) };
-}
-
-const isProgression = ([, , , flags]: NetworkItem): boolean => (flags & PROGRESSION_FLAG) === PROGRESSION_FLAG;
 
 function listFor<T>(lists: Map<number, T[]>, key: number): T[] {
   const existing = lists.get(key);
@@ -118,9 +101,11 @@ const gameId = z.number().int();
 
 const signalsStateSchema = z.object({
   signalsFrom: isoDate.nullable(),
-  lastValidFrom: entriesOf(z.enum(['cheese', 'ap_tracker']), isoDate),
-  receivedCounts: entriesOf(gameId, z.number().int()),
-  itemTimes: entriesOf(gameId, z.array(isoDate)),
+  lastValidFrom: entriesOf(z.string(), isoDate).transform(
+    (entries) => new Map([...entries].filter((entry): entry is [SignalSource, Date] => entry[0] === 'cheese')),
+  ),
+  lastSyncRunAt: isoDate.nullable().default(null),
+  syncGaps: z.array(periodSchema).default([]),
   closedBkPeriods: entriesOf(gameId, z.array(periodSchema)),
   openBkStarts: entriesOf(gameId, isoDate),
   closedPlayerPeriods: entriesOf(gameId, z.array(periodSchema.extend(playerSchema.shape))),
@@ -133,8 +118,8 @@ export function emptySignalsState(): SignalsState {
   return {
     signalsFrom: null,
     lastValidFrom: new Map(),
-    receivedCounts: new Map(),
-    itemTimes: new Map(),
+    lastSyncRunAt: null,
+    syncGaps: [],
     closedBkPeriods: new Map(),
     openBkStarts: new Map(),
     closedPlayerPeriods: new Map(),
@@ -187,22 +172,25 @@ function readCheese(state: SignalsState, status: CheeseStatus, validFrom: Date):
   }
 }
 
-function readTracker(state: SignalsState, received: ReceivedItems, validFrom: Date, isFirst: boolean): void {
-  for (const { player, items } of received.player_items_received) {
-    const known = state.receivedCounts.get(player) ?? 0;
-    if (items.length <= known) {
-      continue;
+export function readSyncRuns(state: SignalsState, startTimes: Date[], gapMinutes: number): void {
+  const sorted = startTimes
+    .filter((time) => state.lastSyncRunAt === null || time > state.lastSyncRunAt)
+    .sort((a, b) => a.getTime() - b.getTime());
+  for (const time of sorted) {
+    const previous = state.lastSyncRunAt;
+    if (previous !== null && time.getTime() - previous.getTime() > gapMinutes * MS_PER_MINUTE) {
+      state.syncGaps.push({ from: previous, to: time });
     }
-    if (!isFirst) {
-      listFor(state.itemTimes, player).push(
-        ...items
-          .slice(known)
-          .filter(isProgression)
-          .map(() => validFrom),
-      );
-    }
-    state.receivedCounts.set(player, items.length);
+    state.lastSyncRunAt = time;
   }
+}
+
+export function syncGaps(state: SignalsState, now: Date): SignalPeriod[] {
+  const last = state.lastSyncRunAt;
+  if (last === null || now.getTime() - last.getTime() <= DATA_GAP_MINUTES * MS_PER_MINUTE) {
+    return [...state.syncGaps];
+  }
+  return [...state.syncGaps, { from: last, to: now }];
 }
 
 export function readSignalSnapshot(
@@ -213,9 +201,9 @@ export function readSignalSnapshot(
   if (previous !== undefined && validFrom < previous) {
     throw new Error(`Snapshots of the source ${source} are not sorted by time`);
   }
-  let parsed: ParsedSnapshot;
+  let status: CheeseStatus;
   try {
-    parsed = parseSnapshot(source, payload);
+    status = cheeseStatusSchema.parse(JSON.parse(payload));
   } catch (error) {
     if (error instanceof SyntaxError || error instanceof z.ZodError) {
       return { read: false, error };
@@ -225,11 +213,7 @@ export function readSignalSnapshot(
   if (state.signalsFrom === null || validFrom < state.signalsFrom) {
     state.signalsFrom = validFrom;
   }
-  if (parsed.source === 'cheese') {
-    readCheese(state, parsed.status, validFrom);
-  } else {
-    readTracker(state, parsed.received, validFrom, previous === undefined);
-  }
+  readCheese(state, status, validFrom);
   state.lastValidFrom.set(source, validFrom);
   return { read: true };
 }
@@ -244,7 +228,6 @@ export function finishSignals(state: SignalsState, slots: readonly SignalSlot[],
       return [
         slot.position,
         {
-          progressionItemTimes: [...(state.itemTimes.get(slot.position) ?? [])],
           bkPeriods: openFrom === undefined ? [...closed] : [...closed, { from: openFrom, to: now }],
           playerPeriods: openPlayer === undefined ? [...closedPlayers] : [...closedPlayers, { ...openPlayer, to: now }],
           statusChanges: [...(state.statusChanges.get(slot.cheeseGameId) ?? [])],

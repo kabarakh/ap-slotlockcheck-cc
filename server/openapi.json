@@ -3991,11 +3991,13 @@
         "type": "string",
         "enum": [
           "locked",
+          "not_started",
           "active",
           "pause",
           "bk",
           "break",
           "bulk",
+          "no_data",
           "after_goal"
         ]
       },
@@ -4109,13 +4111,6 @@
               "$ref": "#/components/schemas/SegmentDto"
             }
           },
-          "progressionItemTimes": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
           "statusChanges": {
             "type": "array",
             "items": {
@@ -4142,7 +4137,6 @@
           "from",
           "to",
           "segments",
-          "progressionItemTimes",
           "statusChanges",
           "playerPeriods",
           "unreadableSnapshots",

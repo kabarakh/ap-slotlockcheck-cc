@@ -27,7 +27,7 @@ const EMPTY_VALUES = {
   startKind: null,
 };
 
-const LAST_HISTORY_POINT = '2026-10-22T09:00:00.000Z';
+const LAST_HISTORY_POINT = '2026-10-22T09:10:00.000Z';
 const HISTORY_STEP_MS = 10 * 60_000;
 
 const lastGridPoint = (calculatedAt: string) => {
@@ -40,11 +40,6 @@ const lastGridPoint = (calculatedAt: string) => {
 interface CheeseGameFixture {
   id: number;
   progression_status: string;
-}
-
-interface TrackerItemsFixture {
-  player: number;
-  items: number[][];
 }
 
 const minutesBetween = (from: string, to: string) => (Date.parse(to) - Date.parse(from)) / 60_000;
@@ -81,7 +76,7 @@ describe('pace statistics (integration)', () => {
   const lastSnapshotIds = async (prisma: PrismaService, roomId: number) => {
     const last = async (source: string) =>
       (await prisma.syncSnapshot.findFirstOrThrow({ where: { roomId, source }, orderBy: { id: 'desc' } })).id;
-    return { cheese: await last('cheese'), ap_tracker: await last('ap_tracker') };
+    return { cheese: await last('cheese') };
   };
 
   beforeAll(async () => {
@@ -160,13 +155,13 @@ describe('pace statistics (integration)', () => {
     expect(rows['Alice']).toMatchObject({
       hasRange: true,
       from: '2026-10-21T14:30:00.000Z',
-      activeMinutes: 0,
-      checks: 0,
+      activeMinutes: 10,
+      checks: 5,
       checksPerHour: null,
       bkMinutes: 0,
-      bkShare: null,
+      bkShare: 0,
       breakMinutes:
-        minutesBetween('2026-10-21T14:30:00.000Z', '2026-10-22T08:50:00.000Z') +
+        minutesBetween('2026-10-21T14:40:00.000Z', '2026-10-22T09:00:00.000Z') +
         minutesBetween(LAST_HISTORY_POINT, lastGridPoint(body.calculatedAt)),
       startKind: 'estimated',
     });
@@ -174,8 +169,8 @@ describe('pace statistics (integration)', () => {
       {
         game: 'A Link to the Past',
         slotCount: 1,
-        activeMinutes: 0,
-        checks: 0,
+        activeMinutes: 10,
+        checks: 5,
         checksPerHour: null,
         medianChecksPerHour: null,
       },
@@ -252,7 +247,6 @@ describe('pace statistics (integration)', () => {
     expect(Object.keys(body).sort()).toEqual([
       'from',
       'playerPeriods',
-      'progressionItemTimes',
       'segments',
       'slotId',
       'statusChanges',
@@ -263,14 +257,13 @@ describe('pace statistics (integration)', () => {
       slotId: alice?.slotId,
       from: '2026-10-21T12:00:00.000Z',
       segments: [
-        { kind: 'locked', from: '2026-10-20T10:00:00.000Z', to: '2026-10-21T12:00:00.000Z', checks: 0 },
-        { kind: 'break', from: '2026-10-21T12:00:00.000Z', to: '2026-10-21T14:20:00.000Z', checks: 0 },
-        { kind: 'active', from: '2026-10-21T14:20:00.000Z', to: '2026-10-21T14:30:00.000Z', checks: 5 },
-        { kind: 'break', from: '2026-10-21T14:30:00.000Z', to: '2026-10-22T08:50:00.000Z', checks: 0 },
-        { kind: 'bulk', from: '2026-10-22T08:50:00.000Z', to: LAST_HISTORY_POINT, checks: 115 },
+        { kind: 'locked', from: '2026-10-20T10:10:00.000Z', to: '2026-10-21T12:00:00.000Z', checks: 0 },
+        { kind: 'not_started', from: '2026-10-21T12:00:00.000Z', to: '2026-10-21T14:30:00.000Z', checks: 0 },
+        { kind: 'active', from: '2026-10-21T14:30:00.000Z', to: '2026-10-21T14:40:00.000Z', checks: 5 },
+        { kind: 'break', from: '2026-10-21T14:40:00.000Z', to: '2026-10-22T09:00:00.000Z', checks: 0 },
+        { kind: 'bulk', from: '2026-10-22T09:00:00.000Z', to: LAST_HISTORY_POINT, checks: 115 },
         { kind: 'break', from: LAST_HISTORY_POINT, to: lastGridPoint(before.calculatedAt), checks: 0 },
       ],
-      progressionItemTimes: [],
       statusChanges: [{ status: 'bk' }],
       playerPeriods: [{ discordUserId: OWNER.discordId, discordName: 'alice_owner' }],
     });
@@ -301,29 +294,21 @@ describe('pace statistics (integration)', () => {
     const { prisma, room } = await signalState();
     const alice = rowsByName((await pace(ownerCookie).expect(200)).body as RoomPaceDto)['Alice'];
     const oldSnapshots = await prisma.syncSnapshot.findMany({
-      where: { roomId: room.id, source: { in: ['cheese', 'ap_tracker'] } },
+      where: { roomId: room.id, source: 'cheese' },
     });
     await prisma.syncSnapshot.updateMany({
       where: { id: { in: oldSnapshots.map((snapshot) => snapshot.id) } },
       data: { payload: 'old payload' },
     });
     const cheeseFixture = loadFixture('cheese-tracker') as { games: CheeseGameFixture[] };
-    const trackerFixture = loadFixture('ap-tracker') as { player_items_received: TrackerItemsFixture[] };
     testApp.fixtureOverrides.set('cheese-tracker', {
       ...cheeseFixture,
       games: cheeseFixture.games.map((game) => (game.id === 102 ? { ...game, progression_status: 'go' } : game)),
-    });
-    testApp.fixtureOverrides.set('ap-tracker', {
-      ...trackerFixture,
-      player_items_received: trackerFixture.player_items_received.map((entry) =>
-        entry.player === 2 ? { ...entry, items: [...entry.items, [43, 78, 3, 1]] } : entry,
-      ),
     });
     const warn = vi.spyOn(Logger.prototype, 'warn');
     warn.mockClear();
     await expect(testApp.app.get(SyncService).syncRoom(room.id, 'schedule')).resolves.toBe('success');
     testApp.fixtureOverrides.delete('cheese-tracker');
-    testApp.fixtureOverrides.delete('ap-tracker');
     const run = await prisma.syncRun.findFirstOrThrow({ where: { roomId: room.id }, orderBy: { id: 'desc' } });
     const { state } = await signalState();
     expect(JSON.parse(state?.lastSnapshotIds ?? '')).toEqual(await lastSnapshotIds(prisma, room.id));
@@ -332,7 +317,6 @@ describe('pace statistics (integration)', () => {
     expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('cannot be read'));
     expect(incrementalTimeline.statusChanges.map((change) => change.status)).toEqual(['bk', 'go']);
     expect(incrementalTimeline.statusChanges[1]?.time).toBe(run.startedAt.toISOString());
-    expect(incrementalTimeline.progressionItemTimes).toEqual([run.startedAt.toISOString()]);
     expect(incrementalTimeline.unreadableSnapshots).toEqual([
       { from: expect.any(String) as string, to: run.startedAt.toISOString() },
     ]);

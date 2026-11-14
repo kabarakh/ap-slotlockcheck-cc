@@ -5,7 +5,17 @@ import type { ProgressionStatus } from '../../sources/cheese/cheese.schemas.js';
 import type { SegmentKind, SlotStartKind } from '../pace.logic.js';
 
 export const SLOT_START_KINDS: SlotStartKind[] = ['unlock', 'estimated', 'history_start', 'unknown'];
-export const SEGMENT_KINDS: SegmentKind[] = ['locked', 'active', 'pause', 'bk', 'break', 'bulk', 'after_goal'];
+export const SEGMENT_KINDS: SegmentKind[] = [
+  'locked',
+  'not_started',
+  'active',
+  'pause',
+  'bk',
+  'break',
+  'bulk',
+  'no_data',
+  'after_goal',
+];
 
 export class PaceLimitsDto {
   breakLimitMinutes: number;
@@ -135,9 +145,6 @@ export class SlotTimelineDto {
 
   @ApiProperty({ type: [SegmentDto] })
   segments: SegmentDto[];
-
-  @ApiProperty({ type: String, format: 'date-time', isArray: true })
-  progressionItemTimes: string[];
 
   @ApiProperty({ type: [StatusChangeDto] })
   statusChanges: StatusChangeDto[];

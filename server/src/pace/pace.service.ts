@@ -10,9 +10,19 @@ import { RoomUpdatesService } from '../rooms/room-updates.service.js';
 import { RoomsService } from '../rooms/rooms.service.js';
 import { ChecksHistoryService } from './checks-history.service.js';
 import type { RoomPaceDto, SlotTimelineDto } from './dto/pace.dto.js';
-import { finishSignals, type SignalPeriod, type SlotSignals } from './pace-signals.js';
+import { noLogicPeriods, type LogicLocation } from './logic-periods.logic.js';
+import { finishSignals, syncGaps, type SignalPeriod, type SlotSignals } from './pace-signals.js';
 import { PaceSignalsService, unreadablePeriods } from './pace-signals.service.js';
-import { classifySlot, slotPaceRows, slotRange, type PaceLimits, type Segment, type SlotRange } from './pace.logic.js';
+import {
+  bkSignalsFrom,
+  classifySlot,
+  slotPaceRows,
+  slotRange,
+  type NoLogicSignals,
+  type PaceLimits,
+  type Segment,
+  type SlotRange,
+} from './pace.logic.js';
 import {
   firstHistoryTime,
   gamePaceDtos,
@@ -36,8 +46,14 @@ export interface PaceCalculation {
   unreadableSnapshots: SignalPeriod[];
 }
 
+interface SeedLogic {
+  from: Date;
+  unreachableSphere: number;
+  ownLocations: Map<number, LogicLocation[]>;
+  progressionItems: Map<number, LogicLocation[]>;
+}
+
 const NO_SIGNALS: SlotSignals = {
-  progressionItemTimes: [],
   bkPeriods: [],
   playerPeriods: [],
   statusChanges: [],
@@ -93,6 +109,45 @@ export class PaceService implements OnModuleInit {
     return calculation;
   }
 
+  private async seedLogic(roomId: number): Promise<SeedLogic | null> {
+    const seed = await this.prisma.seedData.findUnique({
+      where: { roomId },
+      select: { uploadedAt: true, sphereCount: true },
+    });
+    if (seed === null) {
+      return null;
+    }
+    const locations = await this.prisma.seedLocation.findMany({
+      where: { roomId },
+      select: {
+        finderSlotId: true,
+        receiverSlotId: true,
+        itemType: true,
+        sphere: true,
+        checked: true,
+        checkedFirstSeenAt: true,
+      },
+    });
+    const ownLocations = new Map<number, LogicLocation[]>();
+    const progressionItems = new Map<number, LogicLocation[]>();
+    const add = (lists: Map<number, LogicLocation[]>, slotId: number, location: LogicLocation) => {
+      const list = lists.get(slotId) ?? [];
+      list.push(location);
+      lists.set(slotId, list);
+    };
+    for (const location of locations) {
+      const logicLocation = {
+        sphere: location.sphere,
+        checkedAt: location.checked ? (location.checkedFirstSeenAt ?? seed.uploadedAt) : null,
+      };
+      add(ownLocations, location.finderSlotId, logicLocation);
+      if (location.itemType === 'progression' && location.receiverSlotId !== null) {
+        add(progressionItems, location.receiverSlotId, logicLocation);
+      }
+    }
+    return { from: seed.uploadedAt, unreachableSphere: seed.sphereCount, ownLocations, progressionItems };
+  }
+
   private invalidate(roomId: number): void {
     this.revisions.set(roomId, (this.revisions.get(roomId) ?? 0) + 1);
     this.calculations.delete(roomId);
@@ -125,6 +180,21 @@ export class PaceService implements OnModuleInit {
     );
     const stored = await this.paceSignals.updateSignals(room);
     const signals = finishSignals(stored.state, slots, now);
+    const dataGaps = syncGaps(stored.state, now);
+    const seedLogic = await this.seedLogic(room.id);
+    const noLogicOf = (slotId: number): NoLogicSignals | null =>
+      seedLogic === null
+        ? null
+        : {
+            from: seedLogic.from,
+            periods: noLogicPeriods({
+              ownLocations: seedLogic.ownLocations.get(slotId) ?? [],
+              progressionItems: seedLogic.progressionItems.get(slotId) ?? [],
+              unreachableSphere: seedLogic.unreachableSphere,
+              from: seedLogic.from,
+              to: now,
+            }),
+          };
     const unreadableSnapshots = unreadablePeriods(stored.unreadableSnapshots, now);
     const limits: PaceLimits = {
       breakLimitMinutes: room.paceBreakLimitMinutes,
@@ -145,6 +215,8 @@ export class PaceService implements OnModuleInit {
         history: slotHistory(history, slot.cheeseGameId),
         range,
         signals: signals.get(slot.position) ?? NO_SIGNALS,
+        noLogic: range === null ? null : noLogicOf(slot.id),
+        dataGaps,
         limits,
         currentPlayer: { discordUserId: slot.discordUserId, discordName: slot.discordName },
         now,
@@ -152,7 +224,10 @@ export class PaceService implements OnModuleInit {
       slotCalculations.set(slot.id, { range, segments: classifySlot(input), signals: input.signals });
       return slotPaceDtos(slot, slotPaceRows(input));
     });
-    const signalsFrom = signals.values().next().value?.signalsFrom ?? null;
+    const signalsFrom = bkSignalsFrom(
+      signals.values().next().value ?? NO_SIGNALS,
+      seedLogic === null ? null : { from: seedLogic.from, periods: [] },
+    );
     return {
       key,
       result: {

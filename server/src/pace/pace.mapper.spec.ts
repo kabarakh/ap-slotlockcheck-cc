@@ -83,8 +83,7 @@ describe('pace mapping', () => {
       [
         { id: 5, source: 'cheese', firstSyncRunId: 3 },
         { id: 1, source: 'cheese', firstSyncRunId: 1 },
-        { id: 2, source: 'ap_tracker', firstSyncRunId: 1 },
-        { id: 4, source: 'ap_tracker', firstSyncRunId: 2 },
+        { id: 4, source: 'cheese', firstSyncRunId: 2 },
         { id: 3, source: 'cheese', firstSyncRunId: 9 },
       ],
       runStarts,
@@ -92,9 +91,8 @@ describe('pace mapping', () => {
     );
     expect(order.withoutRun).toEqual([3]);
     expect(order.snapshots).toEqual([
-      { id: 1, source: 'cheese', from: t('10:00'), to: t('10:10') },
-      { id: 2, source: 'ap_tracker', from: t('10:00'), to: t('10:05') },
-      { id: 4, source: 'ap_tracker', from: t('10:05'), to: t('12:00') },
+      { id: 1, source: 'cheese', from: t('10:00'), to: t('10:05') },
+      { id: 4, source: 'cheese', from: t('10:05'), to: t('10:10') },
       { id: 5, source: 'cheese', from: t('10:10'), to: t('12:00') },
     ]);
   });
@@ -183,7 +181,6 @@ describe('pace mapping', () => {
           { kind: 'bk', from: t('10:30'), to: t('11:00'), checks: 0 },
         ],
         signals: {
-          progressionItemTimes: [t('10:50')],
           bkPeriods: [{ from: t('10:30'), to: t('10:50') }],
           playerPeriods: [
             { from: t('09:00'), to: t('11:30'), discordUserId: '42', discordName: 'alice' },
@@ -206,7 +203,6 @@ describe('pace mapping', () => {
         { kind: 'active', from: '2026-10-20T10:00:00.000Z', to: '2026-10-20T10:30:00.000Z', checks: 12 },
         { kind: 'bk', from: '2026-10-20T10:30:00.000Z', to: '2026-10-20T11:00:00.000Z', checks: 0 },
       ],
-      progressionItemTimes: ['2026-10-20T10:50:00.000Z'],
       statusChanges: [
         { time: '2026-10-20T10:00:00.000Z', status: 'go' },
         { time: '2026-10-20T10:30:00.000Z', status: 'bk' },
