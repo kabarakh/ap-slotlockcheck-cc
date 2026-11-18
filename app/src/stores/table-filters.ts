@@ -34,6 +34,7 @@ function matchesText(slot: SlotRow, text: string): boolean {
     formatGameName(slot.game),
     slot.discordName ?? '',
     slot.notes,
+    slot.staffNote?.text ?? '',
     ...slot.locks.map((lock) => lock.senderName ?? ''),
   ]
     .join(' ')

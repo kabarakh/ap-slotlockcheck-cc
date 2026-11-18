@@ -128,6 +128,11 @@ const router = createRouter({
               meta: { requiresLocations: true },
             },
             {
+              path: 'notes',
+              name: 'control-notes',
+              component: () => import('@/components/control/NotesPanel.vue'),
+            },
+            {
               path: 'warnings',
               name: 'control-warnings',
               component: () => import('@/components/admin/WarningsPanel.vue'),

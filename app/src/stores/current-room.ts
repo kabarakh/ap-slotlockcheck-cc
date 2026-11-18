@@ -9,6 +9,7 @@ import { usePaceStore } from './pace';
 import { useRoomHistoryStore } from './room-history';
 import { useSeedStore } from './seed';
 import { useServerAdminStore } from './server-admin';
+import { useSlotNotesStore } from './slot-notes';
 import { useSphereOverviewStore } from './sphere-overview';
 import { useStatisticsFilterStore } from './statistics-filter';
 import { useUiStore } from './ui';
@@ -69,6 +70,14 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     }
   };
 
+  const refreshInternalNotes = async (): Promise<void> => {
+    if (membership.value.role === 'admin' || membership.value.role === 'helper') {
+      await useSlotNotesStore().fetchInternal();
+    } else {
+      useSlotNotesStore().clear();
+    }
+  };
+
   const open = async (roomSlug: string): Promise<boolean> => {
     if (slug.value === roomSlug && room.value) {
       return true;
@@ -90,7 +99,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
       room.value = detail;
       slots.value = roster;
       useLiveStore().joinRoom(roomSlug);
-      await refreshWarnings();
+      await Promise.all([refreshWarnings(), refreshInternalNotes()]);
       return true;
     } catch (error) {
       room.value = null;
@@ -121,6 +130,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
     slots.value = [];
     membership.value = { role: 'visitor', isOwner: false };
     useWarningsStore().clear();
+    useSlotNotesStore().clear();
     useSeedStore().clear();
     useSphereOverviewStore().clear();
     useLocationsStore().leave();
@@ -157,6 +167,7 @@ export const useCurrentRoomStore = defineStore('currentRoom', () => {
       room.value = payload.room;
       slots.value = payload.slots;
       void refreshWarnings();
+      void refreshInternalNotes();
       void usePaceStore().refresh();
       void useDependenciesStore().refresh();
     }

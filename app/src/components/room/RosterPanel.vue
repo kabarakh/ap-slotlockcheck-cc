@@ -11,6 +11,7 @@ import type { MenuItem } from 'primevue/menuitem';
 import MultiSelect from 'primevue/multiselect';
 
 import WarningDialog from '@/components/admin/WarningDialog.vue';
+import SlotNotesDialog from '@/components/room/SlotNotesDialog.vue';
 import InactivityText from '@/components/ui/InactivityText.vue';
 import SlotTable from '@/components/ui/SlotTable.vue';
 
@@ -19,6 +20,7 @@ import type { InactivityLevel } from '@/domain/inactivity';
 import { useCurrentRoomStore } from '@/stores/current-room';
 import { useInactivityStore } from '@/stores/inactivity';
 import { useInactivityReminderStore } from '@/stores/inactivity-reminder';
+import { useSlotNotesStore } from '@/stores/slot-notes';
 import { useStatisticsStore } from '@/stores/statistics';
 import { useTableFiltersStore } from '@/stores/table-filters';
 import { useWarningsStore } from '@/stores/warnings';
@@ -30,6 +32,8 @@ const { isAdmin, isHelper, hasSlotLock } = storeToRefs(useCurrentRoomStore());
 const warningsStore = useWarningsStore();
 const { countBySlotId } = storeToRefs(warningsStore);
 const reminder = useInactivityReminderStore();
+const notesStore = useSlotNotesStore();
+const { internalBySlotId, canEdit: canEditNotes } = storeToRefs(notesStore);
 const { globalStatistics } = storeToRefs(useStatisticsStore());
 const { t } = useI18n();
 
@@ -121,7 +125,10 @@ const openSlotMenu = (event: MouseEvent, slot: SlotRow) => {
       :level-by-slot-id="levelBySlotId"
       :warning-count-by-slot-id="isAdmin ? countBySlotId : null"
       :show-locks="hasSlotLock"
+      :internal-note-by-slot-id="isHelper ? internalBySlotId : null"
+      :can-edit-notes="canEditNotes"
       test-id="roster-table"
+      @edit-notes="notesStore.startEdit"
     >
       <template v-if="isHelper" #inactivity="{ row }">
         <button
@@ -137,6 +144,7 @@ const openSlotMenu = (event: MouseEvent, slot: SlotRow) => {
     </SlotTable>
     <Menu ref="slotMenu" :model="slotMenuItems" popup data-testid="slot-menu" />
     <WarningDialog v-if="isAdmin" />
+    <SlotNotesDialog v-if="isHelper" />
   </section>
 </template>
 

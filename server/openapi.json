@@ -1296,6 +1296,95 @@
         ]
       }
     },
+    "/api/rooms/{slug}/notes/internal": {
+      "get": {
+        "operationId": "Notes_listInternal",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/InternalNoteDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      }
+    },
+    "/api/rooms/{slug}/slots/{slotId}/notes/{kind}": {
+      "put": {
+        "operationId": "Notes_update",
+        "parameters": [
+          {
+            "name": "slug",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "slotId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "kind",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "$ref": "#/components/schemas/SlotNoteKind"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSlotNoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StaffNoteDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Notes"
+        ]
+      }
+    },
     "/api/rooms/{slug}/unlock-times": {
       "put": {
         "operationId": "UnlockTimes_set",
@@ -2431,6 +2520,26 @@
           "public"
         ]
       },
+      "StaffNoteDto": {
+        "type": "object",
+        "properties": {
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "text": {
+            "type": "string"
+          },
+          "updatedByName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "updatedAt",
+          "text",
+          "updatedByName"
+        ]
+      },
       "LockStatus": {
         "type": "string",
         "enum": [
@@ -2591,6 +2700,15 @@
               }
             ]
           },
+          "staffNote": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StaffNoteDto"
+              }
+            ]
+          },
           "lockStatus": {
             "allOf": [
               {
@@ -2664,6 +2782,7 @@
           "progressionStatus",
           "completionStatus",
           "availabilityStatus",
+          "staffNote",
           "lockStatus",
           "locks",
           "unlockTime",
@@ -3448,6 +3567,49 @@
         "required": [
           "slotId",
           "date",
+          "text"
+        ]
+      },
+      "InternalNoteDto": {
+        "type": "object",
+        "properties": {
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "text": {
+            "type": "string"
+          },
+          "updatedByName": {
+            "type": "string"
+          },
+          "slotId": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "updatedAt",
+          "text",
+          "updatedByName",
+          "slotId"
+        ]
+      },
+      "SlotNoteKind": {
+        "type": "string",
+        "enum": [
+          "public",
+          "internal"
+        ]
+      },
+      "UpdateSlotNoteDto": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 10000
+          }
+        },
+        "required": [
           "text"
         ]
       },

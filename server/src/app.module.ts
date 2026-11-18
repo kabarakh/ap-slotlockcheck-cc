@@ -14,6 +14,7 @@ import { HealthModule } from './health/health.module.js';
 import { LiveModule } from './live/live.module.js';
 import { LocationsModule } from './locations/locations.module.js';
 import { LockModule } from './lock/lock.module.js';
+import { NotesModule } from './notes/notes.module.js';
 import { PaceModule } from './pace/pace.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { RoomSetupModule } from './room-setup/room-setup.module.js';
@@ -43,6 +44,7 @@ function staticAppModules(): DynamicModule[] {
     RoomSetupModule,
     AdminsModule,
     WarningsModule,
+    NotesModule,
     UnlockTimesModule,
     HealthModule,
     SeedModule,

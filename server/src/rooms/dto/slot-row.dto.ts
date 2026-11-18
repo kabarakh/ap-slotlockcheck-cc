@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import type { GoalTimeSource } from '../../locations/goal-time.logic.js';
 import type { LockStatus, UnlockTimeSource } from '../../lock/lock.types.js';
+import { StaffNoteDto } from '../../notes/dto/slot-note.dto.js';
 import type {
   AvailabilityStatus,
   CompletionStatus,
@@ -95,6 +96,10 @@ export class SlotRowDto {
   availabilityStatus: AvailabilityStatus;
 
   notes: string;
+
+  @ApiProperty({ type: StaffNoteDto, nullable: true })
+  staffNote: StaffNoteDto | null;
+
   isSlotLock: boolean;
   isSelectedSlotLock: boolean;
 

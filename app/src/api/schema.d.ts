@@ -420,6 +420,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/rooms/{slug}/notes/internal": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Notes_listInternal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/rooms/{slug}/slots/{slotId}/notes/{kind}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["Notes_update"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/rooms/{slug}/unlock-times": {
         parameters: {
             query?: never;
@@ -812,6 +844,12 @@ export interface components {
         CompletionStatus: "incomplete" | "all_checks" | "goal" | "done" | "released";
         /** @enum {string} */
         AvailabilityStatus: "unknown" | "open" | "claimed" | "public";
+        StaffNoteDto: {
+            /** Format: date-time */
+            updatedAt: string;
+            text: string;
+            updatedByName: string;
+        };
         /** @enum {string} */
         LockStatus: "not_locked" | "start_slot" | "locked" | "partially_unlocked" | "unlocked";
         /** @enum {string} */
@@ -849,6 +887,7 @@ export interface components {
             progressionStatus: components["schemas"]["ProgressionStatus"];
             completionStatus: components["schemas"]["CompletionStatus"];
             availabilityStatus: components["schemas"]["AvailabilityStatus"];
+            staffNote: components["schemas"]["StaffNoteDto"] | null;
             lockStatus: components["schemas"]["LockStatus"];
             locks: components["schemas"]["SlotLockDto"][];
             /** Format: date-time */
@@ -1047,6 +1086,18 @@ export interface components {
         CreateWarningDto: {
             slotId: number;
             date: string;
+            text: string;
+        };
+        InternalNoteDto: {
+            /** Format: date-time */
+            updatedAt: string;
+            text: string;
+            updatedByName: string;
+            slotId: number;
+        };
+        /** @enum {string} */
+        SlotNoteKind: "public" | "internal";
+        UpdateSlotNoteDto: {
             text: string;
         };
         SetUnlockTimeDto: {
@@ -2035,6 +2086,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["WarningDto"][];
+                };
+            };
+        };
+    };
+    Notes_listInternal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InternalNoteDto"][];
+                };
+            };
+        };
+    };
+    Notes_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+                slotId: number;
+                kind: components["schemas"]["SlotNoteKind"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSlotNoteDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StaffNoteDto"];
                 };
             };
         };

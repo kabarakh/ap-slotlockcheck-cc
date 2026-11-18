@@ -15,7 +15,7 @@ export interface UiMessage {
   params: Record<string, string | number>;
 }
 
-export type DialogName = 'warning' | 'unlockTime' | 'serverConfirm';
+export type DialogName = 'warning' | 'unlockTime' | 'serverConfirm' | 'slotNotes';
 
 export const useUiStore = defineStore(
   'ui',

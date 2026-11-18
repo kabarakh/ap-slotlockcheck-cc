@@ -74,6 +74,13 @@ const tabs = computed<ControlTab[]>(() => [
     badges: [],
   },
   {
+    name: 'control-notes',
+    label: t('control.tabs.notes'),
+    section: 'notes',
+    visible: isHelper.value,
+    badges: [],
+  },
+  {
     name: 'control-warnings',
     label: t('control.tabs.warnings'),
     section: 'warnings',

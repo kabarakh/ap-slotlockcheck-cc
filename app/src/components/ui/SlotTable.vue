@@ -9,9 +9,10 @@ import CheeseStatusTag from './CheeseStatusTag.vue';
 import DateTimeText from './DateTimeText.vue';
 import InactivityText from './InactivityText.vue';
 import LockStatusTag from './LockStatusTag.vue';
+import StaffNoteText from './StaffNoteText.vue';
 import UnlockInfo from './UnlockInfo.vue';
 
-import type { SlotRow } from '@/api/types';
+import type { InternalNote, SlotRow } from '@/api/types';
 import { goalTimeSortKey, STATUS_SORT, statusSortKey } from '@/domain/completion-order';
 import { formatGameName } from '@/domain/game-name';
 import type { InactivityLevel } from '@/domain/inactivity';
@@ -26,7 +27,10 @@ const props = defineProps<{
   warningCountBySlotId: ReadonlyMap<number, number> | null;
   showLocks: boolean;
   testId: string;
+  internalNoteBySlotId?: ReadonlyMap<number, InternalNote> | null;
+  canEditNotes?: boolean;
 }>();
+const emit = defineEmits<{ editNotes: [slotId: number] }>();
 const { t } = useI18n();
 
 const otherArchipelagoName = (slot: SlotRow): string | null =>
@@ -170,7 +174,28 @@ const onSort = (event: DataTableSortEvent): void => {
     </Column>
     <Column field="notes" :header="t('slot.columns.notes')">
       <template #body="{ data }">
-        <span class="notes">{{ (data as Row).notes }}</span>
+        <span class="notes">
+          <span v-if="(data as Row).notes" class="cheese-note">{{ (data as Row).notes }}</span>
+          <StaffNoteText :note="(data as Row).staffNote" kind="public" />
+          <button
+            v-if="props.canEditNotes"
+            v-tooltip.top="t('notes.edit')"
+            type="button"
+            class="edit-notes"
+            :aria-label="t('notes.edit')"
+            data-testid="edit-notes"
+            @click="emit('editNotes', (data as Row).id)"
+          >
+            <i class="pi pi-pencil" />
+          </button>
+        </span>
+      </template>
+    </Column>
+    <Column v-if="props.internalNoteBySlotId" :header="t('slot.columns.internalNote')">
+      <template #body="{ data }">
+        <span class="notes">
+          <StaffNoteText :note="props.internalNoteBySlotId.get((data as Row).id)" kind="internal" />
+        </span>
       </template>
     </Column>
     <Column v-if="props.showLocks" field="unlocksSent" :header="t('slot.columns.unlocksSent')" sortable />
@@ -244,8 +269,23 @@ const onSort = (event: DataTableSortEvent): void => {
 }
 
 .notes {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
   max-width: 14rem;
   overflow-wrap: anywhere;
+}
+
+.edit-notes {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+}
+
+.edit-notes:hover {
+  color: var(--p-primary-color);
 }
 </style>

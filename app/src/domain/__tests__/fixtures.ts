@@ -22,6 +22,7 @@ export function slotRow(overrides: Partial<SlotRow>): SlotRow {
     completionStatus: 'incomplete',
     availabilityStatus: 'claimed',
     notes: '',
+    staffNote: null,
     isSlotLock: false,
     isSelectedSlotLock: false,
     lockStatus: 'not_locked',

@@ -49,6 +49,16 @@ The functions are in `PLAN room archive.md`.
 - Inactivity and pace use the archive time as the current time, so the values do not change after the archive.
 - The room list hides archived rooms. A checkbox shows them.
 
+### Slot notes
+
+- Each slot has three notes. The player writes the player note in the Cheese Tracker. The synchronization copies it, and the app shows it read-only.
+- Admins and admin helpers write the public note and the internal note. All users see the public note, also visitors. Only admins and admin helpers see the internal note.
+- The public note is part of the slot rows. So it goes through the roster and the socket messages, which are public. The internal note is never part of the slot rows: the browser of an admin or an admin helper gets it from `GET /rooms/:slug/notes/internal` and loads it again after each room update.
+- The roster shows the player note and the public note in one column, and the internal note in a column only for admins and admin helpers. The tab "Notes" of the game control shows all three notes for each slot.
+- A note keeps only its last change: the text, the time and the user. An empty text is a valid note with its last change.
+- In an archived room, the notes are read-only.
+- The Cheese Tracker has no length limit for its note. The app limits each staff note to 10,000 characters, so that a very long text does not go to all socket clients.
+
 ### Unlock times
 
 - Archipelago gives no time for received items. The server records the time when a synchronization finds an unlock item for the first time.

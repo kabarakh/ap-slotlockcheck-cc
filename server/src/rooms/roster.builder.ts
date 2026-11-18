@@ -1,6 +1,7 @@
 import type { GoalTimeSource } from '../locations/goal-time.logic.js';
 import { evaluateSlotLockStates } from '../lock/lock.logic.js';
 import type { StoredLaterUnlock, StoredLock, StoredUnlock, UnlockTimeSource } from '../lock/lock.types.js';
+import { notesOfKind, type StoredSlotNote } from '../notes/notes.logic.js';
 import type {
   AvailabilityStatus,
   CompletionStatus,
@@ -40,6 +41,7 @@ export interface RosterInput {
   locks: StoredLock[];
   unlocks: (Omit<StoredUnlock, 'timeSource'> & { timeSource: string })[];
   laterUnlocks: StoredLaterUnlock[];
+  notes: StoredSlotNote[];
 }
 
 const toIso = (date: Date | null): string | null => date?.toISOString() ?? null;
@@ -51,6 +53,7 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
       .filter((unlock) => unlock.lockerSlotId === lockerSlotId && unlock.lockedSlotId === lockedSlotId)
       .sort((a, b) => a.sequence - b.sequence)
       .map((unlock) => ({ senderSlotId: unlock.senderSlotId, firstSeenAt: toIso(unlock.firstSeenAt) }));
+  const staffNotes = notesOfKind(input.notes, 'public');
   const unlocks = input.unlocks.map((unlock) => ({ ...unlock, timeSource: unlock.timeSource as UnlockTimeSource }));
   const states = evaluateSlotLockStates(
     input.slots.map((slot) => slot.id),
@@ -84,6 +87,7 @@ export function buildRoster(input: RosterInput): SlotRowDto[] {
         completionStatus: slot.completionStatus as CompletionStatus,
         availabilityStatus: slot.availabilityStatus as AvailabilityStatus,
         notes: slot.notes,
+        staffNote: staffNotes.get(slot.id) ?? null,
         isSlotLock: slot.isSlotLock,
         isSelectedSlotLock: slot.isSelectedSlotLock,
         lockStatus: state?.status ?? 'not_locked',

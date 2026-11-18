@@ -20,6 +20,7 @@ model User {
   warnings    Warning[]
   seedUploads SeedData[]
   fillerMarks SeedLocation[]
+  slotNotes   SlotNote[]
 }
 
 model Room {
@@ -112,6 +113,7 @@ model Slot {
   warnings             Warning[]
   foundLocations       SeedLocation[]    @relation("LocationFinder")
   receivedLocations    SeedLocation[]    @relation("LocationReceiver")
+  staffNotes           SlotNote[]
 
   @@unique([roomId, position])
 }
@@ -174,6 +176,18 @@ model Warning {
   room        Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
   slot        Slot     @relation(fields: [slotId], references: [id], onDelete: Cascade)
   admin       User     @relation(fields: [adminUserId], references: [id])
+}
+
+model SlotNote {
+  slotId          Int
+  kind            String
+  text            String
+  updatedAt       DateTime
+  updatedByUserId Int
+  slot            Slot     @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  updatedBy       User     @relation(fields: [updatedByUserId], references: [id])
+
+  @@id([slotId, kind])
 }
 
 model SyncRun {
