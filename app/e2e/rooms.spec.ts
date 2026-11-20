@@ -32,11 +32,11 @@ test('the room list shows only the own rooms', async ({ page }) => {
   await expect(page.getByTestId('room-role')).toHaveText('Owner');
   await expect(page.getByTestId('room-unlocks')).toContainText('1/4 (25 %)');
   await expect(page.getByTestId('room-checks')).toContainText('201/752 (26.7 %)');
-  await expect(page).toHaveTitle('TOAST');
+  await expect(page).toHaveTitle('Rooms - TOAST');
   await page.getByRole('link', { name: 'Big Chill' }).click();
-  await expect(page).toHaveTitle('Big Chill - TOAST');
+  await expect(page).toHaveTitle('Roster - Big Chill - TOAST');
   await page.getByRole('link', { name: 'Rooms', exact: true }).click();
-  await expect(page).toHaveTitle('TOAST');
+  await expect(page).toHaveTitle('Rooms - TOAST');
   await page.context().clearCookies();
   await page.goto('/');
   await expect(page.getByTestId('rooms-hint')).toContainText('Log in with Discord');
@@ -47,7 +47,7 @@ test('a visitor opens a room with its link and sees the roster', async ({ page }
   await ensureRoom(page);
   await page.context().clearCookies();
   await page.goto('/room/big-chill');
-  await expect(page).toHaveTitle('Big Chill - TOAST');
+  await expect(page).toHaveTitle('Roster - Big Chill - TOAST');
   const roster = page.getByTestId('roster-table');
   await expect(row(roster, 'Alice')).toContainText('Unlocked');
   await expect(row(roster, 'Bob')).toContainText('Locked');
@@ -101,6 +101,7 @@ test('the statistics show the unlock times and the progress', async ({ page }) =
   await expect(page.getByTestId('wait-times')).toContainText('Alice');
   await expect(page.getByTestId('section-reactions')).toBeVisible();
   await page.getByTestId('statistics-tab-statistics-progress').click();
+  await expect(page).toHaveTitle('Progress - Statistics - Big Chill - TOAST');
   await expect(page).toHaveURL(/statistics\/progress$/);
   await expect(page.getByTestId('section-forecast').getByTestId('time-line-chart')).toBeVisible();
   await expect(page.getByTestId('slot-forecasts')).toContainText('Alice');
@@ -111,6 +112,7 @@ test('the statistics show the unlock times and the progress', async ({ page }) =
 test('the statistics filter by players and slots', async ({ page }) => {
   await ensureRoom(page);
   await page.goto('/room/big-chill/statistics');
+  await expect(page).toHaveTitle('Overview - Statistics - Big Chill - TOAST');
   await expect(page.getByTestId('statistics-checks')).toContainText('201 / 752');
   await page.getByTestId('statistics-filter-slots').click();
   await page.getByRole('option', { name: 'Alice (alice_owner)' }).click();

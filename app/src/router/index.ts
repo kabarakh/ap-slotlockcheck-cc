@@ -16,6 +16,7 @@ declare module 'vue-router' {
     sphereLocations?: boolean;
     requiresLocations?: boolean;
     requiresSlotLock?: boolean;
+    title?: string[];
   }
 }
 
@@ -24,12 +25,12 @@ const roomSlug = (route: RouteLocationNormalized): string => String(route.params
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'rooms', component: RoomListView },
+    { path: '/', name: 'rooms', component: RoomListView, meta: { title: ['app.rooms'] } },
     {
       path: '/rooms/new',
       name: 'room-create',
       component: () => import('@/views/RoomCreateView.vue'),
-      meta: { requiresLogin: true },
+      meta: { requiresLogin: true, title: ['app.newRoom'] },
     },
     {
       path: '/room/:slug',
@@ -38,8 +39,18 @@ const router = createRouter({
         await useCurrentRoomStore().open(roomSlug(to));
       },
       children: [
-        { path: '', name: 'roster', component: () => import('@/views/RosterView.vue') },
-        { path: 'players', name: 'players', component: () => import('@/views/PlayerSummaryView.vue') },
+        {
+          path: '',
+          name: 'roster',
+          component: () => import('@/views/RosterView.vue'),
+          meta: { title: ['room.tabs.roster'] },
+        },
+        {
+          path: 'players',
+          name: 'players',
+          component: () => import('@/views/PlayerSummaryView.vue'),
+          meta: { title: ['room.tabs.players'] },
+        },
         {
           path: 'statistics',
           component: () => import('@/views/StatisticsView.vue'),
@@ -48,23 +59,25 @@ const router = createRouter({
               path: '',
               name: 'statistics',
               component: () => import('@/components/room/StatisticsPanel.vue'),
+              meta: { title: ['statistics.tabs.overview', 'room.tabs.statistics'] },
             },
             {
               path: 'unlock-times',
               name: 'statistics-unlock-times',
               component: () => import('@/components/statistics/UnlockTimesPanel.vue'),
-              meta: { requiresSlotLock: true },
+              meta: { requiresSlotLock: true, title: ['statistics.tabs.unlockTimes', 'room.tabs.statistics'] },
             },
             {
               path: 'unlock-senders',
               name: 'statistics-unlock-senders',
               component: () => import('@/components/statistics/UnlockSendersPanel.vue'),
-              meta: { requiresSlotLock: true },
+              meta: { requiresSlotLock: true, title: ['statistics.tabs.unlockSenders', 'room.tabs.statistics'] },
             },
             {
               path: 'progress',
               name: 'statistics-progress',
               component: () => import('@/components/statistics/ProgressPanel.vue'),
+              meta: { title: ['statistics.tabs.progress', 'room.tabs.statistics'] },
             },
           ],
         },
@@ -72,77 +85,92 @@ const router = createRouter({
           path: 'unlock-tree',
           name: 'unlock-tree',
           component: () => import('@/views/UnlockTreeView.vue'),
-          meta: { requiresSlotLock: true },
+          meta: { requiresSlotLock: true, title: ['room.tabs.unlockTree'] },
         },
         {
           path: 'spheres',
           name: 'spheres',
           component: () => import('@/views/SphereOverviewView.vue'),
-          meta: { requiresLocations: true },
+          meta: { requiresLocations: true, title: ['room.tabs.spheres'] },
         },
         ...(['open', 'found', 'filler'] as LocationState[]).map((state) => ({
           path: `locations/${state}`,
           name: `locations-${state}`,
           component: () => import('@/views/LocationsView.vue'),
-          meta: { locationState: state, requiresLocations: true },
+          meta: { locationState: state, requiresLocations: true, title: [`locations.states.${state}`] },
         })),
         {
           path: 'my-slots',
           name: 'my-slots',
           component: () => import('@/views/MySlotsView.vue'),
-          meta: { requiresRole: 'player' },
+          meta: { requiresRole: 'player', title: ['room.tabs.mySlots'] },
         },
         {
           path: 'control',
           component: () => import('@/views/ControlView.vue'),
-          meta: { requiresRole: 'helper' },
+          meta: { requiresRole: 'helper', title: ['room.tabs.control'] },
           children: [
             { path: '', name: 'control', component: () => import('@/views/ControlMessagesView.vue') },
             {
               path: 'spheres',
               name: 'control-spheres',
               component: () => import('@/views/ControlSpheresView.vue'),
-              meta: { requiresLocations: true, sphereLocations: true },
+              meta: {
+                requiresLocations: true,
+                sphereLocations: true,
+                title: ['control.tabs.spheres', 'room.tabs.control'],
+              },
             },
             ...(['open', 'found', 'filler'] as LocationState[]).map((state) => ({
               path: `locations/${state}`,
               name: `control-locations-${state}`,
               component: () => import('@/views/LocationsView.vue'),
-              meta: { locationState: state, locationView: 'admin' as const, requiresLocations: true },
+              meta: {
+                locationState: state,
+                locationView: 'admin' as const,
+                requiresLocations: true,
+                title: [`locations.states.${state}`, 'room.tabs.control'],
+              },
             })),
             {
               path: 'messages',
               name: 'control-messages',
               component: () => import('@/views/ControlMessagesView.vue'),
+              meta: { title: ['control.tabs.messages', 'room.tabs.control'] },
             },
             {
               path: 'pace',
               name: 'control-pace',
               component: () => import('@/views/ControlPaceView.vue'),
-              meta: { requiresRole: 'helper' },
+              meta: { requiresRole: 'helper', title: ['control.tabs.pace', 'room.tabs.control'] },
             },
             {
               path: 'dependencies',
               name: 'control-dependencies',
               component: () => import('@/components/control/DependenciesPanel.vue'),
-              meta: { requiresLocations: true },
+              meta: { requiresLocations: true, title: ['control.tabs.dependencies', 'room.tabs.control'] },
             },
             {
               path: 'notes',
               name: 'control-notes',
               component: () => import('@/components/control/NotesPanel.vue'),
+              meta: { title: ['control.tabs.notes', 'room.tabs.control'] },
             },
             {
               path: 'warnings',
               name: 'control-warnings',
               component: () => import('@/components/admin/WarningsPanel.vue'),
-              meta: { requiresRole: 'admin' },
+              meta: { requiresRole: 'admin', title: ['control.tabs.warnings', 'room.tabs.control'] },
             },
             {
               path: 'server',
               name: 'control-server',
               component: () => import('@/views/ControlServerView.vue'),
-              meta: { requiresRole: 'admin', requiresLocations: true },
+              meta: {
+                requiresRole: 'admin',
+                requiresLocations: true,
+                title: ['control.tabs.server', 'room.tabs.control'],
+              },
             },
           ],
         },
@@ -150,7 +178,7 @@ const router = createRouter({
           path: 'admin/:tab?',
           name: 'admin',
           component: () => import('@/views/AdminView.vue'),
-          meta: { requiresRole: 'helper' },
+          meta: { requiresRole: 'helper', title: ['room.tabs.admin'] },
         },
       ],
     },
@@ -158,7 +186,7 @@ const router = createRouter({
       path: '/invite/:token',
       name: 'invitation',
       component: () => import('@/views/InvitationView.vue'),
-      meta: { requiresLogin: true },
+      meta: { requiresLogin: true, title: ['invitations.title'] },
     },
     { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('@/views/NotFoundView.vue') },
   ],

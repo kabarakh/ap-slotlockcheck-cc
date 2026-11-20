@@ -3,7 +3,7 @@ import { useTitle } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { computed, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 
 import AppHeader from '@/components/layout/AppHeader.vue';
 import AppMessages from '@/components/layout/AppMessages.vue';
@@ -14,10 +14,19 @@ import { useUiStore } from '@/stores/ui';
 import { applyColorMode } from '@/theme';
 
 const ui = useUiStore();
-const { locale, t } = useI18n({ useScope: 'global' });
+const { locale, t, te } = useI18n({ useScope: 'global' });
 const { room } = storeToRefs(useCurrentRoomStore());
 
-useTitle(computed(() => windowTitle(room.value?.title, t('app.title'))));
+const route = useRoute();
+
+const viewTitle = computed(() => {
+  const keys = route.meta.title ?? [];
+  const tab = route.name === 'admin' ? String(route.params['tab'] ?? '') : '';
+  const tabKey = `admin.tabs.${tab}`;
+  return [...(tab && te(tabKey) ? [tabKey] : []), ...keys].map((key) => t(key));
+});
+
+useTitle(computed(() => windowTitle([...viewTitle.value, room.value?.title], t('app.title'))));
 
 watchEffect(() => {
   locale.value = ui.locale;

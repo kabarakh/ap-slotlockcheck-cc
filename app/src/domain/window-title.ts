@@ -1,3 +1,3 @@
-export function windowTitle(roomTitle: string | null | undefined, appName: string): string {
-  return roomTitle ? `${roomTitle} - ${appName}` : appName;
+export function windowTitle(parts: (string | null | undefined)[], appName: string): string {
+  return [...parts.filter((part): part is string => Boolean(part)), appName].join(' - ');
 }
