@@ -32,11 +32,11 @@ test('the room list shows only the own rooms', async ({ page }) => {
   await expect(page.getByTestId('room-role')).toHaveText('Owner');
   await expect(page.getByTestId('room-unlocks')).toContainText('1/4 (25 %)');
   await expect(page.getByTestId('room-checks')).toContainText('201/752 (26.7 %)');
-  await expect(page).toHaveTitle('SlotLockCheck');
+  await expect(page).toHaveTitle('TOAST');
   await page.getByRole('link', { name: 'Big Chill' }).click();
-  await expect(page).toHaveTitle('Big Chill - SlotLockCheck');
+  await expect(page).toHaveTitle('Big Chill - TOAST');
   await page.getByRole('link', { name: 'Rooms', exact: true }).click();
-  await expect(page).toHaveTitle('SlotLockCheck');
+  await expect(page).toHaveTitle('TOAST');
   await page.context().clearCookies();
   await page.goto('/');
   await expect(page.getByTestId('rooms-hint')).toContainText('Log in with Discord');
@@ -47,7 +47,7 @@ test('a visitor opens a room with its link and sees the roster', async ({ page }
   await ensureRoom(page);
   await page.context().clearCookies();
   await page.goto('/room/big-chill');
-  await expect(page).toHaveTitle('Big Chill - SlotLockCheck');
+  await expect(page).toHaveTitle('Big Chill - TOAST');
   const roster = page.getByTestId('roster-table');
   await expect(row(roster, 'Alice')).toContainText('Unlocked');
   await expect(row(roster, 'Bob')).toContainText('Locked');

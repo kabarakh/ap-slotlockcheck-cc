@@ -1,11 +1,11 @@
 const path = require('node:path');
 
-const appRoot = process.env.SLOTLOCK_ROOT ?? path.join(process.env.HOME ?? '', 'slotlock');
+const appRoot = process.env.TOAST_ROOT ?? path.join(process.env.HOME ?? '', 'toast');
 
 module.exports = {
   apps: [
     {
-      name: 'slotlock',
+      name: 'toast',
       cwd: path.join(appRoot, 'current', 'server'),
       script: 'dist/main.js',
       exec_mode: 'fork',

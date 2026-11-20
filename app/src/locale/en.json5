@@ -7,7 +7,7 @@
     reset: 'Reset',
   },
   app: {
-    title: 'SlotLockCheck',
+    title: 'TOAST',
     rooms: 'Rooms',
     newRoom: 'New room',
     login: 'Log in with Discord',

@@ -1,5 +1,5 @@
 {
-  "name": "slotlock-tracker",
+  "name": "toast",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "node": ">=26.0.0"
   },
   "scripts": {
-    "dev": "vp run --parallel -F @slotlock/server -F @slotlock/app dev",
+    "dev": "vp run --parallel -F @toast/server -F @toast/app dev",
     "dev:server": "npm run dev -w server",
     "dev:app": "npm run dev -w app",
     "api:sync": "npm run openapi:export -w server && npm run api:generate -w app",
@@ -30,7 +30,7 @@
     "prepare": "vp config --hooks --no-agent",
     "prototype:report": "npm run prototype:report -w server --",
     "seed:report": "npm run seed:report -w server --",
-    "dev:public": "cross-env SLOTLOCK_PUBLIC_DEV=true npm run dev",
+    "dev:public": "cross-env TOAST_PUBLIC_DEV=true npm run dev",
     "cert:dev": "npm run cert:dev -w app",
     "icons": "npm run icons -w app"
   },

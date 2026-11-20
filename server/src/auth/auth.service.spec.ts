@@ -23,8 +23,8 @@ describe('safeReturnPath', () => {
 
   it('never resolves to a foreign origin', () => {
     for (const returnTo of ['/\t/evil.example', '/%2F/evil.example', '/./\t/evil.example']) {
-      const target = new URL(safeReturnPath(returnTo), 'https://slotlock.example');
-      expect(target.origin).toBe('https://slotlock.example');
+      const target = new URL(safeReturnPath(returnTo), 'https://toast.example');
+      expect(target.origin).toBe('https://toast.example');
     }
   });
 });

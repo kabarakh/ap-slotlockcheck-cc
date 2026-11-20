@@ -27,7 +27,7 @@ export interface TestApp {
 export type ProviderOverride = [token: symbol, value: unknown];
 
 export async function createTestApp(overrides: ProviderOverride[] = []): Promise<TestApp> {
-  const directory = mkdtempSync(join(tmpdir(), 'slotlock-test-'));
+  const directory = mkdtempSync(join(tmpdir(), 'toast-test-'));
   const databaseFile = join(directory, 'test.db');
   applyMigrations(databaseFile);
   Object.assign(process.env, {
@@ -39,7 +39,7 @@ export async function createTestApp(overrides: ProviderOverride[] = []): Promise
     DISCORD_CLIENT_SECRET: 'test',
     DISCORD_CALLBACK_URL: 'http://localhost:5173/api/auth/discord/callback',
     CHEESE_BASE_URL: 'https://cheese.test',
-    HTTP_USER_AGENT: 'SlotLockCheck/test',
+    HTTP_USER_AGENT: 'TOAST/test',
     APP_DIST_PATH: directory,
   });
 

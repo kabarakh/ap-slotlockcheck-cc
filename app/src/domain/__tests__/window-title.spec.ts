@@ -4,11 +4,11 @@ import { windowTitle } from '../window-title';
 
 describe('windowTitle', () => {
   it('puts the room before the application name', () => {
-    expect(windowTitle('Big Chill Slotlock', 'SlotLockCheck')).toBe('Big Chill Slotlock - SlotLockCheck');
+    expect(windowTitle('Big Chill Slotlock', 'TOAST')).toBe('Big Chill Slotlock - TOAST');
   });
 
   it('shows only the application name without a room', () => {
-    expect(windowTitle(null, 'SlotLockCheck')).toBe('SlotLockCheck');
-    expect(windowTitle('', 'SlotLockCheck')).toBe('SlotLockCheck');
+    expect(windowTitle(null, 'TOAST')).toBe('TOAST');
+    expect(windowTitle('', 'TOAST')).toBe('TOAST');
   });
 });

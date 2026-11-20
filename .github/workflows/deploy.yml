@@ -39,7 +39,7 @@ jobs:
       - name: Upload release
         env:
           TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
-          APP_ROOT: ${{ vars.DEPLOY_APP_ROOT || 'slotlock' }}
+          APP_ROOT: ${{ vars.DEPLOY_APP_ROOT || 'toast' }}
         run: |
           release="releases/$(date -u +%Y%m%d%H%M%S)-${GITHUB_SHA::8}"
           echo "RELEASE=$release" >> "$GITHUB_ENV"
@@ -53,6 +53,6 @@ jobs:
       - name: Activate release
         env:
           TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
-          APP_ROOT: ${{ vars.DEPLOY_APP_ROOT || 'slotlock' }}
+          APP_ROOT: ${{ vars.DEPLOY_APP_ROOT || 'toast' }}
         run: |
-          ssh -i ~/.ssh/id_deploy "$TARGET" "SLOTLOCK_ROOT=\$HOME/$APP_ROOT bash '$APP_ROOT/$RELEASE/deploy/post-deploy.sh' '$APP_ROOT/$RELEASE'"
+          ssh -i ~/.ssh/id_deploy "$TARGET" "TOAST_ROOT=\$HOME/$APP_ROOT bash '$APP_ROOT/$RELEASE/deploy/post-deploy.sh' '$APP_ROOT/$RELEASE'"

@@ -3,7 +3,7 @@ import { databaseDirectory, databaseFile } from './database-directory.logic.js';
 describe('databaseDirectory', () => {
   it('gives the directory of a relative or absolute database file', () => {
     expect(databaseDirectory('file:./data/development.db')).toBe('./data');
-    expect(databaseDirectory('file:/home/slotlock/shared/data/slotlock.db')).toBe('/home/slotlock/shared/data');
+    expect(databaseDirectory('file:/home/toast/shared/data/toast.db')).toBe('/home/toast/shared/data');
     expect(databaseDirectory('file:./data/development.db?mode=rwc')).toBe('./data');
   });
 
@@ -16,7 +16,7 @@ describe('databaseDirectory', () => {
 describe('databaseFile', () => {
   it('gives the database file without the parameters', () => {
     expect(databaseFile('file:./data/development.db?mode=rwc')).toBe('./data/development.db');
-    expect(databaseFile('file:/home/slotlock/shared/data/slotlock.db')).toBe('/home/slotlock/shared/data/slotlock.db');
+    expect(databaseFile('file:/home/toast/shared/data/toast.db')).toBe('/home/toast/shared/data/toast.db');
   });
 
   it('gives no file for an in-memory database', () => {

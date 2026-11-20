@@ -2,15 +2,15 @@
 set -euo pipefail
 
 release_dir="$(cd "$1" && pwd)"
-app_root="${SLOTLOCK_ROOT:-$HOME/slotlock}"
+app_root="${TOAST_ROOT:-$HOME/toast}"
 shared_dir="$app_root/shared"
-port="${SLOTLOCK_PORT:-3000}"
-keep_releases="${SLOTLOCK_KEEP_RELEASES:-5}"
+port="${TOAST_PORT:-3000}"
+keep_releases="${TOAST_KEEP_RELEASES:-5}"
 previous_release="$(readlink -f "$app_root/current" 2>/dev/null || true)"
 
 export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
 source "$NVM_DIR/nvm.sh"
-export VP_GIT_HOOKS=0 CHECKPOINT_DISABLE=1 NODE_ENV=production SLOTLOCK_ROOT="$app_root"
+export VP_GIT_HOOKS=0 CHECKPOINT_DISABLE=1 NODE_ENV=production TOAST_ROOT="$app_root"
 
 cd "$release_dir"
 nvm install
@@ -22,9 +22,9 @@ npm rebuild better-sqlite3
 mkdir -p "$shared_dir/data" "$shared_dir/backups"
 ln -sfn "$shared_dir/.env.production" "$release_dir/server/.env.production"
 
-database_file="$shared_dir/data/slotlock.db"
+database_file="$shared_dir/data/toast.db"
 if [ -f "$database_file" ]; then
-  cp "$database_file" "$shared_dir/backups/slotlock-$(date +%Y%m%d-%H%M%S).db"
+  cp "$database_file" "$shared_dir/backups/toast-$(date +%Y%m%d-%H%M%S).db"
 else
   (cd "$release_dir/server" && node -e '
     const Database = require("better-sqlite3");

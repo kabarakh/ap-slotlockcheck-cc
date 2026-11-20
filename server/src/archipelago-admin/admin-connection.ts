@@ -48,7 +48,7 @@ export class ArchipelagoAdminConnection implements AdminConnection {
     await this.client.login(target.address, target.slotName, '', {
       password: target.roomPassword,
       slotData: false,
-      tags: ['TextOnly', 'SlotLockCheck'],
+      tags: ['TextOnly', 'TOAST'],
     });
   }
 

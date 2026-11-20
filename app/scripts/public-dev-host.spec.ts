@@ -4,7 +4,7 @@ import { publicHostFromEnv } from './public-dev-host';
 
 describe('publicHostFromEnv', () => {
   it('returns the host name of PUBLIC_BASE_URL', () => {
-    expect(publicHostFromEnv('PORT=3000\nPUBLIC_BASE_URL=https://slotlock.test\n')).toBe('slotlock.test');
+    expect(publicHostFromEnv('PORT=3000\nPUBLIC_BASE_URL=https://toast.test\n')).toBe('toast.test');
   });
 
   it('rejects a missing or invalid PUBLIC_BASE_URL', () => {

@@ -21,7 +21,7 @@ This guide is for the person who prepares the proServer. This can be the develop
 ## 3. Make the folders
 
 ```
-~/slotlock/
+~/toast/
 ├─ releases/
 ├─ shared/
 │  ├─ .env.production
@@ -30,23 +30,23 @@ This guide is for the person who prepares the proServer. This can be the develop
 └─ current -> releases/<release>
 ```
 
-1. Make the folders `~/slotlock/releases`, `~/slotlock/shared/data` and `~/slotlock/shared/backups`.
-2. Copy `server/.env.production.example` to `~/slotlock/shared/.env.production`.
+1. Make the folders `~/toast/releases`, `~/toast/shared/data` and `~/toast/shared/backups`.
+2. Copy `server/.env.production.example` to `~/toast/shared/.env.production`.
 3. Replace all placeholders `<…>` in this file. The server does not start if a placeholder stays in the file.
 4. Set the file permissions to `600`.
 
 ## 4. Configure nginx
 
 1. Use `deploy/nginx.conf.example` as template.
-2. The template uses the domain `slotlock.example.com` and the certificate paths of Let's Encrypt.
-3. Get the certificate before nginx uses the template, because nginx does not start without the certificate files: `sudo certbot certonly --standalone -d slotlock.example.com` (port 80 must be free and forwarded). After that, `certbot renew` renews the certificate automatically.
+2. The template uses the domain `toast.example.com` and the certificate paths of Let's Encrypt.
+3. Get the certificate before nginx uses the template, because nginx does not start without the certificate files: `sudo certbot certonly --standalone -d toast.example.com` (port 80 must be free and forwarded). After that, `certbot renew` renews the certificate automatically.
 4. Keep the `Upgrade` and `Connection` headers for `/socket.io/`. The live updates need them.
 5. Set `TRUST_PROXY=true` in `.env.production`.
 
 ## 5. Configure Discord
 
 1. Open the Discord application in the Discord Developer Portal.
-2. Add the redirect URL `https://slotlock.example.com/api/auth/discord/callback`.
+2. Add the redirect URL `https://toast.example.com/api/auth/discord/callback`.
 3. Copy client ID and client secret into `.env.production`.
 
 ## 6. Configure GitHub
@@ -57,7 +57,7 @@ This guide is for the person who prepares the proServer. This can be the develop
    - `DEPLOY_KNOWN_HOSTS`: the output of `ssh-keyscan <host>`.
    - `DEPLOY_HOST`: the host name of the proServer.
    - `DEPLOY_USER`: the application user.
-3. Optional: set the variable `DEPLOY_APP_ROOT` if the application folder is not `slotlock` in the home folder.
+3. Optional: set the variable `DEPLOY_APP_ROOT` if the application folder is not `toast` in the home folder.
 
 ## 7. Deploy
 
@@ -70,14 +70,14 @@ This guide is for the person who prepares the proServer. This can be the develop
 
 ## 8. Operation
 
-- Logs: `pm2 logs slotlock`.
+- Logs: `pm2 logs toast`.
 - Status: `pm2 status`.
-- Database backups: `~/slotlock/shared/backups`. Delete old backups from time to time.
+- Database backups: `~/toast/shared/backups`. Delete old backups from time to time.
 - Migrations that change a big table copy the table. Keep free disk space of at least two times the database size.
 - The server gives free space back only with `auto_vacuum = INCREMENTAL`. `deploy/post-deploy.sh` creates a new database with this mode. A database from an older release needs the switch one time. Stop the application for this, because `VACUUM` writes the full database again:
 
   ```bash
-  pm2 stop slotlock
-  sqlite3 ~/slotlock/shared/data/slotlock.db "PRAGMA auto_vacuum = INCREMENTAL; VACUUM;"
-  pm2 start slotlock
+  pm2 stop toast
+  sqlite3 ~/toast/shared/data/toast.db "PRAGMA auto_vacuum = INCREMENTAL; VACUUM;"
+  pm2 start toast
   ```

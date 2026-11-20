@@ -1,4 +1,4 @@
-upstream slotlock_app {
+upstream toast_app {
     server 127.0.0.1:3000;
     keepalive 16;
 }
@@ -6,15 +6,15 @@ upstream slotlock_app {
 server {
     listen 443 ssl;
     http2 on;
-    server_name slotlock.example.com;
+    server_name toast.example.com;
 
-    ssl_certificate     /etc/letsencrypt/live/slotlock.example.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/slotlock.example.com/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/toast.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/toast.example.com/privkey.pem;
 
     client_max_body_size 2m;
 
     location /socket.io/ {
-        proxy_pass http://slotlock_app;
+        proxy_pass http://toast_app;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -27,7 +27,7 @@ server {
 
     location ~ ^/api/rooms/[^/]+/seed$ {
         client_max_body_size 500m;
-        proxy_pass http://slotlock_app;
+        proxy_pass http://toast_app;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
         proxy_set_header Host $host;
@@ -37,7 +37,7 @@ server {
     }
 
     location / {
-        proxy_pass http://slotlock_app;
+        proxy_pass http://toast_app;
         proxy_http_version 1.1;
         proxy_set_header Connection "";
         proxy_set_header Host $host;
@@ -48,6 +48,6 @@ server {
 
 server {
     listen 80;
-    server_name slotlock.example.com;
+    server_name toast.example.com;
     return 301 https://$host$request_uri;
 }

@@ -1,6 +1,6 @@
-# SlotLockCheck
+# TOAST
 
-SlotLockCheck shows the lock status of all slots in an Archipelago room that uses the game SlotLock. It replaces a manual Google sheet. The functions and the technical plan are in `PLAN slotlock.md`. The progress is in `CHECKLIST implementation.md`.
+TOAST (Tracking Opened Archipelago Slotlocks Together) shows the lock status of all slots in an Archipelago room that uses the game SlotLock. It replaces a manual Google sheet. The functions and the technical plan are in `PLAN slotlock.md`. The progress is in `CHECKLIST implementation.md`.
 
 Language: ASD-STE100 (Simplified Technical English)
 
@@ -199,11 +199,11 @@ The app runs on `http://localhost:5173`. Vite sends `/api` and `/socket.io` to t
 
 ### Public test mode
 
-`npm run dev:public` starts the development environment so that it is reachable from the internet through the public domain, for example `https://slotlock.example.com`. Vite and `npm run cert:dev` take the domain from `PUBLIC_BASE_URL` in `server/.env.development`, so the domain is not in version control.
+`npm run dev:public` starts the development environment so that it is reachable from the internet through the public domain, for example `https://toast.example.com`. Vite and `npm run cert:dev` take the domain from `PUBLIC_BASE_URL` in `server/.env.development`, so the domain is not in version control.
 
-1. Set `PUBLIC_BASE_URL` and `DISCORD_CALLBACK_URL` in `server/.env.development` to the public domain, for example `https://slotlock.example.com` (without port). `example.com` is only a placeholder: Let's Encrypt does not issue certificates for it. Set `ADDITIONAL_ORIGINS=http://localhost:5173,https://localhost:5173`, so that `localhost` also works.
+1. Set `PUBLIC_BASE_URL` and `DISCORD_CALLBACK_URL` in `server/.env.development` to the public domain, for example `https://toast.example.com` (without port). `example.com` is only a placeholder: Let's Encrypt does not issue certificates for it. Set `ADDITIONAL_ORIGINS=http://localhost:5173,https://localhost:5173`, so that `localhost` also works.
 2. Add the callback URL to the Discord application.
-3. Forward the external port 443 in the router to the internal port 5173 of this computer and allow the port 5173 in the firewall. If you use another external port, set `SLOTLOCK_PUBLIC_DEV_PORT` to it, so that the live reload of Vite uses the correct port.
+3. Forward the external port 443 in the router to the internal port 5173 of this computer and allow the port 5173 in the firewall. If you use another external port, set `TOAST_PUBLIC_DEV_PORT` to it, so that the live reload of Vite uses the correct port.
 4. Stop the test mode and close the port after the test. The Vite development server is not made for the internet.
 
 In this mode, Vite listens on all network interfaces and uses HTTPS. Without a certificate in `app/.certs`, Vite uses a self-signed certificate (`@vitejs/plugin-basic-ssl`). Browsers show a warning, and some security programs (for example Bitdefender) block the page.

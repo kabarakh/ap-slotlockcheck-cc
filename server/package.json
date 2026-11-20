@@ -1,7 +1,7 @@
 {
-  "name": "@slotlock/server",
+  "name": "@toast/server",
   "version": "0.1.0",
-  "description": "SlotLockCheck server",
+  "description": "TOAST server",
   "author": "",
   "private": true,
   "license": "UNLICENSED",

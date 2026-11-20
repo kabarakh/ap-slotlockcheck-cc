@@ -7,7 +7,7 @@
     reset: 'Zurücksetzen',
   },
   app: {
-    title: 'SlotLockCheck',
+    title: 'TOAST',
     rooms: 'Räume',
     newRoom: 'Neuer Raum',
     login: 'Mit Discord anmelden',

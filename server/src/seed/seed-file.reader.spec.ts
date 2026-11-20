@@ -19,7 +19,7 @@ describe('readSeedFile', () => {
   let directory: string;
 
   beforeAll(() => {
-    directory = mkdtempSync(join(tmpdir(), 'slotlock-seed-file-'));
+    directory = mkdtempSync(join(tmpdir(), 'toast-seed-file-'));
   });
 
   afterAll(() => {

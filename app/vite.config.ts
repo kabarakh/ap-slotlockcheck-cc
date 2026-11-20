@@ -8,10 +8,10 @@ import { defineConfig, type PluginOption } from 'vite-plus';
 
 import { publicDevHost } from './scripts/public-dev-host.ts';
 
-const serverUrl = process.env.SLOTLOCK_SERVER_URL ?? 'http://localhost:3000';
-const publicHosts = process.env.SLOTLOCK_PUBLIC_DEV === 'true' ? [publicDevHost()] : [];
+const serverUrl = process.env.TOAST_SERVER_URL ?? 'http://localhost:3000';
+const publicHosts = process.env.TOAST_PUBLIC_DEV === 'true' ? [publicDevHost()] : [];
 const isPublicDev = publicHosts.length > 0;
-const publicPort = Number(process.env.SLOTLOCK_PUBLIC_DEV_PORT ?? 443);
+const publicPort = Number(process.env.TOAST_PUBLIC_DEV_PORT ?? 443);
 
 const certificatePath = (extension: string) =>
   fileURLToPath(new URL(`./.certs/${publicHosts[0] ?? ''}.${extension}`, import.meta.url));
