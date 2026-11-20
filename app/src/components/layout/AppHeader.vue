@@ -21,13 +21,20 @@ const locales: { value: Locale; label: string }[] = [
   { value: 'en', label: 'English' },
 ];
 const colorModes: ColorMode[] = ['system', 'light', 'dark'];
+const longTitle = ['Tracking', 'Opened', 'Archipelago', 'Slotlocks', 'Together'];
 </script>
 
 <template>
   <header class="app-header">
     <RouterLink to="/" class="app-brand">
       <img :src="isDark ? '/logo-dark.svg' : '/logo.svg'" alt="" class="app-logo" width="28" height="28" />
-      {{ t('app.title') }}
+      <span class="app-brand-short">{{ t('app.title') }}</span>
+      <span class="app-brand-long" data-testid="brand-long">
+        <template v-for="(word, index) in longTitle" :key="word"
+          >{{ index > 0 ? ' ' : '' }}<span class="app-brand-initial">{{ word[0] }}</span
+          >{{ word.slice(1) }}</template
+        >
+      </span>
     </RouterLink>
     <nav class="app-toolbar">
       <RouterLink :to="{ name: 'rooms' }">{{ t('app.rooms') }}</RouterLink>
@@ -67,6 +74,7 @@ const colorModes: ColorMode[] = ['system', 'light', 'dark'];
 
 <style scoped>
 .app-header {
+  container-type: inline-size;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -86,5 +94,25 @@ const colorModes: ColorMode[] = ['system', 'light', 'dark'];
   font-weight: 700;
   font-size: 1.125rem;
   text-decoration: none;
+}
+
+.app-brand-long {
+  display: none;
+  font-weight: 500;
+}
+
+.app-brand-initial {
+  font-weight: 800;
+  color: var(--p-primary-color);
+}
+
+@container (min-width: 75rem) {
+  .app-brand-short {
+    display: none;
+  }
+
+  .app-brand-long {
+    display: inline;
+  }
 }
 </style>
