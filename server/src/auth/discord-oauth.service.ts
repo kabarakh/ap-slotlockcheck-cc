@@ -22,10 +22,10 @@ export type DiscordUser = z.infer<typeof discordUserSchema>;
 export class DiscordOAuthService {
   constructor(private readonly config: AppConfigService) {}
 
-  authorizeUrl(state: string): string {
+  authorizeUrl(state: string, redirectUri: string): string {
     const url = new URL(DISCORD_AUTHORIZE_URL);
     url.searchParams.set('client_id', this.config.get('DISCORD_CLIENT_ID'));
-    url.searchParams.set('redirect_uri', this.config.get('DISCORD_CALLBACK_URL'));
+    url.searchParams.set('redirect_uri', redirectUri);
     url.searchParams.set('response_type', 'code');
     url.searchParams.set('scope', 'identify');
     url.searchParams.set('state', state);
@@ -33,7 +33,7 @@ export class DiscordOAuthService {
     return url.toString();
   }
 
-  async fetchUser(code: string): Promise<DiscordUser> {
+  async fetchUser(code: string, redirectUri: string): Promise<DiscordUser> {
     const tokenResponse = await fetch(DISCORD_TOKEN_URL, {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -42,7 +42,7 @@ export class DiscordOAuthService {
         client_secret: this.config.get('DISCORD_CLIENT_SECRET'),
         grant_type: 'authorization_code',
         code,
-        redirect_uri: this.config.get('DISCORD_CALLBACK_URL'),
+        redirect_uri: redirectUri,
       }),
       signal: AbortSignal.timeout(this.config.get('HTTP_TIMEOUT_SECONDS') * 1000),
     });

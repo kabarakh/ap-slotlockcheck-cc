@@ -201,8 +201,8 @@ The app runs on `http://localhost:5173`. Vite sends `/api` and `/socket.io` to t
 
 `npm run dev:public` starts the development environment so that it is reachable from the internet through the public domain, for example `https://toast.example.com`. Vite and `npm run cert:dev` take the domain from `PUBLIC_BASE_URL` in `server/.env.development`, so the domain is not in version control.
 
-1. Set `PUBLIC_BASE_URL` and `DISCORD_CALLBACK_URL` in `server/.env.development` to the public domain, for example `https://toast.example.com` (without port). `example.com` is only a placeholder: Let's Encrypt does not issue certificates for it. Set `ADDITIONAL_ORIGINS=http://localhost:5173,https://localhost:5173`, so that `localhost` also works.
-2. Add the callback URL to the Discord application.
+1. Set `PUBLIC_BASE_URL` and `DISCORD_CALLBACK_URL` in `server/.env.development` to the public domain, for example `https://toast.example.com` (without port). `example.com` is only a placeholder: Let's Encrypt does not issue certificates for it. Set `ADDITIONAL_ORIGINS=http://localhost:5173,https://localhost:5173`, so that `localhost` also works. The login uses the origin of the request if `PUBLIC_BASE_URL` or `ADDITIONAL_ORIGINS` contains it: the Discord callback and the return after the login stay on this origin. For other origins, the login uses `PUBLIC_BASE_URL`. The Vite proxy sends the protocol and the host in the `X-Forwarded-*` headers.
+2. Add the callback URL of each origin to the Discord application, for example `https://toast.example.com/api/auth/discord/callback` and `http://localhost:5173/api/auth/discord/callback`.
 3. Forward the external port 443 in the router to the internal port 5173 of this computer and allow the port 5173 in the firewall. If you use another external port, set `TOAST_PUBLIC_DEV_PORT` to it, so that the live reload of Vite uses the correct port.
 4. Stop the test mode and close the port after the test. The Vite development server is not made for the internet.
 

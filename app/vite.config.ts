@@ -33,7 +33,7 @@ export default defineConfig({
       : undefined,
     hmr: isPublicDev ? { clientPort: publicPort } : undefined,
     proxy: {
-      '/api': { target: serverUrl },
+      '/api': { target: serverUrl, xfwd: true },
       '/socket.io': { target: serverUrl, ws: true },
     },
   },

@@ -3,12 +3,14 @@ import { ApiExcludeEndpoint } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import { randomBytes } from 'node:crypto';
 
+import { allowedOrigins } from '../common/origin-check.middleware.js';
 import { AppConfigService } from '../config/app-config.service.js';
 import { CurrentUser } from './auth.decorators.js';
 import { AuthService, safeReturnPath } from './auth.service.js';
 import { OAUTH_STATE_COOKIE, OAUTH_STATE_LIFETIME_SECONDS, type AuthUser } from './auth.types.js';
 import { DiscordOAuthService } from './discord-oauth.service.js';
 import { SessionDto } from './dto/auth.dto.js';
+import { callbackUrlFor, loginOrigin } from './login-origin.logic.js';
 import { SessionService } from './session.service.js';
 
 interface OAuthState {
@@ -18,23 +20,27 @@ interface OAuthState {
 
 @Controller('auth')
 export class AuthController {
+  private readonly origins: Set<string>;
+
   constructor(
     private readonly auth: AuthService,
     private readonly discord: DiscordOAuthService,
     private readonly sessions: SessionService,
     private readonly config: AppConfigService,
-  ) {}
+  ) {
+    this.origins = allowedOrigins(config.get('PUBLIC_BASE_URL'), config.get('ADDITIONAL_ORIGINS'));
+  }
 
   @Get('discord')
   @ApiExcludeEndpoint()
-  startLogin(@Query('returnTo') returnTo: unknown, @Res() response: Response): void {
+  startLogin(@Query('returnTo') returnTo: unknown, @Req() request: Request, @Res() response: Response): void {
     const state: OAuthState = { nonce: randomBytes(24).toString('base64url'), returnTo: safeReturnPath(returnTo) };
     response.cookie(
       OAUTH_STATE_COOKIE,
       JSON.stringify(state),
       this.sessions.cookieOptions(OAUTH_STATE_LIFETIME_SECONDS),
     );
-    response.redirect(this.discord.authorizeUrl(state.nonce));
+    response.redirect(this.discord.authorizeUrl(state.nonce, this.callbackUrl(request)));
   }
 
   @Get('discord/callback')
@@ -50,7 +56,7 @@ export class AuthController {
     if (!state || typeof code !== 'string' || nonce !== state.nonce) {
       throw new BadRequestException('Invalid login state');
     }
-    const discordUser = await this.discord.fetchUser(code);
+    const discordUser = await this.discord.fetchUser(code, this.callbackUrl(request));
     const user = await this.auth.login({
       discordId: discordUser.id,
       name: discordUser.global_name ?? discordUser.username,
@@ -58,7 +64,7 @@ export class AuthController {
       avatar: discordUser.avatar ?? null,
     });
     await this.sessions.startSession(response, user);
-    response.redirect(new URL(state.returnTo, this.config.get('PUBLIC_BASE_URL')).toString());
+    response.redirect(new URL(state.returnTo, this.origin(request)).toString());
   }
 
   @Get('me')
@@ -70,6 +76,14 @@ export class AuthController {
   @HttpCode(204)
   logout(@Res({ passthrough: true }) response: Response): void {
     this.sessions.endSession(response);
+  }
+
+  private origin(request: Request): string {
+    return loginOrigin(request.headers, request.protocol, this.origins, this.config.get('PUBLIC_BASE_URL'));
+  }
+
+  private callbackUrl(request: Request): string {
+    return callbackUrlFor(this.origin(request), this.config.get('DISCORD_CALLBACK_URL'));
   }
 
   private readState(request: Request): OAuthState | undefined {
